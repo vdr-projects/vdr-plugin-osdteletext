@@ -521,12 +521,15 @@ cTxtStatus::~cTxtStatus()
    /*if (running)
       Cancel(3);*/
    if (receiver)
+   {
+      receiver->Stop();
       delete receiver;
+   }
 }
 
 void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber)
 {
-   if (Device->IsPrimaryDevice()) {
+   if (Device->IsPrimaryDevice() || Device == cDevice::ActualDevice()) {
 
 /*#ifdef OSDTELETEXT_REINSERTION_PATCH
       if (ttSetup.suspendReceiving) {
@@ -563,9 +566,9 @@ void cTxtStatus::CheckCreateReceiver() {
       if (!channel)
          return;
       //primary device a full-featured card
-      if (cDevice::PrimaryDevice()->ProvidesChannel(channel, Setup.PrimaryLimit)) {
+      if (cDevice::ActualDevice()->ProvidesChannel(channel, Setup.PrimaryLimit)) {
           receiver = new cTxtReceiver(TPid, chan);
-          cDevice::PrimaryDevice()->AttachReceiver(receiver);
+         cDevice::ActualDevice()->AttachReceiver(receiver);
           //dsyslog("OSDTeletext: Created teletext receiver for channel %d, PID %d on primary device", ChNum, TPid);
       //primary device a DXR3 or similar
       } else {
@@ -710,7 +713,7 @@ cTxtReceiver::cTxtReceiver(int TPid, tChannelID chan)
 
 cTxtReceiver::~cTxtReceiver()
 {
-   Detach();
+   cReceiver::Detach();
    if (running) {
       running=false;
       buffer.Signal();
@@ -718,6 +721,11 @@ cTxtReceiver::~cTxtReceiver()
    }
    buffer.Clear();
    delete TxtPage;
+}
+
+void cTxtReceiver::Stop()
+{
+   Activate(false);
 }
 
 void cTxtReceiver::Activate(bool On)

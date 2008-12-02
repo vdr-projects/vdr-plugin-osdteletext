@@ -175,6 +175,7 @@ protected:
 public:
    cTxtReceiver(int TPid, tChannelID chan);
    virtual ~cTxtReceiver();
+   virtual void Stop();
 };
 
 class cTxtStatus : public cStatus/*, public cThread*/ {
