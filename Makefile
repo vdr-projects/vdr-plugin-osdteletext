@@ -67,8 +67,6 @@ $(DEPFILE): Makefile
 ### Targets:
 
 all: libvdr-$(PLUGIN).so
-	@install -d ../../man
-	@install README ../../man/$(PLUGIN).man
 
 libvdr-$(PLUGIN).so: $(OBJS)
 	$(CXX) $(CXXFLAGS) -shared $(OBJS) -o $@
@@ -84,3 +82,7 @@ dist: clean
 
 clean:
 	@-rm -f $(OBJS) $(DEPFILE) *.so *.tgz core* *~
+
+install:
+	@install -d ../../man
+	@install README ../../man/$(PLUGIN).man
