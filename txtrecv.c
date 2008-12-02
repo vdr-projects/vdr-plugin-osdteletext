@@ -692,11 +692,14 @@ void cTxtStatus::ForceSuspending(bool onOrOff) {
 */
 
 cTxtReceiver::cTxtReceiver(int TPid, tChannelID chan)
-#if VDRVERSNUM >= 10319
+#if VDRVERSNUM >= 10500
+ : cReceiver(chan, -1, TPid), 
+#elif VDRVERSNUM >= 10319
  : cReceiver(0, -1, TPid), 
 #else
  : cReceiver(0, -1, 1, TPid), 
 #endif
+ cThread("osdteletext-receiver"),
    chan(chan), TxtPage(0), buffer((188+60)*75), running(false)
 {
    Storage::instance()->prepareDirectory(chan);
