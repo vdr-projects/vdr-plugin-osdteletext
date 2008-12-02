@@ -76,8 +76,7 @@ Command line options:
    
      -d        --directory=DIR    The directory where the temporary
                                   files will be stored.
-                                  (standard value: /vtx, recommended: /tmp/vtx
-                                   or /var/cache/vdr/osdteletext.)
+                                  (standard value: /var/cache/vdr/vtx)
                                   Ensure that the directory exists and is writable.
      -n        --max-cache=NUM    Maximum size in megabytes of cache used
                                   to store the pages on the harddisk.

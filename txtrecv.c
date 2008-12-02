@@ -26,7 +26,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-const char *RootDir::root = "/vtx";
+const char *RootDir::root = "/var/cache/vdr/vtx";
 
 void RootDir::setRootDir(const char *newRoot) {
    root=newRoot;

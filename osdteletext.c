@@ -121,8 +121,7 @@ const char *cPluginTeletextosd::CommandLineHelp(void)
   // Return a string that describes all known command line options.
   return "  -d        --directory=DIR    The directory where the temporary\n"
          "                               files will be stored.\n"
-         "                               (default: /vtx, recommended: /tmp/vtx\n"
-         "                                or /var/cache/vdr/osdteletext.)\n"
+         "                               (default: /var/cache/vdr/vtx)\n"
          "                               Ensure that the directory exists and is writable.\n"
          "  -n        --max-cache=NUM    Maximum size in megabytes of cache used\n"
          "                               to store the pages on the harddisk.\n"

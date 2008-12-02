@@ -20,9 +20,6 @@
 #include "setup.h"
 #include "txtrecv.h"
 
-
-#define TXTROOT "/vtx"
-
 #define GET_HUNDREDS(x) ( ( (x) - ((x)%256) ) /256 )
 #define GET_TENS(x)  ( (( (x) - ((x)%16) )%256 ) /16 )
 #define GET_ONES(x)   ( (x)%16 )

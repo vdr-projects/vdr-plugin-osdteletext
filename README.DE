@@ -63,8 +63,7 @@ Kommandozeilen-Optionen:
    Verfügbare Optionen:
    
      -d        --directory=DIR    Das Verzeichnis für die temporären Dateien.
-                                  (Voreinstellung: /vtx, empfohlen: /tmp/vtx
-                                   oder /var/cache/vdr/osdteletext.)
+                                  (Voreinstellung: /var/cache/vdr/vtx)
                                   Stellen Sie sicher, dass das Verzeichnis existiert
                                   und beschreibbar ist.
      -n        --max-cache=NUM    Maximale Größe des Zwischenspeichers für Seiten
