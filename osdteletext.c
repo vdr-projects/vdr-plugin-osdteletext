@@ -23,7 +23,7 @@ using namespace std;
 #include "txtrecv.h"
 #include "setup.h"
 
-static const char *VERSION        = "0.5.1";
+static const char *VERSION        = "0.6.0";
 static const char *DESCRIPTION    = "Displays teletext on the OSD";
 static const char *MAINMENUENTRY  = "Teletext (OSD)";
 
