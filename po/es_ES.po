@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <nobody@nowhere.org>\n"
-"POT-Creation-Date: 2008-12-13 17:15+0200\n"
+"POT-Creation-Date: 2008-12-13 23:09+0200\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Ruben Nunez Francisco <ruben.nunez@tang-it.com>\n"
 "Language-Team: <vdr@linuxtv.org>\n"
@@ -29,18 +29,6 @@ msgstr "Visualiza el teletexto en el OSD"
 
 msgid "Teletext (OSD)"
 msgstr "Teletexto (OSD)"
-
-msgid "Red key"
-msgstr "Tecla roja"
-
-msgid "Green key"
-msgstr "Tecla verde"
-
-msgid "Yellow key"
-msgstr "Tecla amarilla"
-
-msgid "Blue key"
-msgstr "Tecla azul"
 
 msgid "Zoom"
 msgstr "Zoom"
@@ -76,6 +64,9 @@ msgid "OSD horizontal align"
 msgstr ""
 
 msgid "OSD vertical align"
+msgstr ""
+
+msgid "Key bindings"
 msgstr ""
 
 msgid "  Page number"

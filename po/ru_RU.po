@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <nobody@nowhere.org>\n"
-"POT-Creation-Date: 2008-12-13 17:15+0200\n"
+"POT-Creation-Date: 2008-12-13 23:09+0200\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Vyacheslav Dikonov <sdiconov@mail.ru>\n"
 "Language-Team: <vdr@linuxtv.org>\n"
@@ -29,18 +29,6 @@ msgstr "Показ телетекста в меню"
 
 msgid "Teletext (OSD)"
 msgstr "Телетекст"
-
-msgid "Red key"
-msgstr "Красная кнопка"
-
-msgid "Green key"
-msgstr "Зелёная кнопка"
-
-msgid "Yellow key"
-msgstr "Жёлтая кнопка"
-
-msgid "Blue key"
-msgstr "Синяя кнопка"
 
 msgid "Zoom"
 msgstr "увеличить"
@@ -76,6 +64,9 @@ msgid "OSD horizontal align"
 msgstr ""
 
 msgid "OSD vertical align"
+msgstr ""
+
+msgid "Key bindings"
 msgstr ""
 
 msgid "  Page number"

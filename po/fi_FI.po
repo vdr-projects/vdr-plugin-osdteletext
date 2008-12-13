@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <nobody@nowhere.org>\n"
-"POT-Creation-Date: 2008-12-13 17:15+0200\n"
+"POT-Creation-Date: 2008-12-13 23:09+0200\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Rolf Ahrenberg <rahrenbe@cc.hut.fi>\n"
 "Language-Team: <vdr@linuxtv.org>\n"
@@ -29,18 +29,6 @@ msgstr "Teksti-TV (OSD)"
 
 msgid "Teletext (OSD)"
 msgstr "Teksti-TV"
-
-msgid "Red key"
-msgstr "Punainen näppäin"
-
-msgid "Green key"
-msgstr "Vihreä näppäin"
-
-msgid "Yellow key"
-msgstr "Keltainen näppäin"
-
-msgid "Blue key"
-msgstr "Sininen näppäin"
 
 msgid "Zoom"
 msgstr "Suurenna"
@@ -77,6 +65,9 @@ msgstr "Pystykeskitys"
 
 msgid "OSD vertical align"
 msgstr "Vaakakeskitys"
+
+msgid "Key bindings"
+msgstr "Näppäintoiminnot"
 
 msgid "  Page number"
 msgstr "  Sivunumero"
