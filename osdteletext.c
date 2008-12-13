@@ -10,7 +10,6 @@
  ***************************************************************************/
 
 #include <vdr/plugin.h>
-#include <vdr/i18n.h>
 #include <vdr/keys.h>
 #include <vdr/config.h>
 
@@ -19,13 +18,16 @@
 using namespace std;
 
 #include "menu.h"
-#include "i18n.h"
 #include "txtrecv.h"
 #include "setup.h"
 
+#if defined(APIVERSNUM) && APIVERSNUM < 10600
+#error "VDR-1.6.0 API version or greater is required!"
+#endif
+
 static const char *VERSION        = "0.6.0";
-static const char *DESCRIPTION    = "Displays teletext on the OSD";
-static const char *MAINMENUENTRY  = "Teletext (OSD)";
+static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
+static const char *MAINMENUENTRY  = trNOOP("Teletext (OSD)");
 
 class cPluginTeletextosd : public cPlugin {
 private:
@@ -199,7 +201,6 @@ bool cPluginTeletextosd::Start(void)
 void cPluginTeletextosd::initTexts() {
    if (cTeletextSetupPage::actionKeyNames)
       return;
-   RegisterI18n(Phrases);
    //TODO: rewrite this in the xy[0].cd="fg"; form
    static const ActionKeyName st_actionKeyNames[] =
    {

@@ -12,7 +12,6 @@
 #include <time.h>
     
 #include <vdr/interface.h>
-#include <vdr/i18n.h>
 #include <vdr/config.h>
 
 #include "menu.h"
@@ -155,8 +154,7 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
                   ChannelSwitched(selectingChannelNumber);
                else {
                   needClearMessage=true;
-                  //string tranlated in VDR's i18n.c
-                  Display::DrawMessage(tr("*** Invalid Channel ***"));
+                  Display::DrawMessage(trVDR("*** Invalid Channel ***"));
                }
             } else {
                ShowPage();

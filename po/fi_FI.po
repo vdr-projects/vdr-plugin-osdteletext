@@ -1,25 +1,19 @@
 # VDR plugin language source file.
 # Copyright (C) 2007 Klaus Schmidinger <kls@cadsoft.de>
 # This file is distributed under the same license as the VDR package.
-# Hannu Savolainen <hannu@opensound.com>, 2002
-# Jaakko Hyv‰tti <jaakko@hyvatti.iki.fi>, 2002
-# Niko Tarnanen <niko.tarnanen@hut.fi>, 2003
 # Rolf Ahrenberg <rahrenbe@cc.hut.fi>, 2003
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <nobody@nowhere.org>\n"
-"POT-Creation-Date: 2008-07-25 17:26+0200\n"
+"POT-Creation-Date: 2008-12-13 17:15+0200\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Rolf Ahrenberg <rahrenbe@cc.hut.fi>\n"
 "Language-Team: <vdr@linuxtv.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-15\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
-msgid "*** Invalid Channel ***"
-msgstr ""
 
 msgid "Channel (press OK): "
 msgstr "Kanava (paina OK):"
@@ -28,19 +22,25 @@ msgid "Page"
 msgstr "Sivua"
 
 msgid "not found"
-msgstr "ei lˆydy"
+msgstr "ei l√∂ydy"
+
+msgid "Displays teletext on the OSD"
+msgstr "Teksti-TV (OSD)"
+
+msgid "Teletext (OSD)"
+msgstr "Teksti-TV"
 
 msgid "Red key"
-msgstr "Punainen n‰pp‰in"
+msgstr "Punainen n√§pp√§in"
 
 msgid "Green key"
-msgstr "Vihre‰ n‰pp‰in"
+msgstr "Vihre√§ n√§pp√§in"
 
 msgid "Yellow key"
-msgstr "Keltainen n‰pp‰in"
+msgstr "Keltainen n√§pp√§in"
 
 msgid "Blue key"
-msgstr "Sininen n‰pp‰in"
+msgstr "Sininen n√§pp√§in"
 
 msgid "Zoom"
 msgstr "Suurenna"
@@ -58,13 +58,13 @@ msgid "Jump to..."
 msgstr "Siirry sivulle..."
 
 msgid "Background transparency"
-msgstr "Taustan l‰pin‰kyvyys"
+msgstr "Taustan l√§pin√§kyvyys"
 
 msgid "Show clock"
-msgstr "N‰yt‰ kello"
+msgstr "N√§yt√§ kello"
 
 msgid "Auto-update pages"
-msgstr "Automaattinen sivup‰ivitys"
+msgstr "Automaattinen sivup√§ivitys"
 
 msgid "OSD height"
 msgstr "Korkeus"
@@ -80,9 +80,3 @@ msgstr "Vaakakeskitys"
 
 msgid "  Page number"
 msgstr "  Sivunumero"
-
-#~ msgid "Displays teletext on the OSD"
-#~ msgstr "Teksti-TV (OSD)"
-
-#~ msgid "Teletext (OSD)"
-#~ msgstr "Teksti-TV"

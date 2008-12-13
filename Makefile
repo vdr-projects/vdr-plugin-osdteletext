@@ -46,7 +46,7 @@ DEFINES += -DPLUGIN_NAME_I18N='"$(PLUGIN)"' -D_GNU_SOURCE
 
 ### The object files (add further files here):
 
-OBJS = $(PLUGIN).o menu.o txtfont.o i18n.o txtrecv.o txtrender.o displaybase.o display.o
+OBJS = $(PLUGIN).o menu.o txtfont.o txtrecv.o txtrender.o displaybase.o display.o
 
 ### Implicit rules:
 

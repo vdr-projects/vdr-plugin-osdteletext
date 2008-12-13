@@ -7,16 +7,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <nobody@nowhere.org>\n"
-"POT-Creation-Date: 2008-07-25 17:26+0200\n"
+"POT-Creation-Date: 2008-12-13 17:15+0200\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Ruben Nunez Francisco <ruben.nunez@tang-it.com>\n"
 "Language-Team: <vdr@linuxtv.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-15\n"
 "Content-Transfer-Encoding: 8bit\n"
-
-msgid "*** Invalid Channel ***"
-msgstr ""
 
 msgid "Channel (press OK): "
 msgstr "Canal (pulse OK):"
@@ -26,6 +23,12 @@ msgstr "Página"
 
 msgid "not found"
 msgstr "no encontrada"
+
+msgid "Displays teletext on the OSD"
+msgstr "Visualiza el teletexto en el OSD"
+
+msgid "Teletext (OSD)"
+msgstr "Teletexto (OSD)"
 
 msgid "Red key"
 msgstr "Tecla roja"
@@ -77,9 +80,3 @@ msgstr ""
 
 msgid "  Page number"
 msgstr "  Número de página"
-
-#~ msgid "Displays teletext on the OSD"
-#~ msgstr "Visualiza el teletexto en el OSD"
-
-#~ msgid "Teletext (OSD)"
-#~ msgstr "Teletexto (OSD)"
