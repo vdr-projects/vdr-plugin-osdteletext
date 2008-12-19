@@ -4,15 +4,16 @@
 # Alberto Carraro <bertocar@tin.it>, 2001
 # Antonio Ospite <ospite@studenti.unina.it>, 2003
 # Sean Carlos <seanc@libero.it>, 2005
+# Davide Cavalca <davide125@tiscali.it>, 2005
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <nobody@nowhere.org>\n"
 "POT-Creation-Date: 2008-12-13 23:09+0200\n"
-"PO-Revision-Date: 2008-05-04 15:33+0200\n"
-"Last-Translator: Sean Carlos <seanc@libero.it>\n"
-"Language-Team: <vdr@linuxtv.org>\n"
+"PO-Revision-Date: 2008-12-14 10:24+0100\n"
+"Last-Translator: Davide Cavalca <davide125@tiscali.it>\n"
+"Language-Team:  <vdr@linuxtv.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-15\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -39,22 +40,22 @@ msgid "Half page"
 msgstr "Mezza pagina"
 
 msgid "Change channel"
-msgstr "Cambio canale"
+msgstr "Cambia canale"
 
 msgid "Switch background"
 msgstr "Cambia sfondo"
 
 msgid "Jump to..."
-msgstr "Salta a..."
+msgstr "Vai a..."
 
 msgid "Background transparency"
 msgstr "Trasparenza dello sfondo"
 
 msgid "Show clock"
-msgstr "Visualizza la hora"
+msgstr "Mostra orologio"
 
 msgid "Auto-update pages"
-msgstr "Aggiornamento pagina automatico"
+msgstr "Aggiorna automaticamente le pagine"
 
 msgid "OSD height"
 msgstr "Altezza OSD"
@@ -63,13 +64,13 @@ msgid "OSD width"
 msgstr "Larghezza OSD"
 
 msgid "OSD horizontal align"
-msgstr ""
+msgstr "Allineamento orizzontale OSD"
 
 msgid "OSD vertical align"
-msgstr ""
+msgstr "Allineamento verticale OSD"
 
 msgid "Key bindings"
 msgstr ""
 
 msgid "  Page number"
-msgstr "  Numero di pagina"
+msgstr "  Numero pagina"

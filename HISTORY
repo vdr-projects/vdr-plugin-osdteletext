@@ -1,10 +1,11 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
 
-2008-12-??: version 0.?.?
+2008-12-19: version 0.7.0
 - switched completely to VDR 1.6's I18N system and removed the old crap - no
   more support for older VDR versions! (thx to Rolf Ahrenberg)
 - proper translation of the key bindings (thx to Rolf Ahrenberg)
+- Partially updated Italian translation by Davide Cavalca <davide125@tiscali.it>
 
 2008-12-02: version 0.6.0
 - Moved installation of README and manpage from all to install target
