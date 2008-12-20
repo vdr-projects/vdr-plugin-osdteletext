@@ -27,7 +27,7 @@ using namespace std;
 
 static const char *VERSION        = "0.7.0";
 static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
-static const char *MAINMENUENTRY  = trNOOP("Teletext (OSD)");
+static const char *MAINMENUENTRY  = trNOOP("Teletext");
 
 class cPluginTeletextosd : public cPlugin {
 private:
