@@ -4,7 +4,7 @@
 # Alberto Carraro <bertocar@tin.it>, 2001
 # Antonio Ospite <ospite@studenti.unina.it>, 2003
 # Sean Carlos <seanc@libero.it>, 2005
-# Davide Cavalca <davide125@tiscali.it>, 2005
+# Davide Cavalca <davide125@tiscali.it>, 2008
 #
 msgid ""
 msgstr ""
