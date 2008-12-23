@@ -187,23 +187,12 @@ bool Storage::exists(const char* file) {
 
 void Storage::getFilename(char *buffer, int bufLength, PageID page) {
    snprintf(buffer, bufLength, "%s/%s/%03x_%02x.vtx", getRootDir(),
-#if VDRVERSNUM >= 10318
-            *page.channel.ToString(),
-#else
-            page.channel.ToString(),
-#endif
-            page.page, page.subPage);
+            *page.channel.ToString(), page.page, page.subPage);
 }
 
 void Storage::prepareDirectory(tChannelID chan) {
    free(currentDir);
-   asprintf(&currentDir, "%s/%s", root,
-#if VDRVERSNUM >= 10318
-            *chan.ToString()
-#else
-            chan.ToString()
-#endif
-            );
+   asprintf(&currentDir, "%s/%s", root, *chan.ToString());
    MakeDirs(currentDir, 1);
    failedFreeSpace=false;
 }
@@ -409,12 +398,7 @@ void PackedStorage::getFilename(char *buffer, int bufLength, PageID page) {
    //This is a different scheme: page 576_07 will have the name 570s.vtx, the same as e.g. 571_01 or 575_00
    //Think of "the five hundred seventies"
    snprintf(buffer, bufLength, "%s/%s/%03xs.vtx", getRootDir(),
-#if VDRVERSNUM >= 10318
-            *page.channel.ToString(),
-#else
-            page.channel.ToString(),
-#endif
-            (page.page & 0xFF0));
+            *page.channel.ToString(), (page.page & 0xFF0));
 }
 
 StorageHandle PackedStorage::openForWriting(PageID page) {
@@ -695,14 +679,7 @@ void cTxtStatus::ForceSuspending(bool onOrOff) {
 */
 
 cTxtReceiver::cTxtReceiver(int TPid, tChannelID chan)
-#if VDRVERSNUM >= 10500
- : cReceiver(chan, -1, TPid), 
-#elif VDRVERSNUM >= 10319
- : cReceiver(0, -1, TPid), 
-#else
- : cReceiver(0, -1, 1, TPid), 
-#endif
- cThread("osdteletext-receiver"),
+ : cReceiver(chan, -1, TPid), cThread("osdteletext-receiver"),
    chan(chan), TxtPage(0), buffer((188+60)*75), running(false)
 {
    Storage::instance()->prepareDirectory(chan);
