@@ -132,10 +132,7 @@ const char *cPluginTeletextosd::CommandLineHelp(void)
          "                               Choose \"legacy\" for the traditional\n"
          "                               one-file-per-page system.\n"
          "                               Default is \"packed\" for the \n"
-         "                               one-file-for-a-few-pages system.\n"
-         "  -R,       --no-receive       Do not receive and store teletext\n"
-         "                               (deprecated - plugin will be useless).\n"
-         "  -r,       --receive          (obsolete)\n";
+         "                               one-file-for-a-few-pages system.\n";
 }
 
 bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
@@ -145,14 +142,12 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
        { "directory",    required_argument,       NULL, 'd' },
        { "max-cache",    required_argument,       NULL, 'n' },
        { "cache-system",    required_argument,       NULL, 's' },
-       { "no-receiver",  no_argument,       NULL, 'R' },
-       { "receive",      no_argument,       NULL, 'r' },
        { NULL }
        };
      
    int c;
    int maxStorage=-1;
-   while ((c = getopt_long(argc, argv, "s:d:n:Rr", long_options, NULL)) != -1) {
+   while ((c = getopt_long(argc, argv, "s:d:n:", long_options, NULL)) != -1) {
         switch (c) {
           case 's': 
                     if (!optarg)
@@ -168,10 +163,6 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
                        int n = atoi(optarg);
                        maxStorage=n;
                     }
-                    break;
-          case 'R': startReceiver=false;
-                    break;
-          case 'r': startReceiver=true;
                     break;
         }
    }
