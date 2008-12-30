@@ -55,7 +55,7 @@ int Storage::doCleanUp() {
       }
       closedir(top);
    } else {
-      esyslog("Error opening teletext storage directory \"%s\": %s", root, strerror(errno));
+      esyslog("OSD-Teletext: Error opening teletext storage directory \"%s\": %s", root, strerror(errno));
    }
    return pagesDeleted;
 }
@@ -553,7 +553,7 @@ void cTxtStatus::CheckCreateReceiver() {
       if (cDevice::ActualDevice()->ProvidesChannel(channel, Setup.PrimaryLimit)) {
           receiver = new cTxtReceiver(TPid, chan);
          cDevice::ActualDevice()->AttachReceiver(receiver);
-          //dsyslog("OSDTeletext: Created teletext receiver for channel %d, PID %d on primary device", ChNum, TPid);
+          //dsyslog("OSD-Teletext: Created teletext receiver for channel %d, PID %d on primary device", ChNum, TPid);
       //primary device a DXR3 or similar
       } else {
          int devNum = cDevice::NumDevices();
@@ -565,7 +565,7 @@ void cTxtStatus::CheckCreateReceiver() {
                bFound = true;
                receiver = new cTxtReceiver(TPid, chan);
                pDevice->AttachReceiver(receiver);
-               //dsyslog("OSDTeletext: Created teletext receiver for channel %d, PID %d on device %d", ChNum, TPid, i);
+               //dsyslog("OSD-Teletext: Created teletext receiver for channel %d, PID %d on device %d", ChNum, TPid, i);
             }
          }
          if (!bFound) //can this happen?
@@ -576,7 +576,7 @@ void cTxtStatus::CheckCreateReceiver() {
 
 void cTxtStatus::CheckDeleteReceiver() {
    if (receiver) {
-      //dsyslog("OSDTeletext: Deleted teletext receiver");
+      //dsyslog("OSD-Teletext: Deleted teletext receiver");
       delete receiver;
 /*#ifdef OSDTELETEXT_REINSERTION_PATCH
       //the patch only makes sense if primary device is a DVB card, so no handling for DXR3
@@ -592,7 +592,7 @@ void cTxtStatus::Action() {
 #ifdef OSDTELETEXT_REINSERTION_PATCH
    running=true;
    
-   dsyslog("OSDTeletext waiting thread started with pid %d", getpid());
+   dsyslog("OSD-Teletext: waiting thread started with pid %d", getpid());
    
    count=0;
    
@@ -621,7 +621,7 @@ void cTxtStatus::Action() {
    }
    
    running=false;
-   dsyslog("OSDTeletext waiting thread ended");
+   dsyslog("OSD-Teletext: waiting thread ended");
    
 #endif
 }
