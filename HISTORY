@@ -8,6 +8,7 @@ VDR Plugin 'osdteletext' Revision History
 - Added Ukrainian translation provided by Yarema P. aka Knedlyk
 - Removed obsolete options -R and -r
 - Remove remnants of VDR < 1.6 support
+- Updated Russian translation provided by Oleg Roitburd (Closes #46)
 
 2008-12-19: version 0.7.0
 - switched completely to VDR 1.6's I18N system and removed the old crap - no
