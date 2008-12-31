@@ -75,6 +75,8 @@ protected:
    static tChannelID channel;
    static int currentChannelNumber;
    static TeletextBrowser* self;
+private:
+   void ChangeBackground();
 };
 
 

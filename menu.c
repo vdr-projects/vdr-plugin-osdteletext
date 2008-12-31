@@ -310,10 +310,7 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
                //suspendedReceiving=(!suspendedReceiving);
                break;*/
             case DarkScreen:
-               if (Display::GetBackgroundColor() == clrBlack)
-                  Display::SetBackgroundColor((tColor)ttSetup.configuredClrBackground);
-               else
-                  Display::SetBackgroundColor(clrBlack);
+               ChangeBackground();
                break;
             default:
                //In osdteletext.c, numbers are thought to be decimal, the setup page
@@ -337,6 +334,16 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
                }
                break;
          }
+}
+
+void TeletextBrowser::ChangeBackground()
+{
+   if (Display::GetBackgroundColor() == clrBlack)
+      Display::SetBackgroundColor((tColor)ttSetup.configuredClrBackground);
+   else if (Display::GetBackgroundColor() == (tColor)ttSetup.configuredClrBackground)
+      Display::SetBackgroundColor(clrTransparent);
+   else
+      Display::SetBackgroundColor(clrBlack);
 }
 
 eTeletextAction TeletextBrowser::TranslateKey(eKeys Key) {
