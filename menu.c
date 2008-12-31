@@ -545,13 +545,8 @@ void TeletextBrowser::ShowPageNumber() {
 
 void TeletextBrowser::ShowAskForChannel() {
    if (selectingChannel) {
-      char *str;
-      if (selectingChannelNumber>0)
-         asprintf(&str,"%s%d", tr("Channel (press OK): "), selectingChannelNumber);
-      else
-         asprintf(&str,"%s", tr("Channel (press OK): ") );
+      cString str = cString::sprintf(selectingChannelNumber > 0 ? "%s%d" : "%s", tr("Channel (press OK): "), selectingChannelNumber);
       Display::DrawMessage(str);
-      free(str);
    }
 }
 
