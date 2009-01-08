@@ -105,7 +105,6 @@ Storage::StorageSystem Storage::system = Storage::StorageSystemPacked;
 Storage::Storage() {
    s_self=this;
    byteCount=0;
-   currentDir=0;
    storageOption=-1;
    failedFreeSpace=false;
 }
@@ -191,9 +190,8 @@ void Storage::getFilename(char *buffer, int bufLength, PageID page) {
 }
 
 void Storage::prepareDirectory(tChannelID chan) {
-   free(currentDir);
-   if (asprintf(&currentDir, "%s/%s", root, *chan.ToString()) == -1 ||
-       !MakeDirs(currentDir, 1)) {
+   currentDir = cString::sprintf("%s/%s", root, *chan.ToString());
+   if (!MakeDirs(currentDir, 1)) {
       esyslog("OSD-Teletext: Error preparing directory for channel \"%s\"",
               *chan.ToString());
       return;

@@ -84,7 +84,7 @@ protected:
    bool exists(const char* file);
    
    long byteCount;
-   char *currentDir;
+   cString currentDir;
 private:
    static StorageSystem system;
    int storageOption;
