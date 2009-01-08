@@ -14,6 +14,7 @@ VDR Plugin 'osdteletext' Revision History
   background transparency and full transparency as suggested by
   Walter K. (Closes #41)
 - Removed the OSDTELETEXT_REINSERTION_PATCH (dead code)
+- Removed timingdebug code
 
 2008-12-19: version 0.7.0
 - switched completely to VDR 1.6's I18N system and removed the old crap - no

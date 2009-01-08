@@ -560,11 +560,6 @@ void TeletextBrowser::ShowAskForChannel() {
 //this is taken and adapted from the teletext plugin since it uses its data
 bool TeletextBrowser::DecodePage() {
    // Load the page and decodes it
-   #ifdef timingdebug
-   cTime t;
-   t.Start();
-   #endif
-
    unsigned char cache[40*24+12];
    StorageHandle fd;
    // Take a look if there is a xxx-00 page
@@ -591,10 +586,6 @@ bool TeletextBrowser::DecodePage() {
       ShowPageNumber();
       UpdateClock();
       Display::ReleaseFlush();
-
-      #ifdef timingdebug
-      t.Stop("Full Page Update");
-      #endif
    } else {
       // page doesn't exist
       currentSubPage--;
