@@ -518,28 +518,11 @@ cTxtStatus::~cTxtStatus()
 void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber)
 {
    if (Device->IsPrimaryDevice() || Device == cDevice::ActualDevice()) {
-
-/*#ifdef OSDTELETEXT_REINSERTION_PATCH
-      if (ttSetup.suspendReceiving) {
-         if (!running)
-         Start();
-      } else if (running) { //setup option changed, apply
-         running=false;
-         Cancel(3);
-      }
-#endif*/
-  
       CheckDeleteReceiver();
-   
+
       if (ChannelNumber) {
          cChannel *channel = Channels.GetByNumber(ChannelNumber);
          if (channel && channel->Tpid()) {
-/*#ifdef OSDTELETEXT_REINSERTION_PATCH
-            cMutexLock MutexLock(&mutex);
-            count=0; //reset 20 second intervall
-            condVar.Broadcast();
-            //other thread is locked on the mutex until the end of this function!
-#endif  */
             TPid=channel->Tpid();
             chan=channel->GetChannelID();
             CheckCreateReceiver();
@@ -582,105 +565,9 @@ void cTxtStatus::CheckDeleteReceiver() {
    if (receiver) {
       //dsyslog("OSD-Teletext: Deleted teletext receiver");
       delete receiver;
-/*#ifdef OSDTELETEXT_REINSERTION_PATCH
-      //the patch only makes sense if primary device is a DVB card, so no handling for DXR3
-      cDevice::PrimaryDevice()->ReinsertTeletextPid(TPid);
-#endif*/
       receiver = NULL;
    }
 }
-
-/*
-//only used for suspending the receiver, if selected by user in setup
-void cTxtStatus::Action() {
-#ifdef OSDTELETEXT_REINSERTION_PATCH
-   running=true;
-   
-   dsyslog("OSD-Teletext: waiting thread started with pid %d", getpid());
-   
-   count=0;
-   
-   
-   while (running) {
-      cMutexLock MutexLock(&mutex);
-      
-      if (doNotSuspend) {
-         CheckCreateReceiver();
-         count=0;
-      } else if (doNotReceive) {
-         CheckDeleteReceiver();
-         count=0;
-      } else {
-         count++;
-         if (count <= 20)
-            CheckCreateReceiver();
-         else if (count < 20+5*60) 
-            CheckDeleteReceiver();
-         else
-            count=0; //if count=20+5*60
-      }            
-   
-      condVar.TimedWait(mutex, 1000); //one second
-      
-   }
-   
-   running=false;
-   dsyslog("OSD-Teletext: waiting thread ended");
-   
-#endif
-}
-
-//only has an effect when suspending is enabled:
-//prevents receiving from suspension when argument is true
-//reenables suspension when argument is false,
-// but does not necessarily suspend immediately, that is the task of ForceSuspending,
-// in contrast to which it does not make any sense if suspending is
-// not enabled.
-//In clear words: When the plugin is in use, it calls the function
-//with onOrOff=true so that data is received continously during the
-//TeletextBrowser object's lifetime. When it is destroyed, it releases 
-//this constraint by calling onOrOff=false.
-void cTxtStatus::ForceReceiving(bool onOrOff) {
-#ifdef OSDTELETEXT_REINSERTION_PATCH
-   if (!running)
-      return;
-   if (onOrOff && !doNotSuspend) {
-      cMutexLock MutexLock(&mutex);
-      doNotSuspend=true;
-      condVar.Broadcast(); 
-   } else if (!onOrOff && doNotSuspend) {
-      cMutexLock MutexLock(&mutex);
-      doNotSuspend=false;
-      condVar.Broadcast(); 
-   }
-#endif
-}
-
-//opposite as above:
-//allows to switch off receiving
-void cTxtStatus::ForceSuspending(bool onOrOff) {
-#ifdef OSDTELETEXT_REINSERTION_PATCH
-   if (!running) { //thread is not running, suspend anyway
-      if (onOrOff) {
-         CheckDeleteReceiver();
-      } else {
-         CheckCreateReceiver();
-      }
-   } else {
-      doNotSuspend=false; //ForceReceive may have been called before
-      if (onOrOff && !doNotReceive) {
-         cMutexLock MutexLock(&mutex);
-         doNotReceive=true;
-         condVar.Broadcast(); 
-      } else if (!onOrOff && doNotReceive) {
-         cMutexLock MutexLock(&mutex);
-         doNotReceive=false;
-         condVar.Broadcast(); 
-      }   
-   }
-#endif
-}
-*/
 
 cTxtReceiver::cTxtReceiver(int TPid, tChannelID chan)
  : cReceiver(chan, -1, TPid), cThread("osdteletext-receiver"),
