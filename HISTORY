@@ -1,7 +1,7 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
 
-2008-??-??: version 0.?.?
+2009-01-10: version 0.8.0
 - Added Portuguese translation provided by Chris Silva
 - Updated Italian translation by Davide Cavalca
 - Removed the "OSD" from the main menu entry as suggested by Davide Cavalca
