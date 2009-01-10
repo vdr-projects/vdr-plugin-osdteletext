@@ -1,6 +1,9 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
 
+2009-01-10: version 0.8.1
+- Small bugfix in channel switching code
+
 2009-01-10: version 0.8.0
 - Added Portuguese translation provided by Chris Silva
 - Updated Italian translation by Davide Cavalca

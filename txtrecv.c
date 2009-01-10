@@ -537,6 +537,8 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber)
    // channel was changed to a new channel and OSDTeletext can
    // now re-attach the receiver to the new live channel
 
+   currentLiveChannel = newLiveChannel->GetChannelID();
+
    CheckDeleteReceiver();
 
    if (newLiveChannel->Tpid()) {
