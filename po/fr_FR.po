@@ -11,11 +11,11 @@ msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <nobody@nowhere.org>\n"
 "POT-Creation-Date: 2008-12-20 10:45+0100\n"
-"PO-Revision-Date: 2008-05-04 15:33+0200\n"
-"Last-Translator: Nicolas Huillard <nhuillard@e-dition.fr>\n"
+"PO-Revision-Date: 2009-01-10 19:32+0100\n"
+"Last-Translator: Nival Michaël\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid "Channel (press OK): "
@@ -25,13 +25,13 @@ msgid "Page"
 msgstr "Page"
 
 msgid "not found"
-msgstr "pas trouv�"
+msgstr "pas trouvé"
 
 msgid "Displays teletext on the OSD"
-msgstr ""
+msgstr "Affiche le télétexte sur l'OSD"
 
 msgid "Teletext"
-msgstr "Teletext"
+msgstr "Teletexte"
 
 msgid "Zoom"
 msgstr "Zoom"
@@ -40,13 +40,13 @@ msgid "Half page"
 msgstr "Demi-Page"
 
 msgid "Change channel"
-msgstr "Changer la cha�ne"
+msgstr "Changer la chaîne"
 
 msgid "Switch background"
-msgstr "Change le fond d'�cran"
+msgstr "Change le fond d'écran"
 
 msgid "Jump to..."
-msgstr "Aller �..."
+msgstr "Aller à..."
 
 msgid "Background transparency"
 msgstr "Fond transparent"
@@ -55,22 +55,23 @@ msgid "Show clock"
 msgstr "Afficher l'heure"
 
 msgid "Auto-update pages"
-msgstr "Mise a jour des pages"
+msgstr "Mise à jour des pages"
 
 msgid "OSD height"
-msgstr "OSD Hauteur"
+msgstr "Hauteur OSD"
 
 msgid "OSD width"
-msgstr "OSD Largeur"
+msgstr "Largeur OSD"
 
 msgid "OSD horizontal align"
-msgstr ""
+msgstr "Alignement horizontal de l'OSD"
 
 msgid "OSD vertical align"
-msgstr ""
+msgstr "Alignement vertical de l'OSD"
 
 msgid "Key bindings"
-msgstr ""
+msgstr "Attribution des touches"
 
 msgid "  Page number"
 msgstr "  Nombre de pages"
+

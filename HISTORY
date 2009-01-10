@@ -18,6 +18,7 @@ VDR Plugin 'osdteletext' Revision History
 - Merged class ChannelStatus into cTxtStatus and changed the code that
   detects, if the current live channel has been changed and the
   OsdTeletext receiver needs to switch to the new channel as well
+- Updated French translation provided by Nival Michaël (Closes #56)
 
 2008-12-19: version 0.7.0
 - switched completely to VDR 1.6's I18N system and removed the old crap - no
