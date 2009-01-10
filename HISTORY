@@ -15,6 +15,9 @@ VDR Plugin 'osdteletext' Revision History
   Walter K. (Closes #41)
 - Removed the OSDTELETEXT_REINSERTION_PATCH (dead code)
 - Removed timingdebug code
+- Merged class ChannelStatus into cTxtStatus and changed the code that
+  detects, if the current live channel has been changed and the
+  OsdTeletext receiver needs to switch to the new channel as well
 
 2008-12-19: version 0.7.0
 - switched completely to VDR 1.6's I18N system and removed the old crap - no

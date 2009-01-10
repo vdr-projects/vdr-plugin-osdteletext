@@ -185,6 +185,7 @@ private:
    //cCondVar condVar;
    //cMutex mutex;
    //int count;
+   tChannelID currentLiveChannel;
 protected:
    int TPid;
    tChannelID chan;

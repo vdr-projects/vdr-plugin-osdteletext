@@ -628,17 +628,6 @@ void TeletextBrowser::UpdateClock() {
       Display::DrawClock();
 }
 
-
-ChannelStatus::ChannelStatus() 
-{
-}
-
-
-void ChannelStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber) {
-   if (Device->IsPrimaryDevice() && ChannelNumber>0) 
-      TeletextBrowser::ChannelSwitched(ChannelNumber);
-}
-
 TeletextSetup ttSetup;
 
 TeletextSetup::TeletextSetup() {

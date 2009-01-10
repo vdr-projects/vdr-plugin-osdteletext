@@ -13,6 +13,7 @@
 #include "txtrecv.h"
 #include "tables.h"
 #include "setup.h"
+#include "menu.h"
 
 #include <vdr/channels.h>
 #include <vdr/device.h>
@@ -500,6 +501,8 @@ cTxtStatus::cTxtStatus(void)
    /*doNotSuspend=false;
    doNotReceive=false;*/
    //suspended=false;
+
+   currentLiveChannel = tChannelID::InvalidID;
 }
 
 cTxtStatus::~cTxtStatus()
@@ -515,18 +518,34 @@ cTxtStatus::~cTxtStatus()
 
 void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber)
 {
-   if (Device->IsPrimaryDevice() || Device == cDevice::ActualDevice()) {
-      CheckDeleteReceiver();
+   // ignore if channel is 0
+   if (ChannelNumber == 0) return;
 
-      if (ChannelNumber) {
-         cChannel *channel = Channels.GetByNumber(ChannelNumber);
-         if (channel && channel->Tpid()) {
-            TPid=channel->Tpid();
-            chan=channel->GetChannelID();
-            CheckCreateReceiver();
-         }
+   // ignore if channel is invalid (highly unlikely, this will ever
+   // be the case, but defensive coding rules!)
+   cChannel* newLiveChannel = Channels.GetByNumber(ChannelNumber);
+   if (newLiveChannel == NULL) return;
+
+   // ignore if channel hasn't changed
+   if (currentLiveChannel == newLiveChannel->GetChannelID()) return;
+
+   // ignore non-live-channel-switching
+   if (!Device->IsPrimaryDevice() ||
+      ChannelNumber != cDevice::CurrentChannel()) return;
+
+   // At this point it seems to be pretty sure to me, that the live
+   // channel was changed to a new channel and OSDTeletext can
+   // now re-attach the receiver to the new live channel
+
+   CheckDeleteReceiver();
+
+   if (newLiveChannel->Tpid()) {
+      TPid=newLiveChannel->Tpid();
+      chan=newLiveChannel->GetChannelID();
+      CheckCreateReceiver();
       }
-   }
+
+   TeletextBrowser::ChannelSwitched(ChannelNumber);
 }
 
 void cTxtStatus::CheckCreateReceiver() {

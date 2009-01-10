@@ -33,7 +33,6 @@ class cPluginTeletextosd : public cPlugin {
 private:
   // Add any member variables or functions you may need here.
   cTxtStatus *txtStatus;
-  ChannelStatus *channelStatus;
   bool startReceiver;
   void initTexts();
 public:
@@ -104,7 +103,6 @@ cPluginTeletextosd::cPluginTeletextosd(void)
   // DON'T DO ANYTHING ELSE THAT MAY HAVE SIDE EFFECTS, REQUIRE GLOBAL
   // VDR OBJECTS TO EXIST OR PRODUCE ANY OUTPUT!
   txtStatus=0;
-  channelStatus=0;
   startReceiver=true;
 }
 
@@ -113,8 +111,6 @@ cPluginTeletextosd::~cPluginTeletextosd()
    // Clean up after yourself!
    if (txtStatus)
       delete txtStatus;
-   if (channelStatus)
-      delete channelStatus;
    Storage::instance()->cleanUp();
 }
 
@@ -182,7 +178,6 @@ bool cPluginTeletextosd::Start(void)
    initTexts();
    if (startReceiver)
       txtStatus=new cTxtStatus();
-   channelStatus=new ChannelStatus();
    if (ttSetup.OSDheight<=100)  ttSetup.OSDheight=Setup.OSDHeight;
    if (ttSetup.OSDwidth<=100)   ttSetup.OSDwidth=Setup.OSDWidth;
   
