@@ -42,8 +42,8 @@ Keys:
                     When you press the key associated with that action, you are asked for the channel number.
                     Press OK after you entered it with the number keys.
      Jump to...:    Jumps to the page you configure.
-     Switch background: Changes the in the setup configurable background color immediately
-                        to black and back to your degree of transparency.
+     Switch background: Toggles background transparency between a value
+                    configured in setup, fully black, and fully transparent.
                         
    How to configure the key bindings:
    In the plugins setup menu, you can assign one of actions to each key.
