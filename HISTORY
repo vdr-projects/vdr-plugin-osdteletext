@@ -51,14 +51,14 @@ VDR Plugin 'osdteletext' Revision History
   setup option.
   (suggested by Peter Bieringer)
 - fixed gcc4 warnings
-  (thanks to Ville Skytt‰)
+  (thanks to Ville Skytt√§)
 - updated Finnish translation
   (thanks to Rolf Ahrenberg)
 - added command line parameter documentation
   to READMEs
 - added /var/cache/vdr/osdteletext to the list of recommended
   cache directories
-  (suggested by Ville Skytt‰)
+  (suggested by Ville Skytt√§)
 
 2005-04-21: version 0.5
 
