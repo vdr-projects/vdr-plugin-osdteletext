@@ -5,6 +5,8 @@ VDR Plugin 'osdteletext' Revision History
 - More refactoring of the TxtStatus class (Thx to Sören Moch!)
 - Install plug-in to lib dir with --remove-destination as suggested
   by Christian Wieninger (Closes #57)
+- If background is configured to completely black or transparent,
+  toggle between black and transparent only.
 
 2009-01-10: version 0.8.1
 - Small bugfix in channel switching code

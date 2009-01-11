@@ -336,13 +336,24 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
          }
 }
 
+// 3-state toggling between configured->transparent->black.
+// If configured is black or transparent, do 2-state transparent->black only.
 void TeletextBrowser::ChangeBackground()
 {
-   if (Display::GetBackgroundColor() == clrBlack)
-      Display::SetBackgroundColor((tColor)ttSetup.configuredClrBackground);
-   else if (Display::GetBackgroundColor() == (tColor)ttSetup.configuredClrBackground)
-      Display::SetBackgroundColor(clrTransparent);
-   else
+   tColor clrConfig = (tColor)ttSetup.configuredClrBackground;
+   tColor clrCurrent = Display::GetBackgroundColor();
+
+   if (clrCurrent == clrConfig)
+      if (clrConfig == clrTransparent)
+         Display::SetBackgroundColor(clrBlack);
+      else
+         Display::SetBackgroundColor(clrTransparent);
+   else if (clrCurrent == clrBlack)
+      if (clrConfig == clrBlack)
+         Display::SetBackgroundColor(clrTransparent);
+      else
+         Display::SetBackgroundColor(clrConfig);
+   else // clrCurrent == clrTransparent
       Display::SetBackgroundColor(clrBlack);
 }
 
