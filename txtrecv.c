@@ -92,7 +92,7 @@ int Storage::cleanSubDir(const char *dir) {
          reportedError=true;
       }
    }
-   
+
    if (hadError && !reportedError) {
       esyslog("OSD-Teletext: Error removing teletext storage subdirectory \"%s\": %s", dir, strerror(hadError));
       reportedError=true;
@@ -146,7 +146,7 @@ void Storage::freeSpace() {
    //occupies the whole space. We cannot delete anything. Don't waste time scanning.
    if (failedFreeSpace)
       return;
-   
+
    //printf("freeSpace()\n");
    time_t min=time(0);
    char minDir[PATH_MAX];
@@ -171,7 +171,7 @@ void Storage::freeSpace() {
          }
       }
       closedir(top);
-      
+
       //if haveDir, only current directory present, which must not be deleted
       if (haveDir>=2)
          byteCount-=cleanSubDir(minDir);
@@ -233,16 +233,15 @@ int LegacyStorage::actualFileSize(int netFileSize) {
 
 //max==0 means unlimited, max==-1 means a reasonable default value shall be calculated
 void LegacyStorage::initMaxStorage(int maxMB) {
-   
    struct statfs fs;
    if (statfs(getRootDir(), &fs)!=0) {
       esyslog("OSD-Teletext: Error statfs'ing root directory \"%s\": %s, cache size uncontrolled", getRootDir(), strerror(errno));
       return;
    }
    fsBlockSize=fs.f_bsize;
-   
+
    pageBytes=actualFileSize(TELETEXT_PAGESIZE);
-      
+
    if (maxMB>=0) {
       if (maxMB<3) {
          esyslog("OSD-Teletext: Request to use at most %d MB for caching. This is not enough, using 3 MB", maxMB);
@@ -346,7 +345,7 @@ PackedStorage::PackedStorage() {
 bool PackedStorage::seekTo(PageID page, int desc, bool create) {
    lseek(desc, 0, SEEK_SET);
    PageAddress addr[TOC_SIZE];
-   
+
    while (::read(desc, addr, sizeof(addr)) == sizeof(addr)) {
       lseek(desc, 0, SEEK_CUR);
       for (int index=0; index<TOC_SIZE; index++) {
@@ -369,11 +368,11 @@ bool PackedStorage::seekTo(PageID page, int desc, bool create) {
                return false;
          }
       }
-      
+
       //seek over data area
       lseek(desc, TELETEXT_PAGESIZE*TOC_SIZE, SEEK_CUR);
    }
-   
+
    int oldSize=actualFileSize(lseek(desc, 0, SEEK_CUR));
    if (create) {
       //create a new set of a TOC and a TOC_SIZE*TELETEXT_PAGESIZE data area
@@ -429,14 +428,14 @@ StorageHandle PackedStorage::openForWriting(PageID page) {
       wroteError=true;
       esyslog("OSD-Teletext: Error opening teletext file %s: %s", filename, strerror(errno));
    }
-      
+
    if (desc==-1)
       return StorageHandle();
    else if (!seekTo(page, desc, true)) {
       ::close(desc);
       return StorageHandle();
    }
-   
+
    if ( maxBytes && byteCount>maxBytes )
       freeSpace();
    return (StorageHandle)desc;
@@ -495,25 +494,12 @@ void cTelePage::save()
 cTxtStatus::cTxtStatus(void)
 {
    receiver = NULL;
- 
-   //running=false;
-   TPid=0;
-   /*doNotSuspend=false;
-   doNotReceive=false;*/
-   //suspended=false;
-
    currentLiveChannel = tChannelID::InvalidID;
 }
 
 cTxtStatus::~cTxtStatus()
 {
-   /*if (running)
-      Cancel(3);*/
-   if (receiver)
-   {
-      receiver->Stop();
-      delete receiver;
-   }
+    delete receiver;
 }
 
 void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber)
@@ -539,54 +525,19 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber)
 
    currentLiveChannel = newLiveChannel->GetChannelID();
 
-   CheckDeleteReceiver();
+   delete receiver;
+   receiver = NULL;
 
-   if (newLiveChannel->Tpid()) {
-      TPid=newLiveChannel->Tpid();
-      chan=newLiveChannel->GetChannelID();
-      CheckCreateReceiver();
-      }
+   int TPid = newLiveChannel->Tpid();
+
+   if (TPid) {
+      receiver = new cTxtReceiver(TPid, currentLiveChannel);
+      cDevice::ActualDevice()->AttachReceiver(receiver);
+   }
 
    TeletextBrowser::ChannelSwitched(ChannelNumber);
 }
 
-void cTxtStatus::CheckCreateReceiver() {
-   if (!receiver  && TPid ) {
-      cChannel *channel = Channels.GetByChannelID(chan);
-      if (!channel)
-         return;
-      //primary device a full-featured card
-      if (cDevice::ActualDevice()->ProvidesChannel(channel, Setup.PrimaryLimit)) {
-          receiver = new cTxtReceiver(TPid, chan);
-         cDevice::ActualDevice()->AttachReceiver(receiver);
-          //dsyslog("OSD-Teletext: Created teletext receiver for channel %d, PID %d on primary device", ChNum, TPid);
-      //primary device a DXR3 or similar
-      } else {
-         int devNum = cDevice::NumDevices();
-         bool bFound = false;
-         cDevice* pDevice = 0;
-         for (int i = 0; i < devNum && !bFound; ++i) {
-            pDevice = cDevice::GetDevice(i);
-            if (pDevice && pDevice->ProvidesChannel(channel, Setup.PrimaryLimit) && pDevice->Receiving(true)) {
-               bFound = true;
-               receiver = new cTxtReceiver(TPid, chan);
-               pDevice->AttachReceiver(receiver);
-               //dsyslog("OSD-Teletext: Created teletext receiver for channel %d, PID %d on device %d", ChNum, TPid, i);
-            }
-         }
-         if (!bFound) //can this happen?
-            esyslog("OSDTeletext: Did not find appropriate device for teletext receiver for channel %s, PID %d", channel->Name(), TPid);
-      }
-   }
-}
-
-void cTxtStatus::CheckDeleteReceiver() {
-   if (receiver) {
-      //dsyslog("OSD-Teletext: Deleted teletext receiver");
-      delete receiver;
-      receiver = NULL;
-   }
-}
 
 cTxtReceiver::cTxtReceiver(int TPid, tChannelID chan)
  : cReceiver(chan, -1, TPid), cThread("osdteletext-receiver"),
@@ -653,7 +604,7 @@ void cTxtReceiver::Action() {
       cFrame *frame=buffer.Get();
       if (frame) {
          uchar *Datai=frame->Data();
-         
+
          for (int i=0; i < 4; i++) {
             if (Datai[4+i*46]==2 || Datai[4+i*46]==3) {
                for (int j=(8+i*46);j<(50+i*46);j++)
@@ -661,12 +612,12 @@ void cTxtReceiver::Action() {
                DecodeTXT(&Datai[i*46]);
             }
          }
-         
+
          buffer.Drop(frame);
       } else
          buffer.Wait();
    }
-   
+
    buffer.Clear();
    running=false;
 }
@@ -709,17 +660,17 @@ void cTxtReceiver::DecodeTXT(uchar* TXT_buf)
    //   C11 - Magazine Serial mode
    //   C12-C14 - Language selection, lower 3 bits
 
-    
+
    int hdr,mag,mag8,line;
    uchar *ptr;
    uchar flags,lang;
-   
+
    hdr = unham16 (&TXT_buf[0x8]);
    mag = hdr & 0x07;
    mag8 = mag ?: 8;
    line = (hdr>>3) & 0x1f;
    ptr = &TXT_buf[10];
-   
+
    switch (line) {
    case 0: 
       {
@@ -727,7 +678,7 @@ void cTxtReceiver::DecodeTXT(uchar* TXT_buf)
       int pgno, subno;
       b1 = unham16 (ptr);    
       // Page no, 10- and 1-digit
-      
+
       if (b1 == 0xff) break;
       if (TxtPage) {
          TxtPage->save();
@@ -755,7 +706,7 @@ void cTxtReceiver::DecodeTXT(uchar* TXT_buf)
 
       pgno = mag8 * 256 + b1;
       subno = (b2 + b3 * 256) & 0x3f7f;         // Sub Page Number
-      
+
       TxtPage = new cTelePage(PageID(chan, pgno, subno), flags, lang, mag);
       TxtPage->SetLine((int)line,(uchar *)ptr);
       break;

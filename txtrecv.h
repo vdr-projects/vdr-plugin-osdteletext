@@ -178,28 +178,15 @@ public:
    virtual void Stop();
 };
 
-class cTxtStatus : public cStatus/*, public cThread*/ {
+class cTxtStatus : public cStatus {
 private:
    cTxtReceiver *receiver;
-   //bool running;
-   //cCondVar condVar;
-   //cMutex mutex;
-   //int count;
    tChannelID currentLiveChannel;
 protected:
-   int TPid;
-   tChannelID chan;
-   //bool doNotSuspend;
-   //bool doNotReceive; 
    virtual void ChannelSwitch(const cDevice *Device, int ChannelNumber);
-   //virtual void Action();
-   void CheckCreateReceiver();
-   void CheckDeleteReceiver();
 public:
    cTxtStatus(void);
    ~cTxtStatus();
-   //void ForceReceiving(bool onOrOff);
-   //void ForceSuspending(bool onOrOff);
 };
 
 
