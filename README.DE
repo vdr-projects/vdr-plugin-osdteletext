@@ -7,79 +7,79 @@ Im Hintergrund gibt es weiterhin Bild und Ton.
 Tasten:
    1,...,9: Seitenzahl eingeben
    Hoch:    Seite weiter
-   Herunter:Seite zurück
+   Herunter:Seite zurÃ¼ck
    Rechts:  Unterseite weiter
-   Links:   Unterseite zurück
-   Zurück:  Videotext-Plugin schließen
+   Links:   Unterseite zurÃ¼ck
+   ZurÃ¼ck:  Videotext-Plugin schlieÃŸen
    
    Die restliche Bedienung ("Aktionen") durch die anderen Tasten ist frei konfigurierbar.
    Man kann z.B. einstellen, das die man mit der Taste Rot auf die Seite 100 springt.
-   Bei dieser Einstellung wäre die Aktion "Springe zu 100" der Taste Rot zugeordnet.
+   Bei dieser Einstellung wÃ¤re die Aktion "Springe zu 100" der Taste Rot zugeordnet.
    
-   Verfügbare Tasten: Blau, Rot, Gelb, Grün, Play, Stop, Schneller Vorlauf, Schn. Rücklauf
-   Aktionen:          "Vergrößern", "Halbe Seite", "Kanal wechseln",
+   VerfÃ¼gbare Tasten: Blau, Rot, Gelb, GrÃ¼n, Play, Stop, Schneller Vorlauf, Schn. RÃ¼cklauf
+   Aktionen:          "VergrÃ¶ÃŸern", "Halbe Seite", "Kanal wechseln",
                       "Hintergrund wechseln", "Springe zu..." einer bestimmten Seite
                       
    Beschreibung der Aktionen:
-      Vergrößern:    Obere / untere Hälfte vergrößern / zurück zur ganzen Seite
-      Halbe Seite:   OSD-Fenster nur noch in unterer Hälfte des Bildschirms zeigen
-                     und obere / untere Hälfte anzeigen bzw. zurück
+      VergrÃ¶ÃŸern:    Obere / untere HÃ¤lfte vergrÃ¶ÃŸern / zurÃ¼ck zur ganzen Seite
+      Halbe Seite:   OSD-Fenster nur noch in unterer HÃ¤lfte des Bildschirms zeigen
+                     und obere / untere HÃ¤lfte anzeigen bzw. zurÃ¼ck
       Kanal wechseln:Seiten eines anderen Senders als des gerade eingestellten anzeigen.
                      Dabei wird keine Frequenz gewechselt oder mit VDR ein anderer Kanal eingestellt.
-                     Damit Seiten verfügbar sind, muss irgendwann vorher der gewählte 
+                     Damit Seiten verfÃ¼gbar sind, muss irgendwann vorher der gewÃ¤hlte 
                      Kanal eingestellt gewesen sein. Bei Aufruf der Aktion wird nach der Kanalnummer 
-                     gefragt. Die Nummer mit den Zifferntasten eingeben und OK drücken.
+                     gefragt. Die Nummer mit den Zifferntasten eingeben und OK drÃ¼cken.
       Springe zu...: Springt zu der entsprechenden Seite
-      Hintergrund wechseln: Ändert die im Setup einstellbare Hintergrundfarbe sofort zu Schwarz
-                            und nach erneutem Aufruf wieder zurück.
+      Hintergrund wechseln: Ã„ndert die im Setup einstellbare Hintergrundfarbe sofort zu Schwarz
+                            und nach erneutem Aufruf wieder zurÃ¼ck.
                             
    Wie man Tasten Aktionen zuordnet:
-   Im Einstellungsmenü des Plugins kann jeder Taste eine Aktion zugeordnet werden.
+   Im EinstellungsmenÃ¼ des Plugins kann jeder Taste eine Aktion zugeordnet werden.
    Dabei ist nichts vorgeschrieben - keine Aktion muss irgendeiner Taste zugewiesen werden,
-   wenn sie nicht benötigt wird.
+   wenn sie nicht benÃ¶tigt wird.
    Bei Auswahl von "Springe zu..." wird die Seitennummer in der Zeile direkt darunter
    angegeben.
    
 Andere Optionen:
    Hintergrund-Transparenz: Zahl zwischen 0 (transparent) und 255 (schwarz). Vorgegeben ist 127 (wie auch von VDR)
-   Zeige Uhr:  Diese Option bestimmt, ob etwa im Sekundenabstand zusätzlich eine Uhr angezeigt wird.
+   Zeige Uhr:  Diese Option bestimmt, ob etwa im Sekundenabstand zusÃ¤tzlich eine Uhr angezeigt wird.
                Die Uhr zeigt die aktuelle Systemzeit, nicht die mit dem Videotext ausgestrahlte Zeit.
                Um genaue Werte zu haben, kann VDR die Systemzeit von einem Transponder einstellen.
    Automatisch aktualisieren: 
-               Überprüft ständig, ob sich die Seite geändert hat und aktualisiert sie wenn nötig
-   OSD-Breite, OSD-Höhe: 
-               Hier kann die Breite des OSD unabhängig von den Einstellungen für VDR
-               bestimmt werden. Für die Breite liegt die Zahl zwischen 40 und 56,
-               für die Höhe zwischen 12 und 21.
-   Mindest Benutzer-Inaktivität:
+               ÃœberprÃ¼ft stÃ¤ndig, ob sich die Seite geÃ¤ndert hat und aktualisiert sie wenn nÃ¶tig
+   OSD-Breite, OSD-HÃ¶he: 
+               Hier kann die Breite des OSD unabhÃ¤ngig von den Einstellungen fÃ¼r VDR
+               bestimmt werden. FÃ¼r die Breite liegt die Zahl zwischen 40 und 56,
+               fÃ¼r die HÃ¶he zwischen 12 und 21.
+   Mindest Benutzer-InaktivitÃ¤t:
                Bestimmt die Zeit (in Minuten), nach der das Plugin automatisch geschlossen wird, wenn
-               der Benutzer solange keine Taste betätigt hat. Das kann durch setzen des Wertes auf 0
+               der Benutzer solange keine Taste betÃ¤tigt hat. Das kann durch setzen des Wertes auf 0
                verhindert werden. Dann wird jedoch auch das automatische Abschalten von VDR effektiv 
-               außer Kraft gesetzt, solange das Plugin geöffnet ist.
+               auÃŸer Kraft gesetzt, solange das Plugin geÃ¶ffnet ist.
    Tasten einrichten:    siehe oben
    
 Kommandozeilen-Optionen:
-   Einige Einstellungen werden über die Kommandozeile anstatt über das Menü gesetzt.
-   Verfügbare Optionen:
+   Einige Einstellungen werden Ã¼ber die Kommandozeile anstatt Ã¼ber das MenÃ¼ gesetzt.
+   VerfÃ¼gbare Optionen:
    
-     -d        --directory=DIR    Das Verzeichnis für die temporären Dateien.
+     -d        --directory=DIR    Das Verzeichnis fÃ¼r die temporÃ¤ren Dateien.
                                   (Voreinstellung: /var/cache/vdr/vtx)
                                   Stellen Sie sicher, dass das Verzeichnis existiert
                                   und beschreibbar ist.
-     -n        --max-cache=NUM    Maximale Größe des Zwischenspeichers für Seiten
+     -n        --max-cache=NUM    Maximale GrÃ¶ÃŸe des Zwischenspeichers fÃ¼r Seiten
                                   auf der Festplatte.
                                   (Voreinstellung: ein berechneter Wert unter 50 MB)
      -s        --cache-system=SYS Das zu benutzende Zwischenspeichersystem.
-                                  Wählen Sie "legacy" für das althergebrachte
+                                  WÃ¤hlen Sie "legacy" fÃ¼r das althergebrachte
                                   System "Eine Datei - eine Seite".
-                                  Voreinstellung ist "packed" für ein System, das
+                                  Voreinstellung ist "packed" fÃ¼r ein System, das
                                   in eine Datei mehrere Seiten speichert.
    
 Farben:
-  Auf allen Ausgabegeräten, die nicht in der Farbtiefe des OSD beschränkt sind,
-  werden die unveränderten Farben des Videotexts dargestellt (einzig Weiß wurde zum Zwecke der besseren
+  Auf allen AusgabegerÃ¤ten, die nicht in der Farbtiefe des OSD beschrÃ¤nkt sind,
+  werden die unverÃ¤nderten Farben des Videotexts dargestellt (einzig WeiÃŸ wurde zum Zwecke der besseren
   Lesbarkeit durch Cyan ersetzt).
-  Für die klassische DVB-Karte mit Hardware-Dekoder und anderen so beschränkten Geräten werden nur vier Farben dargestellt. Die Zuordnung ist auf ARD, ZDF und RTL optimiert. Sollten Sie aus irgendeinem Grund absolut nicht
+  FÃ¼r die klassische DVB-Karte mit Hardware-Dekoder und anderen so beschrÃ¤nkten GerÃ¤ten werden nur vier Farben dargestellt. Die Zuordnung ist auf ARD, ZDF und RTL optimiert. Sollten Sie aus irgendeinem Grund absolut nicht
   meiner Meinung sein, passen Sie die Datei colormapping.h an und kompilieren Sie neu.
 
   
