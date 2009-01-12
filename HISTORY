@@ -7,6 +7,7 @@ VDR Plugin 'osdteletext' Revision History
   by Christian Wieninger (Closes #57)
 - If background is configured to completely black or transparent,
   toggle between black and transparent only.
+- Updated Italian translation provided by Diego Pierotto (Closes #60)
 
 2009-01-10: version 0.8.1
 - Small bugfix in channel switching code
