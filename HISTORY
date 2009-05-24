@@ -10,6 +10,7 @@ VDR Plugin 'osdteletext' Revision History
 - Updated Italian translation provided by Diego Pierotto (Closes #60)
 - Fixed problems with VDR >= 1.7.3 (not all teletext pages accessible,
   4 GByte VTX files)
+- Removed unnecessary DVBDIR from Makefile
 
 2009-01-10: version 0.8.1
 - Small bugfix in channel switching code
