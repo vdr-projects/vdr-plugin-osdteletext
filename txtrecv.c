@@ -356,7 +356,7 @@ bool PackedStorage::seekTo(PageID page, int desc, bool create) {
             //0 means: no more pages follow
             if (create) {
                //rewind what was read
-               lseek(desc, -(sizeof(addr)), SEEK_CUR);
+               lseek(desc, -(off_t)sizeof(addr), SEEK_CUR);
                //update index
                addr[index]=page;
                if (::write(desc, addr, sizeof(addr)) != sizeof(addr))
@@ -390,7 +390,7 @@ bool PackedStorage::seekTo(PageID page, int desc, bool create) {
       //Now, calculate new file size
       byteCount += ( actualFileSize(lseek(desc, 0, SEEK_CUR)) - oldSize );
       //seek to beginning of data, which is requested
-      lseek(desc, -(TELETEXT_PAGESIZE*TOC_SIZE), SEEK_CUR);
+      lseek(desc, -(off_t)(TELETEXT_PAGESIZE*TOC_SIZE), SEEK_CUR);
       return true;
    } else
       return false;
