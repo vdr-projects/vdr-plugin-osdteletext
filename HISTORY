@@ -1,7 +1,7 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
 
-2009-xx-xx: version 0.x.x
+2009-05-25: version 0.8.2
 - More refactoring of the TxtStatus class (Thx to Sören Moch!)
 - Install plug-in to lib dir with --remove-destination as suggested
   by Christian Wieninger (Closes #57)
