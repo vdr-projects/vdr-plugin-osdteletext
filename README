@@ -21,18 +21,18 @@ Keys:
      Right:   sub page+
      Left:    sub page-
      Back:    close teletext plugin
-     
+
    All other user interaction ("Actions") is configurably assigned to the other
    available keys.
    You can e.g. configure that you jump to page 100 when you press Red.
    In this example, the Action "Jump to 100" is assigned to key "Red".
    Have a look at the plugin's setup page to learn the current assignment
    and adapt it to your needs.
-   
+
    Available Keys: Blue, Red, Yellow, Green, Play, Stop, FastFwd, FastRwd
    Actions: "Zoom", "Half page", "Switch channel", "Switch background",
             "Jump to..." a specific page.
-            
+
    Description of the actions:
      Zoom:          Zoom to upper half/lower half/back to full page
      Half Page:     Reduce OSD window to the lower half of the screen and
@@ -47,15 +47,15 @@ Keys:
      Jump to...:    Jumps to the page you configure.
      Switch background: Toggles background transparency between a value
                     configured in setup, fully black, and fully transparent.
-                        
+
    How to configure the key bindings:
    In the plugins setup menu, you can assign one of actions to each key.
    You can choose freely which actions you need, you are not forced to assign
    an action to a key at all if you do not need it.
    If you select "Jump to...", specify the page number in the line immediately
    below.
-   
-   
+
+
 Other Setup options:
    Background transparency: 
                number between 0 (transparent) and 255 (black). Default is 127
@@ -79,11 +79,11 @@ Other Setup options:
                disabling timeout will also effectively disable VDR's
                auto-shutdown feature as long as the plugin is active.
    Key bindings:      See above.
-   
+
 Command line options:
    A few settings are given on the command line rather than in the setup menu.
    Available options:
-   
+
      -d        --directory=DIR    The directory where the temporary
                                   files will be stored.
                                   (default: /var/cache/vdr/vtx)
@@ -107,4 +107,3 @@ Colors:
   The mapping is currently optimized for German ARD, ZDF and RTL. If you are
   for some reason really and definitely not satisfied with my choices, edit
   colormapping.h and recompile.
-

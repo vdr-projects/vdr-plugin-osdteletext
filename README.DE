@@ -11,15 +11,15 @@ Tasten:
    Rechts:  Unterseite weiter
    Links:   Unterseite zurück
    Zurück:  Videotext-Plugin schließen
-   
+
    Die restliche Bedienung ("Aktionen") durch die anderen Tasten ist frei konfigurierbar.
    Man kann z.B. einstellen, das die man mit der Taste Rot auf die Seite 100 springt.
    Bei dieser Einstellung wäre die Aktion "Springe zu 100" der Taste Rot zugeordnet.
-   
+
    Verfügbare Tasten: Blau, Rot, Gelb, Grün, Play, Stop, Schneller Vorlauf, Schn. Rücklauf
    Aktionen:          "Vergrößern", "Halbe Seite", "Kanal wechseln",
                       "Hintergrund wechseln", "Springe zu..." einer bestimmten Seite
-                      
+
    Beschreibung der Aktionen:
       Vergrößern:    Obere / untere Hälfte vergrößern / zurück zur ganzen Seite
       Halbe Seite:   OSD-Fenster nur noch in unterer Hälfte des Bildschirms zeigen
@@ -32,14 +32,14 @@ Tasten:
       Springe zu...: Springt zu der entsprechenden Seite
       Hintergrund wechseln: Ändert die im Setup einstellbare Hintergrundfarbe sofort zu Schwarz
                             und nach erneutem Aufruf wieder zurück.
-                            
+
    Wie man Tasten Aktionen zuordnet:
    Im Einstellungsmenü des Plugins kann jeder Taste eine Aktion zugeordnet werden.
    Dabei ist nichts vorgeschrieben - keine Aktion muss irgendeiner Taste zugewiesen werden,
    wenn sie nicht benötigt wird.
    Bei Auswahl von "Springe zu..." wird die Seitennummer in der Zeile direkt darunter
    angegeben.
-   
+
 Andere Optionen:
    Hintergrund-Transparenz: Zahl zwischen 0 (transparent) und 255 (schwarz). Vorgegeben ist 127 (wie auch von VDR)
    Zeige Uhr:  Diese Option bestimmt, ob etwa im Sekundenabstand zusätzlich eine Uhr angezeigt wird.
@@ -57,11 +57,11 @@ Andere Optionen:
                verhindert werden. Dann wird jedoch auch das automatische Abschalten von VDR effektiv 
                außer Kraft gesetzt, solange das Plugin geöffnet ist.
    Tasten einrichten:    siehe oben
-   
+
 Kommandozeilen-Optionen:
    Einige Einstellungen werden über die Kommandozeile anstatt über das Menü gesetzt.
    Verfügbare Optionen:
-   
+
      -d        --directory=DIR    Das Verzeichnis für die temporären Dateien.
                                   (Voreinstellung: /var/cache/vdr/vtx)
                                   Stellen Sie sicher, dass das Verzeichnis existiert
@@ -74,12 +74,10 @@ Kommandozeilen-Optionen:
                                   System "Eine Datei - eine Seite".
                                   Voreinstellung ist "packed" für ein System, das
                                   in eine Datei mehrere Seiten speichert.
-   
+
 Farben:
   Auf allen Ausgabegeräten, die nicht in der Farbtiefe des OSD beschränkt sind,
   werden die unveränderten Farben des Videotexts dargestellt (einzig Weiß wurde zum Zwecke der besseren
   Lesbarkeit durch Cyan ersetzt).
   Für die klassische DVB-Karte mit Hardware-Dekoder und anderen so beschränkten Geräten werden nur vier Farben dargestellt. Die Zuordnung ist auf ARD, ZDF und RTL optimiert. Sollten Sie aus irgendeinem Grund absolut nicht
   meiner Meinung sein, passen Sie die Datei colormapping.h an und kompilieren Sie neu.
-
-  
