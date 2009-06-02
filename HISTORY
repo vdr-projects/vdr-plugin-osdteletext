@@ -1,6 +1,9 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
 
+2009-06-02: version 0.8.3
+- Updated Ukrainian translation provided by Yarema P. aka Knedlyk (Closes #133)
+
 2009-05-25: version 0.8.2
 - More refactoring of the TxtStatus class (Thx to Sören Moch!)
 - Install plug-in to lib dir with --remove-destination as suggested
