@@ -319,7 +319,7 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
                //This means, we convert the number to what it would be if the string
                //had been parsed with hexadecimal base.
                int pageNr=PSEUDO_HEX_TO_DECIMAL((int)e);
-               if (0x100<=pageNr<=0x899) {
+               if (0x100<=pageNr && pageNr<=0x899) {
                   if (selectingChannel) {
                       selectingChannel=false;
                       Display::ClearMessage();

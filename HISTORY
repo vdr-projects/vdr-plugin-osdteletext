@@ -3,6 +3,7 @@ VDR Plugin 'osdteletext' Revision History
 
 20xx-xx-xx: version x.x.x
 - Updated Italian translation provided by Diego Pierotto (Closes #151)
+- Fix valid page number check in TeletextBrowser::ExecuteAction (Closes #154)
 
 2009-06-02: version 0.8.3
 - Updated Ukrainian translation provided by Yarema P. aka Knedlyk (Closes #133)
