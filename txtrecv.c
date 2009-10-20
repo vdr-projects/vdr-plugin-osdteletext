@@ -583,13 +583,8 @@ void cTxtReceiver::Activate(bool On)
 
 void cTxtReceiver::Receive(uchar *Data, int Length)
 {
-   if (!buffer.Check(Length)) {
-      // Buffer overrun
-      buffer.Signal();
-      return;
-   }
    cFrame *frame=new cFrame(Data, Length);
-   if (frame && !buffer.Put(frame)) {
+   if (!buffer.Put(frame)) {
       // Buffer overrun
       delete frame;
       buffer.Signal();

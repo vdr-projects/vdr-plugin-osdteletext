@@ -157,7 +157,6 @@ class cRingTxtFrames : public cRingBufferFrame {
   ~cRingTxtFrames() { Clear(); };
   void Wait(void) { WaitForGet(); };
   void Signal(void) { EnableGet(); };
-  bool Check(int Size) { return (Free() >= Size); };
 };
 
 class cTxtReceiver : public cReceiver, public cThread {
