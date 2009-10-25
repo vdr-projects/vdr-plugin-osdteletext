@@ -166,9 +166,8 @@ private:
 protected:
    virtual void Activate(bool On);
    virtual void Receive(uchar *Data, int Length);
-   void Action();
+   virtual void Action();
    cRingTxtFrames buffer;
-   bool running;
 public:
    cTxtReceiver(int TPid, tChannelID chan);
    virtual ~cTxtReceiver();

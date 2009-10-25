@@ -541,7 +541,7 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber)
 
 cTxtReceiver::cTxtReceiver(int TPid, tChannelID chan)
  : cReceiver(chan, -1, TPid), cThread("osdteletext-receiver"),
-   TxtPage(0), buffer((188+60)*75), running(false)
+   TxtPage(0), buffer((188+60)*75)
 {
    Storage::instance()->prepareDirectory(ChannelID());
    // 10 ms timeout on getting TS frames
@@ -551,12 +551,8 @@ cTxtReceiver::cTxtReceiver(int TPid, tChannelID chan)
 
 cTxtReceiver::~cTxtReceiver()
 {
-   cReceiver::Detach();
-   if (running) {
-      running=false;
-      buffer.Signal();
-      Cancel(2);
-   }
+   Detach();
+   Activate(false);
    buffer.Clear();
    delete TxtPage;
 }
@@ -569,13 +565,11 @@ void cTxtReceiver::Stop()
 void cTxtReceiver::Activate(bool On)
 {
   if (On) {
-     if (!running) {
-        running=true;
+     if (!Running()) {
         Start();
         }
      }
-  else if (running) {
-     running = false;
+  else if (Running()) {
      buffer.Signal();
      Cancel(2);
      }
@@ -593,7 +587,7 @@ void cTxtReceiver::Receive(uchar *Data, int Length)
 
 void cTxtReceiver::Action() {
 
-   while (running) {
+   while (Running()) {
       cFrame *frame=buffer.Get();
       if (frame) {
          uchar *Datai=frame->Data();
@@ -612,7 +606,6 @@ void cTxtReceiver::Action() {
    }
 
    buffer.Clear();
-   running=false;
 }
 
 uchar cTxtReceiver::unham16 (uchar *p)
