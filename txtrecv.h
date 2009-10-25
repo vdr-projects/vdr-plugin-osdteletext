@@ -55,17 +55,16 @@ public:
    virtual ~Storage();
    enum StorageSystem { StorageSystemLegacy, StorageSystemPacked };
    //must be called before the first call to instance()
-   static void setSystem(StorageSystem system);
    void setMaxStorage(int maxMB=-1);
    
-   static Storage *instance();
+   static Storage *CreateInstance(StorageSystem system);
    
    //must be called before operation starts. Set all options (RootDir, maxStorage) before.
    void init();   
    virtual void cleanUp() = 0;
    
    virtual void getFilename(char *buffer, int bufLength, PageID page);
-   void prepareDirectory(tChannelID chan);
+   virtual void prepareDirectory(tChannelID chan);
    
    virtual StorageHandle openForWriting(PageID page) = 0;
    virtual StorageHandle openForReading(PageID page, bool countAsAccess) = 0;
@@ -79,15 +78,13 @@ protected:
    int cleanSubDir(const char *dir);
    int doCleanUp();
    virtual int actualFileSize(int netFileSize) { return netFileSize; }
-   static Storage *s_self;
    void freeSpace();
    bool exists(const char* file);
    
    long byteCount;
    cString currentDir;
 private:
-   static StorageSystem system;
-   int storageOption;
+   static int storageOption;
    bool failedFreeSpace;
 };
 
@@ -143,8 +140,9 @@ class cTelePage {
   unsigned char lang;
   PageID page;
   unsigned char pagebuf[27*40];
+  Storage* storage;
  public:
-  cTelePage(PageID page, uchar flags, uchar lang, int mag);
+  cTelePage(PageID page, uchar flags, uchar lang, int mag, Storage *s);
   ~cTelePage();
   void SetLine(int, uchar*);
   void save();
@@ -166,13 +164,14 @@ private:
    cTelePage *TxtPage;
    void SaveAndDeleteTxtPage();
    bool storeTopText;
+   Storage *storage;
 protected:
    virtual void Activate(bool On);
    virtual void Receive(uchar *Data, int Length);
    virtual void Action();
    cRingTxtFrames buffer;
 public:
-   cTxtReceiver(int TPid, tChannelID chan, bool storeTopText);
+   cTxtReceiver(int TPid, tChannelID chan, bool storeTopText, Storage* storage);
    virtual ~cTxtReceiver();
    virtual void Stop();
 };
@@ -182,10 +181,11 @@ private:
    cTxtReceiver *receiver;
    tChannelID currentLiveChannel;
    bool storeTopText;
+   Storage* storage;
 protected:
    virtual void ChannelSwitch(const cDevice *Device, int ChannelNumber);
 public:
-   cTxtStatus(bool storeTopText);
+   cTxtStatus(bool storeTopText, Storage* storage);
    ~cTxtStatus();
 };
 

@@ -35,7 +35,10 @@ private:
   cTxtStatus *txtStatus;
   bool startReceiver;
   bool storeTopText;
+  Storage *storage;
+  int maxStorage;
   void initTexts();
+  Storage::StorageSystem storageSystem;
 public:
   cPluginTeletextosd(void);
   virtual ~cPluginTeletextosd();
@@ -104,6 +107,8 @@ cPluginTeletextosd::cPluginTeletextosd(void)
   // VDR OBJECTS TO EXIST OR PRODUCE ANY OUTPUT!
   txtStatus=0;
   startReceiver=true;
+  storage = NULL;
+  maxStorage=-1;
 }
 
 cPluginTeletextosd::~cPluginTeletextosd()
@@ -111,7 +116,10 @@ cPluginTeletextosd::~cPluginTeletextosd()
    // Clean up after yourself!
    if (txtStatus)
       delete txtStatus;
-   Storage::instance()->cleanUp();
+   if(storage) {
+     storage->cleanUp();
+     delete storage;
+   }
 }
 
 const char *cPluginTeletextosd::CommandLineHelp(void)
@@ -144,16 +152,15 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
        };
      
    int c;
-   int maxStorage=-1;
    while ((c = getopt_long(argc, argv, "s:d:n:t", long_options, NULL)) != -1) {
         switch (c) {
           case 's': 
                     if (!optarg)
                        break;
                     if (strcasecmp(optarg, "legacy")==0)
-                       Storage::setSystem(Storage::StorageSystemLegacy);
+                       storageSystem = Storage::StorageSystemLegacy;
                     else if (strcasecmp(optarg, "packed")==0)
-                       Storage::setSystem(Storage::StorageSystemPacked);
+                       storageSystem = Storage::StorageSystemPacked;
                     break;
           case 'd': Storage::setRootDir(optarg);
                     break;
@@ -166,10 +173,6 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
                     break;
         }
    }
-   //do this here because the option -s to change the storage system might be given
-   // after -n, and then -s would have no effect
-   if (maxStorage>=0)
-      Storage::instance()->setMaxStorage(maxStorage);
    return true;
 }
 
@@ -178,10 +181,17 @@ bool cPluginTeletextosd::Start(void)
   // Start any background activities the plugin shall perform.
    //Clean any files which might be remaining from the last session, 
    //perhaps due to a crash they have not been deleted.
-   Storage::instance()->init();
+   storage = Storage::CreateInstance(storageSystem);
+   if(storage) {
+      if (maxStorage>=0)
+        storage->setMaxStorage(maxStorage);
+      storage->init();
+   } else {
+     return false;
+   }
    initTexts();
    if (startReceiver)
-      txtStatus=new cTxtStatus(storeTopText);
+      txtStatus=new cTxtStatus(storeTopText, storage);
    if (ttSetup.OSDheight<=100)  ttSetup.OSDheight=Setup.OSDHeight;
    if (ttSetup.OSDwidth<=100)   ttSetup.OSDwidth=Setup.OSDWidth;
   
@@ -232,7 +242,7 @@ const char *cPluginTeletextosd::MainMenuEntry(void)
 cOsdObject *cPluginTeletextosd::MainMenuAction(void)
 {
    // Perform the action when selected from the main VDR menu.
-   return new TeletextBrowser(txtStatus);
+   return new TeletextBrowser(txtStatus,storage);
 }
 
 cMenuSetupPage *cPluginTeletextosd::SetupMenu(void)

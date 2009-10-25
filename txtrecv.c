@@ -100,36 +100,24 @@ int Storage::cleanSubDir(const char *dir) {
    return bytesDeleted;
 }
 
-Storage *Storage::s_self = 0;
-Storage::StorageSystem Storage::system = Storage::StorageSystemPacked;
+int Storage::storageOption = -1;
 
 Storage::Storage() {
-   s_self=this;
    byteCount=0;
-   storageOption=-1;
    failedFreeSpace=false;
 }
 
 Storage::~Storage() {
 }
 
-void Storage::setSystem(StorageSystem s) {
-   system=s;
-}
-
-Storage *Storage::instance() {
-   if (!s_self) {
-      switch (system) {
-      case StorageSystemLegacy:
-         s_self=new LegacyStorage();
-         break;
-      case StorageSystemPacked:
-      default:
-         s_self=new PackedStorage();
-         break;
-      }
-   }
-   return s_self;
+Storage *Storage::CreateInstance(StorageSystem system) {
+  switch (system) {
+  case StorageSystemLegacy:
+     return new LegacyStorage();
+  case StorageSystemPacked:
+  default:
+     return new PackedStorage();
+  }
 }
 
 void Storage::setMaxStorage(int maxMB) {
@@ -457,8 +445,8 @@ StorageHandle PackedStorage::openForReading(PageID page, bool countAsAccess) {
 
 
 
-cTelePage::cTelePage(PageID t_page, uchar t_flags, uchar t_lang,int t_mag)
-  : mag(t_mag), flags(t_flags), lang(t_lang), page(t_page)
+cTelePage::cTelePage(PageID t_page, uchar t_flags, uchar t_lang,int t_mag, Storage *s)
+  : mag(t_mag), flags(t_flags), lang(t_lang), page(t_page), storage(s)
 {
    memset(pagebuf,' ',26*40);
 }
@@ -473,20 +461,19 @@ void cTelePage::SetLine(int line, uchar *myptr)
 
 void cTelePage::save()
 {
-   Storage *s=Storage::instance();
    unsigned char buf;
    StorageHandle fd;
-   if ( (fd=s->openForWriting(page)) ) {
-      s->write("VTXV4",5,fd);
-      buf=0x01; s->write(&buf,1,fd);
-      buf=mag;  s->write(&buf,1,fd);
-      buf=page.page; s->write(&buf,1,fd);
-      buf=flags; s->write(&buf,1,fd);
-      buf=lang; s->write(&buf,1,fd);
-      buf=0x00; s->write(&buf,1,fd);
-      buf=0x00; s->write(&buf,1,fd);
-      s->write(pagebuf,24*40,fd);
-      s->close(fd);
+   if ( (fd=storage->openForWriting(page)) ) {
+      storage->write("VTXV4",5,fd);
+      buf=0x01; storage->write(&buf,1,fd);
+      buf=mag;  storage->write(&buf,1,fd);
+      buf=page.page; storage->write(&buf,1,fd);
+      buf=flags; storage->write(&buf,1,fd);
+      buf=lang; storage->write(&buf,1,fd);
+      buf=0x00; storage->write(&buf,1,fd);
+      buf=0x00; storage->write(&buf,1,fd);
+      storage->write(pagebuf,24*40,fd);
+      storage->close(fd);
    }
 }
 
@@ -495,8 +482,8 @@ bool cTelePage::IsTopTextPage()
    return (page.page & 0xFF) <= 0x99 && (page.page & 0x0F) <= 0x9;
 }
 
-cTxtStatus::cTxtStatus(bool storeTopText)
- :storeTopText(storeTopText)
+cTxtStatus::cTxtStatus(bool storeTopText, Storage* storage)
+ :storeTopText(storeTopText), storage(storage)
 {
    receiver = NULL;
    currentLiveChannel = tChannelID::InvalidID;
@@ -536,7 +523,7 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber)
    int TPid = newLiveChannel->Tpid();
 
    if (TPid) {
-      receiver = new cTxtReceiver(TPid, currentLiveChannel, storeTopText);
+      receiver = new cTxtReceiver(TPid, currentLiveChannel, storeTopText, storage);
       cDevice::ActualDevice()->AttachReceiver(receiver);
    }
 
@@ -544,11 +531,12 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber)
 }
 
 
-cTxtReceiver::cTxtReceiver(int TPid, tChannelID chan, bool storeTopText)
+cTxtReceiver::cTxtReceiver(int TPid, tChannelID chan, bool storeTopText, Storage* storage)
  : cReceiver(chan, -1, TPid), cThread("osdteletext-receiver"),
    TxtPage(0), storeTopText(storeTopText), buffer((188+60)*75)
 {
-   Storage::instance()->prepareDirectory(ChannelID());
+   storage->prepareDirectory(ChannelID());
+
    // 10 ms timeout on getting TS frames
    buffer.SetTimeouts(0, 10);
 }
@@ -560,6 +548,9 @@ cTxtReceiver::~cTxtReceiver()
    Activate(false);
    buffer.Clear();
    delete TxtPage;
+   if(storage) {
+     delete storage;
+   }
 }
 
 void cTxtReceiver::Stop()
@@ -705,7 +696,7 @@ void cTxtReceiver::DecodeTXT(uchar* TXT_buf)
       pgno = mag8 * 256 + b1;
       subno = (b2 + b3 * 256) & 0x3f7f;         // Sub Page Number
 
-      TxtPage = new cTelePage(PageID(ChannelID(), pgno, subno), flags, lang, mag);
+      TxtPage = new cTelePage(PageID(ChannelID(), pgno, subno), flags, lang, mag, storage);
       TxtPage->SetLine((int)line,(uchar *)ptr);
       break;
       }

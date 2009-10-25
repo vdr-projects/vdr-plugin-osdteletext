@@ -24,7 +24,7 @@ extern int Stretch;
 
 class TeletextBrowser : public cOsdObject {
 public:
-   TeletextBrowser(cTxtStatus *txtSt);
+   TeletextBrowser(cTxtStatus *txtSt,Storage *s);
    ~TeletextBrowser();
    void Show(void);
    static void ChannelSwitched(int ChannelNumber);
@@ -67,6 +67,7 @@ protected:
    static tChannelID channel;
    static int currentChannelNumber;
    static TeletextBrowser* self;
+   Storage *storage;
 private:
    void ChangeBackground();
 };

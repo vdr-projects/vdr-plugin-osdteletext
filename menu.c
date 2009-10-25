@@ -43,7 +43,8 @@ int TeletextBrowser::currentChannelNumber=0;
 TeletextBrowser* TeletextBrowser::self=0;
 
 
-TeletextBrowser::TeletextBrowser(cTxtStatus *txtSt) {
+TeletextBrowser::TeletextBrowser(cTxtStatus *txtSt,Storage *s) {
+   storage = s;
    cursorPos=0;
    pageFound=true;
    selectingChannel=false;
@@ -524,11 +525,10 @@ bool TeletextBrowser::CheckPage()
 {
    StorageHandle fd;
    
-   Storage *s=Storage::instance();
-   if (!(fd=s->openForReading(PageID(channel, currentPage, currentSubPage), false)) )
+   if (!(fd=storage->openForReading(PageID(channel, currentPage, currentSubPage), false)) )
       return false;
 
-   s->close(fd);
+   storage->close(fd);
    return true;
 }
 
@@ -574,22 +574,21 @@ bool TeletextBrowser::DecodePage() {
    unsigned char cache[40*24+12];
    StorageHandle fd;
    // Take a look if there is a xxx-00 page
-   Storage *s=Storage::instance();
    if (currentSubPage==0) {
-      if ( !(fd=s->openForReading(PageID(channel, currentPage,currentSubPage), false)) ) {
+      if ( !(fd=storage->openForReading(PageID(channel, currentPage,currentSubPage), false)) ) {
          // There is no subpage 0 so look if there is subpage 1
          currentSubPage++;
          // Generate file string
       } else {
          // yes file exists
-         s->close(fd);
+         storage->close(fd);
       }
    }
    
-   if ( (fd=s->openForReading(PageID(channel, currentPage, currentSubPage), true)) )
+   if ( (fd=storage->openForReading(PageID(channel, currentPage, currentSubPage), true)) )
    {
-      s->read(cache,sizeof cache,fd); // Read full page data
-      s->close(fd);
+      storage->read(cache,sizeof cache,fd); // Read full page data
+      storage->close(fd);
       
       Display::HoldFlush();
       Display::ClearMessage();
@@ -621,12 +620,11 @@ int TeletextBrowser::PageCheckSum() {
    
    CheckFirstSubPage(currentSubPage);
    
-   Storage *s=Storage::instance();
-   if ((fd=s->openForReading(PageID(channel, currentPage, currentSubPage), false)) ) {
+   if ((fd=storage->openForReading(PageID(channel, currentPage, currentSubPage), false)) ) {
       uchar cache[960];
-      s->read(cache, 12, fd); //skip
-      s->read(cache, sizeof(cache), fd);
-      s->close(fd);
+      storage->read(cache, 12, fd); //skip
+      storage->read(cache, sizeof(cache), fd);
+      storage->close(fd);
       memset(cache+12, 0, 8); //it seems that there the clock is transmitted, ignore changes
       for (uint i=0;i<sizeof(cache); i++)
          retSum+=cache[i];
