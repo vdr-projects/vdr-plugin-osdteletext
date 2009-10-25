@@ -614,8 +614,8 @@ uchar cTxtReceiver::unham16 (uchar *p)
 
 void cTxtReceiver::SaveAndDeleteTxtPage()
 {
-  if (storeTopText || !TxtPage->IsTopTextPage()) {
-     if (TxtPage) {
+  if (TxtPage) {
+     if (storeTopText || !TxtPage->IsTopTextPage()) {
         TxtPage->save();
         delete TxtPage;
         TxtPage=NULL;
