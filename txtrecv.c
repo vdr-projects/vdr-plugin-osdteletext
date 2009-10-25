@@ -541,9 +541,9 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber)
 
 cTxtReceiver::cTxtReceiver(int TPid, tChannelID chan)
  : cReceiver(chan, -1, TPid), cThread("osdteletext-receiver"),
-   chan(chan), TxtPage(0), buffer((188+60)*75), running(false)
+   TxtPage(0), buffer((188+60)*75), running(false)
 {
-   Storage::instance()->prepareDirectory(chan);
+   Storage::instance()->prepareDirectory(ChannelID());
    // 10 ms timeout on getting TS frames
    buffer.SetTimeouts(0, 10);
 }
@@ -700,7 +700,7 @@ void cTxtReceiver::DecodeTXT(uchar* TXT_buf)
       pgno = mag8 * 256 + b1;
       subno = (b2 + b3 * 256) & 0x3f7f;         // Sub Page Number
 
-      TxtPage = new cTelePage(PageID(chan, pgno, subno), flags, lang, mag);
+      TxtPage = new cTelePage(PageID(ChannelID(), pgno, subno), flags, lang, mag);
       TxtPage->SetLine((int)line,(uchar *)ptr);
       break;
       }

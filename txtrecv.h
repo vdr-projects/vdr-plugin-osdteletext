@@ -162,7 +162,6 @@ class cTxtReceiver : public cReceiver, public cThread {
 private:
    void DecodeTXT(uchar*);
    uchar unham16 (uchar*);
-   tChannelID chan;
    cTelePage *TxtPage;
 protected:
    virtual void Activate(bool On);
