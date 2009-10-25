@@ -143,7 +143,6 @@ class cTelePage {
   unsigned char lang;
   PageID page;
   unsigned char pagebuf[27*40];
-  char Directory [255];
  public:
   cTelePage(PageID page, uchar flags, uchar lang, int mag);
   ~cTelePage();
