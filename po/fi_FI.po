@@ -67,7 +67,7 @@ msgid "OSD vertical align"
 msgstr "Vaakakeskitys"
 
 msgid "Hide mainmenu entry"
-msgstr ""
+msgstr "Piilota valinta päävalikosta"
 
 msgid "Key bindings"
 msgstr "Näppäintoiminnot"
