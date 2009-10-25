@@ -44,7 +44,7 @@ public:
   virtual bool ProcessArgs(int argc, char *argv[]);
   virtual bool Start(void);
   virtual void Housekeeping(void);
-  virtual const char *MainMenuEntry(void) { return tr(MAINMENUENTRY); }
+  virtual const char *MainMenuEntry(void);
   virtual cOsdObject *MainMenuAction(void);
   virtual cMenuSetupPage *SetupMenu(void);
   virtual bool SetupParse(const char *Name, const char *Value);
@@ -220,6 +220,11 @@ void cPluginTeletextosd::Housekeeping(void)
   // Perform any cleanup or other regular tasks.
 }
 
+const char *cPluginTeletextosd::MainMenuEntry(void)
+{
+   return ttSetup.HideMainMenu ? 0 : tr(MAINMENUENTRY);
+}
+
 cOsdObject *cPluginTeletextosd::MainMenuAction(void)
 {
    // Perform the action when selected from the main VDR menu.
@@ -249,6 +254,7 @@ bool cPluginTeletextosd::SetupParse(const char *Name, const char *Value)
   else if (!strcasecmp(Name, "OSDHAlign")) ttSetup.OSDHAlign=atoi(Value);
   else if (!strcasecmp(Name, "OSDVAlign")) ttSetup.OSDVAlign=atoi(Value);
   else if (!strcasecmp(Name, "inactivityTimeout")) /*ttSetup.inactivityTimeout=atoi(Value)*/;
+  else if (!strcasecmp(Name, "HideMainMenu")) ttSetup.HideMainMenu=atoi(Value);
   else {
      for (int i=0;i<LastActionKey;i++) {
         if (!strcasecmp(Name, cTeletextSetupPage::actionKeyNames[i].internalName)) {
@@ -289,6 +295,7 @@ void cTeletextSetupPage::Store(void) {
    ttSetup.OSDwidth=temp.OSDwidth;
    ttSetup.OSDHAlign=temp.OSDHAlign;
    ttSetup.OSDVAlign=temp.OSDVAlign;
+   ttSetup.HideMainMenu=temp.HideMainMenu;
    //ttSetup.inactivityTimeout=temp.inactivityTimeout;
    
    for (int i=0;i<LastActionKey;i++) {
@@ -303,6 +310,7 @@ void cTeletextSetupPage::Store(void) {
    SetupStore("OSDwidth", ttSetup.OSDwidth);
    SetupStore("OSDHAlign", ttSetup.OSDHAlign);
    SetupStore("OSDVAlign", ttSetup.OSDVAlign);
+   SetupStore("HideMainMenu", ttSetup.HideMainMenu);
    //SetupStore("inactivityTimeout", ttSetup.inactivityTimeout);
 }
 
@@ -329,8 +337,9 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    temp.OSDwidth=ttSetup.OSDwidth;
    temp.OSDHAlign=ttSetup.OSDHAlign;
    temp.OSDVAlign=ttSetup.OSDVAlign;
+   temp.HideMainMenu=ttSetup.HideMainMenu;
    //temp.inactivityTimeout=ttSetup.inactivityTimeout;
-      
+
    Add(new cMenuEditIntItem(tr("Background transparency"), &tempConfiguredClrBackground, 0, 255)); 
    
    Add(new cMenuEditBoolItem(tr("Show clock"), &temp.showClock ));
@@ -344,6 +353,7 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    
    Add(new cMenuEditIntItem(tr("OSD horizontal align"), &temp.OSDHAlign, 0, 100));
    Add(new cMenuEditIntItem(tr("OSD vertical align"), &temp.OSDVAlign, 0, 100));
+   Add(new cMenuEditBoolItem(tr("Hide mainmenu entry"), &temp.HideMainMenu));
    
    //Using same string as VDR's setup menu
    //Add(new cMenuEditIntItem(tr("Setup.Miscellaneous$Min. user inactivity (min)"), &temp.inactivityTimeout));

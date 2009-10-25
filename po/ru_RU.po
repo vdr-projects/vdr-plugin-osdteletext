@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <nobody@nowhere.org>\n"
-"POT-Creation-Date: 2008-12-20 10:45+0100\n"
+"POT-Creation-Date: 2009-10-21 19:27+0200\n"
 "PO-Revision-Date: 2008-12-30 13:52+0100\n"
 "Last-Translator: Oleg Roitburd <oleg@roitburd.de>\n"
 "Language-Team: Russian\n"
@@ -67,9 +67,11 @@ msgstr "Горизонтальное положение OSD"
 msgid "OSD vertical align"
 msgstr "Вертикальное положение OSD"
 
+msgid "Hide mainmenu entry"
+msgstr ""
+
 msgid "Key bindings"
 msgstr "Привязка кнопок"
 
 msgid "  Page number"
 msgstr "  Номер страницы"
-

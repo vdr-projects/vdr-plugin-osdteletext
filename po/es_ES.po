@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <nobody@nowhere.org>\n"
-"POT-Creation-Date: 2008-12-20 10:45+0100\n"
+"POT-Creation-Date: 2009-10-21 19:27+0200\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Ruben Nunez Francisco <ruben.nunez@tang-it.com>\n"
 "Language-Team: Spanish\n"
@@ -64,6 +64,9 @@ msgid "OSD horizontal align"
 msgstr ""
 
 msgid "OSD vertical align"
+msgstr ""
+
+msgid "Hide mainmenu entry"
 msgstr ""
 
 msgid "Key bindings"

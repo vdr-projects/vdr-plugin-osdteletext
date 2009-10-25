@@ -656,6 +656,7 @@ TeletextSetup::TeletextSetup() {
    showClock=true;
    suspendReceiving=false;
    autoUpdatePage=true;
+   HideMainMenu=false;
    //OSDHeight+width default values given in Start()
    OSDHAlign=50;
    OSDVAlign=50;

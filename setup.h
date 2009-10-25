@@ -45,6 +45,7 @@ public:
    int OSDHAlign;
    int OSDVAlign;
    int inactivityTimeout;
+   int HideMainMenu;
 };
 
 extern TeletextSetup ttSetup;

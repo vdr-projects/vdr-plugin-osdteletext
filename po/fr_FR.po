@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <nobody@nowhere.org>\n"
-"POT-Creation-Date: 2008-12-20 10:45+0100\n"
+"POT-Creation-Date: 2009-10-21 19:27+0200\n"
 "PO-Revision-Date: 2009-01-10 19:32+0100\n"
 "Last-Translator: Nival Michaël\n"
 "Language-Team: French\n"
@@ -69,9 +69,11 @@ msgstr "Alignement horizontal de l'OSD"
 msgid "OSD vertical align"
 msgstr "Alignement vertical de l'OSD"
 
+msgid "Hide mainmenu entry"
+msgstr ""
+
 msgid "Key bindings"
 msgstr "Attribution des touches"
 
 msgid "  Page number"
 msgstr "  Nombre de pages"
-
