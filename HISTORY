@@ -7,6 +7,8 @@ VDR Plugin 'osdteletext' Revision History
 - Fixed possible segfault (Closes #179) - (Thx to Manuel Reimer)
 - Added setup option to disable maine menu entry (Closes #149)
   (Thx to Manuel Reimer!)
+- Added command line option to enable storing TopText pages, which is
+  now disabled by default (References #177) (Thx to Andreas Brachold!)
 
 2009-06-02: version 0.8.3
 - Updated Ukrainian translation provided by Yarema P. aka Knedlyk (Closes #133)

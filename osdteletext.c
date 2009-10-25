@@ -34,6 +34,7 @@ private:
   // Add any member variables or functions you may need here.
   cTxtStatus *txtStatus;
   bool startReceiver;
+  bool storeTopText;
   void initTexts();
 public:
   cPluginTeletextosd(void);
@@ -96,7 +97,6 @@ protected:
 };*/
 
 
-
 cPluginTeletextosd::cPluginTeletextosd(void)
 {
   // Initialize any member variables here.
@@ -128,7 +128,8 @@ const char *cPluginTeletextosd::CommandLineHelp(void)
          "                               Choose \"legacy\" for the traditional\n"
          "                               one-file-per-page system.\n"
          "                               Default is \"packed\" for the \n"
-         "                               one-file-for-a-few-pages system.\n";
+         "                               one-file-for-a-few-pages system.\n"
+         "  -t,       --toptext          Store top text pages at cache. (unviewable pages)\n";
 }
 
 bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
@@ -137,13 +138,14 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
    static struct option long_options[] = {
        { "directory",    required_argument,       NULL, 'd' },
        { "max-cache",    required_argument,       NULL, 'n' },
-       { "cache-system",    required_argument,       NULL, 's' },
+       { "cache-system", required_argument,       NULL, 's' },
+       { "toptext",      no_argument,             NULL, 't' },
        { NULL }
        };
      
    int c;
    int maxStorage=-1;
-   while ((c = getopt_long(argc, argv, "s:d:n:", long_options, NULL)) != -1) {
+   while ((c = getopt_long(argc, argv, "s:d:n:t", long_options, NULL)) != -1) {
         switch (c) {
           case 's': 
                     if (!optarg)
@@ -159,6 +161,8 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
                        int n = atoi(optarg);
                        maxStorage=n;
                     }
+                    break;
+          case 't': storeTopText=true;
                     break;
         }
    }
@@ -177,7 +181,7 @@ bool cPluginTeletextosd::Start(void)
    Storage::instance()->init();
    initTexts();
    if (startReceiver)
-      txtStatus=new cTxtStatus();
+      txtStatus=new cTxtStatus(storeTopText);
    if (ttSetup.OSDheight<=100)  ttSetup.OSDheight=Setup.OSDHeight;
    if (ttSetup.OSDwidth<=100)   ttSetup.OSDwidth=Setup.OSDWidth;
   

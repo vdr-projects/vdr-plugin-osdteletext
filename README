@@ -97,6 +97,8 @@ Command line options:
                                   one-file-per-page system.
                                   Default is "packed" for the 
                                   one-file-for-a-few-pages system.
+     -t        --toptext          Store top text pages at cache.
+                                  (unviewable pages)
 
 Colors:
   On all sorts of output devices which are not limited as to color depth

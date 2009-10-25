@@ -148,6 +148,7 @@ class cTelePage {
   ~cTelePage();
   void SetLine(int, uchar*);
   void save();
+  bool IsTopTextPage();
  };
 
 class cRingTxtFrames : public cRingBufferFrame {
@@ -163,13 +164,15 @@ private:
    void DecodeTXT(uchar*);
    uchar unham16 (uchar*);
    cTelePage *TxtPage;
+   void SaveAndDeleteTxtPage();
+   bool storeTopText;
 protected:
    virtual void Activate(bool On);
    virtual void Receive(uchar *Data, int Length);
    virtual void Action();
    cRingTxtFrames buffer;
 public:
-   cTxtReceiver(int TPid, tChannelID chan);
+   cTxtReceiver(int TPid, tChannelID chan, bool storeTopText);
    virtual ~cTxtReceiver();
    virtual void Stop();
 };
@@ -178,10 +181,11 @@ class cTxtStatus : public cStatus {
 private:
    cTxtReceiver *receiver;
    tChannelID currentLiveChannel;
+   bool storeTopText;
 protected:
    virtual void ChannelSwitch(const cDevice *Device, int ChannelNumber);
 public:
-   cTxtStatus(void);
+   cTxtStatus(bool storeTopText);
    ~cTxtStatus();
 };
 

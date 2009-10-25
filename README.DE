@@ -74,6 +74,7 @@ Kommandozeilen-Optionen:
                                   System "Eine Datei - eine Seite".
                                   Voreinstellung ist "packed" für ein System, das
                                   in eine Datei mehrere Seiten speichert.
+     -t        --toptext          Speichere TopText Seiten (nich anzeigbar)
 
 Farben:
   Auf allen Ausgabegeräten, die nicht in der Farbtiefe des OSD beschränkt sind,

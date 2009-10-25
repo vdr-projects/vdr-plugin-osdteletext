@@ -487,11 +487,16 @@ void cTelePage::save()
       buf=0x00; s->write(&buf,1,fd);
       s->write(pagebuf,24*40,fd);
       s->close(fd);
-   }         
+   }
 }
 
+bool cTelePage::IsTopTextPage()
+{
+   return (page.page & 0xFF) <= 0x99 && (page.page & 0x0F) <= 0x9;
+}
 
-cTxtStatus::cTxtStatus(void)
+cTxtStatus::cTxtStatus(bool storeTopText)
+ :storeTopText(storeTopText)
 {
    receiver = NULL;
    currentLiveChannel = tChannelID::InvalidID;
@@ -531,7 +536,7 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber)
    int TPid = newLiveChannel->Tpid();
 
    if (TPid) {
-      receiver = new cTxtReceiver(TPid, currentLiveChannel);
+      receiver = new cTxtReceiver(TPid, currentLiveChannel, storeTopText);
       cDevice::ActualDevice()->AttachReceiver(receiver);
    }
 
@@ -539,9 +544,9 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber)
 }
 
 
-cTxtReceiver::cTxtReceiver(int TPid, tChannelID chan)
+cTxtReceiver::cTxtReceiver(int TPid, tChannelID chan, bool storeTopText)
  : cReceiver(chan, -1, TPid), cThread("osdteletext-receiver"),
-   TxtPage(0), buffer((188+60)*75)
+   TxtPage(0), storeTopText(storeTopText), buffer((188+60)*75)
 {
    Storage::instance()->prepareDirectory(ChannelID());
    // 10 ms timeout on getting TS frames
@@ -616,6 +621,17 @@ uchar cTxtReceiver::unham16 (uchar *p)
   return (c1 & 0x0F) | (c2 & 0x0F) *16;
 }
 
+void cTxtReceiver::SaveAndDeleteTxtPage()
+{
+  if (storeTopText || !TxtPage->IsTopTextPage()) {
+     if (TxtPage) {
+        TxtPage->save();
+        delete TxtPage;
+        TxtPage=NULL;
+     }
+  }
+}
+
 void cTxtReceiver::DecodeTXT(uchar* TXT_buf)
 {
    // Format of buffer:
@@ -666,11 +682,7 @@ void cTxtReceiver::DecodeTXT(uchar* TXT_buf)
       // Page no, 10- and 1-digit
 
       if (b1 == 0xff) break;
-      if (TxtPage) {
-         TxtPage->save();
-         delete TxtPage;
-         TxtPage=NULL;
-      }
+      SaveAndDeleteTxtPage();
 
       b2 = unham16 (ptr+2); // Sub-code 0..6 + C4
       b3 = unham16 (ptr+4); // Sub-code 8..13 + C5,C6
@@ -704,11 +716,7 @@ void cTxtReceiver::DecodeTXT(uchar* TXT_buf)
       }
    /*case 23: 
       {
-      if (TxtPage) {
-         TxtPage->save();
-         delete TxtPage;
-         TxtPage=NULL;
-      }
+      SaveAndDeleteTxtPage();
       break;
       }*/
    default:
