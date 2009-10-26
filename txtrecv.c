@@ -479,7 +479,7 @@ void cTelePage::save()
 
 bool cTelePage::IsTopTextPage()
 {
-   return (page.page & 0xFF) <= 0x99 && (page.page & 0x0F) <= 0x9;
+   return (page.page & 0xFF) > 0x99 || (page.page & 0x0F) > 0x9;
 }
 
 cTxtStatus::cTxtStatus(bool storeTopText, Storage* storage)
@@ -533,7 +533,7 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber)
 
 cTxtReceiver::cTxtReceiver(int TPid, tChannelID chan, bool storeTopText, Storage* storage)
  : cReceiver(chan, -1, TPid), cThread("osdteletext-receiver"),
-   TxtPage(0), storeTopText(storeTopText), buffer((188+60)*75)
+   TxtPage(0), storeTopText(storeTopText), buffer((188+60)*75), storage(storage)
 {
    storage->prepareDirectory(ChannelID());
 
@@ -548,9 +548,6 @@ cTxtReceiver::~cTxtReceiver()
    Activate(false);
    buffer.Clear();
    delete TxtPage;
-   if(storage) {
-     delete storage;
-   }
 }
 
 void cTxtReceiver::Stop()
