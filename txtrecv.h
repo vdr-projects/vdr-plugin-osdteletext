@@ -158,12 +158,12 @@ private:
    cTelePage *TxtPage;
    void SaveAndDeleteTxtPage();
    bool storeTopText;
+   cRingTxtFrames buffer;
    Storage *storage;
 protected:
    virtual void Activate(bool On);
    virtual void Receive(uchar *Data, int Length);
    virtual void Action();
-   cRingTxtFrames buffer;
 public:
    cTxtReceiver(int TPid, tChannelID chan, bool storeTopText, Storage* storage);
    virtual ~cTxtReceiver();
