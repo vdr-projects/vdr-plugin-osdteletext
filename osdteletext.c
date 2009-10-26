@@ -181,14 +181,8 @@ bool cPluginTeletextosd::Start(void)
   // Start any background activities the plugin shall perform.
    //Clean any files which might be remaining from the last session, 
    //perhaps due to a crash they have not been deleted.
-   storage = Storage::CreateInstance(storageSystem);
-   if(storage) {
-      if (maxStorage>=0)
-        storage->setMaxStorage(maxStorage);
-      storage->init();
-   } else {
-     return false;
-   }
+   storage = Storage::CreateInstance(storageSystem, maxStorage);
+
    initTexts();
    if (startReceiver)
       txtStatus=new cTxtStatus(storeTopText, storage);

@@ -100,8 +100,6 @@ int Storage::cleanSubDir(const char *dir) {
    return bytesDeleted;
 }
 
-int Storage::storageOption = -1;
-
 Storage::Storage() {
    byteCount=0;
    failedFreeSpace=false;
@@ -110,23 +108,14 @@ Storage::Storage() {
 Storage::~Storage() {
 }
 
-Storage *Storage::CreateInstance(StorageSystem system) {
+Storage *Storage::CreateInstance(StorageSystem system, int storageLimit) {
   switch (system) {
   case StorageSystemLegacy:
-     return new LegacyStorage();
+     return new LegacyStorage(storageLimit);
   case StorageSystemPacked:
   default:
-     return new PackedStorage();
+     return new PackedStorage(storageLimit);
   }
-}
-
-void Storage::setMaxStorage(int maxMB) {
-   storageOption=maxMB;
-}
-
-void Storage::init() {
-   cleanUp();
-   initMaxStorage(storageOption);
 }
 
 void Storage::freeSpace() {
@@ -190,10 +179,10 @@ void Storage::prepareDirectory(tChannelID chan) {
 
 #define TELETEXT_PAGESIZE 972
 
-LegacyStorage::LegacyStorage() {
-   maxBytes=0;
+LegacyStorage::LegacyStorage(int maxMB) {
    fsBlockSize=1;
    pageBytes=TELETEXT_PAGESIZE;
+   initMaxStorage(maxMB);
 }
 
 LegacyStorage::~LegacyStorage() {
@@ -323,7 +312,8 @@ ssize_t LegacyStorage::write(const void *ptr, size_t size, StorageHandle stream)
 
 
 
-PackedStorage::PackedStorage() {
+PackedStorage::PackedStorage(int maxMB)
+ : LegacyStorage(maxMB) {
 }
 #define TOC_SIZE 8
 //The file structure is simple:

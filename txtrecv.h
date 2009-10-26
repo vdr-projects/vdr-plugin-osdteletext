@@ -55,12 +55,10 @@ public:
    virtual ~Storage();
    enum StorageSystem { StorageSystemLegacy, StorageSystemPacked };
    //must be called before the first call to instance()
-   void setMaxStorage(int maxMB=-1);
    
-   static Storage *CreateInstance(StorageSystem system);
+   static Storage *CreateInstance(StorageSystem system, int storageLimit);
    
    //must be called before operation starts. Set all options (RootDir, maxStorage) before.
-   void init();   
    virtual void cleanUp() = 0;
    
    virtual void getFilename(char *buffer, int bufLength, PageID page);
@@ -72,8 +70,6 @@ public:
    virtual ssize_t read(void *ptr, size_t size, StorageHandle stream) = 0;
    virtual void close(StorageHandle stream) = 0;
 protected:
-   virtual void initMaxStorage(int maxMB=-1) = 0;
-   
    Storage();
    int cleanSubDir(const char *dir);
    int doCleanUp();
@@ -84,13 +80,14 @@ protected:
    long byteCount;
    cString currentDir;
 private:
-   static int storageOption;
    bool failedFreeSpace;
 };
 
 class LegacyStorage : public Storage {
+private:
+   void initMaxStorage(int maxMB=-1);
 public:
-   LegacyStorage();
+   LegacyStorage(int maxMB);
    virtual ~LegacyStorage();
    virtual void cleanUp();
    
@@ -102,7 +99,6 @@ public:
    virtual void close(StorageHandle stream)
      { ::close((int)stream); }
 protected:
-   virtual void initMaxStorage(int maxMB=-1);
    void registerFile(PageID page);
    virtual int actualFileSize(int netFileSize);
    //int maxPages;
@@ -113,9 +109,7 @@ protected:
 
 class PackedStorage : public LegacyStorage {
 public:
-   PackedStorage();
-   //virtual void setMaxStorage(int maxMB=-1);
-   //virtual void cleanUp();
+   PackedStorage(int maxMB);
    
    virtual void getFilename(char *buffer, int bufLength, PageID page);
    virtual StorageHandle openForWriting(PageID page);
