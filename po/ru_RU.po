@@ -13,66 +13,66 @@ msgstr ""
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-5\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid "Channel (press OK): "
-msgstr "єРЭРЫ (ЅРЦЬШвХ ѕє)"
+msgstr "РљР°РЅР°Р» (РќР°Р¶РјРёС‚Рµ РћРљ)"
 
 msgid "Page"
-msgstr "БваРЭШжР"
+msgstr "РЎС‚СЂР°РЅРёС†Р°"
 
 msgid "not found"
-msgstr "ЭХ ЭРЩФХЭР"
+msgstr "РЅРµ РЅР°Р№РґРµРЅР°"
 
 msgid "Displays teletext on the OSD"
-msgstr "їЮЪРЧ вХЫХвХЪбвР Т OSD"
+msgstr "РџРѕРєР°Р· С‚РµР»РµС‚РµРєСЃС‚Р° РІ OSD"
 
 #, fuzzy
 msgid "Teletext"
-msgstr "ВХЫХвХЪбв"
+msgstr "РўРµР»РµС‚РµРєСЃС‚"
 
 msgid "Zoom"
-msgstr "гТХЫШзШвм"
+msgstr "СѓРІРµР»РёС‡РёС‚СЊ"
 
 msgid "Half page"
-msgstr "ЯЮЫ-бваРЭШжл"
+msgstr "РїРѕР»-СЃС‚СЂР°РЅРёС†С‹"
 
 msgid "Change channel"
-msgstr "ЯХаХЪЫозШвм ЪРЭРЫ"
+msgstr "РїРµСЂРµРєР»СЋС‡РёС‚СЊ РєР°РЅР°Р»"
 
 msgid "Switch background"
-msgstr "їХаХЪЫозШвм дЮЭ"
+msgstr "РџРµСЂРµРєР»СЋС‡РёС‚СЊ С„РѕРЅ"
 
 msgid "Jump to..."
-msgstr "ЯХаХЩвШ Ъ..."
+msgstr "РїРµСЂРµР№С‚Рё Рє..."
 
 msgid "Background transparency"
-msgstr "їаЮЧаРзЭЮбвм дЮЭР"
+msgstr "РџСЂРѕР·СЂР°С‡РЅРѕСЃС‚СЊ С„РѕРЅР°"
 
 msgid "Show clock"
-msgstr "їЮЪРЧлТРвм зРбл"
+msgstr "РџРѕРєР°Р·С‹РІР°С‚СЊ С‡Р°СЃС‹"
 
 msgid "Auto-update pages"
-msgstr "°ТвЮЮСЭЮТЫХЭШХ бваРЭШж"
+msgstr "РђРІС‚РѕРѕР±РЅРѕРІР»РµРЅРёРµ СЃС‚СЂР°РЅРёС†"
 
 msgid "OSD height"
-msgstr "ІлбЮвР ЬХЭо"
+msgstr "Р’С‹СЃРѕС‚Р° РјРµРЅСЋ"
 
 msgid "OSD width"
-msgstr "ИШаШЭР ЬХЭо"
+msgstr "РЁРёСЂРёРЅР° РјРµРЅСЋ"
 
 msgid "OSD horizontal align"
-msgstr "іЮаШЧЮЭвРЫмЭЮХ ЯЮЫЮЦХЭШХ OSD"
+msgstr "Р“РѕСЂРёР·РѕРЅС‚Р°Р»СЊРЅРѕРµ РїРѕР»РѕР¶РµРЅРёРµ OSD"
 
 msgid "OSD vertical align"
-msgstr "ІХавШЪРЫмЭЮХ ЯЮЫЮЦХЭШХ OSD"
+msgstr "Р’РµСЂС‚РёРєР°Р»СЊРЅРѕРµ РїРѕР»РѕР¶РµРЅРёРµ OSD"
 
 msgid "Hide mainmenu entry"
 msgstr ""
 
 msgid "Key bindings"
-msgstr "їаШТпЧЪР ЪЭЮЯЮЪ"
+msgstr "РџСЂРёРІСЏР·РєР° РєРЅРѕРїРѕРє"
 
 msgid "  Page number"
-msgstr "  ЅЮЬХа бваРЭШжл"
+msgstr "  РќРѕРјРµСЂ СЃС‚СЂР°РЅРёС†С‹"

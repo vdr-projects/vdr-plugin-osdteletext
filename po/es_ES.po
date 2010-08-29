@@ -13,14 +13,14 @@ msgstr ""
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-15\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid "Channel (press OK): "
 msgstr "Canal (pulse OK):"
 
 msgid "Page"
-msgstr "Página"
+msgstr "PÃ¡gina"
 
 msgid "not found"
 msgstr "no encontrada"
@@ -35,7 +35,7 @@ msgid "Zoom"
 msgstr "Zoom"
 
 msgid "Half page"
-msgstr "Media página"
+msgstr "Media pÃ¡gina"
 
 msgid "Change channel"
 msgstr "Cambio cadena"
@@ -74,4 +74,4 @@ msgid "Key bindings"
 msgstr ""
 
 msgid "  Page number"
-msgstr "  Número de página"
+msgstr "  NÃºmero de pÃ¡gina"

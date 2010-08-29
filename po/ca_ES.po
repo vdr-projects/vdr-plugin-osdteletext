@@ -3,7 +3,7 @@
 # This file is distributed under the same license as the VDR package.
 # Marc Rovira Vall <tm05462@salleURL.edu>, 2003
 # Ramon Roca <ramon.roca@xcombo.com>, 2003
-# Jordi Vil‡ <jvila@tinet.org>, 2003
+# Jordi Vil√† <jvila@tinet.org>, 2003
 #
 msgid ""
 msgstr ""
@@ -11,18 +11,18 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://projects.vdr-developer.org/projects/plg-osdteletext\n"
 "POT-Creation-Date: 2010-08-29 15:11+0300\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
-"Last-Translator: Jordi Vil‡ <jvila@tinet.org>\n"
+"Last-Translator: Jordi Vil√† <jvila@tinet.org>\n"
 "Language-Team: Catalanian\n"
 "Language: ca_ES\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid "Channel (press OK): "
 msgstr "Canal (premi OK):"
 
 msgid "Page"
-msgstr "P‡gina"
+msgstr "P√†gina"
 
 msgid "not found"
 msgstr "no trobada"
@@ -37,7 +37,7 @@ msgid "Zoom"
 msgstr "Zoom"
 
 msgid "Half page"
-msgstr "Mitja p‡gina"
+msgstr "Mitja p√†gina"
 
 msgid "Change channel"
 msgstr "Canvi cadena"
@@ -49,19 +49,19 @@ msgid "Jump to..."
 msgstr "Salta a..."
 
 msgid "Background transparency"
-msgstr "TransparËncia del fons"
+msgstr "Transpar√®ncia del fons"
 
 msgid "Show clock"
 msgstr "Visualitza l'hora"
 
 msgid "Auto-update pages"
-msgstr "ActualitzaciÛ p‡gines autom‡tica"
+msgstr "Actualitzaci√≥ p√†gines autom√†tica"
 
 msgid "OSD height"
 msgstr "Altura OSD"
 
 msgid "OSD width"
-msgstr "Ampl‡ria OSD"
+msgstr "Ampl√†ria OSD"
 
 msgid "OSD horizontal align"
 msgstr ""
@@ -76,4 +76,4 @@ msgid "Key bindings"
 msgstr ""
 
 msgid "  Page number"
-msgstr "  Nombre de p‡gina"
+msgstr "  Nombre de p√†gina"

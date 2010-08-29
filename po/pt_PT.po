@@ -13,17 +13,17 @@ msgstr ""
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-15\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid "Channel (press OK): "
 msgstr "Sender (Prima OK): "
 
 msgid "Page"
-msgstr "Página"
+msgstr "PÃ¡gina"
 
 msgid "not found"
-msgstr "Não encontrado"
+msgstr "NÃ£o encontrado"
 
 msgid "Displays teletext on the OSD"
 msgstr "Mostra o teletexto no OSD"
@@ -35,7 +35,7 @@ msgid "Zoom"
 msgstr "Zoom"
 
 msgid "Half page"
-msgstr "Meia Página"
+msgstr "Meia PÃ¡gina"
 
 msgid "Change channel"
 msgstr "Mudar canal"
@@ -47,13 +47,13 @@ msgid "Jump to..."
 msgstr "Ir para"
 
 msgid "Background transparency"
-msgstr "Transparência do Fundo"
+msgstr "TransparÃªncia do Fundo"
 
 msgid "Show clock"
-msgstr "Mostrar Relógio"
+msgstr "Mostrar RelÃ³gio"
 
 msgid "Auto-update pages"
-msgstr "Auto actualizar páginas"
+msgstr "Auto actualizar pÃ¡ginas"
 
 msgid "OSD height"
 msgstr "Altura do OSD"
@@ -74,4 +74,4 @@ msgid "Key bindings"
 msgstr "Tecla alocada"
 
 msgid "  Page number"
-msgstr "  Número de Página"
+msgstr "  NÃºmero de PÃ¡gina"
