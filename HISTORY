@@ -10,6 +10,8 @@ VDR Plugin 'osdteletext' Revision History
 - Added command line option to enable storing TopText pages, which is
   now disabled by default (References #177) (Thx to Andreas Brachold!)
 - Makefile adjustments for VDR 1.7.13.
+- Don't care if the current channel really changed, if we get a channel switch
+  on the primary device (Thx to Sören Moch)
 
 2009-06-02: version 0.8.3
 - Updated Ukrainian translation provided by Yarema P. aka Knedlyk (Closes #133)

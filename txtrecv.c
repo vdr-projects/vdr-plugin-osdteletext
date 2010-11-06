@@ -476,7 +476,6 @@ cTxtStatus::cTxtStatus(bool storeTopText, Storage* storage)
  :storeTopText(storeTopText), storage(storage)
 {
    receiver = NULL;
-   currentLiveChannel = tChannelID::InvalidID;
 }
 
 cTxtStatus::~cTxtStatus()
@@ -494,18 +493,12 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber)
    cChannel* newLiveChannel = Channels.GetByNumber(ChannelNumber);
    if (newLiveChannel == NULL) return;
 
-   // ignore if channel hasn't changed
-   if (currentLiveChannel == newLiveChannel->GetChannelID()) return;
-
    // ignore non-live-channel-switching
    if (!Device->IsPrimaryDevice() ||
       ChannelNumber != cDevice::CurrentChannel()) return;
 
-   // At this point it seems to be pretty sure to me, that the live
-   // channel was changed to a new channel and OSDTeletext can
+   // live channel was changed
    // now re-attach the receiver to the new live channel
-
-   currentLiveChannel = newLiveChannel->GetChannelID();
 
    delete receiver;
    receiver = NULL;
@@ -513,7 +506,7 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber)
    int TPid = newLiveChannel->Tpid();
 
    if (TPid) {
-      receiver = new cTxtReceiver(TPid, currentLiveChannel, storeTopText, storage);
+      receiver = new cTxtReceiver(TPid, newLiveChannel->GetChannelID(), storeTopText, storage);
       cDevice::ActualDevice()->AttachReceiver(receiver);
    }
 

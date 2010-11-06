@@ -173,7 +173,6 @@ public:
 class cTxtStatus : public cStatus {
 private:
    cTxtReceiver *receiver;
-   tChannelID currentLiveChannel;
    bool storeTopText;
    Storage* storage;
 protected:
