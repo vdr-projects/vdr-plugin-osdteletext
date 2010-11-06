@@ -1,11 +1,11 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
 
-20xx-xx-xx: version x.x.x
+2010-11-06: version 0.9.0
 - Updated Italian translation provided by Diego Pierotto (Closes #151)
 - Fix valid page number check in TeletextBrowser::ExecuteAction (Closes #154)
 - Fixed possible segfault (Closes #179) - (Thx to Manuel Reimer)
-- Added setup option to disable maine menu entry (Closes #149)
+- Added setup option to disable main menu entry (Closes #149)
   (Thx to Manuel Reimer!)
 - Added command line option to enable storing TopText pages, which is
   now disabled by default (References #177) (Thx to Andreas Brachold!)
