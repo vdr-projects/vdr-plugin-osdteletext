@@ -1,8 +1,9 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
 
-2010-11-xx: version 0.9.1
+2011-08-20: version 0.9.1
 - Updated Italian translation provided by Diego Pierotto (Closes #450)
+- Added Slovak translation provided by Milan Hrala (Closes #558)
 
 2010-11-06: version 0.9.0
 - Updated Italian translation provided by Diego Pierotto (Closes #151)
