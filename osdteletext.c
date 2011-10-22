@@ -101,14 +101,11 @@ protected:
 
 
 cPluginTeletextosd::cPluginTeletextosd(void)
+  : txtStatus(0), startReceiver(true), storage(NULL), maxStorage(-1)
 {
   // Initialize any member variables here.
   // DON'T DO ANYTHING ELSE THAT MAY HAVE SIDE EFFECTS, REQUIRE GLOBAL
   // VDR OBJECTS TO EXIST OR PRODUCE ANY OUTPUT!
-  txtStatus=0;
-  startReceiver=true;
-  storage = NULL;
-  maxStorage=-1;
 }
 
 cPluginTeletextosd::~cPluginTeletextosd()

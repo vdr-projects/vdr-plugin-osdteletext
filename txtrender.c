@@ -219,13 +219,11 @@ inline enumCharsets GetG2Charset(int codepage) {
 }
 
     
-cRenderPage::cRenderPage() {
-    Dirty=false;
-    DirtyAll=false;
-    
-    // Todo: make this configurable
-    FirstG0CodePage=0;
-    SecondG0CodePage=0;
+cRenderPage::cRenderPage()
+    : Dirty(false), DirtyAll(false),
+      // Todo: make this configurable
+      FirstG0CodePage(0), SecondG0CodePage(0)
+{
 }
 
 enum enumSizeMode {

@@ -43,23 +43,16 @@ int TeletextBrowser::currentChannelNumber=0;
 TeletextBrowser* TeletextBrowser::self=0;
 
 
-TeletextBrowser::TeletextBrowser(cTxtStatus *txtSt,Storage *s) {
-   storage = s;
-   cursorPos=0;
-   pageFound=true;
-   selectingChannel=false;
-   needClearMessage=false;
-   selectingChannelNumber=-1;
+TeletextBrowser::TeletextBrowser(cTxtStatus *txtSt,Storage *s)
+  : cursorPos(0), pageFound(true), selectingChannel(false),
+    needClearMessage(false), selectingChannelNumber(-1), txtStatus(txtSt),
+    suspendedReceiving(false), previousPage(currentPage),
+    previousSubPage(currentSubPage), pageBeforeNumberInput(currentPage),
+    lastActivity(time(NULL)), inactivityTimeout(-1), storage(s)
+{
    self=this;
-   txtStatus=txtSt;
    //if (txtStatus)
     //  txtStatus->ForceReceiving(true);
-   suspendedReceiving=false;  
-   previousPage=currentPage;
-   previousSubPage=currentSubPage;
-   pageBeforeNumberInput=currentPage;
-   lastActivity=time(NULL);
-   inactivityTimeout=-1;
 }
 
 
@@ -639,30 +632,24 @@ void TeletextBrowser::UpdateClock() {
 
 TeletextSetup ttSetup;
 
-TeletextSetup::TeletextSetup() {
+TeletextSetup::TeletextSetup()
    //Set default values for setup options
-   
-   configuredClrBackground=clrGray50;
-   
+  : configuredClrBackground(clrGray50), showClock(true),
+    suspendReceiving(false), autoUpdatePage(true),
+    //OSDHeight+width default values given in Start()
+    OSDHAlign(50), OSDVAlign(50),
+    //use the value set for VDR's min user inactivity.
+    //Initially this value could be changed via the plugin's setup, but I removed that
+    //because there is no advantage, but a possible problem when VDR's value is change
+    //after the plugin has stored its own value.
+    inactivityTimeout(Setup.MinUserInactivity),
+    HideMainMenu(false)
+{
    //init key bindings
    for (int i=0;i<10;i++)
       mapKeyToAction[0]=(eTeletextAction)0;
    mapKeyToAction[3]=Zoom;
    mapKeyToAction[2]=HalfPage;   
    mapKeyToAction[0]=SwitchChannel;
-   
-   showClock=true;
-   suspendReceiving=false;
-   autoUpdatePage=true;
-   HideMainMenu=false;
-   //OSDHeight+width default values given in Start()
-   OSDHAlign=50;
-   OSDVAlign=50;
-   
-   //use the value set for VDR's min user inactivity.
-   //Initially this value could be changed via the plugin's setup, but I removed that
-   //because there is no advantage, but a possible problem when VDR's value is change
-   //after the plugin has stored its own value.
-   inactivityTimeout=Setup.MinUserInactivity;
 }
 

@@ -100,9 +100,9 @@ int Storage::cleanSubDir(const char *dir) {
    return bytesDeleted;
 }
 
-Storage::Storage() {
-   byteCount=0;
-   failedFreeSpace=false;
+Storage::Storage()
+  : byteCount(0), failedFreeSpace(false)
+{
 }
 
 Storage::~Storage() {
@@ -179,9 +179,9 @@ void Storage::prepareDirectory(tChannelID chan) {
 
 #define TELETEXT_PAGESIZE 972
 
-LegacyStorage::LegacyStorage(int maxMB) {
-   fsBlockSize=1;
-   pageBytes=TELETEXT_PAGESIZE;
+LegacyStorage::LegacyStorage(int maxMB)
+  : fsBlockSize(1), pageBytes(TELETEXT_PAGESIZE)
+{
    initMaxStorage(maxMB);
 }
 
@@ -473,9 +473,8 @@ bool cTelePage::IsTopTextPage()
 }
 
 cTxtStatus::cTxtStatus(bool storeTopText, Storage* storage)
- :storeTopText(storeTopText), storage(storage)
+   : receiver(NULL), storeTopText(storeTopText), storage(storage)
 {
-   receiver = NULL;
 }
 
 cTxtStatus::~cTxtStatus()

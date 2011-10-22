@@ -176,11 +176,8 @@ cDisplay4BPP::cDisplay4BPP(int x0, int y0, int width, int height)
 
 
 cDisplay4BPPHalf::cDisplay4BPPHalf(int x0, int y0, int width, int height, bool upper) 
-    : cDisplay(width,height) {
-
-    OsdX0=x0;
-    OsdY0=y0;
-    Upper=upper;
+    : cDisplay(width,height), Upper(upper), OsdX0(x0), OsdY0(y0)
+{   
     osd=NULL;
     
     // Redirect all real init work to method

@@ -19,26 +19,13 @@
 #include "txtfont.h"
 
 
-cDisplay::cDisplay(int width, int height) {
-    Concealed=false;
-    Blinked=false;
-    FlushLock=0;
-    Zoom=Zoom_Off;
-    osd=NULL;
-    ScaleX=1;
-    ScaleY=1;
-    OffsetX=0;
-    OffsetY=0;
-    Width=width;
-    Height=height;
-    Background=clrGray50;
-    Boxed=false;
-    
-    MessageX=0;
-    MessageY=0;
-    MessageW=0;
-    MessageH=0;
-    MessageFont=cFont::GetFont(fontSml);
+cDisplay::cDisplay(int width, int height)
+    : Zoom(Zoom_Off), Concealed(false), Blinked(false), FlushLock(0),
+      Boxed(false), Width(width), Height(height), Background(clrGray50),
+      osd(NULL), ScaleX(1), ScaleY(1), OffsetX(0), OffsetY(0),
+      MessageFont(cFont::GetFont(fontSml)), MessageX(0), MessageY(0),
+      MessageW(0), MessageH(0)
+{
 }
 
 cDisplay::~cDisplay() {
