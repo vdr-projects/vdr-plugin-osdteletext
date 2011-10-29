@@ -102,8 +102,7 @@ cDisplay2BPP::cDisplay2BPP(int x0, int y0, int width, int height)
     
     tArea Areas[] = { { 0, 0, width - 1, height - 1, 2 } };
     if (osd->CanHandleAreas(Areas, sizeof(Areas) / sizeof(tArea)) != oeOk) {
-        delete osd;
-        osd=NULL;
+        DELETENULL(osd);
         return;
     }   
     osd->SetAreas(Areas, sizeof(Areas) / sizeof(tArea));
@@ -161,8 +160,7 @@ cDisplay4BPP::cDisplay4BPP(int x0, int y0, int width, int height)
 
     tArea Areas[] = { { 0, 0, width - 1, height - 1, 4 } };
     if (osd->CanHandleAreas(Areas, sizeof(Areas) / sizeof(tArea)) != oeOk) {
-        delete osd;
-        osd=NULL;
+        DELETENULL(osd);
         return;
     }   
     osd->SetAreas(Areas, sizeof(Areas) / sizeof(tArea));
@@ -206,8 +204,7 @@ void cDisplay4BPPHalf::InitOSD() {
         }
         if (Areas[0].y1>Areas[0].y2) {
             // Area is empty, fail miserably
-            delete osd;
-            osd=NULL;
+            DELETENULL(osd);
             return;
         }
     }

@@ -499,8 +499,7 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber)
    // live channel was changed
    // now re-attach the receiver to the new live channel
 
-   delete receiver;
-   receiver = NULL;
+   DELETENULL(receiver);
 
    int TPid = newLiveChannel->Tpid();
 
@@ -596,8 +595,7 @@ void cTxtReceiver::SaveAndDeleteTxtPage()
   if (TxtPage) {
      if (storeTopText || !TxtPage->IsTopTextPage()) {
         TxtPage->save();
-        delete TxtPage;
-        TxtPage=NULL;
+        DELETENULL(TxtPage);
      }
   }
 }

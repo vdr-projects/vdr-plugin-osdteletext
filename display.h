@@ -35,7 +35,7 @@ namespace Display {
     // Access to display mode:
     void SetMode(Display::Mode mode);
     inline void Delete()
-        { if (display) { delete display; display=NULL; } }
+        { if (display) { DELETENULL(display); } }
     
     void ShowUpperHalf();
     // Make sure the upper half of screen is visible
