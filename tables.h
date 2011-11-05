@@ -1,4 +1,4 @@
-/* This file is copied from Ralph Metzler's vbidecode package. */
+/* This file is copied from Ralph Metzler's vbidecode package. -*- c++ -*- */
 
 /* 
     tables.h - some data conversion tables for vbidecode

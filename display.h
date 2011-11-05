@@ -1,4 +1,4 @@
-/***************************************************************************
+/*************************************************************** -*- c++ -*-
  *                                                                         *
  *   display.h - Actual implementation of OSD display variants and         *
  *               Display:: namespace that encapsulates a single cDisplay.  *

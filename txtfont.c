@@ -1,3 +1,5 @@
+// -*- c++ -*-
+
 #include "txtfont.h"
 
 unsigned int TXT_Mask[11]= {
