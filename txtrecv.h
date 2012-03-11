@@ -176,7 +176,11 @@ private:
    bool storeTopText;
    Storage* storage;
 protected:
-   virtual void ChannelSwitch(const cDevice *Device, int ChannelNumber);
+   virtual void ChannelSwitch(const cDevice *Device, int ChannelNumber
+#if APIVERSNUM >= 10726
+                              , bool LiveView
+#endif
+                              );
 public:
    cTxtStatus(bool storeTopText, Storage* storage);
    ~cTxtStatus();

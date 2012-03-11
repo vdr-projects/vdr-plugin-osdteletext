@@ -483,9 +483,16 @@ cTxtStatus::~cTxtStatus()
     delete receiver;
 }
 
-void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber)
+void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber
+#if APIVERSNUM >= 10726
+                               , bool LiveView
+#endif
+                               )
 {
-#if VDRVERSNUM >= 10725
+#if APIVERSNUM < 10726
+   bool LiveView = Device->IsPrimaryDevice();
+#endif
+#if APIVERSNUM >= 10725
    // Disconnect receiver if channel is 0, will reconnect to new
    // receiver after channel change.
    if (ChannelNumber == 0 && Device->IsPrimaryDevice())
@@ -501,8 +508,7 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber)
    if (newLiveChannel == NULL) return;
 
    // ignore non-live-channel-switching
-   if (!Device->IsPrimaryDevice() ||
-      ChannelNumber != cDevice::CurrentChannel()) return;
+   if (!LiveView || ChannelNumber != cDevice::CurrentChannel()) return;
 
    // live channel was changed
    // now re-attach the receiver to the new live channel
