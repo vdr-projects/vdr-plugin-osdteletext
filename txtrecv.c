@@ -485,6 +485,13 @@ cTxtStatus::~cTxtStatus()
 
 void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber)
 {
+#if VDRVERSNUM >= 10725
+   // Disconnect receiver if channel is 0, will reconnect to new
+   // receiver after channel change.
+   if (ChannelNumber == 0 && Device->IsPrimaryDevice())
+      DELETENULL(receiver);
+#endif
+
    // ignore if channel is 0
    if (ChannelNumber == 0) return;
 
