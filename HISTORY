@@ -1,6 +1,13 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
 
+2012-03-25: version 0.9.2
+- Some code refactorings (Thx to Ville Skyttä)
+- FF card transfer mode on channel switch with VDR >= 1.7.25 (Closes: #9)
+  (Thx to Udo Richter)
+- VDR 1.7.26 compatibility (Thx to Ville Skyttä)
+- Better live view channel switch detection
+
 2011-08-20: version 0.9.1
 - Updated Italian translation provided by Diego Pierotto (Closes #450)
 - Added Slovak translation provided by Milan Hrala (Closes #558)
