@@ -1,6 +1,10 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
 
+2012-04-03: version 0.9.3
+  - VDR 1.7.27 compatibility (Closes #919), Credit goes to nox and gda fro
+    vdrportal.de
+
 2012-03-25: version 0.9.2
 - Some code refactorings (Thx to Ville Skyttä)
 - FF card transfer mode on channel switch with VDR >= 1.7.25 (Closes: #9)

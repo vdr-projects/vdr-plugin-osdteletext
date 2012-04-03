@@ -165,7 +165,7 @@ protected:
    virtual void Receive(uchar *Data, int Length);
    virtual void Action();
 public:
-   cTxtReceiver(int TPid, tChannelID chan, bool storeTopText, Storage* storage);
+   cTxtReceiver(const cChannel* chan, bool storeTopText, Storage* storage);
    virtual ~cTxtReceiver();
    virtual void Stop();
 };
