@@ -424,14 +424,14 @@ void cDisplay::DrawMessage(const char *txt) {
         if (fg==bg) bg=bm->Color(GetColorIndexAlternate(ttcBlack,Area));
         
         // Draw framed box
-        osd->DrawRectangle(x         ,y         ,x+w-1       ,y+border-1  ,fg);
-        osd->DrawRectangle(x         ,y+h-border,x+w-1       ,y+h-1       ,fg);
-        osd->DrawRectangle(x         ,y         ,x+border-1  ,y+h-1       ,fg);
-        osd->DrawRectangle(x+w-border,y         ,x+w-1       ,y+h-1       ,fg);
-        osd->DrawRectangle(x+border  ,y+border  ,x+w-border-1,y+h-border-1,bg);
+        bm->DrawRectangle(x         ,y         ,x+w-1       ,y+border-1  ,fg);
+        bm->DrawRectangle(x         ,y+h-border,x+w-1       ,y+h-1       ,fg);
+        bm->DrawRectangle(x         ,y         ,x+border-1  ,y+h-1       ,fg);
+        bm->DrawRectangle(x+w-border,y         ,x+w-1       ,y+h-1       ,fg);
+        bm->DrawRectangle(x+border  ,y+border  ,x+w-border-1,y+h-border-1,bg);
 
         // Draw text
-        osd->DrawText(x+2*border,y+2*border,txt, fg, bg, MessageFont);
+        bm->DrawText(x+2*border,y+2*border,txt, fg, bg, MessageFont);
 
         Area++;
     }

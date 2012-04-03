@@ -2,8 +2,10 @@ VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
 
 2012-04-03: version 0.9.3
-  - VDR 1.7.27 compatibility (Closes #919), Credit goes to nox and gda fro
-    vdrportal.de
+- VDR 1.7.27 compatibility (Closes #919), Credit goes to nox and gda fro
+  vdrportal.de
+- Instead of doing mixed drawing to cOsd and cBitmap only draw to cBitmap
+  (Closes #899, this should fixe the issues with the TT6400)
 
 2012-03-25: version 0.9.2
 - Some code refactorings (Thx to Ville Skyttä)
