@@ -1,6 +1,9 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
 
+2012-xx-xx: version x.x.x
+- Allow to override the CXXFLAGS
+
 2012-04-03: version 0.9.3
 - VDR 1.7.27 compatibility (Closes #919), Credit goes to nox and gda fro
   vdrportal.de
