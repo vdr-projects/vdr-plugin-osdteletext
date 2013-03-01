@@ -30,7 +30,7 @@ enum enumCharsets {
     CHARSET_LATIN_G0_IT       = 0x0600, // Italian
     CHARSET_LATIN_G0_LV_LT    = 0x0700, // Lettish/Lithuanian (todo)
     CHARSET_LATIN_G0_PL       = 0x0800, // Polish (todo)
-    CHARSET_LATIN_G0_PT_ES    = 0x0900, // Portugese/Spanish
+    CHARSET_LATIN_G0_PT_ES    = 0x0900, // Portuguese/Spanish
     CHARSET_LATIN_G0_RO       = 0x0A00, // Romanian (todo)
     CHARSET_LATIN_G0_SR_HR_SL = 0x0B00, // Serbian/Croatian/Slovenian (todo)
     CHARSET_LATIN_G0_SV_FI    = 0x0C00, // Swedish/Finnish
