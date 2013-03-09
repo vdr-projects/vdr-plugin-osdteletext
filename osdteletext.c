@@ -21,11 +21,11 @@ using namespace std;
 #include "txtrecv.h"
 #include "setup.h"
 
-#if defined(APIVERSNUM) && APIVERSNUM < 10600
-#error "VDR-1.6.0 API version or greater is required!"
+#if defined(APIVERSNUM) && APIVERSNUM < 10739
+#error "VDR-1.7.39 API version or greater is required!"
 #endif
 
-static const char *VERSION        = "0.9.3";
+static const char *VERSION        = "1.0.0";
 static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
 static const char *MAINMENUENTRY  = trNOOP("Teletext");
 

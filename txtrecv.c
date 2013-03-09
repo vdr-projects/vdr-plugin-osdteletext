@@ -483,21 +483,12 @@ cTxtStatus::~cTxtStatus()
     delete receiver;
 }
 
-void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber
-#if APIVERSNUM >= 10726
-                               , bool LiveView
-#endif
-                               )
+void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber, bool LiveView)
 {
-#if APIVERSNUM < 10726
-   bool LiveView = Device->IsPrimaryDevice();
-#endif
-#if APIVERSNUM >= 10725
    // Disconnect receiver if channel is 0, will reconnect to new
    // receiver after channel change.
    if (LiveView && ChannelNumber == 0)
       DELETENULL(receiver);
-#endif
 
    // ignore if channel is 0
    if (ChannelNumber == 0) return;
@@ -527,17 +518,11 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber
 
 
 cTxtReceiver::cTxtReceiver(const cChannel* chan, bool storeTopText, Storage* storage)
-#if APIVERSNUM >= 10712
  : cReceiver(chan, -1), cThread("osdteletext-receiver"),
-#else
- : cReceiver(chan, -1, chan->Tpid()), cThread("osdteletext-receiver"),
-#endif
    TxtPage(0), storeTopText(storeTopText), buffer((188+60)*75), storage(storage)
 {
-#if APIVERSNUM >= 10712
    SetPids(NULL);
    AddPid(chan->Tpid());
-#endif
    storage->prepareDirectory(ChannelID());
 
    // 10 ms timeout on getting TS frames
