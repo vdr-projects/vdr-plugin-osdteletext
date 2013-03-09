@@ -6,6 +6,7 @@ VDR Plugin 'osdteletext' Revision History
 - Fixed CZ font and added CZ-SK subset - patch provided Marek Hajduk
   (Closes #1134)
 - Dropped backwards compatibility for VDR 1.6.0 (Closes #944)
+- Using new standard plugin Makefile from VDR 1.7.39
 
 2012-04-03: version 0.9.3
 - VDR 1.7.27 compatibility (Closes #919), Credit goes to nox and gda fro
