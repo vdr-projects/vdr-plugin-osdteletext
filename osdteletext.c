@@ -20,6 +20,8 @@ using namespace std;
 #include "menu.h"
 #include "txtrecv.h"
 #include "setup.h"
+#include "legacystorage.h"
+#include "packedstorage.h"
 
 #if defined(APIVERSNUM) && APIVERSNUM < 10739
 #error "VDR-1.7.39 API version or greater is required!"
@@ -175,10 +177,16 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
 
 bool cPluginTeletextosd::Start(void)
 {
-  // Start any background activities the plugin shall perform.
-   //Clean any files which might be remaining from the last session, 
+   // Start any background activities the plugin shall perform.
+   //Clean any files which might be remaining from the last session,
    //perhaps due to a crash they have not been deleted.
-   storage = Storage::CreateInstance(storageSystem, maxStorage);
+   switch (storageSystem) {
+      case Storage::StorageSystemLegacy:
+         storage =  new LegacyStorage(maxStorage);
+      case Storage::StorageSystemPacked:
+      default:
+        storage = new PackedStorage(maxStorage);
+   }
 
    initTexts();
    if (startReceiver)
