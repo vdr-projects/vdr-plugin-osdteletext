@@ -10,8 +10,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
-"Report-Msgid-Bugs-To: http://projects.vdr-developer.org/projects/plg-osdteletext\n"
-"POT-Creation-Date: 2010-08-29 16:39+0300\n"
+"Report-Msgid-Bugs-To: <see README>\n"
+"POT-Creation-Date: 2013-03-10 17:21+0100\n"
 "PO-Revision-Date: 2010-11-06 19:59+0100\n"
 "Last-Translator: Diego Pierotto <vdr-italian@tiscali.it>\n"
 "Language-Team: Italian <vdr@linuxtv.org>\n"
@@ -82,4 +82,3 @@ msgstr "Tasti associati"
 
 msgid "  Page number"
 msgstr "  Numero pagina"
-

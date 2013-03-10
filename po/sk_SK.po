@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: osdteletext-0.9.0\n"
-"Report-Msgid-Bugs-To: http://projects.vdr-developer.org/projects/plg-osdteletext\n"
-"POT-Creation-Date: 2010-08-29 16:39+0300\n"
+"Report-Msgid-Bugs-To: <see README>\n"
+"POT-Creation-Date: 2013-03-10 17:21+0100\n"
 "PO-Revision-Date: 2011-02-15 21:11+0100\n"
 "Last-Translator: Milan Hrala <hrala.milan@gmail.com>\n"
 "Language-Team: Slovak <hrala.milan@gmail.com>\n"
@@ -75,4 +75,3 @@ msgstr "Klávesové skratky"
 
 msgid "  Page number"
 msgstr "  Číslo strany"
-
