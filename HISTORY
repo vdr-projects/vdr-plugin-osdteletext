@@ -1,7 +1,7 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
 
-2013-xx-xx: version 1.0.0
+2013-03-10: version 0.9.4
 - Allow to override the CXXFLAGS
 - Fixed CZ font and added CZ-SK subset - patch provided Marek Hajduk
   (Closes #1134)
