@@ -49,6 +49,7 @@ public:
   virtual const char *CommandLineHelp(void);
   virtual bool ProcessArgs(int argc, char *argv[]);
   virtual bool Start(void);
+  virtual void Stop(void);
   virtual void Housekeeping(void);
   virtual const char *MainMenuEntry(void);
   virtual cOsdObject *MainMenuAction(void);
@@ -195,6 +196,11 @@ bool cPluginTeletextosd::Start(void)
    if (ttSetup.OSDwidth<=100)   ttSetup.OSDwidth=Setup.OSDWidth;
   
    return true;
+}
+
+void cPluginTeletextosd::Stop(void)
+{
+   DELETENULL(txtStatus);
 }
 
 void cPluginTeletextosd::initTexts() {
