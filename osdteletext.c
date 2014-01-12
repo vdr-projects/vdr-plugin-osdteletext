@@ -114,12 +114,6 @@ cPluginTeletextosd::cPluginTeletextosd(void)
 cPluginTeletextosd::~cPluginTeletextosd()
 {
    // Clean up after yourself!
-   if (txtStatus)
-      delete txtStatus;
-   if(storage) {
-     storage->cleanUp();
-     delete storage;
-   }
 }
 
 const char *cPluginTeletextosd::CommandLineHelp(void)
@@ -201,6 +195,10 @@ bool cPluginTeletextosd::Start(void)
 void cPluginTeletextosd::Stop(void)
 {
    DELETENULL(txtStatus);
+   if (storage) {
+      storage->cleanUp();
+      DELETENULL(storage);
+   }
 }
 
 void cPluginTeletextosd::initTexts() {
