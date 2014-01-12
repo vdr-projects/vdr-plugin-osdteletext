@@ -183,7 +183,7 @@ cDisplay4BPPHalf::cDisplay4BPPHalf(int x0, int y0, int width, int height, bool u
 }
 
 void cDisplay4BPPHalf::InitOSD() {
-    if (osd) delete osd;
+    delete osd;
     osd = cOsdProvider::NewOsd(OsdX0, OsdY0);
     if (!osd) return;
    

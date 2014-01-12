@@ -29,8 +29,7 @@ cDisplay::cDisplay(int width, int height)
 }
 
 cDisplay::~cDisplay() {
-    if (osd) delete osd;
-    osd=NULL;   
+    DELETENULL(osd);
 }
 
 void cDisplay::InitScaler() {
