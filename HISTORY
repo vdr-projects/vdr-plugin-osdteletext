@@ -1,6 +1,11 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
 
+2015-02-13: version 0.9.5
+- Avoid pkg-config warnings
+- Improved cleanup when closing OSDTeletext
+  (Thx to Ville Skyttä and Rolf Ahrenberg)
+
 2013-03-10: version 0.9.4
 - Allow to override the CXXFLAGS
 - Fixed CZ font and added CZ-SK subset - patch provided Marek Hajduk

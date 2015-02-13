@@ -27,7 +27,7 @@ using namespace std;
 #error "VDR-1.7.39 API version or greater is required!"
 #endif
 
-static const char *VERSION        = "0.9.4";
+static const char *VERSION        = "0.9.5";
 static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
 static const char *MAINMENUENTRY  = trNOOP("Teletext");
 
