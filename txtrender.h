@@ -142,7 +142,7 @@ public:
     // For each parameter encoded into the 32-bit int, there is
     // a Get...() to read, a Set...() to write, and a To...() to
     // return a modified copy
-    
+    inline unsigned int GetC() { return c;};
     inline unsigned char GetChar() 
         { return c&CHAR; }
     inline void SetChar(unsigned char chr)

@@ -56,7 +56,11 @@ private:
    Storage *storage;
 protected:
    virtual void Activate(bool On);
+#if APIVERSNUM >= 20301
+   virtual void Receive(const uchar *Data, int Length);
+#else
    virtual void Receive(uchar *Data, int Length);
+#endif
    virtual void Action();
 public:
    cTxtReceiver(const cChannel* chan, bool storeTopText, Storage* storage);

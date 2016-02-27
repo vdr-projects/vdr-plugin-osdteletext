@@ -1642,7 +1642,7 @@ unsigned int TXT_Font[][11]= {
    0xFC00,  // ######****** ****
    0x0000,  // ************ ****
    0x0000,  // ************ ****
-   0x0000   // ************ ****
+   0x0000   // ************ ****11
   },
   { // 0xA7 = 0x27a
    0xFFF0,  // ############ ****
@@ -3106,7 +3106,7 @@ unsigned int TXT_Font[][11]= {
 };
    
 
-
+#if 0
 int NationalOptionSubsetG0Default[13]=
     {0x23,0x94,0x80,0   ,0   ,0   ,0x5e,0x5f,0   ,0   ,0   ,0   ,0   };
 
@@ -3136,7 +3136,37 @@ int NationalOptionSubsetSV_FI[13]=
     {0x23,0x94,0x90,0x5b,0x5c,0x9d,0x5d,0x5f,0x91,0x7b,0x7c,0x99,0x7d};
 int NationalOptionSubsetTR[13]=
     {0   ,0   ,0   ,0   ,0x5c,0xd7,0x5d,0   ,0   ,0   ,0x7c,0xcc,0x7d};
+#else
+int NationalOptionSubsetG0Default[13]=
+    {0x23,0xa4,0x40,0   ,0   ,0   ,0x5e,0x5f,0   ,0   ,0   ,0   ,0   };
 
+int NationalOptionSubsetCZ_SK[13]=
+    {0x23,0x84,0x85,0x95,0x93,0x92,0xed,0x87,0x91,0xeb,0x8f,0xef,0x86};
+int NationalOptionSubsetEN[13]=
+    {0x83,0x24,0x80,0x8b,0x8c,0x8d,0x8e,0x23,0x81,0x82,0x88,0x89,0x8a};
+int NationalOptionSubsetEE[13]=
+    {0x23,0xc6,0   ,0x5b,0x5c,0   ,0x5d,0xd6,0   ,0x7b,0x7c,0   ,0x7d};
+int NationalOptionSubsetFR[13]=
+    {0xd3,0xd4,0xd0,0xdb,0xdc,0xc1,0xde,0x23,0xd1,0xd2,0xd8,0xd9,0xcc};
+int NationalOptionSubsetDE[13]=
+    {0x23,0x24,0xa7,0xc4,0xd6,0xdc,0x5e,0x5f,0x60,0xe4,0xf6,0xfc,0xdf};
+int NationalOptionSubsetIT[13]=
+    {0x83,0x24,0xd3,0x60,0xcc,0x8d,0x8e,0x23,0xdd,0xc1,0xc8,0xc9,0xca};
+int NationalOptionSubsetLV_LT[13]=
+    {0x23,0x24,0   ,0   ,0   ,0   ,0   ,0   ,0   ,0   ,0   ,0   ,0   };
+int NationalOptionSubsetPL[13]=
+    {0x23,0   ,0   ,0   ,0   ,0   ,0   ,0xee,0   ,0   ,0   ,0   ,0   };
+int NationalOptionSubsetPT_ES[13]=
+    {0xcc,0x24,0xe0,0xeb,0xec,0xed,0xee,0xef,0xe1,0x7d,0xe8,0xc9,0xc2};
+int NationalOptionSubsetRO[13]=
+    {0x23,0x94,0   ,0   ,0   ,0   ,0   ,0   ,0   ,0xd2,0   ,0   ,0xde};
+int NationalOptionSubsetSR_HR_SL[13]=
+    {0x23,0   ,0   ,0   ,0   ,0xfb,0   ,0xdb,0   ,0   ,0   ,0   ,0   };
+int NationalOptionSubsetSV_FI[13]=
+    {0x23,0x94,0x90,0x5b,0x5c,0x9d,0x5d,0x5f,0x91,0x7b,0x7c,0x99,0x7d};
+int NationalOptionSubsetTR[13]=
+    {0   ,0   ,0   ,0   ,0x5c,0xd7,0x5d,0   ,0   ,0   ,0x7c,0xcc,0x7d};
+#endif
 
 
 inline int NationalOptionSubset(int chr) {
@@ -3191,7 +3221,7 @@ unsigned int* GetFontChar(cTeletextChar c, unsigned int *buffer) {
     unsigned int *bitmap=NULL;
     int i;
     int NationalOption=NationalOptionSubset(chr);
-    
+
     switch (font) {
     case CHARSET_LATIN_G0:
         if (NationalOption>=0) {
@@ -3211,7 +3241,7 @@ unsigned int* GetFontChar(cTeletextChar c, unsigned int *buffer) {
             if (chr>=0x20 && chr<0x80) {
                 bitmap=TXT_Font[chr-0x20];
             }
-        }           
+        }
         break;
     case CHARSET_LATIN_G0_FR:
         if (NationalOption>=0) {
@@ -3221,7 +3251,7 @@ unsigned int* GetFontChar(cTeletextChar c, unsigned int *buffer) {
             if (chr>=0x20 && chr<0x80) {
                 bitmap=TXT_Font[chr-0x20];
             }
-        }           
+        }
         break;
     case CHARSET_LATIN_G0_IT:
         if (NationalOption>=0) {
@@ -3231,7 +3261,7 @@ unsigned int* GetFontChar(cTeletextChar c, unsigned int *buffer) {
             if (chr>=0x20 && chr<0x80) {
                 bitmap=TXT_Font[chr-0x20];
             }
-        }           
+        }
         break;
     case CHARSET_LATIN_G0_PT_ES:
         if (NationalOption>=0) {
@@ -3241,7 +3271,7 @@ unsigned int* GetFontChar(cTeletextChar c, unsigned int *buffer) {
             if (chr>=0x20 && chr<0x80) {
                 bitmap=TXT_Font[chr-0x20];
             }
-        }           
+        }
         break;
     case CHARSET_LATIN_G0_SV_FI:
         if (NationalOption>=0) {
@@ -3251,7 +3281,7 @@ unsigned int* GetFontChar(cTeletextChar c, unsigned int *buffer) {
             if (chr>=0x20 && chr<0x80) {
                 bitmap=TXT_Font[chr-0x20];
             }
-        }           
+        }
         break;
     case CHARSET_LATIN_G0_DE:
         if (chr>=0x20 && chr<0x80) {
@@ -3280,7 +3310,7 @@ unsigned int* GetFontChar(cTeletextChar c, unsigned int *buffer) {
             bitmap=TXT_Font[chr-0x20];
         }
         break;
-        
+
     case CHARSET_LATIN_G2:
     case CHARSET_CYRILLIC_G0_SR_HR:
     case CHARSET_CYRILLIC_G0_RU_BG:
@@ -3293,7 +3323,7 @@ unsigned int* GetFontChar(cTeletextChar c, unsigned int *buffer) {
     case CHARSET_HEBREW_G0:
         // totally unsupported
         break;
-        
+
     case CHARSET_GRAPHICS_G1:
         if (chr>=0x20 && chr<0x40) {
             bitmap=TXT_Font[chr-0x20+0x80];
@@ -3312,20 +3342,18 @@ unsigned int* GetFontChar(cTeletextChar c, unsigned int *buffer) {
             bitmap=buffer;
         }
         break;
-        
+
     case CHARSET_GRAPHICS_G3:
     case CHARSET_INVALID:
         // Totally unsupported
         break;
     }
-    
-    
-    
+
     if (!buffer) {
         printf("Warning: Undefined char: %x %x\n",font,chr);
         return NULL;
     }
-    
+
     switch (c.GetDblHeight()) {
     case dblh_Top:
         // Scale top 5 lines to full height
@@ -3377,6 +3405,135 @@ unsigned int* GetFontChar(cTeletextChar c, unsigned int *buffer) {
         bitmap=buffer;
     default:;
     }
-    
-    return bitmap;      
+
+    return bitmap;
+}
+
+unsigned int GetVTXChar(cTeletextChar c) {
+    // convert  character for character/charset to utf8
+    int convertedChar = 0;
+    enumCharsets font=c.GetCharset();
+    int chr=c.GetChar();
+    int NationalOption=NationalOptionSubset(chr);
+
+    switch (font) {
+    case CHARSET_LATIN_G0:
+        if (NationalOption>=0) {
+            if (NationalOptionSubsetG0Default[NationalOption]>0)
+                convertedChar = NationalOptionSubsetG0Default[NationalOption];
+        } else {
+            if (chr>=0x20 && chr<0x80) {
+                convertedChar = chr;
+            }
+        }
+        break;
+    case CHARSET_LATIN_G0_EN:
+        if (NationalOption>=0) {
+            if (NationalOptionSubsetEN[NationalOption]>0)
+                convertedChar = NationalOptionSubsetEN[NationalOption];
+        } else {
+            if (chr>=0x20 && chr<0x80) {
+                convertedChar = chr;
+            }
+        }
+        break;
+    case CHARSET_LATIN_G0_FR:
+        if (NationalOption>=0) {
+            if (NationalOptionSubsetFR[NationalOption]>0)
+                convertedChar = NationalOptionSubsetFR[NationalOption];
+        } else {
+            if (chr>=0x20 && chr<0x80) {
+                convertedChar = chr;
+            }
+        }
+        break;
+    case CHARSET_LATIN_G0_IT:
+        if (NationalOption>=0) {
+            if (NationalOptionSubsetIT[NationalOption]>0)
+                convertedChar = NationalOptionSubsetIT[NationalOption];
+        } else {
+            if (chr>=0x20 && chr<0x80) {
+                convertedChar = chr;
+            }
+        }
+        break;
+    case CHARSET_LATIN_G0_PT_ES:
+        if (NationalOption>=0) {
+            if (NationalOptionSubsetPT_ES[NationalOption]>0)
+                convertedChar = NationalOptionSubsetPT_ES[NationalOption];
+        } else {
+            if (chr>=0x20 && chr<0x80) {
+                convertedChar = chr;
+            }
+        }
+        break;
+    case CHARSET_LATIN_G0_SV_FI:
+        if (NationalOption>=0) {
+            if (NationalOptionSubsetSV_FI[NationalOption]>0)
+                convertedChar = NationalOptionSubsetSV_FI[NationalOption];
+        } else {
+            if (chr>=0x20 && chr<0x80) {
+                convertedChar = chr;
+            }
+        }
+        break;
+    case CHARSET_LATIN_G0_DE:
+        if (NationalOption>=0) {
+            if (NationalOptionSubsetDE[NationalOption]>0)
+                convertedChar = NationalOptionSubsetDE[NationalOption];
+        } else {
+            if (chr>=0x20 && chr<0x80) {
+                convertedChar = chr;
+            }
+        }
+        break;
+    case CHARSET_LATIN_G0_CZ_SK:
+        if (NationalOption>=0) {
+            if (NationalOptionSubsetCZ_SK[NationalOption]>0)
+                convertedChar = NationalOptionSubsetCZ_SK[NationalOption];
+        } else {
+            if (chr>=0x20 && chr<0x80) {
+                convertedChar = chr;
+	    }
+        }
+        break;
+
+    case CHARSET_LATIN_G0_EE:
+    case CHARSET_LATIN_G0_LV_LT:
+    case CHARSET_LATIN_G0_PL:
+    case CHARSET_LATIN_G0_RO:
+    case CHARSET_LATIN_G0_SR_HR_SL:
+    case CHARSET_LATIN_G0_TR:
+        // Partially supported latin charsets
+        if (chr>=0x20 && chr<0x80 && NationalOption<0) {
+            convertedChar = chr;
+        }
+        break;
+
+    case CHARSET_LATIN_G2:
+    case CHARSET_CYRILLIC_G0_SR_HR:
+    case CHARSET_CYRILLIC_G0_RU_BG:
+    case CHARSET_CYRILLIC_G0_UK:
+    case CHARSET_CYRILLIC_G2:
+    case CHARSET_GREEK_G0:
+    case CHARSET_GREEK_G2:
+    case CHARSET_ARABIC_G0:
+    case CHARSET_ARABIC_G2:
+    case CHARSET_HEBREW_G0:
+        // totally unsupported
+        break;
+
+    case CHARSET_GRAPHICS_G1:
+        convertedChar = chr + 0xee00;
+        break;
+    case CHARSET_GRAPHICS_G1_SEP:
+        convertedChar = chr + 0xee00 - 0x20;
+        break;
+
+    case CHARSET_GRAPHICS_G3:
+    case CHARSET_INVALID:
+        // Totally unsupported
+        break;
+    }
+    return convertedChar;
 }

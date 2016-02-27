@@ -15,34 +15,79 @@
 
 #include <strings.h>
 #include <time.h>
+#include <vdr/tools.h>
 #include "displaybase.h"
 #include "txtfont.h"
+#include <iostream>
 
+std::string cDisplay::GFXFontFootprint = "";
+std::string cDisplay::TXTFontFootprint = "";
+int cDisplay::realFontWidths[8] = {0};
 
 cDisplay::cDisplay(int width, int height)
     : Zoom(Zoom_Off), Concealed(false), Blinked(false), FlushLock(0),
       Boxed(false), Width(width), Height(height), Background(clrGray50),
-      osd(NULL), ScaleX(1), ScaleY(1), OffsetX(0), OffsetY(0),
+      osd(NULL), outputWidth(0), outputScaleX(1.0),
+      outputHeight(0), outputScaleY(1.0),
+      ScaleX(1), ScaleY(1), OffsetX(0), OffsetY(0),
       MessageFont(cFont::GetFont(fontSml)), MessageX(0), MessageY(0),
-      MessageW(0), MessageH(0)
+      MessageW(0), MessageH(0),
+      GFXFont(0), GFXDblWFont(0), GFXDblHFont(0), GFXDblHWFont(0),
+      TXTFont(0), TXTDblWFont(0), TXTDblHFont(0), TXTDblHWFont(0)
 {
 }
 
 cDisplay::~cDisplay() {
     DELETENULL(osd);
+    DELETENULL(GFXFont);
+    DELETENULL(GFXDblWFont);
+    DELETENULL(GFXDblHFont);
+    DELETENULL(GFXDblHWFont);
+    DELETENULL(TXTFont);
+    DELETENULL(TXTDblWFont);
+    DELETENULL(TXTDblHFont);
+    DELETENULL(TXTDblHWFont);
+}
+
+// This is an ugly hack, any ideas on how to get font size with characters (glyphs) of specified width/height?
+cFont *cDisplay::GetFont(const char *name, int fontIndex, int height, int width) {
+    cFont *font = cFont::CreateFont(name, height, width);
+    if (font != NULL) {
+        int realWidth = font->Width(' ');
+        for (int i = width * width / realWidth; i < width * 4; i++) {
+            DELETENULL(font);
+            font = cFont::CreateFont(name, height, i);
+            if (font != NULL) {
+                realWidth = font->Width(' ');
+                if (realWidth > width) {
+                    DELETENULL(font);
+                    width = i - 1;
+                    font = cFont::CreateFont(name, height, width);
+                    realFontWidths[fontIndex] = width;
+                    break;
+                }
+            }
+        }
+    }
+    return font;
+}
+
+std::string cDisplay::GetFontFootprint(const char *name) {
+    return std::string(cString::sprintf("%s_%d_%d_%d", name, fontWidth, fontHeight, Zoom));
 }
 
 void cDisplay::InitScaler() {
     // Set up the scaling factors. Also do zoom mode by
     // scaling differently.
 
-    if (!osd) return;
-    
+    outputScaleX = (double)outputWidth/480.0;
+    outputScaleY = (double)outputHeight/250.0;
+
     int height=Height-6;
     int width=Width-6;
     OffsetX=3;
     OffsetY=3;
-    
+
     switch (Zoom) {
     case Zoom_Upper:
         height=height*2;
@@ -53,42 +98,61 @@ void cDisplay::InitScaler() {
         break;
     default:;
     }
-    
+
     ScaleX=(480<<16)/width;
     ScaleY=(250<<16)/height;
-}
 
-void cDisplay::InitPalette() {
-    cBitmap *bm;
-    if (!osd) return;
+    fontWidth = outputWidth * 2 / 40;
+    if (Zoom == Zoom_Off) {
+        fontHeight = outputHeight * 2 / 25;
+    } else {
+        fontHeight = outputHeight * 2 / 13;
+    }
 
-    int Area=0;
-    while ((bm=osd->GetBitmap(Area))) {
-        enumTeletextColor c;
-        
-        bm->Reset(); 
-        // reset palette
-        
-        for (c=ttcFirst;c<=ttcLast;c++) bm->Index(GetColorRGB(c,Area));
-        // Announce all palette colors in defined order
-        
-        int x1,y1,x2,y2;
-        if (!bm->Dirty(x1,y1,x2,y2)) {
-            // force bitmap dirty to update palette
-            bm->SetIndex(bm->X0(),bm->Y0(),*bm->Data(bm->X0(),bm->Y0()));
-            // otherwise palette change wont be displayed on flush
-        }
+    int gfxFontWidth = fontWidth;
+    int gfxFontHeight = fontHeight;
+    const char *gfxFontName = "teletext2:Medium";
+    std::string footprint = GetFontFootprint(gfxFontName);
 
-        Area++;
+    if (footprint.compare(GFXFontFootprint) == 0) {
+        GFXFont      = cFont::CreateFont(gfxFontName, gfxFontHeight / 2, realFontWidths[0]);
+        GFXDblWFont  = cFont::CreateFont(gfxFontName, gfxFontHeight / 2, realFontWidths[1]);
+        GFXDblHFont  = cFont::CreateFont(gfxFontName, gfxFontHeight , realFontWidths[2]);
+        GFXDblHWFont = cFont::CreateFont(gfxFontName, gfxFontHeight, realFontWidths[3]);
+    } else {
+        GFXFontFootprint = footprint;
+        GFXFont      = GetFont(gfxFontName, 0, gfxFontHeight / 2, gfxFontWidth / 2);
+        GFXDblWFont  = GetFont(gfxFontName, 1, gfxFontHeight / 2, gfxFontWidth);
+        GFXDblHFont  = GetFont(gfxFontName, 2, gfxFontHeight , gfxFontWidth / 2);
+        GFXDblHWFont = GetFont(gfxFontName, 3, gfxFontHeight, gfxFontWidth);
+    }
+
+
+    int txtFontWidth = fontWidth;
+    int txtFontHeight = fontHeight;
+    const char *txtFontName = ttSetup.txtFontName;
+    footprint = GetFontFootprint(txtFontName);
+
+    if (footprint.compare(TXTFontFootprint) == 0) {
+        TXTFont      = cFont::CreateFont(txtFontName, txtFontHeight / 2, realFontWidths[4]);
+        TXTDblWFont  = cFont::CreateFont(txtFontName, txtFontHeight / 2, realFontWidths[5]);
+        TXTDblHFont  = cFont::CreateFont(txtFontName, txtFontHeight, realFontWidths[6]);
+        TXTDblHWFont = cFont::CreateFont(txtFontName, txtFontHeight, realFontWidths[7]);
+    } else {
+        TXTFontFootprint = footprint;
+        TXTFont      = GetFont(txtFontName, 4, txtFontHeight / 2, txtFontWidth / 2);
+        TXTDblWFont  = GetFont(txtFontName, 5, txtFontHeight / 2, txtFontWidth);
+        TXTDblHFont  = GetFont(txtFontName, 6, txtFontHeight, txtFontWidth / 2);
+        TXTDblHWFont = GetFont(txtFontName, 7, txtFontHeight, txtFontWidth);
     }
 }
 
 bool cDisplay::SetBlink(bool blink) {
     int x,y;
     bool Change=false;
-    
+
     if (blink==Blinked) return false;
-    
+
     // touch all blinking chars
     for (y=0;y<25;y++) {
         for (x=0;x<40;x++) {
@@ -100,7 +164,7 @@ bool cDisplay::SetBlink(bool blink) {
     }
     Blinked=blink;
     if (Change) Dirty=true;
-    
+
     Flush();
 
     return Change;
@@ -109,9 +173,9 @@ bool cDisplay::SetBlink(bool blink) {
 bool cDisplay::SetConceal(bool conceal) {
     int x,y;
     bool Change=false;
-    
+
     if (conceal==Concealed) return false;
-    
+
     // touch all concealed chars
     for (y=0;y<25;y++) {
         for (x=0;x<40;x++) {
@@ -123,48 +187,39 @@ bool cDisplay::SetConceal(bool conceal) {
     }
     Concealed=conceal;
     if (Change) Dirty=true;
-    
+
     Flush();
-    
+
     return Change;
 }
 
 void cDisplay::SetZoom(enumZoom zoom) {
-    
+
     if (!osd) return;
     if (Zoom==zoom) return;
     Zoom=zoom;
 
-    // Re-initialize scaler to let zoom take effect 
+    // Re-initialize scaler to let zoom take effect
     InitScaler();
-    
+
     // Clear screen - mainly clear border
     CleanDisplay();
-     
+
     Flush();
 }
 
 void cDisplay::SetBackgroundColor(tColor c) {
     Background=c;
-    InitPalette();
     CleanDisplay();
     Flush();
 }
 
 void cDisplay::CleanDisplay() {
-    cBitmap *bm;
     enumTeletextColor bgc=(Boxed)?(ttcTransparent):(ttcBlack);
-    int Area=0;
-    while ((bm=osd->GetBitmap(Area))) {
-        // Draw rect in two steps to avoid zapping palette
-        bm->DrawRectangle(bm->X0(), bm->Y0()  , bm->X0()+bm->Width()-1, bm->Y0()               , bm->Color(GetColorIndex(bgc,Area)));
-        bm->DrawRectangle(bm->X0(), bm->Y0()+1, bm->X0()+bm->Width()-1, bm->Y0()+bm->Height()-1, bm->Color(GetColorIndex(bgc,Area)));
-        // Yes, this *is* stupid.
-        // Otherwise, ttcTransparent would shift into 0 index of palette,
-        // causing palette re-organization and flicker on page change
-        Area++; 
-    }
-    
+    if (!osd) return;
+
+    osd->DrawRectangle(0, 0, Width, Height, GetColorRGB(bgc,0));
+
     // repaint all
     Dirty=true;
     DirtyAll=true;
@@ -198,9 +253,9 @@ void cDisplay::RenderTeletextCode(unsigned char *PageCode) {
     HoldFlush();
 
     cRenderPage::ReadTeletextHeader(PageCode);
-        
+
     if (!Boxed && (Flags&0x60)!=0) {
-        Boxed=true;     
+        Boxed=true;
         CleanDisplay();
     } else if (Boxed && (Flags&0x60)==0) {
         Boxed=false;
@@ -217,7 +272,7 @@ void cDisplay::RenderTeletextCode(unsigned char *PageCode) {
 void cDisplay::DrawDisplay() {
     int x,y;
     int cnt=0;
-    
+
     if (!IsDirty()) return;
     // nothing to do
 
@@ -262,96 +317,94 @@ inline bool IsPureChar(unsigned int *bitmap) {
 }
 
 
-    
+
 void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
-    unsigned int buffer[10];
-    unsigned int *charmap;
-    cBitmap *bm;
-    
-    // Get character face:
-    charmap=GetFontChar(c,buffer);
-    if (!charmap) {
-        // invalid - clear buffer
-        bzero(&buffer,sizeof buffer);
-        charmap=buffer;
-    }
-    
     // Get colors
     enumTeletextColor ttfg=c.GetFGColor();
     enumTeletextColor ttbg=c.GetBGColor();
-    
+
     if (c.GetBoxedOut()) {
         ttbg=ttcTransparent;
-        ttfg=ttcTransparent;    
+        ttfg=ttcTransparent;
     }
-        
-    // Virtual box area of the character
-    cBox box;
-    box.SetToCharacter(x,y);
-    
-    // OSD top left pixel of char
-    cVirtualCoordinate TopLeft;
-    TopLeft.VirtualToPixel(this,box.XMin,box.YMin);
-    // This pixel overlaps the box, but may be almost outside.
-    
-    // Move in OSD pixel units until we are inside the box
-    while (TopLeft.VirtX<box.XMin) TopLeft.IncPixelX(this);
-    while (TopLeft.VirtY<box.YMin) TopLeft.IncPixelY(this);
 
-    // Move through all areas
-    int Area=0;
-    while ((bm=osd->GetBitmap(Area))) {
-        cVirtualCoordinate BMTopLeft=TopLeft;
-        
-        // Correct for bitmap offset
-        BMTopLeft.OsdX-=bm->X0();
-        BMTopLeft.OsdY-=bm->Y0();
-    
-        // Map color to local
-        int fg=GetColorIndex(ttfg,Area);
-        int bg=GetColorIndex(ttbg,Area);
-        if (ttfg!=ttbg && fg==bg && !IsPureChar(charmap)) {
-            // Color collision
-            bg=GetColorIndexAlternate(ttbg,Area);
-        }
-    
-        // Now draw the character. Start at the top left corner, and walk
-        // through all pixels on OSD. To speed up, keep one pointer to OSD pixel
-        // and one to virtual box coordinates, and move them together.
-        
-        cVirtualCoordinate p=BMTopLeft;
-        while (p.VirtY<=box.YMax) {
-            // run through OSD lines
-            
-            // OSD line in this bitmap?
-            if (0<=p.OsdY && p.OsdY<bm->Height()) {
-                // bits for this line
-                int bitline;
-                bitline=charmap[(p.VirtY-box.YMin)>>16];
-        
-                p.OsdX=BMTopLeft.OsdX;
-                p.VirtX=BMTopLeft.VirtX;
-                while (p.VirtX<=box.XMax) {
-                    // run through line pixels
-                    
-                    // pixel insied this bitmap?
-                    if (0<=p.OsdX && p.OsdX<bm->Width()) {
-                        // pixel offset in bitline:
-                        int bit=(p.VirtX-box.XMin)>>16;
-                        
-                        if (bitline&(0x8000>>bit)) {
-                            bm->SetIndex(p.OsdX,p.OsdY,fg);
-                        } else {
-                            bm->SetIndex(p.OsdX,p.OsdY,bg);
-                        }
-                    }
-                    p.IncPixelX(this);
-                }
-            }
-            p.IncPixelY(this);
-        }
-        Area++;
+    if (!osd) return;
+
+    tColor fg=GetColorRGB(ttfg, 0);
+    tColor bg=GetColorRGB(ttbg, 0);
+
+    char buf[5];
+    uint t = GetVTXChar(c);
+    int tl = Utf8CharSet(t, buf);
+    buf[tl] = 0;
+
+    const cFont *font;
+    int charset = c.GetCharset();
+    int fontType = 0;
+    int w = fontWidth / 2;
+    int h = fontHeight / 2;
+    if (c.GetDblWidth() != dblw_Normal) {
+        fontType |= 1;
+        w = fontWidth;
     }
+
+    if (c.GetDblHeight() != dblh_Normal) {
+        fontType |= 2;
+        h = fontHeight;
+    }
+
+    if (charset == CHARSET_GRAPHICS_G1 || charset == CHARSET_GRAPHICS_G1_SEP) {
+        switch(fontType) {
+            case 0:
+                font = GFXFont;
+                break;
+            case 1:
+                font = GFXDblWFont;
+                break;
+            case 2:
+                font = GFXDblHFont;
+                break;
+            case 3:
+                font = GFXDblHWFont;
+                break;
+        }
+    } else {
+        switch(fontType) {
+            case 0:
+                font = TXTFont;
+                break;
+            case 1:
+                font = TXTDblWFont;
+                break;
+            case 2:
+                font = TXTDblHFont;
+                break;
+            case 3:
+                font = TXTDblHWFont;
+                break;
+        }
+    }
+
+    if (Zoom == Zoom_Lower) {
+        y -=11;
+    }
+
+    int vx = x * fontWidth / 2;
+    int vy = y * fontHeight / 2;
+
+    bool drawChar = true;
+    if (c.GetDblWidth() == dblw_Right) {
+        drawChar = false;
+    }
+    if (c.GetDblHeight() == dblh_Bottom) {
+        drawChar = false;
+    }
+
+    if (drawChar) {
+        osd->DrawRectangle(vx, vy, vx + w - 1, vy + h - 1, bg);
+        osd->DrawText(vx, vy, buf, fg, bg, font);
+    }
+
 }
 
 void cDisplay::DrawText(int x, int y, const char *text, int len) {
@@ -370,7 +423,7 @@ void cDisplay::DrawText(int x, int y, const char *text, int len) {
         x++;
         len--;
     }
-    
+
     // Fill remaining chars with spaces
     c.SetChar(' ');
     while (len>0) {
@@ -386,7 +439,7 @@ void cDisplay::DrawClock() {
     char text[9];
     time_t t=time(0);
     struct tm loct;
-    
+
     localtime_r(&t, &loct);
     sprintf(text, "%02d:%02d:%02d", loct.tm_hour, loct.tm_min, loct.tm_sec);
 
@@ -395,45 +448,38 @@ void cDisplay::DrawClock() {
 
 void cDisplay::DrawMessage(const char *txt) {
     const int border=5;
-    cBitmap *bm;
-    
+
     if (!osd) return;
-    
+
     HoldFlush();
     // Hold flush until done
-    
+
     ClearMessage();
     // Make sure old message is gone
-    
+
     if (IsDirty()) DrawDisplay();
     // Make sure all characters are out, so we can draw on top
-    
+
     int w=MessageFont->Width(txt)+4*border;
     int h=MessageFont->Height(txt)+4*border;
-    int x=(Width-w)/2;
-    int y=(Height-h)/2;
+    int x=(outputWidth-w)/2;
+    int y=(outputHeight-h)/2;
 
-    int Area=0;
-    while ((bm=osd->GetBitmap(Area))) {
-        // Walk through all OSD areas
+    // Get local color mapping
+    tColor fg=GetColorRGB(ttcWhite,0);
+    tColor bg=GetColorRGB(ttcBlack,0);
+    if (fg==bg) bg=GetColorRGBAlternate(ttcBlack,0);
 
-        // Get local color mapping      
-        tColor fg=bm->Color(GetColorIndex(ttcWhite,Area));
-        tColor bg=bm->Color(GetColorIndex(ttcBlack,Area));
-        if (fg==bg) bg=bm->Color(GetColorIndexAlternate(ttcBlack,Area));
-        
-        // Draw framed box
-        bm->DrawRectangle(x         ,y         ,x+w-1       ,y+border-1  ,fg);
-        bm->DrawRectangle(x         ,y+h-border,x+w-1       ,y+h-1       ,fg);
-        bm->DrawRectangle(x         ,y         ,x+border-1  ,y+h-1       ,fg);
-        bm->DrawRectangle(x+w-border,y         ,x+w-1       ,y+h-1       ,fg);
-        bm->DrawRectangle(x+border  ,y+border  ,x+w-border-1,y+h-border-1,bg);
+    // Draw framed box
+    osd->DrawRectangle(x         ,y         ,x+w-1       ,y+border-1  ,fg);
+    osd->DrawRectangle(x         ,y+h-border,x+w-1       ,y+h-1       ,fg);
+    osd->DrawRectangle(x         ,y         ,x+border-1  ,y+h-1       ,fg);
+    osd->DrawRectangle(x+w-border,y         ,x+w-1       ,y+h-1       ,fg);
+    osd->DrawRectangle(x+border  ,y+border  ,x+w-border-1,y+h-border-1,bg);
 
-        // Draw text
-        bm->DrawText(x+2*border,y+2*border,txt, fg, bg, MessageFont);
+    // Draw text
+    osd->DrawText(x+2*border,y+2*border,txt, fg, bg, MessageFont);
 
-        Area++;
-    }
 
     // Remember box
     MessageW=w;
@@ -448,29 +494,27 @@ void cDisplay::DrawMessage(const char *txt) {
 void cDisplay::ClearMessage() {
     if (!osd) return;
     if (MessageW==0 || MessageH==0) return;
-    
+
     // map OSD pixel to virtual coordinate, use center of pixel
     int x0=(MessageX-OffsetX)*ScaleX+ScaleX/2;
     int y0=(MessageY-OffsetY)*ScaleY+ScaleY/2;
     int x1=(MessageX+MessageW-1-OffsetX)*ScaleX+ScaleX/2;
     int y1=(MessageY+MessageH-1-OffsetY)*ScaleY+ScaleY/2;
-    
+
     // map to character
     x0=x0/(12<<16);
     y0=y0/(10<<16);
     x1=(x1+(12<<16)-1)/(12<<16);
     y1=(y1+(10<<16)-1)/(10<<16);
-    
+
     for (int x=x0;x<=x1;x++) {
         for (int y=y0;y<=y1;y++) {
             MakeDirty(x,y);
         }
     }
-    
+
     MessageW=0;
     MessageH=0;
-    
+
     Flush();
 }
-
-

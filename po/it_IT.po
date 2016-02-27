@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2013-03-10 17:21+0100\n"
+"POT-Creation-Date: 2016-02-17 21:25+0100\n"
 "PO-Revision-Date: 2010-11-06 19:59+0100\n"
 "Last-Translator: Diego Pierotto <vdr-italian@tiscali.it>\n"
 "Language-Team: Italian <vdr@linuxtv.org>\n"
@@ -76,6 +76,9 @@ msgstr "Allineamento verticale OSD"
 
 msgid "Hide mainmenu entry"
 msgstr "Nascondi voce menu principale"
+
+msgid "Text Font"
+msgstr ""
 
 msgid "Key bindings"
 msgstr "Tasti associati"

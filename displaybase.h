@@ -17,14 +17,16 @@
 #define OSDTELETEXT_DISPLAYBASE_H_
 
 #include "txtrender.h"
+#include "setup.h"
 #include <vdr/osd.h>
+#include <string>
 
 class cDisplay : public cRenderPage {
     // Class that extends the virtual cRenderPage with the capability
     // to render its contents to an OSD of variable size.
     // Renders incrementally - just changes
     // plus adds some more display features like message display.
-    
+
 public:
     enum enumZoom {
         // Zoom up upper/lower half of page
@@ -36,34 +38,54 @@ public:
 protected:
     bool Concealed;
     // Hidden text internal state
-    
+
     bool Blinked;
     // Blinking text internal state
-    
+
     int FlushLock;
     // Lock counter for bundeling OSD flushes
-    
+
     bool Boxed;
     // Page is 'boxed mode' transparent
-    
+
     int Width;
     int Height;
     // OSD pixel dimension
-    
+
     tColor Background;
     // Color to be used for black background
     // - allow transparency
 
     cOsd *osd;
     // The osd object. If creation fails, may be NULL
-    
+
+    int outputWidth;
+    double outputScaleX;
+    int outputHeight;
+    double outputScaleY;
+    // for 32bpp true color, If creation fails, may be NULL
+
     int ScaleX,ScaleY;
     int OffsetX,OffsetY;
     // Virtual coordinate system, see InitScaler
-    
+
     const cFont *MessageFont;
     int MessageX,MessageY,MessageW,MessageH;
     // Message overlay window, position and font
+
+    const cFont *GFXFont;
+    const cFont *GFXDblWFont;
+    const cFont *GFXDblHFont;
+    const cFont *GFXDblHWFont;
+    const cFont *TXTFont;
+    const cFont *TXTDblWFont;
+    const cFont *TXTDblHFont;
+    const cFont *TXTDblHWFont;
+    int fontHeight;
+    int fontWidth;
+
+    static int realFontWidths[8];
+
 
     class cBox {
         // helper class. Represents a character's box in virtual coordinates
@@ -72,7 +94,7 @@ protected:
         inline void SetToCharacter(int x, int y);
     };
     friend class cBox;
-    
+
     class cVirtualCoordinate {
         // helper class. Represents a coordinate in virtual display space
         // and in OSD pixel coordinates.
@@ -84,26 +106,32 @@ protected:
         inline void IncPixelY(cDisplay *Display);
     };
     friend class cVirtualCoordinate;
-    
+
 public:
     cDisplay(int width, int height);
     virtual ~cDisplay();
     bool Valid() { return (osd!=NULL); }
     // After creation, check for Valid(). Destroy, if not valid.
-        
-protected:  
+
+    void setOutputWidth(int w) { outputWidth = w; };
+    void setOutputHeight(int h) { outputHeight = h; };
+
+    static std::string GFXFontFootprint;
+    static std::string TXTFontFootprint;
+
+protected:
     void InitScaler();
     // Initialize transformation for OSD->Virtual coordinates
     // Some words about scaling:
-    
+
     // OSD display is variable width x height, with 3 pixels border
     // on all sides. There is a virtual coordinate system projected
-    // on this, with (3,3) mapped to (0,0) and (width-3,height-3) 
+    // on this, with (3,3) mapped to (0,0) and (width-3,height-3)
     // mapped to (480<<16,250<<16).
     // The idea is, that each font pixel uses a virtual rectangle
     // of (1<<16,1<<16) size.
-    
-    // ScaleX,ScaleY represent the (virtual) width and height of a 
+
+    // ScaleX,ScaleY represent the (virtual) width and height of a
     // physical OSD pixel.
     // OffsetX,OffsetY default to 3,3 to represent the border offset,
     // but may be used differently.
@@ -113,12 +141,12 @@ public:
     bool SetBlink(bool blink);
     // Switch blink frequently to get blinking chars
     // Returns true if there are blinking characters.
-    
+
     bool GetConceal() { return Concealed; }
     bool SetConceal(bool conceal);
     // Hidden text. Set to true to see hidden text.
     // Returns true if there are concealed characters.
-    
+
     enumZoom GetZoom() { return Zoom; }
     void SetZoom(enumZoom zoom);
     // Zoom to upper/lower half of page
@@ -136,45 +164,25 @@ public:
     // Map this teletext color to an OSD color in #Area, but dont
     // return same as GetColorRGB(). Used to solve conflicts if
     // foreground and background are mapped to same color.
-    // Defaults to 1:1 identity. Not needed if all colors actually 
+    // Defaults to 1:1 identity. Not needed if all colors actually
     // supported by OSD.
 
-    int GetColorIndex(enumTeletextColor ttc, int Area) {
-        // Map this teletext color to an OSD color index in #Area.
-        if (!osd) return 0;
-        cBitmap *bm=osd->GetBitmap(Area);
-        if (!bm) return 0;
-        return bm->Index(GetColorRGB(ttc,Area));
-    }
-        
-    int GetColorIndexAlternate(enumTeletextColor ttc, int Area) {
-        // Map this teletext color to an OSD color index in #Area.
-        if (!osd) return 0;
-        cBitmap *bm=osd->GetBitmap(Area);
-        if (!bm) return 0;
-        return bm->Index(GetColorRGBAlternate(ttc,Area));
-    }
-
-        
-    
 protected:
-    void InitPalette();
-    // Initialize palette(s) for OSD
 
     void DrawDisplay();
     // Draw all dirty characters from cRenderPage buffer to OSD
-    
+
     void CleanDisplay();
     // Clean OSD completely
-    
+
     virtual void DrawChar(int x, int y, cTeletextChar c);
     // Draw a single character to OSD
-    
+
 
 public:
     void HoldFlush() { FlushLock++; }
     // Hold all OSD flush updates to bundle operations.
-    
+
     void ReleaseFlush() { FlushLock--; Flush(); }
     // Release hold of flush updates. After last release,
     // the flush will be done
@@ -184,14 +192,13 @@ protected:
         // Commit all changes from OSD internal bitmaps to device
         // All draw operations inside cDisplay should call it,
         // no one outside should need to call it.
-        
         if (FlushLock>0) return;
         if (!osd) return;
         if (IsDirty()) DrawDisplay();
         osd->Flush();
     }
 
-public: 
+public:
     void RenderTeletextCode(unsigned char *PageCode);
     // Interprete teletext code referenced by PageCode
     // and draw the whole page content into OSD.
@@ -200,19 +207,24 @@ public:
     void DrawText(int x, int y, const char *text, int len);
     // Draw some characters in teletext page.
     // Max len chars, fill up with spaces
-    
+
     void DrawClock();
     // Draw current time to OSD
-    
-    void DrawPageId(const char *text)   
+
+    void DrawPageId(const char *text)
         { DrawText(0,0,text,8); }
-    // Draw Page ID string to OSD   
-        
+    // Draw Page ID string to OSD
+
     void DrawMessage(const char *txt);
     // Draw a framed, centered message box to OSD
-    
+
     void ClearMessage();
     // Remove message box and redraw hidden content
+
+
+private:
+    cFont *GetFont(const char *name, int index, int height, int width);
+    std::string GetFontFootprint(const char *name);
 };
 
 
@@ -226,10 +238,10 @@ inline void cDisplay::cBox::SetToCharacter(int x, int y) {
 }
 
 inline void cDisplay::cVirtualCoordinate::VirtualToPixel(cDisplay *Display, int x, int y) {
-    // Map virtual coordinate to OSD pixel  
+    // Map virtual coordinate to OSD pixel
     OsdX=x/Display->ScaleX+Display->OffsetX;
     OsdY=y/Display->ScaleY+Display->OffsetY;
-    
+
     // map OSD pixel back to virtual coordinate, use center of pixel
     VirtX=(OsdX-Display->OffsetX)*Display->ScaleX+Display->ScaleX/2;
     VirtY=(OsdY-Display->OffsetY)*Display->ScaleY+Display->ScaleY/2;

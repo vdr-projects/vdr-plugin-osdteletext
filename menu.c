@@ -73,11 +73,21 @@ void TeletextBrowser::Show(void) {
 }
 
 bool TeletextBrowser::CheckIsValidChannel(int number) {
-   return (Channels.GetByNumber(number) != 0);
+#if APIVERSNUM >= 20301
+    LOCK_CHANNELS_READ;
+    return (Channels->GetByNumber(number) != 0);
+#else
+    return (Channels.GetByNumber(number) != 0);
+#endif
 }
 
 void TeletextBrowser::ChannelSwitched(int ChannelNumber) {
+#if APIVERSNUM >= 20301
+   LOCK_CHANNELS_READ;
+   const cChannel *chan=Channels->GetByNumber(ChannelNumber);
+#else
    cChannel *chan=Channels.GetByNumber(ChannelNumber);
+#endif
    
    if (!chan)
       return;
@@ -643,7 +653,8 @@ TeletextSetup::TeletextSetup()
     //because there is no advantage, but a possible problem when VDR's value is change
     //after the plugin has stored its own value.
     inactivityTimeout(Setup.MinUserInactivity),
-    HideMainMenu(false)
+    HideMainMenu(false),
+    txtFontName("teletext2:Medium")
 {
    //init key bindings
    for (int i=0;i<10;i++)
@@ -652,4 +663,3 @@ TeletextSetup::TeletextSetup()
    mapKeyToAction[2]=HalfPage;   
    mapKeyToAction[0]=SwitchChannel;
 }
-

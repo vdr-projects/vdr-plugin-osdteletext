@@ -46,6 +46,9 @@ public:
    int OSDVAlign;
    int inactivityTimeout;
    int HideMainMenu;
+   cString txtFontName;
+   cStringList txtFontNames;
+   int txtFontIndex;
 };
 
 extern TeletextSetup ttSetup;

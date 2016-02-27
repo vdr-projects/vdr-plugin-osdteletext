@@ -14,6 +14,7 @@
 #include <vdr/config.h>
 
 #include <getopt.h>
+#include <iostream>
 
 using namespace std;
 
@@ -272,6 +273,7 @@ bool cPluginTeletextosd::SetupParse(const char *Name, const char *Value)
   else if (!strcasecmp(Name, "OSDVAlign")) ttSetup.OSDVAlign=atoi(Value);
   else if (!strcasecmp(Name, "inactivityTimeout")) /*ttSetup.inactivityTimeout=atoi(Value)*/;
   else if (!strcasecmp(Name, "HideMainMenu")) ttSetup.HideMainMenu=atoi(Value);
+  else if (!strcasecmp(Name, "txtFontName")) ttSetup.txtFontName=strdup(Value);
   else {
      for (int i=0;i<LastActionKey;i++) {
         if (!strcasecmp(Name, cTeletextSetupPage::actionKeyNames[i].internalName)) {
@@ -313,7 +315,9 @@ void cTeletextSetupPage::Store(void) {
    ttSetup.OSDHAlign=temp.OSDHAlign;
    ttSetup.OSDVAlign=temp.OSDVAlign;
    ttSetup.HideMainMenu=temp.HideMainMenu;
+   ttSetup.txtFontName=temp.txtFontNames[temp.txtFontIndex];
    //ttSetup.inactivityTimeout=temp.inactivityTimeout;
+   std::cout << "store " << (const char *)temp.txtFontName << " " << temp.txtFontIndex << std::endl;
    
    for (int i=0;i<LastActionKey;i++) {
       SetupStore(actionKeyNames[i].internalName, ttSetup.mapKeyToAction[i]);
@@ -328,6 +332,7 @@ void cTeletextSetupPage::Store(void) {
    SetupStore("OSDHAlign", ttSetup.OSDHAlign);
    SetupStore("OSDVAlign", ttSetup.OSDVAlign);
    SetupStore("HideMainMenu", ttSetup.HideMainMenu);
+   SetupStore("txtFontName", ttSetup.txtFontName);
    //SetupStore("inactivityTimeout", ttSetup.inactivityTimeout);
 }
 
@@ -355,7 +360,15 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    temp.OSDHAlign=ttSetup.OSDHAlign;
    temp.OSDVAlign=ttSetup.OSDVAlign;
    temp.HideMainMenu=ttSetup.HideMainMenu;
+   temp.txtFontName=ttSetup.txtFontName;
    //temp.inactivityTimeout=ttSetup.inactivityTimeout;
+
+   cFont::GetAvailableFontNames(&temp.txtFontNames, true);
+   temp.txtFontIndex = temp.txtFontNames.Find(ttSetup.txtFontName);
+   if (temp.txtFontIndex < 0) {
+       temp.txtFontIndex = 0;
+   }
+
 
    Add(new cMenuEditIntItem(tr("Background transparency"), &tempConfiguredClrBackground, 0, 255)); 
    
@@ -371,6 +384,7 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    Add(new cMenuEditIntItem(tr("OSD horizontal align"), &temp.OSDHAlign, 0, 100));
    Add(new cMenuEditIntItem(tr("OSD vertical align"), &temp.OSDVAlign, 0, 100));
    Add(new cMenuEditBoolItem(tr("Hide mainmenu entry"), &temp.HideMainMenu));
+   Add(new cMenuEditStraItem(tr("Text Font"), &temp.txtFontIndex, temp.txtFontNames.Size(), &temp.txtFontNames[0]));
    
    //Using same string as VDR's setup menu
    //Add(new cMenuEditIntItem(tr("Setup.Miscellaneous$Min. user inactivity (min)"), &temp.inactivityTimeout));

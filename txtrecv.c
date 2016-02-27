@@ -86,7 +86,12 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber, bool Li
 
    // ignore if channel is invalid (highly unlikely, this will ever
    // be the case, but defensive coding rules!)
-   cChannel* newLiveChannel = Channels.GetByNumber(ChannelNumber);
+#if APIVERSNUM >= 20301
+   LOCK_CHANNELS_READ;
+   const cChannel* newLiveChannel = Channels->GetByNumber(ChannelNumber);
+#else
+   const cChannel* newLiveChannel = Channels.GetByNumber(ChannelNumber);
+#endif
    if (newLiveChannel == NULL) return;
 
    // ignore non-live-channel-switching
@@ -147,7 +152,11 @@ void cTxtReceiver::Activate(bool On)
      }
 }
 
+#if APIVERSNUM >= 20301
+void cTxtReceiver::Receive(const uchar *Data, int Length)
+#else
 void cTxtReceiver::Receive(uchar *Data, int Length)
+#endif
 {
    cFrame *frame=new cFrame(Data, Length);
    if (!buffer.Put(frame)) {
@@ -289,5 +298,3 @@ void cTxtReceiver::DecodeTXT(uchar* TXT_buf)
       break;
    }
 }
-
-
