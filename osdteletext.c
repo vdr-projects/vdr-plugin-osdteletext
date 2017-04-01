@@ -317,8 +317,7 @@ void cTeletextSetupPage::Store(void) {
    ttSetup.HideMainMenu=temp.HideMainMenu;
    ttSetup.txtFontName=temp.txtFontNames[temp.txtFontIndex];
    //ttSetup.inactivityTimeout=temp.inactivityTimeout;
-   std::cout << "store " << (const char *)temp.txtFontName << " " << temp.txtFontIndex << std::endl;
-   
+
    for (int i=0;i<LastActionKey;i++) {
       SetupStore(actionKeyNames[i].internalName, ttSetup.mapKeyToAction[i]);
    }

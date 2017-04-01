@@ -386,7 +386,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
     }
 
     if (Zoom == Zoom_Lower) {
-        y -=11;
+        y -= 11;
     }
 
     int vx = x * fontWidth / 2;

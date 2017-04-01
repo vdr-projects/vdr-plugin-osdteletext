@@ -3163,7 +3163,7 @@ int NationalOptionSubsetRO[13]=
 int NationalOptionSubsetSR_HR_SL[13]=
     {0x23,0   ,0   ,0   ,0   ,0xfb,0   ,0xdb,0   ,0   ,0   ,0   ,0   };
 int NationalOptionSubsetSV_FI[13]=
-    {0x23,0x94,0x90,0x5b,0x5c,0x9d,0x5d,0x5f,0x91,0x7b,0x7c,0x99,0x7d};
+    {0x23,0xa4,0xc9,0xc4,0xd6,0xc5,0xdc,0x5f,0xe9,0xe4,0xf6,0xe5,0xfc};
 int NationalOptionSubsetTR[13]=
     {0   ,0   ,0   ,0   ,0x5c,0xd7,0x5d,0   ,0   ,0   ,0x7c,0xcc,0x7d};
 #endif
@@ -3185,8 +3185,8 @@ inline int NationalOptionSubset(int chr) {
         case 0x7d: return 11;
         case 0x7e: return 12;
     }
-    return -1;      
-}   
+    return -1;
+}
 
 inline unsigned int LeftBits(unsigned int bits) {
     // Scale bit positions 0xfc00 to 0xfff0 positions
@@ -3412,9 +3412,9 @@ unsigned int* GetFontChar(cTeletextChar c, unsigned int *buffer) {
 unsigned int GetVTXChar(cTeletextChar c) {
     // convert  character for character/charset to utf8
     int convertedChar = 0;
-    enumCharsets font=c.GetCharset();
-    int chr=c.GetChar();
-    int NationalOption=NationalOptionSubset(chr);
+    enumCharsets font = c.GetCharset();
+    int chr = c.GetChar();
+    int NationalOption = NationalOptionSubset(chr);
 
     switch (font) {
     case CHARSET_LATIN_G0:
