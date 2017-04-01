@@ -401,7 +401,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
     }
 
     if (drawChar) {
-        osd->DrawRectangle(vx, vy, vx + w - 1, vy + h - 1, bg);
+        osd->DrawRectangle(vx, vy, vx + w, vy + h, bg);
         osd->DrawText(vx, vy, buf, fg, bg, font);
     }
 
