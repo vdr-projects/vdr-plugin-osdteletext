@@ -73,7 +73,7 @@ void TeletextBrowser::Show(void) {
 }
 
 bool TeletextBrowser::CheckIsValidChannel(int number) {
-#if APIVERSNUM >= 20301
+#if defined(APIVERSNUM) && APIVERSNUM >= 20301
     LOCK_CHANNELS_READ;
     return (Channels->GetByNumber(number) != 0);
 #else
@@ -82,7 +82,7 @@ bool TeletextBrowser::CheckIsValidChannel(int number) {
 }
 
 void TeletextBrowser::ChannelSwitched(int ChannelNumber) {
-#if APIVERSNUM >= 20301
+#if defined(APIVERSNUM) && APIVERSNUM >= 20301
    LOCK_CHANNELS_READ;
    const cChannel *chan=Channels->GetByNumber(ChannelNumber);
 #else

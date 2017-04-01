@@ -100,7 +100,7 @@ cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height)
     setOutputWidth(width);
     setOutputHeight(Height);
 
-#if APIVERSNUM >= 20107
+#if defined(APIVERSNUM) && APIVERSNUM >= 20107
     Width = 480;
     Height = 250;
 #endif
@@ -161,7 +161,7 @@ void cDisplay32BPPHalf::InitOSD() {
     setOutputWidth(width);
     setOutputHeight(Height);
 
-#if APIVERSNUM >= 20107
+#if defined(APIVERSNUM) && APIVERSNUM >= 20107
     Width = 480;
     Height = 250;
 #endif
