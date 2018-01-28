@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2016-02-17 21:25+0100\n"
+"POT-Creation-Date: 2018-01-31 22:27+0200\n"
 "PO-Revision-Date: 2009-01-10 19:32+0100\n"
 "Last-Translator: Nival Michaël\n"
 "Language-Team: French <vdr@linuxtv.org>\n"
@@ -49,6 +49,33 @@ msgstr "Change le fond d'écran"
 msgid "Jump to..."
 msgstr "Aller à..."
 
+msgid "Latin 1"
+msgstr ""
+
+msgid "Latin 2"
+msgstr ""
+
+msgid "Latin 3"
+msgstr ""
+
+msgid "Latin 4"
+msgstr ""
+
+msgid "Cyrillic"
+msgstr ""
+
+msgid "Reserved"
+msgstr ""
+
+msgid "Greek"
+msgstr ""
+
+msgid "Arabic"
+msgstr ""
+
+msgid "Hebrew"
+msgstr ""
+
 msgid "Background transparency"
 msgstr "Fond transparent"
 
@@ -74,6 +101,12 @@ msgid "Hide mainmenu entry"
 msgstr ""
 
 msgid "Text Font"
+msgstr ""
+
+msgid "G0 code block"
+msgstr ""
+
+msgid "G2 code block"
 msgstr ""
 
 msgid "Key bindings"

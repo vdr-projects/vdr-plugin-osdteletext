@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: osdteletext-0.9.0\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2016-02-17 21:25+0100\n"
+"POT-Creation-Date: 2018-01-31 22:27+0200\n"
 "PO-Revision-Date: 2011-02-15 21:11+0100\n"
 "Last-Translator: Milan Hrala <hrala.milan@gmail.com>\n"
 "Language-Team: Slovak <hrala.milan@gmail.com>\n"
@@ -46,6 +46,33 @@ msgstr "Prepnúť na pozadí"
 msgid "Jump to..."
 msgstr "Skoč na..."
 
+msgid "Latin 1"
+msgstr ""
+
+msgid "Latin 2"
+msgstr ""
+
+msgid "Latin 3"
+msgstr ""
+
+msgid "Latin 4"
+msgstr ""
+
+msgid "Cyrillic"
+msgstr ""
+
+msgid "Reserved"
+msgstr ""
+
+msgid "Greek"
+msgstr ""
+
+msgid "Arabic"
+msgstr ""
+
+msgid "Hebrew"
+msgstr ""
+
 msgid "Background transparency"
 msgstr "Priesvitnosť pozadia"
 
@@ -71,6 +98,12 @@ msgid "Hide mainmenu entry"
 msgstr "Schovať položku v hlavnom menu"
 
 msgid "Text Font"
+msgstr ""
+
+msgid "G0 code block"
+msgstr ""
+
+msgid "G2 code block"
 msgstr ""
 
 msgid "Key bindings"

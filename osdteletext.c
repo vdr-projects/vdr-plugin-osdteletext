@@ -28,6 +28,8 @@ using namespace std;
 #error "VDR-1.7.39 API version or greater is required!"
 #endif
 
+#define NUMELEMENTS(x) (sizeof(x) / sizeof(x[0]))
+
 static const char *VERSION        = "0.9.6";
 static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
 static const char *MAINMENUENTRY  = trNOOP("Teletext");
@@ -66,7 +68,7 @@ class ActionEdit {
       cMenuEditIntItem  *number;
       bool visible;
    };
-   
+
 struct ActionKeyName {
    const char *internalName;
    const char *userName;
@@ -145,11 +147,11 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
        { "toptext",      no_argument,             NULL, 't' },
        { NULL }
        };
-     
+
    int c;
    while ((c = getopt_long(argc, argv, "s:d:n:t", long_options, NULL)) != -1) {
         switch (c) {
-          case 's': 
+          case 's':
                     if (!optarg)
                        break;
                     if (strcasecmp(optarg, "legacy")==0)
@@ -189,7 +191,7 @@ bool cPluginTeletextosd::Start(void)
       txtStatus=new cTxtStatus(storeTopText, storage);
    if (ttSetup.OSDheight<=100)  ttSetup.OSDheight=Setup.OSDHeight;
    if (ttSetup.OSDwidth<=100)   ttSetup.OSDwidth=Setup.OSDWidth;
-  
+
    return true;
 }
 
@@ -217,9 +219,9 @@ void cPluginTeletextosd::initTexts() {
       { "Action_kFastFwd",  trVDR("Key$FastFwd") },
       { "Action_kFastRew",  trVDR("Key$FastRew") }
    };
-   
+
    cTeletextSetupPage::actionKeyNames = st_actionKeyNames;
-   
+
    static const char *st_modes[] =
    {
       tr("Zoom"),
@@ -229,7 +231,7 @@ void cPluginTeletextosd::initTexts() {
       //tr("Suspend receiving"),
       tr("Jump to...")
    };
-   
+
    cTeletextSetupPage::modes = st_modes;
 }
 
@@ -256,9 +258,8 @@ cMenuSetupPage *cPluginTeletextosd::SetupMenu(void)
 }
 
 
-     
 bool cPluginTeletextosd::SetupParse(const char *Name, const char *Value)
-{    
+{
   initTexts();
   // Parse your own setup parameters and store their values.
   //Stretch=true;
@@ -274,25 +275,27 @@ bool cPluginTeletextosd::SetupParse(const char *Name, const char *Value)
   else if (!strcasecmp(Name, "inactivityTimeout")) /*ttSetup.inactivityTimeout=atoi(Value)*/;
   else if (!strcasecmp(Name, "HideMainMenu")) ttSetup.HideMainMenu=atoi(Value);
   else if (!strcasecmp(Name, "txtFontName")) ttSetup.txtFontName=strdup(Value);
+  else if (!strcasecmp(Name, "txtG0Block")) ttSetup.txtG0Block=atoi(Value);
+  else if (!strcasecmp(Name, "txtG2Block")) ttSetup.txtG2Block=atoi(Value);
   else {
      for (int i=0;i<LastActionKey;i++) {
         if (!strcasecmp(Name, cTeletextSetupPage::actionKeyNames[i].internalName)) {
            ttSetup.mapKeyToAction[i]=(eTeletextAction)atoi(Value);
-           
+
            //for migration to 0.4
            if (ttSetup.mapKeyToAction[i]<100 && ttSetup.mapKeyToAction[i]>=LastAction)
               ttSetup.mapKeyToAction[i]=LastAction-1;
-              
+
            return true;
         }
      }
-     
+
      //for migration to 0.4
      char act[7];
      strncpy(act, Name, 7);
      if (!strcasecmp(act, "Action_"))
         return true;
-     
+
      return false;
   }
   return true;
@@ -316,6 +319,8 @@ void cTeletextSetupPage::Store(void) {
    ttSetup.OSDVAlign=temp.OSDVAlign;
    ttSetup.HideMainMenu=temp.HideMainMenu;
    ttSetup.txtFontName=temp.txtFontNames[temp.txtFontIndex];
+   ttSetup.txtG0Block=temp.txtG0Block;
+   ttSetup.txtG2Block=temp.txtG2Block;
    //ttSetup.inactivityTimeout=temp.inactivityTimeout;
 
    for (int i=0;i<LastActionKey;i++) {
@@ -332,6 +337,8 @@ void cTeletextSetupPage::Store(void) {
    SetupStore("OSDVAlign", ttSetup.OSDVAlign);
    SetupStore("HideMainMenu", ttSetup.HideMainMenu);
    SetupStore("txtFontName", ttSetup.txtFontName);
+   SetupStore("txtG0Block", ttSetup.txtG0Block);
+   SetupStore("txtG2Block", ttSetup.txtG2Block);
    //SetupStore("inactivityTimeout", ttSetup.inactivityTimeout);
 }
 
@@ -340,9 +347,21 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    cString buf;
    cOsdItem *item;
 
+   temp.txtBlock[0]  = tr("Latin 1");
+   temp.txtBlock[1]  = tr("Latin 2");
+   temp.txtBlock[2]  = tr("Latin 3");
+   temp.txtBlock[3]  = tr("Latin 4");
+   temp.txtBlock[4]  = tr("Cyrillic");
+   temp.txtBlock[5]  = tr("Reserved");
+   temp.txtBlock[6]  = tr("Greek");
+   temp.txtBlock[7]  = tr("Reserved");
+   temp.txtBlock[8]  = tr("Arabic");
+   temp.txtBlock[9]  = tr("Reserved");
+   temp.txtBlock[10] = tr("Hebrew");
+
    //init tables
    for (int i=0;i<LastActionKey;i++) {
-      if (ttSetup.mapKeyToAction[i] >= LastAction) {//jump to page selected  
+      if (ttSetup.mapKeyToAction[i] >= LastAction) {//jump to page selected
          temp.mapKeyToAction[i]=LastAction; //to display the last string
          tempPageNumber[i]=ttSetup.mapKeyToAction[i];
       } else { //one of the other modes selected
@@ -360,6 +379,8 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    temp.OSDVAlign=ttSetup.OSDVAlign;
    temp.HideMainMenu=ttSetup.HideMainMenu;
    temp.txtFontName=ttSetup.txtFontName;
+   temp.txtG0Block=ttSetup.txtG0Block;
+   temp.txtG2Block=ttSetup.txtG2Block;
    //temp.inactivityTimeout=ttSetup.inactivityTimeout;
 
    cFont::GetAvailableFontNames(&temp.txtFontNames, true);
@@ -368,23 +389,24 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
        temp.txtFontIndex = 0;
    }
 
+   Add(new cMenuEditIntItem(tr("Background transparency"), &tempConfiguredClrBackground, 0, 255));
 
-   Add(new cMenuEditIntItem(tr("Background transparency"), &tempConfiguredClrBackground, 0, 255)); 
-   
    Add(new cMenuEditBoolItem(tr("Show clock"), &temp.showClock ));
-   
+
    //Add(new cMenuEditBoolItem(tr("Setup$Suspend receiving"), &temp.suspendReceiving ));
-   
+
    Add(new cMenuEditBoolItem(tr("Auto-update pages"), &temp.autoUpdatePage ));
-   
+
    Add(new cMenuEditIntItem(tr("OSD height"), &temp.OSDheight, 250, MAXOSDHEIGHT));
    Add(new cMenuEditIntItem(tr("OSD width"), &temp.OSDwidth, 320, MAXOSDWIDTH));
-   
+
    Add(new cMenuEditIntItem(tr("OSD horizontal align"), &temp.OSDHAlign, 0, 100));
    Add(new cMenuEditIntItem(tr("OSD vertical align"), &temp.OSDVAlign, 0, 100));
    Add(new cMenuEditBoolItem(tr("Hide mainmenu entry"), &temp.HideMainMenu));
    Add(new cMenuEditStraItem(tr("Text Font"), &temp.txtFontIndex, temp.txtFontNames.Size(), &temp.txtFontNames[0]));
-   
+   Add(new cMenuEditStraItem(tr("G0 code block"), &temp.txtG0Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
+   Add(new cMenuEditStraItem(tr("G2 code block"), &temp.txtG2Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
+
    //Using same string as VDR's setup menu
    //Add(new cMenuEditIntItem(tr("Setup.Miscellaneous$Min. user inactivity (min)"), &temp.inactivityTimeout));
 
@@ -401,7 +423,7 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
 
 eOSState cTeletextSetupPage::ProcessKey(eKeys Key) {
    eOSState state = cMenuSetupPage::ProcessKey(Key);
-   if (Key != kRight && Key!=kLeft) 
+   if (Key != kRight && Key!=kLeft)
       return state;
    cOsdItem *item = Get(Current());
    for (int i=0;i<LastActionKey;i++) {
@@ -415,7 +437,7 @@ eOSState cTeletextSetupPage::ProcessKey(eKeys Key) {
                   Ins( ActionEdits[i].number, false, ActionEdits[i+1].action);
                else
                   Add( ActionEdits[i].number, false );
-                  
+
                ActionEdits[i].visible=true;
                Display();
             } else if (temp.mapKeyToAction[i] != LastAction && ActionEdits[i].visible) {
@@ -429,8 +451,8 @@ eOSState cTeletextSetupPage::ProcessKey(eKeys Key) {
          //}
      }
    }
-      
-   return state;   
+
+   return state;
    //return cMenuSetupPage::ProcessKey(Key);
 }
 
@@ -442,7 +464,7 @@ void ActionEdit::Init(cTeletextSetupPage* s, int num, cMenuEditIntItem  *p, cMen
    if (s->temp.mapKeyToAction[num] == LastAction) {
       s->Add(number);
       visible=true;
-   } else 
+   } else
       visible=false;
 }
 
