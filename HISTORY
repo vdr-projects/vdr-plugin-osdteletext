@@ -1,6 +1,10 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
 
+2018-02-24: version 0.9.7
+- Added teletext2.ttf
+- Cyrillic support added
+
 2018-01-28: version 0.9.6
 - Merged the changes from Rolf Ahrenbergs fork pon GitHub
   (https://github.com/rofafor/vdr-plugin-osdteletext):
