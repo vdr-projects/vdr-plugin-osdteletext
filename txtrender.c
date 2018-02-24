@@ -15,7 +15,7 @@
 
 #include <strings.h>
 #include "txtrender.h"
-
+#include "menu.h"
 
 // Font tables
 
@@ -222,7 +222,7 @@ inline enumCharsets GetG2Charset(int codepage) {
 cRenderPage::cRenderPage()
     : Dirty(false), DirtyAll(false),
       // Todo: make this configurable
-      FirstG0CodePage(0), SecondG0CodePage(0)
+      FirstG0CodePage(ttSetup.txtG0Block<<3), SecondG0CodePage(ttSetup.txtG2Block<<3)
 {
 }
 

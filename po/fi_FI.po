@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2016-02-17 21:25+0100\n"
+"POT-Creation-Date: 2018-01-31 22:27+0200\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Rolf Ahrenberg <rahrenbe@cc.hut.fi>\n"
 "Language-Team: Finnish <vdr@linuxtv.org>\n"
@@ -46,6 +46,33 @@ msgstr "Vaihda tausta"
 msgid "Jump to..."
 msgstr "Siirry sivulle..."
 
+msgid "Latin 1"
+msgstr "Latin 1"
+
+msgid "Latin 2"
+msgstr "Latin 2"
+
+msgid "Latin 3"
+msgstr "Latin 3"
+
+msgid "Latin 4"
+msgstr "Latin 4"
+
+msgid "Cyrillic"
+msgstr "kyrillinen"
+
+msgid "Reserved"
+msgstr "varattu"
+
+msgid "Greek"
+msgstr "kreikka"
+
+msgid "Arabic"
+msgstr "arabia"
+
+msgid "Hebrew"
+msgstr "hebrea"
+
 msgid "Background transparency"
 msgstr "Taustan läpinäkyvyys"
 
@@ -72,6 +99,12 @@ msgstr "Piilota valinta päävalikosta"
 
 msgid "Text Font"
 msgstr "Käytä kirjasinta"
+
+msgid "G0 code block"
+msgstr "G0-koodilohko"
+
+msgid "G2 code block"
+msgstr "G2-koodilohko"
 
 msgid "Key bindings"
 msgstr "Näppäintoiminnot"

@@ -2,14 +2,15 @@
 # Copyright (C) 2007 Klaus Schmidinger <Klaus.Schmidinger@tvdr.de>
 # This file is distributed under the same license as the VDR package.
 # Vyacheslav Dikonov <sdiconov@mail.ru>, 2004
+# Oleg Roitburd <oleg@roitburd.de>, 2008
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2016-02-17 21:25+0100\n"
+"POT-Creation-Date: 2017-06-10 21:01+1000\n"
 "PO-Revision-Date: 2008-12-30 13:52+0100\n"
-"Last-Translator: Oleg Roitburd <oleg@roitburd.de>\n"
+"Last-Translator: Andrey Pridvorov <ua0lnj@bk.ru>\n"
 "Language-Team: Russian <vdr@linuxtv.org>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
@@ -28,7 +29,6 @@ msgstr "не найдена"
 msgid "Displays teletext on the OSD"
 msgstr "Показ телетекста в OSD"
 
-#, fuzzy
 msgid "Teletext"
 msgstr "Телетекст"
 
@@ -46,6 +46,33 @@ msgstr "Переключить фон"
 
 msgid "Jump to..."
 msgstr "перейти к..."
+
+msgid "Latin 1"
+msgstr "Латин. 1"
+
+msgid "Latin 2"
+msgstr "Латин. 2"
+
+msgid "Latin 3"
+msgstr "Латин. 3"
+
+msgid "Latin 4"
+msgstr "Латин. 4"
+
+msgid "Cyrillic"
+msgstr "Кириллич."
+
+msgid "Reserved"
+msgstr "Резерв"
+
+msgid "Greek"
+msgstr "Греческ."
+
+msgid "Arabic"
+msgstr "Арабск."
+
+msgid "Hebrew"
+msgstr "Иврит"
 
 msgid "Background transparency"
 msgstr "Прозрачность фона"
@@ -69,10 +96,16 @@ msgid "OSD vertical align"
 msgstr "Вертикальное положение OSD"
 
 msgid "Hide mainmenu entry"
-msgstr ""
+msgstr "Скрыть в главном меню"
 
 msgid "Text Font"
-msgstr ""
+msgstr "Шрифт"
+
+msgid "G0 code block"
+msgstr "G0 кодировка"
+
+msgid "G2 code block"
+msgstr "G2 кодировка"
 
 msgid "Key bindings"
 msgstr "Привязка кнопок"
