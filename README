@@ -8,11 +8,20 @@ Latest version available at: http://projects.vdr-developer.org/projects/show/plg
 
 See the file COPYING for license information.
 
+Alistair Buxtons bitmap2ttf (https://github.com/ali1234/bitmap2ttf) was used to
+create teletext2.ttf from tv-fonts 1.1 (c) 2002 Gerd Knorr <kraxel@debian.org>
+(https://www.kraxel.org/releases/tv-fonts/). The original fonts are public domain.
+
 Description:
 
 Osd-Teletext displays the teletext directly on the OSD.
-Both sound and video are played in the background. 
 
+Installation:
+
+You need to install the teletext2.ttf font in order to render special graphics
+characters properly.
+
+Usage:
 
 Keys:
      1,...,9: insert page number
