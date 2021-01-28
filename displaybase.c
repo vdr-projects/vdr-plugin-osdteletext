@@ -205,7 +205,7 @@ void cDisplay::CleanDisplay() {
     enumTeletextColor bgc=(Boxed)?(ttcTransparent):(ttcBlack);
     if (!osd) return;
 
-    osd->DrawRectangle(0, 0, Width, Height, GetColorRGB(bgc,0));
+    osd->DrawRectangle(0, 0, outputWidth, outputHeight, GetColorRGB(bgc,0));
 
     // repaint all
     Dirty=true;
@@ -247,7 +247,8 @@ void cDisplay::RenderTeletextCode(unsigned char *PageCode) {
     } else if (Boxed && (Flags&0x60)==0) {
         Boxed=false;
         CleanDisplay();
-    }
+    } else
+        CleanDisplay();
 
     cRenderPage::RenderTeletextCode(PageCode+12);
 
