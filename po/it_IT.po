@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2018-01-31 22:27+0200\n"
+"POT-Creation-Date: 2021-01-27 06:22+0100\n"
 "PO-Revision-Date: 2010-11-06 19:59+0100\n"
 "Last-Translator: Diego Pierotto <vdr-italian@tiscali.it>\n"
 "Language-Team: Italian <vdr@linuxtv.org>\n"
@@ -111,6 +111,9 @@ msgid "G0 code block"
 msgstr ""
 
 msgid "G2 code block"
+msgstr ""
+
+msgid "Color Mode 4bpp"
 msgstr ""
 
 msgid "Key bindings"

@@ -52,6 +52,7 @@ public:
    int txtG0Block;
    int txtG2Block;
    const char *txtBlock[11];
+   int colorMode4bpp;
 };
 
 extern TeletextSetup ttSetup;

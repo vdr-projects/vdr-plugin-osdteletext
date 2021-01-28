@@ -277,6 +277,7 @@ bool cPluginTeletextosd::SetupParse(const char *Name, const char *Value)
   else if (!strcasecmp(Name, "txtFontName")) ttSetup.txtFontName=strdup(Value);
   else if (!strcasecmp(Name, "txtG0Block")) ttSetup.txtG0Block=atoi(Value);
   else if (!strcasecmp(Name, "txtG2Block")) ttSetup.txtG2Block=atoi(Value);
+  else if (!strcasecmp(Name, "colorMode4bpp")) ttSetup.colorMode4bpp=atoi(Value);
   else {
      for (int i=0;i<LastActionKey;i++) {
         if (!strcasecmp(Name, cTeletextSetupPage::actionKeyNames[i].internalName)) {
@@ -321,6 +322,7 @@ void cTeletextSetupPage::Store(void) {
    ttSetup.txtFontName=temp.txtFontNames[temp.txtFontIndex];
    ttSetup.txtG0Block=temp.txtG0Block;
    ttSetup.txtG2Block=temp.txtG2Block;
+   ttSetup.colorMode4bpp=temp.colorMode4bpp;
    //ttSetup.inactivityTimeout=temp.inactivityTimeout;
 
    for (int i=0;i<LastActionKey;i++) {
@@ -339,6 +341,7 @@ void cTeletextSetupPage::Store(void) {
    SetupStore("txtFontName", ttSetup.txtFontName);
    SetupStore("txtG0Block", ttSetup.txtG0Block);
    SetupStore("txtG2Block", ttSetup.txtG2Block);
+   SetupStore("colorMode4bpp", ttSetup.colorMode4bpp);
    //SetupStore("inactivityTimeout", ttSetup.inactivityTimeout);
 }
 
@@ -381,6 +384,7 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    temp.txtFontName=ttSetup.txtFontName;
    temp.txtG0Block=ttSetup.txtG0Block;
    temp.txtG2Block=ttSetup.txtG2Block;
+   temp.colorMode4bpp=ttSetup.colorMode4bpp;
    //temp.inactivityTimeout=ttSetup.inactivityTimeout;
 
    cFont::GetAvailableFontNames(&temp.txtFontNames, true);
@@ -406,6 +410,7 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    Add(new cMenuEditStraItem(tr("Text Font"), &temp.txtFontIndex, temp.txtFontNames.Size(), &temp.txtFontNames[0]));
    Add(new cMenuEditStraItem(tr("G0 code block"), &temp.txtG0Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
    Add(new cMenuEditStraItem(tr("G2 code block"), &temp.txtG2Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
+   Add(new cMenuEditBoolItem(tr("Color Mode 4bpp"), &temp.colorMode4bpp));
 
    //Using same string as VDR's setup menu
    //Add(new cMenuEditIntItem(tr("Setup.Miscellaneous$Min. user inactivity (min)"), &temp.inactivityTimeout));

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2018-01-31 22:27+0200\n"
+"POT-Creation-Date: 2021-01-27 06:22+0100\n"
 "PO-Revision-Date: 2009-01-10 19:32+0100\n"
 "Last-Translator: Nival Michaël\n"
 "Language-Team: French <vdr@linuxtv.org>\n"
@@ -107,6 +107,9 @@ msgid "G0 code block"
 msgstr ""
 
 msgid "G2 code block"
+msgstr ""
+
+msgid "Color Mode 4bpp"
 msgstr ""
 
 msgid "Key bindings"

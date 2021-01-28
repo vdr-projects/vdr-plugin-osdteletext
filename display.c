@@ -90,7 +90,8 @@ cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height)
     width=(width+1)&~1;
     // Width has to end on byte boundary, so round up
 
-    tArea Areas[] = { { 0, 0, width - 1, height - 1, 32 } };
+    int bpp = 32; if (ttSetup.colorMode4bpp == true) bpp = 4;
+    tArea Areas[] = { { 0, 0, width - 1, height - 1, bpp } };
     if (osd->CanHandleAreas(Areas, sizeof(Areas) / sizeof(tArea)) != oeOk) {
         DELETENULL(osd);
         return;
@@ -105,7 +106,7 @@ cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height)
     Height = 250;
 #endif
 
-    esyslog("OSD-Teletext: 32BPP");
+    esyslog("OSD-Teletext: %dBPP", bpp);
 
     InitScaler();
 
@@ -130,7 +131,8 @@ void cDisplay32BPPHalf::InitOSD() {
     int width=(Width+1)&~1;
     // Width has to end on byte boundary, so round up
 
-    tArea Areas[] = { { 0, 0, width - 1, Height - 1, 32 } };
+    int bpp = 32; if (ttSetup.colorMode4bpp == true) bpp = 4;
+    tArea Areas[] = { { 0, 0, width - 1, Height - 1, bpp } };
     // Try full-size area first
 
     while (osd->CanHandleAreas(Areas, sizeof(Areas) / sizeof(tArea)) != oeOk) {
