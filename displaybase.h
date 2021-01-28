@@ -71,12 +71,7 @@ protected:
 
     const cFont *MessageFont;
     int MessageX,MessageY,MessageW,MessageH;
-    // Message overlay window, position and font
 
-    const cFont *GFXFont;
-    const cFont *GFXDblWFont;
-    const cFont *GFXDblHFont;
-    const cFont *GFXDblHWFont;
     const cFont *TXTFont;
     const cFont *TXTDblWFont;
     const cFont *TXTDblHFont;
@@ -84,7 +79,7 @@ protected:
     int fontHeight;
     int fontWidth;
 
-    static int realFontWidths[8];
+    static int realFontWidths[4];
 
 
     class cBox {

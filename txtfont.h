@@ -5,6 +5,8 @@
 
 #include "txtrender.h"
 
+unsigned int* GetFontChar(cTeletextChar c, unsigned int *buffer);
+
 unsigned int GetVTXChar(cTeletextChar c);
 
 #endif
