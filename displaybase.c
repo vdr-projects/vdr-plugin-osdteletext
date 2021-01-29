@@ -536,7 +536,7 @@ void cDisplay::ClearMessage() {
 #define TESTOORY(Y) (Y < 0 || Y >= 25)
     if ( TESTOORX(x0) || TESTOORX(x1) || TESTOORY(y0) || TESTOORY(y1) ) {
 	// something out-of-range
-    	esyslog("%s/%s: out-of-range detected(crop) MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d ScaleX=%d ScaleY=%d => x0=%d%s x1=%d%s y0=%d%s y1=%d%s", PLUGIN_NAME_I18N, __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, ScaleX, ScaleY,
+	esyslog("%s/%s: out-of-range detected(crop) MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d ScaleX=%d ScaleY=%d => x0=%d%s x1=%d%s y0=%d%s y1=%d%s", PLUGIN_NAME_I18N, __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, ScaleX, ScaleY,
 		x0, TESTOORX(x0) ? "!" : "",
 		x1, TESTOORX(x1) ? "!" : "",
 		y0, TESTOORY(y0) ? "!" : "",
