@@ -535,7 +535,7 @@ void cDisplay::ClearMessage() {
     x1=(x1+(12<<16)-1)/(12<<16);
     y1=(y1+(10<<16)-1)/(10<<16);
 
-    dsyslog("OSD-Teletext/%s: character          coordinates: x0=%d/y0=%d x1=%d/y1=%d", __FUNCTION__, x0, y0, x1, y1);
+    dsyslog("OSD-Teletext/%s: calculated charact coordinates: x0=%d/y0=%d x1=%d/y1=%d", __FUNCTION__, x0, y0, x1, y1);
 
 #define TESTOORX(X) (X < 0 || X >= 40)
 #define TESTOORY(Y) (Y < 0 || Y >= 25)
