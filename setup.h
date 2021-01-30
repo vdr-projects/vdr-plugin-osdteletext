@@ -51,6 +51,7 @@ public:
    int txtFontIndex;
    int txtG0Block;
    int txtG2Block;
+   int txtVoffset;
    const char *txtBlock[11];
    int colorMode4bpp;
 };
