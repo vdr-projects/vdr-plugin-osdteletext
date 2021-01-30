@@ -518,7 +518,7 @@ void cDisplay::ClearMessage() {
     if (!osd) return;
     if (MessageW==0 || MessageH==0) return;
 
-    dsyslog("%s/%s: called with MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d ScaleX=%d ScaleY=%d", PLUGIN_NAME_I18N, __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, ScaleX, ScaleY);
+    dsyslog("OSD-Teletext/%s: called with MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d ScaleX=%d ScaleY=%d", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, ScaleX, ScaleY);
 
     // map OSD pixel to virtual coordinate, use center of pixel
     int x0=(MessageX-OffsetX)*ScaleX+ScaleX/2;
@@ -536,7 +536,7 @@ void cDisplay::ClearMessage() {
 #define TESTOORY(Y) (Y < 0 || Y >= 25)
     if ( TESTOORX(x0) || TESTOORX(x1) || TESTOORY(y0) || TESTOORY(y1) ) {
 	// something out-of-range
-	esyslog("%s/%s: out-of-range detected(crop) MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d ScaleX=%d ScaleY=%d => x0=%d%s x1=%d%s y0=%d%s y1=%d%s", PLUGIN_NAME_I18N, __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, ScaleX, ScaleY,
+	esyslog("OSD-Teletext/%s: out-of-range detected(crop) MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d ScaleX=%d ScaleY=%d => x0=%d%s x1=%d%s y0=%d%s y1=%d%s", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, ScaleX, ScaleY,
 		x0, TESTOORX(x0) ? "!" : "",
 		x1, TESTOORX(x1) ? "!" : "",
 		y0, TESTOORY(y0) ? "!" : "",
@@ -552,7 +552,7 @@ void cDisplay::ClearMessage() {
 	if TESTOORY(y0) y0 = 25 - 1;
 	if TESTOORY(y1) y1 = 25 - 1;
     }
-    dsyslog("%s/%s: call MakeDirty with area x0=%d/y0=%d <-> x1=%d/y1=%d", PLUGIN_NAME_I18N, __FUNCTION__, x0, y0, x1, y1);
+    dsyslog("OSD-Teletext/%s: call MakeDirty with area x0=%d/y0=%d <-> x1=%d/y1=%d", __FUNCTION__, x0, y0, x1, y1);
     for (int x=x0;x<=x1;x++) {
         for (int y=y0;y<=y1;y++) {
             MakeDirty(x,y);

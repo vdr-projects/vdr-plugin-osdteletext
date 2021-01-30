@@ -254,7 +254,7 @@ public:
     cTeletextChar GetChar(int x, int y) {
         // Read character content from page
         if (x<0 || x>=40 || y<0 || y>=25) {
-            esyslog("%s/%s: Warning: out of bounds read access to teletext page (GetChar, x=%d, y=%d)", PLUGIN_NAME_I18N, __FUNCTION__, x, y);
+            esyslog("OSD-Teletext/%s: Warning: out of bounds read access to teletext page (GetChar, x=%d, y=%d)", __FUNCTION__, x, y);
             return cTeletextChar();
         }
         return Page[x][y].ToDirty(false);
@@ -268,7 +268,7 @@ public:
     bool IsDirty(int x, int y) {
         // local dirty status
         if (x<0 || x>=40 || y<0 || y>=25) {
-            esyslog("%s/%s: Warning: out of bounds read access to teletext page (IsDirty, x=%d, y=%d)", PLUGIN_NAME_I18N, __FUNCTION__, x, y);
+            esyslog("OSD-Teletext/%s: Warning: out of bounds read access to teletext page (IsDirty, x=%d, y=%d)", __FUNCTION__, x, y);
             return false;
         }
         return Page[x][y].GetDirty() | DirtyAll;    
