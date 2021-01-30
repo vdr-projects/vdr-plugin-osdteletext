@@ -1,10 +1,10 @@
 This is a "plugin" for the Video Disk Recorder (VDR).
 
-Written by:                  Marcel Wiesweg <marcel.wiesweg@gmx.de>
+Initially Written by:                   Marcel Wiesweg <marcel.wiesweg@gmx.de>
 
-Project's homepage:          http://www.wiesweg-online.de/linux/vdr
+Original Project's homepage (EOSL):     http://www.wiesweg-online.de/linux/vdr
 
-Latest version available at: http://projects.vdr-developer.org/projects/show/plg-osdteletext
+Latest version available at: https://github.com/vdr-projects/vdr-plugin-osdteletex
 
 See the file COPYING for license information.
 
