@@ -293,7 +293,7 @@ bool cPluginTeletextosd::SetupParse(const char *Name, const char *Value)
      }
 
      //for migration to 0.4
-     char act[7];
+     char act[8];
      strncpy(act, Name, 7);
      if (!strcasecmp(act, "Action_"))
         return true;
