@@ -521,6 +521,7 @@ void cDisplay::ClearMessage() {
 
     dsyslog("OSD-Teletext/%s: called with MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d ScaleX=%d ScaleY=%d", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, ScaleX, ScaleY);
 
+#if 0
     // map OSD pixel to virtual coordinate, use center of pixel
     int x0=(MessageX-OffsetX)*ScaleX+ScaleX/2;
     int y0=(MessageY-OffsetY)*ScaleY+ScaleY/2;
@@ -534,6 +535,13 @@ void cDisplay::ClearMessage() {
     y0=y0/(10<<16);
     x1=(x1+(12<<16)-1)/(12<<16);
     y1=(y1+(10<<16)-1)/(10<<16);
+#else
+    // map to character x/y
+    int x0 = MessageX / (fontWidth / 2);
+    int x1 = (MessageX+MessageW) / (fontWidth / 2) + 1;
+    int y0 = (MessageY) / (fontHeight / 2);
+    int y1 = (MessageY+MessageH) / (fontHeight / 2) + 1;
+#endif
 
     dsyslog("OSD-Teletext/%s: calculated charact coordinates: x0=%d/y0=%d x1=%d/y1=%d", __FUNCTION__, x0, y0, x1, y1);
 
