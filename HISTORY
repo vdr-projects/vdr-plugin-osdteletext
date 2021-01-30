@@ -2,6 +2,7 @@ VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
 
 - [pbiering] introduce setup option "Text Vertical Offset" ("5" looks good on softhddevice)
+- [pbiering] fix out-of-bounds message by using new way to calculated x/y position for ClearMessage
 
 - [pbiering] merge fix for issues fond with OpenGL
 	https://www.vdr-portal.de/forum/index.php?thread/133952-softhddevice-bug-in-opengl-osd-bug-mit-osdteletext/

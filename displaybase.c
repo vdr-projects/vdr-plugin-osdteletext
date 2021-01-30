@@ -537,13 +537,13 @@ void cDisplay::ClearMessage() {
     y1=(y1+(10<<16)-1)/(10<<16);
 #else
     // map to character x/y
-    int x0 = MessageX / (fontWidth / 2);
-    int x1 = (MessageX+MessageW) / (fontWidth / 2) + 1;
-    int y0 = (MessageY) / (fontHeight / 2);
-    int y1 = (MessageY+MessageH) / (fontHeight / 2) + 1;
+    int x0 = (MessageX - OffsetX )         / (fontWidth  / 2);
+    int y0 = (MessageY-OffsetY)            / (fontHeight / 2);
+    int x1 = (MessageX+MessageW-1-OffsetX) / (fontWidth  / 2);
+    int y1 = (MessageY+MessageH-1-OffsetY) / (fontHeight / 2);
 #endif
 
-    dsyslog("OSD-Teletext/%s: calculated charact coordinates: x0=%d/y0=%d x1=%d/y1=%d", __FUNCTION__, x0, y0, x1, y1);
+    dsyslog("OSD-Teletext/%s: calculated character coordinates: x0=%d/y0=%d x1=%d/y1=%d", __FUNCTION__, x0, y0, x1, y1);
 
 #define TESTOORX(X) (X < 0 || X >= 40)
 #define TESTOORY(Y) (Y < 0 || Y >= 25)
