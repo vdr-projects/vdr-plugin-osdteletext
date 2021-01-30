@@ -277,7 +277,7 @@ public:
     void MakeDirty(int x, int y) {
         // force one character dirty
         if (x<0 || x>=40 || y<0 || y>=25) {
-            esyslog("%s/%s: Warning: out of bounds write access to teletext page (MakeDirty, x=%d, y=%d)", PLUGIN_NAME_I18N, __FUNCTION__, x, y);
+            esyslog("OSD-Teletext/%s: Warning: out of bounds write access to teletext page (MakeDirty, x=%d, y=%d)", __FUNCTION__, x, y);
             return;
         }
         Page[x][y].SetDirty(true);
@@ -288,7 +288,7 @@ public:
         // Set character at given location
         
         if (x<0 || x>=40 || y<0 || y>=25) {
-            esyslog("%s/%s: Warning: out of bounds write access to teletext page (SetChar, x=%d, y=%d, c=%x)", PLUGIN_NAME_I18N, __FUNCTION__, x, y, c.GetC());
+            esyslog("OSD-Teletext/%s: Warning: out of bounds write access to teletext page (SetChar, x=%d, y=%d, c=%x)", __FUNCTION__, x, y, c.GetC());
             return;
         }
         if (GetChar(x,y) != c) {
