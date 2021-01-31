@@ -519,8 +519,6 @@ void cDisplay::ClearMessage() {
     if (!osd) return;
     if (MessageW==0 || MessageH==0) return;
 
-    dsyslog("OSD-Teletext/%s: called with MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d ScaleX=%d ScaleY=%d", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, ScaleX, ScaleY);
-
 #if 0
     // BUGGY, resulting in out-of-range
     // map OSD pixel to virtual coordinate, use center of pixel
@@ -545,7 +543,7 @@ void cDisplay::ClearMessage() {
     int y1 = (MessageY+MessageH-1-OffsetY) / (fontHeight / 2);
 #endif
 
-    dsyslog("OSD-Teletext/%s: calculated character coordinates: x0=%d/y0=%d x1=%d/y1=%d", __FUNCTION__, x0, y0, x1, y1);
+    dsyslog("OSD-Teletext/%s: called with MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d ScaleX=%d ScaleY=%d => x0=%d/y0=%d x1=%d/y1=%d", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, ScaleX, ScaleY, x0, y0, x1, y1);
 
 #define TESTOORX(X) (X < 0 || X >= 40)
 #define TESTOORY(Y) (Y < 0 || Y >= 25)
@@ -567,7 +565,7 @@ void cDisplay::ClearMessage() {
 	if TESTOORY(y0) y0 = 25 - 1;
 	if TESTOORY(y1) y1 = 25 - 1;
     }
-    dsyslog("OSD-Teletext/%s: call MakeDirty with area x0=%d/y0=%d <-> x1=%d/y1=%d", __FUNCTION__, x0, y0, x1, y1);
+    // dsyslog("OSD-Teletext/%s: call MakeDirty with area x0=%d/y0=%d <-> x1=%d/y1=%d", __FUNCTION__, x0, y0, x1, y1);
     for (int x=x0;x<=x1;x++) {
         for (int y=y0;y<=y1;y++) {
             MakeDirty(x,y);
