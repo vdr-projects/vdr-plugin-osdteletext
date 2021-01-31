@@ -509,7 +509,11 @@ void cDisplay::DrawMessage(const char *txt) {
     MessageX=x;
     MessageY=y;
 
+#if 0
     dsyslog("OSD-Teletext/%s: display with MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d ScaleX=%d ScaleY=%d", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, ScaleX, ScaleY);
+#else
+    dsyslog("OSD-Teletext/%s: display with MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY);
+#endif
 
     // And flush all changes
     ReleaseFlush();
@@ -527,13 +531,13 @@ void cDisplay::ClearMessage() {
     int x1=(MessageX+MessageW-1-OffsetX)*ScaleX+ScaleX/2;
     int y1=(MessageY+MessageH-1-OffsetY)*ScaleY+ScaleY/2;
 
-    dsyslog("OSD-Teletext/%s: calculated virtual coordinates: x0=%d/y0=%d x1=%d/y1=%d", __FUNCTION__, x0, y0, x1, y1);
-
     // map to character
     x0=x0/(12<<16);
     y0=y0/(10<<16);
     x1=(x1+(12<<16)-1)/(12<<16);
     y1=(y1+(10<<16)-1)/(10<<16);
+
+    dsyslog("OSD-Teletext/%s: called with MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d ScaleX=%d ScaleY=%d => x0=%d/y0=%d x1=%d/y1=%d", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, ScaleX, ScaleY, x0, y0, x1, y1);
 #else
     // NEW, reverse calculation based on how DrawChar
     // map to character x/y
@@ -541,15 +545,19 @@ void cDisplay::ClearMessage() {
     int y0 = (MessageY-OffsetY)            / (fontHeight / 2);
     int x1 = (MessageX+MessageW-1-OffsetX) / (fontWidth  / 2);
     int y1 = (MessageY+MessageH-1-OffsetY) / (fontHeight / 2);
-#endif
 
-    dsyslog("OSD-Teletext/%s: called with MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d ScaleX=%d ScaleY=%d => x0=%d/y0=%d x1=%d/y1=%d", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, ScaleX, ScaleY, x0, y0, x1, y1);
+    dsyslog("OSD-Teletext/%s: called with MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d => x0=%d/y0=%d x1=%d/y1=%d", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, x0, y0, x1, y1);
+#endif
 
 #define TESTOORX(X) (X < 0 || X >= 40)
 #define TESTOORY(Y) (Y < 0 || Y >= 25)
     if ( TESTOORX(x0) || TESTOORX(x1) || TESTOORY(y0) || TESTOORY(y1) ) {
 	// something out-of-range
+#if 0
 	esyslog("OSD-Teletext/%s: out-of-range detected(crop) MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d ScaleX=%d ScaleY=%d => x0=%d%s y0=%d%s x1=%d%s y1=%d%s", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, ScaleX, ScaleY,
+#else
+	esyslog("OSD-Teletext/%s: out-of-range detected(crop) MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d => x0=%d%s y0=%d%s x1=%d%s y1=%d%s", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY,
+#endif
 		x0, TESTOORX(x0) ? "!" : "",
 		y0, TESTOORY(y0) ? "!" : "",
 		x1, TESTOORX(x1) ? "!" : "",
