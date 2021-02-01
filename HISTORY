@@ -1,6 +1,7 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
 
+2021-02-01: version 0.9.8
 - [pbiering] add configurable 4bpp color mode base on hardcoded patch:
 	https://www.vdr-portal.de/index.php?attachment/41884-osdteletext-4bpp-diff/
 	https://www.vdr-portal.de/forum/index.php?thread/131627-gel%C3%B6st-vdr-plugin-osdteletxt-0-9-7/&postID=1304681#post1304681
