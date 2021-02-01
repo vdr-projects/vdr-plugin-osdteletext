@@ -654,7 +654,9 @@ TeletextSetup::TeletextSetup()
     //after the plugin has stored its own value.
     inactivityTimeout(Setup.MinUserInactivity),
     HideMainMenu(false),
-    txtFontName("teletext2:Medium")
+    txtFontName("teletext2:Medium"),
+    txtVoffset(0),
+    colorMode4bpp(false)
 {
    //init key bindings
    for (int i=0;i<10;i++)

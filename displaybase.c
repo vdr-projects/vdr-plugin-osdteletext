@@ -422,7 +422,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
             cBitmap charBm(w, h, 24);
             charBm.DrawRectangle(0, 0, w, h, bg);
 //            charBm.DrawText(0, 0, buf, fg, bg, font);
-            charBm.DrawText(0, 0, buf, fg, 0, font);
+            charBm.DrawText(0, ttSetup.txtVoffset, buf, fg, 0, font);
             osd->DrawBitmap(vx, vy, charBm);
 #endif
         }
@@ -503,12 +503,17 @@ void cDisplay::DrawMessage(const char *txt) {
     // Draw text
     osd->DrawText(x+2*border,y+2*border,txt, fg, bg, MessageFont);
 
-
     // Remember box
     MessageW=w;
     MessageH=h;
     MessageX=x;
     MessageY=y;
+
+#if 0
+    dsyslog("OSD-Teletext/%s: display with MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d ScaleX=%d ScaleY=%d", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, ScaleX, ScaleY);
+#else
+    dsyslog("OSD-Teletext/%s: display with MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY);
+#endif
 
     // And flush all changes
     ReleaseFlush();
@@ -518,6 +523,8 @@ void cDisplay::ClearMessage() {
     if (!osd) return;
     if (MessageW==0 || MessageH==0) return;
 
+#if 0
+    // BUGGY, resulting in out-of-range
     // map OSD pixel to virtual coordinate, use center of pixel
     int x0=(MessageX-OffsetX)*ScaleX+ScaleX/2;
     int y0=(MessageY-OffsetY)*ScaleY+ScaleY/2;
@@ -530,6 +537,43 @@ void cDisplay::ClearMessage() {
     x1=(x1+(12<<16)-1)/(12<<16);
     y1=(y1+(10<<16)-1)/(10<<16);
 
+    dsyslog("OSD-Teletext/%s: called with MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d ScaleX=%d ScaleY=%d => x0=%d/y0=%d x1=%d/y1=%d", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, ScaleX, ScaleY, x0, y0, x1, y1);
+#else
+    // NEW, reverse calculation based on how DrawChar
+    // map to character x/y
+    int x0 = (MessageX - OffsetX )         / (fontWidth  / 2);
+    int y0 = (MessageY-OffsetY)            / (fontHeight / 2);
+    int x1 = (MessageX+MessageW-1-OffsetX) / (fontWidth  / 2);
+    int y1 = (MessageY+MessageH-1-OffsetY) / (fontHeight / 2);
+
+    dsyslog("OSD-Teletext/%s: called with MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d => x0=%d/y0=%d x1=%d/y1=%d", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, x0, y0, x1, y1);
+#endif
+
+#define TESTOORX(X) (X < 0 || X >= 40)
+#define TESTOORY(Y) (Y < 0 || Y >= 25)
+    if ( TESTOORX(x0) || TESTOORX(x1) || TESTOORY(y0) || TESTOORY(y1) ) {
+	// something out-of-range
+#if 0
+	esyslog("OSD-Teletext/%s: out-of-range detected(crop) MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d ScaleX=%d ScaleY=%d => x0=%d%s y0=%d%s x1=%d%s y1=%d%s", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, ScaleX, ScaleY,
+#else
+	esyslog("OSD-Teletext/%s: out-of-range detected(crop) MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d => x0=%d%s y0=%d%s x1=%d%s y1=%d%s", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY,
+#endif
+		x0, TESTOORX(x0) ? "!" : "",
+		y0, TESTOORY(y0) ? "!" : "",
+		x1, TESTOORX(x1) ? "!" : "",
+		y1, TESTOORY(y1) ? "!" : ""
+	);
+	// crop to limits
+	if (x0 < 0) x0 = 0;
+	if (x1 < 0) x1 = 0;
+	if (y0 < 0) y0 = 0;
+	if (y1 < 0) y1 = 0;
+	if TESTOORX(x0) x0 = 40 - 1;
+	if TESTOORX(x1) x1 = 40 - 1;
+	if TESTOORY(y0) y0 = 25 - 1;
+	if TESTOORY(y1) y1 = 25 - 1;
+    }
+    // dsyslog("OSD-Teletext/%s: call MakeDirty with area x0=%d/y0=%d <-> x1=%d/y1=%d", __FUNCTION__, x0, y0, x1, y1);
     for (int x=x0;x<=x1;x++) {
         for (int y=y0;y<=y1;y++) {
             MakeDirty(x,y);
