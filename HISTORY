@@ -1,6 +1,8 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
 
+2021-02-01: version 0.9.8
+
 - [pbiering] introduce setup option "Text Vertical Offset" ("5" looks good on softhddevice)
 - [pbiering] fix out-of-bounds message by using new way to calculated x/y position for ClearMessage
 
