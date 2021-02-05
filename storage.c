@@ -14,10 +14,10 @@ int Storage::doCleanUp() {
    DIR *top=opendir(root);
    int pagesDeleted=0;
    if (top) {
-      struct dirent *chandir, path;
+      struct dirent *chandir;
       struct stat chandirstat;
       char fullPath[PATH_MAX];
-      while ( (!readdir_r(top, &path, &chandir) && chandir != NULL) ) {
+      while ((chandir = readdir(top)) != NULL) {
          if (strcmp(chandir->d_name, "..")==0 || strcmp(chandir->d_name, ".")==0)
             continue;
          snprintf(fullPath, PATH_MAX, "%s/%s", root, chandir->d_name);
@@ -40,11 +40,11 @@ int Storage::cleanSubDir(const char *dir) {
    bool hadError=false;
    int bytesDeleted=0;
    if (d) {
-      struct dirent *txtfile, path;
+      struct dirent *txtfile;
       struct stat txtfilestat;
       char fullPath[PATH_MAX];
       int filesize;
-      while ( (!readdir_r(d, &path, &txtfile) && txtfile != NULL) ) {
+      while ((txtfile = readdir(d)) != NULL) {
          int len=strlen(txtfile->d_name);
          //check that the file end with .vtx to avoid accidents and disasters
          if (strcmp(txtfile->d_name+len-4, ".vtx")==0) {
@@ -95,9 +95,9 @@ void Storage::freeSpace() {
    DIR *top=opendir(getRootDir());
    if (top) {
       int haveDir=0;
-      struct dirent *chandir, path;
+      struct dirent *chandir;
       struct stat chandirstat;
-      while ( (!readdir_r(top, &path, &chandir) && chandir != NULL) ) {
+      while ((chandir = readdir(top)) != NULL) {
          if (strcmp(chandir->d_name, "..")==0 || strcmp(chandir->d_name, ".")==0)
             continue;
          snprintf(fullPath, PATH_MAX, "%s/%s", getRootDir(), chandir->d_name);
