@@ -15,6 +15,7 @@
 
 #include <strings.h>
 #include <vdr/config.h>
+#include <vdr/skins.h>
 #include "setup.h"
 #include "display.h"
 #include "txtfont.h"
@@ -102,6 +103,7 @@ cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height)
     if (osd->CanHandleAreas(Areas, sizeof(Areas) / sizeof(tArea)) != oeOk) {
         DELETENULL(osd);
         esyslog("OSD-Teletext: can't create requested OSD area with x0=%d y0=%d width=%d height=%d bpp=%d", x0, y0, width, height, bpp);
+        Skins.Message(mtError, "OSD-Teletext can't request OSD area, check plugin settings");
         return;
     }
     osd->SetAreas(Areas, sizeof(Areas) / sizeof(tArea));
