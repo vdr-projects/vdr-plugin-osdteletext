@@ -94,6 +94,7 @@ cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height)
     tArea Areas[] = { { 0, 0, width - 1, height - 1, bpp } };
     if (osd->CanHandleAreas(Areas, sizeof(Areas) / sizeof(tArea)) != oeOk) {
         DELETENULL(osd);
+        esyslog("%s: can't create requested OSD area with x0=%d y0=%d width=%d height=%d bpp=%d\n", PLUGIN_NAME_I18N, x0, y0, width, height, bpp);
         return;
     }
     osd->SetAreas(Areas, sizeof(Areas) / sizeof(tArea));
