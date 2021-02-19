@@ -91,13 +91,12 @@ cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height)
     // Width has to end on byte boundary, so round up
 
     int bpp = 32;
-    if (osd->IsTrueColor() == false) {
-	   bpp = 8;
-           dsyslog("OSD-Teletext: OSD is not providing TrueColor, fallback to bpp=%d", bpp);
-    };
     if (ttSetup.colorMode4bpp == true) {
 	   bpp = 4;
            dsyslog("OSD-Teletext: OSD config forced to bpp=%d", bpp);
+    } else if (osd->IsTrueColor() == false) {
+	   bpp = 8;
+           dsyslog("OSD-Teletext: OSD is not providing TrueColor, fallback to bpp=%d", bpp);
     };
     tArea Areas[] = { { 0, 0, width - 1, height - 1, bpp } };
     if (osd->CanHandleAreas(Areas, sizeof(Areas) / sizeof(tArea)) != oeOk) {
