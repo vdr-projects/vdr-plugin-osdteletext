@@ -67,7 +67,7 @@ cFont *cDisplay::GetFont(const char *name, int fontIndex, int height, int width)
             esyslog("OSD-Teletext: font %s returned realWidth of 0 (should not happen, please try a different font)", name);
         }
     }
-    isyslog("OSD-Teletext: font %s index %d probed size (w/h) = (%d/%d), char width: %d", name, fontIndex, width, height, font->Width("g"));
+    dsyslog("OSD-Teletext: font %s index %d probed size (w/h) = (%d/%d), char width: %d", name, fontIndex, width, height, font->Width("g"));
     return font;
 }
 
@@ -112,8 +112,8 @@ void cDisplay::InitScaler() {
     fontHeight &= 0xfffe;
 
 
-    isyslog("OSD-Teletext: osd width = %d, height = %d", outputWidth, outputHeight);
-    isyslog("OSD-Teletext: font width * 2 = %d, height = %d", fontWidth, fontHeight);
+    dsyslog("OSD-Teletext: OSD width = %d, height = %d", outputWidth, outputHeight);
+    dsyslog("OSD-Teletext: font width * 2 = %d, height = %d", fontWidth, fontHeight);
 
     int txtFontWidth = fontWidth;
     int txtFontHeight = fontHeight;
