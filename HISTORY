@@ -1,6 +1,6 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
-2021-02-19:
+2021-02-19: version 0.9.9
 - [pbiering] add fallback to 8 bpp in case OSD is not supporting TrueColor
 
 2021-02-04:
