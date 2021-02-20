@@ -32,15 +32,26 @@ void Display::SetMode(Display::Mode NewMode) {
     // No change, nothing to do
 
     // OSD origin, centered on VDR OSD
+#ifdef OSDSIZEPCT
+    int OSDheight = (cOsd::OsdHeight() * ttSetup.OSDheightPct) / 100;
+    int OSDwidth = (cOsd::OsdWidth() * ttSetup.OSDwidthPct) / 100;
+    int x0 = (cOsd::OsdWidth() - OSDwidth) / 2;
+    int y0 = (cOsd::OsdHeight() - OSDheight) / 2;
+#else
     int x0=Setup.OSDLeft+(Setup.OSDWidth-ttSetup.OSDwidth)*ttSetup.OSDHAlign/100;
     int y0=Setup.OSDTop +(Setup.OSDHeight-ttSetup.OSDheight)*ttSetup.OSDVAlign/100;
+#endif
 
     switch (NewMode) {
     case Display::Full:
         // Need to re-initialize *display:
         Delete();
         // Try 32BPP display first:
+#ifdef OSDSIZEPCT
+        display=new cDisplay32BPP(x0,y0,OSDwidth,OSDheight);
+#else
         display=new cDisplay32BPP(x0,y0,ttSetup.OSDwidth,ttSetup.OSDheight);
+#endif
         break;
     case Display::HalfUpper:
         // Shortcut to switch from HalfUpper to HalfLower:
@@ -51,7 +62,11 @@ void Display::SetMode(Display::Mode NewMode) {
         }
         // Need to re-initialize *display:
         Delete();
+#ifdef OSDSIZEPCT
+        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,true);
+#else
         display=new cDisplay32BPPHalf(x0,y0,ttSetup.OSDwidth,ttSetup.OSDheight,true);
+#endif
         break;
     case Display::HalfLower:
         // Shortcut to switch from HalfUpper to HalfLower:
@@ -62,7 +77,11 @@ void Display::SetMode(Display::Mode NewMode) {
         }
         // Need to re-initialize *display:
         Delete();
+#ifdef OSDSIZEPCT
+        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,false);
+#else
         display=new cDisplay32BPPHalf(x0,y0,ttSetup.OSDwidth,ttSetup.OSDheight,false);
+#endif
         break;
     }
     mode=NewMode;

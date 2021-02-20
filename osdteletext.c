@@ -30,7 +30,7 @@ using namespace std;
 
 #define NUMELEMENTS(x) (sizeof(x) / sizeof(x[0]))
 
-static const char *VERSION        = "0.9.9";
+static const char *VERSION        = "0.9.9.1";
 static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
 static const char *MAINMENUENTRY  = trNOOP("Teletext");
 
@@ -189,8 +189,13 @@ bool cPluginTeletextosd::Start(void)
    initTexts();
    if (startReceiver)
       txtStatus=new cTxtStatus(storeTopText, storage);
+#ifdef OSDSIZEPCT
+   if (ttSetup.OSDheightPct<20)  ttSetup.OSDheightPct=20;
+   if (ttSetup.OSDwidthPct<20)   ttSetup.OSDwidthPct=20;
+#else
    if (ttSetup.OSDheight<=100)  ttSetup.OSDheight=Setup.OSDHeight;
    if (ttSetup.OSDwidth<=100)   ttSetup.OSDwidth=Setup.OSDWidth;
+#endif
 
    return true;
 }
@@ -268,10 +273,15 @@ bool cPluginTeletextosd::SetupParse(const char *Name, const char *Value)
      //currently not used
   else if (!strcasecmp(Name, "suspendReceiving")) ttSetup.suspendReceiving=atoi(Value);
   else if (!strcasecmp(Name, "autoUpdatePage")) ttSetup.autoUpdatePage=atoi(Value);
+#ifdef OSDSIZEPCT
+  else if (!strcasecmp(Name, "OSDheightPct")) ttSetup.OSDheightPct=atoi(Value);
+  else if (!strcasecmp(Name, "OSDwidthPct")) ttSetup.OSDwidthPct=atoi(Value);
+#else
   else if (!strcasecmp(Name, "OSDheight")) ttSetup.OSDheight=atoi(Value);
   else if (!strcasecmp(Name, "OSDwidth")) ttSetup.OSDwidth=atoi(Value);
   else if (!strcasecmp(Name, "OSDHAlign")) ttSetup.OSDHAlign=atoi(Value);
   else if (!strcasecmp(Name, "OSDVAlign")) ttSetup.OSDVAlign=atoi(Value);
+#endif
   else if (!strcasecmp(Name, "inactivityTimeout")) /*ttSetup.inactivityTimeout=atoi(Value)*/;
   else if (!strcasecmp(Name, "HideMainMenu")) ttSetup.HideMainMenu=atoi(Value);
   else if (!strcasecmp(Name, "txtFontName")) ttSetup.txtFontName=strdup(Value);
@@ -315,10 +325,15 @@ void cTeletextSetupPage::Store(void) {
    ttSetup.showClock=temp.showClock;
    ttSetup.suspendReceiving=temp.suspendReceiving;
    ttSetup.autoUpdatePage=temp.autoUpdatePage;
+#ifdef OSDSIZEPCT
+   ttSetup.OSDheightPct=temp.OSDheightPct;
+   ttSetup.OSDwidthPct=temp.OSDwidthPct;
+#else
    ttSetup.OSDheight=temp.OSDheight;
    ttSetup.OSDwidth=temp.OSDwidth;
    ttSetup.OSDHAlign=temp.OSDHAlign;
    ttSetup.OSDVAlign=temp.OSDVAlign;
+#endif
    ttSetup.HideMainMenu=temp.HideMainMenu;
    ttSetup.txtFontName=temp.txtFontNames[temp.txtFontIndex];
    ttSetup.txtG0Block=temp.txtG0Block;
@@ -335,10 +350,15 @@ void cTeletextSetupPage::Store(void) {
       //currently not used
    //SetupStore("suspendReceiving", ttSetup.suspendReceiving);
    SetupStore("autoUpdatePage", ttSetup.autoUpdatePage);
+#ifdef OSDSIZEPCT
+   SetupStore("OSDheightPct", ttSetup.OSDheightPct);
+   SetupStore("OSDwidthPct", ttSetup.OSDwidthPct);
+#else
    SetupStore("OSDheight", ttSetup.OSDheight);
    SetupStore("OSDwidth", ttSetup.OSDwidth);
    SetupStore("OSDHAlign", ttSetup.OSDHAlign);
    SetupStore("OSDVAlign", ttSetup.OSDVAlign);
+#endif
    SetupStore("HideMainMenu", ttSetup.HideMainMenu);
    SetupStore("txtFontName", ttSetup.txtFontName);
    SetupStore("txtG0Block", ttSetup.txtG0Block);
@@ -379,10 +399,15 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    temp.showClock=ttSetup.showClock;
    temp.suspendReceiving=ttSetup.suspendReceiving;
    temp.autoUpdatePage=ttSetup.autoUpdatePage;
+#ifdef OSDSIZEPCT
+   temp.OSDheightPct=ttSetup.OSDheightPct;
+   temp.OSDwidthPct=ttSetup.OSDwidthPct;
+#else
    temp.OSDheight=ttSetup.OSDheight;
    temp.OSDwidth=ttSetup.OSDwidth;
    temp.OSDHAlign=ttSetup.OSDHAlign;
    temp.OSDVAlign=ttSetup.OSDVAlign;
+#endif
    temp.HideMainMenu=ttSetup.HideMainMenu;
    temp.txtFontName=ttSetup.txtFontName;
    temp.txtG0Block=ttSetup.txtG0Block;
@@ -405,11 +430,15 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
 
    Add(new cMenuEditBoolItem(tr("Auto-update pages"), &temp.autoUpdatePage ));
 
+#ifdef OSDSIZEPCT
+   Add(new cMenuEditIntItem(tr("OSD height percent"), &temp.OSDheightPct, 20, 100));
+   Add(new cMenuEditIntItem(tr("OSD width percent"), &temp.OSDwidthPct, 20, 100));
+#else
    Add(new cMenuEditIntItem(tr("OSD height"), &temp.OSDheight, 250, MAXOSDHEIGHT));
    Add(new cMenuEditIntItem(tr("OSD width"), &temp.OSDwidth, 320, MAXOSDWIDTH));
-
    Add(new cMenuEditIntItem(tr("OSD horizontal align"), &temp.OSDHAlign, 0, 100));
    Add(new cMenuEditIntItem(tr("OSD vertical align"), &temp.OSDVAlign, 0, 100));
+#endif
    Add(new cMenuEditBoolItem(tr("Hide mainmenu entry"), &temp.HideMainMenu));
    Add(new cMenuEditStraItem(tr("Text Font"), &temp.txtFontIndex, temp.txtFontNames.Size(), &temp.txtFontNames[0]));
    Add(new cMenuEditStraItem(tr("G0 code block"), &temp.txtG0Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
