@@ -82,11 +82,9 @@ msgstr "Uhr anzeigen"
 msgid "Auto-update pages"
 msgstr "Seiten aktualisieren"
 
-#, c-format
 msgid "OSD % size mode"
 msgstr "OSD % Größen-Modus"
 
-#, c-format
 msgid "OSD % height"
 msgstr "OSD % Höhe"
 
