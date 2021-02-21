@@ -420,7 +420,7 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    Add(new cMenuEditBoolItem(tr("Auto-update pages"), &temp.autoUpdatePage ));
 
    Add(new cMenuEditBoolItem(tr("OSD % size mode"), &temp.OSDsizePctMode));
-   if (temp.OSDsizePctMode == true) { // TODO: toggle menu depending of mode
+   if (temp.OSDsizePctMode == true) { // TODO HOWTO?: get instant active, not only after closing plugin config menu
       Add(new cMenuEditIntItem(tr("OSD % height"), &temp.OSDheightPct, 10, 100));
       Add(new cMenuEditIntItem(tr("OSD % width"), &temp.OSDwidthPct, 10, 100));
    } else {
