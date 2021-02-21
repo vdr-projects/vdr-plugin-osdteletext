@@ -1,5 +1,9 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
+2021-02-20:
+- [pbiering] add optional percent and always-center based OSD size
+- [pbiering] scale "Text Vertical Offset" according to reduced size
+
 2021-02-19: version 0.9.9
 - [pbiering] add fallback to 8 bpp in case OSD is not supporting TrueColor
 
