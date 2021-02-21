@@ -420,15 +420,15 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    Add(new cMenuEditBoolItem(tr("Auto-update pages"), &temp.autoUpdatePage ));
 
    Add(new cMenuEditBoolItem(tr("OSD % size mode"), &temp.OSDsizePctMode));
-//   if (temp.OSDsizePctMode == true) { // TODO: toggle menu depending of mode
+   if (temp.OSDsizePctMode == true) { // TODO: toggle menu depending of mode
       Add(new cMenuEditIntItem(tr("OSD % height"), &temp.OSDheightPct, 10, 100));
       Add(new cMenuEditIntItem(tr("OSD % width"), &temp.OSDwidthPct, 10, 100));
-//   } else {
+   } else {
       Add(new cMenuEditIntItem(tr("OSD height"), &temp.OSDheight, 250, MAXOSDHEIGHT));
       Add(new cMenuEditIntItem(tr("OSD width"), &temp.OSDwidth, 320, MAXOSDWIDTH));
       Add(new cMenuEditIntItem(tr("OSD horizontal align"), &temp.OSDHAlign, 0, 100));
       Add(new cMenuEditIntItem(tr("OSD vertical align"), &temp.OSDVAlign, 0, 100));
-//   }
+   };
    Add(new cMenuEditBoolItem(tr("Hide mainmenu entry"), &temp.HideMainMenu));
    Add(new cMenuEditStraItem(tr("Text Font"), &temp.txtFontIndex, temp.txtFontNames.Size(), &temp.txtFontNames[0]));
    Add(new cMenuEditStraItem(tr("G0 code block"), &temp.txtG0Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
