@@ -422,11 +422,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
             cBitmap charBm(w, h, 24);
             charBm.DrawRectangle(0, 0, w, h, bg);
 //            charBm.DrawText(0, 0, buf, fg, bg, font);
-#ifdef OSDSIZEPCT
-            charBm.DrawText(0, (ttSetup.txtVoffset * ttSetup.OSDheightPct) / 100, buf, fg, 0, font);
-#else
-            charBm.DrawText(0, ttSetup.txtVoffset, buf, fg, 0, font);
-#endif
+            charBm.DrawText(0, (ttSetup.txtVoffset * osd->Height()) / cOsd::OsdHeight(), buf, fg, 0, font);
             osd->DrawBitmap(vx, vy, charBm);
 #endif
         }

@@ -26,32 +26,52 @@ cDisplay *Display::display=NULL;
 
 
 void Display::SetMode(Display::Mode NewMode) {
+    int hpixelPerCharMin = 8;
+    int vpixelPerCharMin = 10;
+    int hChars = 40;
+    int vLines = 25;
+    int OSDwidth  = hpixelPerCharMin * hChars;
+    int OSDheight = vpixelPerCharMin * vLines;
+    int x0;
+    int y0;
+
     // (re-)set display mode.
 
     if (display!=NULL && NewMode==mode) return;
     // No change, nothing to do
 
     // OSD origin, centered on VDR OSD
-#ifdef OSDSIZEPCT
-    int OSDheight = (cOsd::OsdHeight() * ttSetup.OSDheightPct) / 100;
-    int OSDwidth = (cOsd::OsdWidth() * ttSetup.OSDwidthPct) / 100;
-    int x0 = (cOsd::OsdWidth() - OSDwidth) / 2;
-    int y0 = (cOsd::OsdHeight() - OSDheight) / 2;
-#else
-    int x0=Setup.OSDLeft+(Setup.OSDWidth-ttSetup.OSDwidth)*ttSetup.OSDHAlign/100;
-    int y0=Setup.OSDTop +(Setup.OSDHeight-ttSetup.OSDheight)*ttSetup.OSDVAlign/100;
-#endif
+    if (ttSetup.OSDsizePctMode == true) {
+        // calculate from percentage and OSD maximum
+        OSDwidth = (cOsd::OsdWidth() * ttSetup.OSDwidthPct) / 100;
+        OSDheight = (cOsd::OsdHeight() * ttSetup.OSDheightPct) / 100;
+
+        // apply minimum limit if selected percent values are too less for hpixelPerCharMin/vpixelPerCharMin
+        if (OSDwidth  < (hpixelPerCharMin * hChars)) OSDwidth  = (hpixelPerCharMin * hChars);
+        if (OSDheight < (vpixelPerCharMin * vLines)) OSDheight = (vpixelPerCharMin * vLines);
+
+        // align with hChars/vLines in case of less than 100 %
+        if ((ttSetup.OSDwidthPct  < 100) && ((OSDwidth  % hChars) > 0)) OSDwidth  = (OSDwidth  / hChars) * hChars;
+        if ((ttSetup.OSDheightPct < 100) && ((OSDheight % vLines) > 0)) OSDheight = (OSDheight / vLines) * vLines;
+
+        // calculate left/top offset for centering
+        x0 = (cOsd::OsdWidth() - OSDwidth) / 2;
+        y0 = (cOsd::OsdHeight() - OSDheight) / 2;
+        dsyslog("OSD-Teletext: OSD area calculated by percent  values: x0=%d y0=%d width=%d (%d%% of %d) height=%d (%d%% of %d)", x0, y0, OSDwidth, ttSetup.OSDwidthPct, cOsd::OsdWidth(), OSDheight, ttSetup.OSDheightPct, cOsd::OsdHeight());
+    } else {
+        x0=Setup.OSDLeft+(Setup.OSDWidth-ttSetup.OSDwidth)*ttSetup.OSDHAlign/100;
+        y0=Setup.OSDTop +(Setup.OSDHeight-ttSetup.OSDheight)*ttSetup.OSDVAlign/100;
+        OSDwidth =ttSetup.OSDwidth;
+        OSDheight=ttSetup.OSDheight;
+        dsyslog("OSD-Teletext: OSD area calculated by absolute values: x0=%d y0=%d width=%d height=%d", x0, y0, OSDwidth, OSDheight);
+    }
 
     switch (NewMode) {
     case Display::Full:
         // Need to re-initialize *display:
         Delete();
         // Try 32BPP display first:
-#ifdef OSDSIZEPCT
         display=new cDisplay32BPP(x0,y0,OSDwidth,OSDheight);
-#else
-        display=new cDisplay32BPP(x0,y0,ttSetup.OSDwidth,ttSetup.OSDheight);
-#endif
         break;
     case Display::HalfUpper:
         // Shortcut to switch from HalfUpper to HalfLower:
@@ -62,11 +82,7 @@ void Display::SetMode(Display::Mode NewMode) {
         }
         // Need to re-initialize *display:
         Delete();
-#ifdef OSDSIZEPCT
         display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,true);
-#else
-        display=new cDisplay32BPPHalf(x0,y0,ttSetup.OSDwidth,ttSetup.OSDheight,true);
-#endif
         break;
     case Display::HalfLower:
         // Shortcut to switch from HalfUpper to HalfLower:
@@ -77,11 +93,7 @@ void Display::SetMode(Display::Mode NewMode) {
         }
         // Need to re-initialize *display:
         Delete();
-#ifdef OSDSIZEPCT
         display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,false);
-#else
-        display=new cDisplay32BPPHalf(x0,y0,ttSetup.OSDwidth,ttSetup.OSDheight,false);
-#endif
         break;
     }
     mode=NewMode;
@@ -206,3 +218,5 @@ void cDisplay32BPPHalf::InitOSD() {
     DirtyAll=true;
     Flush();
 }
+
+// vim: ts=4 sw=4 et
