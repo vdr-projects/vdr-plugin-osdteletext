@@ -422,7 +422,8 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
             cBitmap charBm(w, h, 24);
             charBm.DrawRectangle(0, 0, w, h, bg);
 //            charBm.DrawText(0, 0, buf, fg, bg, font);
-            charBm.DrawText(0, (ttSetup.txtVoffset * osd->Height()) / cOsd::OsdHeight(), buf, fg, 0, font);
+            charBm.DrawText(0, (ttSetup.txtVoffset * outputHeight) / cOsd::OsdHeight(), buf, fg, 0, font);
+            // dsyslog("vertical offset: txtVoffset=%d outputHeight=%d cOsd::OsdHeight()=%d shift=%d", ttSetup.txtVoffset, outputHeight, cOsd::OsdHeight(), (ttSetup.txtVoffset * osd->Height()) / cOsd::OsdHeight());
             osd->DrawBitmap(vx, vy, charBm);
 #endif
         }
@@ -585,3 +586,5 @@ void cDisplay::ClearMessage() {
 
     Flush();
 }
+
+// vim: ts=4 sw=4 et
