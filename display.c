@@ -126,11 +126,12 @@ cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height)
     if (ttSetup.colorMode4bpp == true) {
 	   bpp = 4;
            dsyslog("OSD-Teletext: OSD config forced to bpp=%d", bpp);
-    } else if (osd->IsTrueColor() == false) {
-	   bpp = 8;
-           dsyslog("OSD-Teletext: OSD is not providing TrueColor, fallback to bpp=%d", bpp);
     };
     tArea Areas[] = { { 0, 0, width - 1, height - 1, bpp } };
+    if (bpp == 32 && (osd->CanHandleAreas(Areas, sizeof(Areas) / sizeof(tArea)) != oeOk)) {
+        bpp = 8;
+        dsyslog("OSD-Teletext: OSD is not providing TrueColor, fallback to bpp=%d", bpp);
+    }
     if (osd->CanHandleAreas(Areas, sizeof(Areas) / sizeof(tArea)) != oeOk) {
         DELETENULL(osd);
         esyslog("OSD-Teletext: can't create requested OSD area with x0=%d y0=%d width=%d height=%d bpp=%d", x0, y0, width, height, bpp);
