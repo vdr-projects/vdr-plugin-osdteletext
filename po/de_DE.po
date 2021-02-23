@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-02-21 09:02+0100\n"
+"POT-Creation-Date: 2021-02-23 07:43+0100\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Klaus Schmidinger <Klaus.Schmidinger@tvdr.de>\n"
 "Language-Team: German <vdr@linuxtv.org>\n"
@@ -82,26 +82,11 @@ msgstr "Uhr anzeigen"
 msgid "Auto-update pages"
 msgstr "Seiten aktualisieren"
 
-msgid "OSD % size mode"
-msgstr "OSD % Größen-Modus"
+msgid "OSD width (%)"
+msgstr "OSD Breite (%)"
 
-msgid "OSD % height"
-msgstr "OSD % Höhe"
-
-msgid "OSD % width"
-msgstr "OSD % Breite"
-
-msgid "OSD height"
-msgstr "OSD-Höhe"
-
-msgid "OSD width"
-msgstr "OSD-Breite"
-
-msgid "OSD horizontal align"
-msgstr "OSD horizontale Anordnung"
-
-msgid "OSD vertical align"
-msgstr "OSD vertikale Anordnung"
+msgid "OSD height (%)"
+msgstr "OSD Höhe (%)"
 
 msgid "Hide mainmenu entry"
 msgstr "Hauptmenüeintrag verstecken"
@@ -126,3 +111,26 @@ msgstr "Tastenzuweisung"
 
 msgid "  Page number"
 msgstr "  Seitenzahl"
+
+#, fuzzy, c-format
+#~ msgid "OSD % size mode"
+#~ msgstr "OSD % Größen-Modus"
+
+#, fuzzy, c-format
+#~ msgid "OSD % height"
+#~ msgstr "OSD % Höhe"
+
+#~ msgid "OSD % width"
+#~ msgstr "OSD % Breite"
+
+#~ msgid "OSD height"
+#~ msgstr "OSD-Höhe"
+
+#~ msgid "OSD width"
+#~ msgstr "OSD-Breite"
+
+#~ msgid "OSD horizontal align"
+#~ msgstr "OSD horizontale Anordnung"
+
+#~ msgid "OSD vertical align"
+#~ msgstr "OSD vertikale Anordnung"
