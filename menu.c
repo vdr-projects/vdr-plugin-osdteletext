@@ -647,9 +647,7 @@ TeletextSetup::TeletextSetup()
   : configuredClrBackground(clrGray50), showClock(true),
     suspendReceiving(false), autoUpdatePage(true),
     //OSDHeight+width default values given in Start()
-    OSDsizePctMode(false),
     OSDheightPct(100), OSDwidthPct(100),
-    OSDHAlign(50), OSDVAlign(50),
     //use the value set for VDR's min user inactivity.
     //Initially this value could be changed via the plugin's setup, but I removed that
     //because there is no advantage, but a possible problem when VDR's value is change
