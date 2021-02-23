@@ -41,39 +41,31 @@ void Display::SetMode(Display::Mode NewMode) {
     // No change, nothing to do
 
     // OSD origin, centered on VDR OSD
-    if (ttSetup.OSDsizePctMode == true) {
-        // calculate from percentage and OSD maximum
-        OSDwidth = (cOsd::OsdWidth() * ttSetup.OSDwidthPct) / 100;
-        OSDheight = (cOsd::OsdHeight() * ttSetup.OSDheightPct) / 100;
+    // calculate from percentage and OSD maximum
+    OSDwidth = (cOsd::OsdWidth() * ttSetup.OSDwidthPct) / 100;
+    OSDheight = (cOsd::OsdHeight() * ttSetup.OSDheightPct) / 100;
 
-        // apply minimum limit if selected percent values are too less for hpixelPerCharMin/vpixelPerCharMin
-        if (OSDwidth  < (hpixelPerCharMin * hChars)) OSDwidth  = (hpixelPerCharMin * hChars);
-        if (OSDheight < (vpixelPerCharMin * vLines)) OSDheight = (vpixelPerCharMin * vLines);
+    // apply minimum limit if selected percent values are too less for hpixelPerCharMin/vpixelPerCharMin
+    if (OSDwidth  < (hpixelPerCharMin * hChars)) OSDwidth  = (hpixelPerCharMin * hChars);
+    if (OSDheight < (vpixelPerCharMin * vLines)) OSDheight = (vpixelPerCharMin * vLines);
 
-        // align with hChars/vLines in case of less than 100 %
-        if ((ttSetup.OSDwidthPct  < 100) && ((OSDwidth  % hChars) > 0)) OSDwidth  = (OSDwidth  / hChars) * hChars;
-        if ((ttSetup.OSDheightPct < 100) && ((OSDheight % vLines) > 0)) OSDheight = (OSDheight / vLines) * vLines;
+    // align with hChars/vLines in case of less than 100 %
+    if ((ttSetup.OSDwidthPct  < 100) && ((OSDwidth  % hChars) > 0)) OSDwidth  = (OSDwidth  / hChars) * hChars;
+    if ((ttSetup.OSDheightPct < 100) && ((OSDheight % vLines) > 0)) OSDheight = (OSDheight / vLines) * vLines;
 
-        // calculate left/top offset for centering
-        x0 = (cOsd::OsdWidth() - OSDwidth) / 2;
-        y0 = (cOsd::OsdHeight() - OSDheight) / 2;
-        dsyslog("OSD-Teletext: OSD area calculated by percent  values: x0=%d y0=%d width=%d (%d%% of %d) height=%d (%d%% of %d)", x0, y0, OSDwidth, ttSetup.OSDwidthPct, cOsd::OsdWidth(), OSDheight, ttSetup.OSDheightPct, cOsd::OsdHeight());
-    } else {
-        x0=Setup.OSDLeft+(Setup.OSDWidth-ttSetup.OSDwidth)*ttSetup.OSDHAlign/100;
-        y0=Setup.OSDTop +(Setup.OSDHeight-ttSetup.OSDheight)*ttSetup.OSDVAlign/100;
-        OSDwidth =ttSetup.OSDwidth;
-        OSDheight=ttSetup.OSDheight;
-        dsyslog("OSD-Teletext: OSD area calculated by absolute values: x0=%d y0=%d width=%d height=%d", x0, y0, OSDwidth, OSDheight);
-    }
+    // calculate left/top offset for centering
+    x0 = cOsd::OsdLeft() + (cOsd::OsdWidth() - OSDwidth) / 2;
+    y0 = cOsd::OsdTop() + (cOsd::OsdHeight() - OSDheight) / 2;
+    dsyslog("OSD-Teletext: OSD area calculated by percent values: OsdLeft=%d OsdTop=%d OsdWidth=%d OsdHeight=%d OSDwidthPct=%d%% OSDheightPct=%d%% => x0=%d y0=%d width=%d height=%d", cOsd::OsdLeft(), cOsd::OsdTop(), cOsd::OsdWidth(), cOsd::OsdHeight(), ttSetup.OSDwidthPct, ttSetup.OSDheightPct, x0, y0, OSDwidth, OSDheight);
 
     switch (NewMode) {
-    case Display::Full:
+      case Display::Full:
         // Need to re-initialize *display:
         Delete();
         // Try 32BPP display first:
         display=new cDisplay32BPP(x0,y0,OSDwidth,OSDheight);
         break;
-    case Display::HalfUpper:
+      case Display::HalfUpper:
         // Shortcut to switch from HalfUpper to HalfLower:
         if (mode==Display::HalfLower) {
             // keep instance.
@@ -84,7 +76,7 @@ void Display::SetMode(Display::Mode NewMode) {
         Delete();
         display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,true);
         break;
-    case Display::HalfLower:
+      case Display::HalfLower:
         // Shortcut to switch from HalfUpper to HalfLower:
         if (mode==Display::HalfUpper) {
             // keep instance.
