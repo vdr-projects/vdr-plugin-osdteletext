@@ -26,23 +26,46 @@ cDisplay *Display::display=NULL;
 
 
 void Display::SetMode(Display::Mode NewMode) {
+    int hpixelPerCharMin = 8;
+    int vpixelPerCharMin = 10;
+    int hChars = 40;
+    int vLines = 25;
+    int OSDwidth  = hpixelPerCharMin * hChars;
+    int OSDheight = vpixelPerCharMin * vLines;
+    int x0;
+    int y0;
+
     // (re-)set display mode.
 
     if (display!=NULL && NewMode==mode) return;
     // No change, nothing to do
 
     // OSD origin, centered on VDR OSD
-    int x0=Setup.OSDLeft+(Setup.OSDWidth-ttSetup.OSDwidth)*ttSetup.OSDHAlign/100;
-    int y0=Setup.OSDTop +(Setup.OSDHeight-ttSetup.OSDheight)*ttSetup.OSDVAlign/100;
+    // calculate from percentage and OSD maximum
+    OSDwidth = (cOsd::OsdWidth() * ttSetup.OSDwidthPct) / 100;
+    OSDheight = (cOsd::OsdHeight() * ttSetup.OSDheightPct) / 100;
+
+    // apply minimum limit if selected percent values are too less for hpixelPerCharMin/vpixelPerCharMin
+    if (OSDwidth  < (hpixelPerCharMin * hChars)) OSDwidth  = (hpixelPerCharMin * hChars);
+    if (OSDheight < (vpixelPerCharMin * vLines)) OSDheight = (vpixelPerCharMin * vLines);
+
+    // align with hChars/vLines in case of less than 100 %
+    if ((ttSetup.OSDwidthPct  < 100) && ((OSDwidth  % hChars) > 0)) OSDwidth  = (OSDwidth  / hChars) * hChars;
+    if ((ttSetup.OSDheightPct < 100) && ((OSDheight % vLines) > 0)) OSDheight = (OSDheight / vLines) * vLines;
+
+    // calculate left/top offset for centering
+    x0 = cOsd::OsdLeft() + (cOsd::OsdWidth() - OSDwidth) / 2;
+    y0 = cOsd::OsdTop() + (cOsd::OsdHeight() - OSDheight) / 2;
+    dsyslog("OSD-Teletext: OSD area calculated by percent values: OsdLeft=%d OsdTop=%d OsdWidth=%d OsdHeight=%d OSDwidthPct=%d%% OSDheightPct=%d%% => x0=%d y0=%d width=%d height=%d", cOsd::OsdLeft(), cOsd::OsdTop(), cOsd::OsdWidth(), cOsd::OsdHeight(), ttSetup.OSDwidthPct, ttSetup.OSDheightPct, x0, y0, OSDwidth, OSDheight);
 
     switch (NewMode) {
-    case Display::Full:
+      case Display::Full:
         // Need to re-initialize *display:
         Delete();
         // Try 32BPP display first:
-        display=new cDisplay32BPP(x0,y0,ttSetup.OSDwidth,ttSetup.OSDheight);
+        display=new cDisplay32BPP(x0,y0,OSDwidth,OSDheight);
         break;
-    case Display::HalfUpper:
+      case Display::HalfUpper:
         // Shortcut to switch from HalfUpper to HalfLower:
         if (mode==Display::HalfLower) {
             // keep instance.
@@ -51,9 +74,9 @@ void Display::SetMode(Display::Mode NewMode) {
         }
         // Need to re-initialize *display:
         Delete();
-        display=new cDisplay32BPPHalf(x0,y0,ttSetup.OSDwidth,ttSetup.OSDheight,true);
+        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,true);
         break;
-    case Display::HalfLower:
+      case Display::HalfLower:
         // Shortcut to switch from HalfUpper to HalfLower:
         if (mode==Display::HalfUpper) {
             // keep instance.
@@ -62,7 +85,7 @@ void Display::SetMode(Display::Mode NewMode) {
         }
         // Need to re-initialize *display:
         Delete();
-        display=new cDisplay32BPPHalf(x0,y0,ttSetup.OSDwidth,ttSetup.OSDheight,false);
+        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,false);
         break;
     }
     mode=NewMode;
@@ -93,13 +116,15 @@ cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height)
 
     int bpp = 32;
     if (ttSetup.colorMode4bpp == true) {
-	   bpp = 4;
-           dsyslog("OSD-Teletext: OSD config forced to bpp=%d", bpp);
-    } else if (osd->IsTrueColor() == false) {
-	   bpp = 8;
-           dsyslog("OSD-Teletext: OSD is not providing TrueColor, fallback to bpp=%d", bpp);
+        bpp = 4;
+        dsyslog("OSD-Teletext: OSD config forced to bpp=%d", bpp);
     };
     tArea Areas[] = { { 0, 0, width - 1, height - 1, bpp } };
+    if (bpp == 32 && (osd->CanHandleAreas(Areas, sizeof(Areas) / sizeof(tArea)) != oeOk)) {
+        bpp = 8;
+        Areas[0].bpp = 8;
+        dsyslog("OSD-Teletext: OSD is not providing TrueColor, fallback to bpp=%d", bpp);
+    }
     if (osd->CanHandleAreas(Areas, sizeof(Areas) / sizeof(tArea)) != oeOk) {
         DELETENULL(osd);
         esyslog("OSD-Teletext: can't create requested OSD area with x0=%d y0=%d width=%d height=%d bpp=%d", x0, y0, width, height, bpp);
@@ -187,3 +212,5 @@ void cDisplay32BPPHalf::InitOSD() {
     DirtyAll=true;
     Flush();
 }
+
+// vim: ts=4 sw=4 et
