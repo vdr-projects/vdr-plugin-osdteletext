@@ -1,6 +1,6 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
-2021-02-23:
+2021-02-23: version 1.0.0
 - [pbiering] replace OSD sizing options by percent values and always-centric
 - [pbiering] scale "Text Vertical Offset" according to reduced size
 
