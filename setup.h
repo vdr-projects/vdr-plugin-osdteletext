@@ -40,13 +40,8 @@ public:
    int showClock;
    int suspendReceiving;
    int autoUpdatePage;
-   int OSDsizePctMode;
    int OSDheightPct;
    int OSDwidthPct;
-   int OSDheight;
-   int OSDwidth;
-   int OSDHAlign;
-   int OSDVAlign;
    int inactivityTimeout;
    int HideMainMenu;
    cString txtFontName;
