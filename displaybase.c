@@ -311,6 +311,11 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
     enumTeletextColor ttfg=c.GetFGColor();
     enumTeletextColor ttbg=c.GetBGColor();
 
+    static int cache_txtVoffset   = -1;
+    static int cache_outputHeight = -1;
+    static int cache_OsdHeight    = -1;
+    static int cache_Vshift = 0;
+
     if (c.GetBoxedOut()) {
         ttbg=ttcTransparent;
         ttfg=ttcTransparent;
@@ -422,8 +427,18 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
             cBitmap charBm(w, h, 24);
             charBm.DrawRectangle(0, 0, w, h, bg);
 //            charBm.DrawText(0, 0, buf, fg, bg, font);
-            charBm.DrawText(0, (ttSetup.txtVoffset * outputHeight) / cOsd::OsdHeight(), buf, fg, 0, font);
-            // dsyslog("vertical offset: txtVoffset=%d outputHeight=%d cOsd::OsdHeight()=%d shift=%d", ttSetup.txtVoffset, outputHeight, cOsd::OsdHeight(), (ttSetup.txtVoffset * osd->Height()) / cOsd::OsdHeight());
+            if (
+                 (cache_txtVoffset   < 0) || (cache_txtVoffset   != ttSetup.txtVoffset)
+              || (cache_outputHeight < 0) || (cache_outputHeight != outputHeight      )
+              || (cache_OsdHeight    < 0) || (cache_OsdHeight    != cOsd::OsdHeight() )
+            ) {
+                cache_txtVoffset   = ttSetup.txtVoffset;
+                cache_outputHeight = outputHeight;
+                cache_OsdHeight    = cOsd::OsdHeight();
+                cache_Vshift       = (cache_txtVoffset * cache_outputHeight) / cache_OsdHeight;
+                dsyslog("OSD-Teletext: DrawText vertical shift cache updated: txtVoffset=%d outputHeight=%d OsdHeight=%d => Vshift=%d", cache_txtVoffset, cache_outputHeight, cache_OsdHeight, cache_Vshift);
+            };
+            charBm.DrawText(0, cache_Vshift, buf, fg, 0, font);
             osd->DrawBitmap(vx, vy, charBm);
 #endif
         }
