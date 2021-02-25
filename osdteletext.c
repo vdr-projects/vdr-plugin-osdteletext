@@ -191,6 +191,8 @@ bool cPluginTeletextosd::Start(void)
       txtStatus=new cTxtStatus(storeTopText, storage);
    if (ttSetup.OSDheightPct<10)  ttSetup.OSDheightPct=10;
    if (ttSetup.OSDwidthPct<10)   ttSetup.OSDwidthPct=10;
+   if (abs(ttSetup.OSDvcentPct)>50) ttSetup.OSDvcentPct=0; // failsafe
+   if (abs(ttSetup.OSDhcentPct)>50) ttSetup.OSDhcentPct=0; // failsafe
 
    return true;
 }
@@ -270,6 +272,8 @@ bool cPluginTeletextosd::SetupParse(const char *Name, const char *Value)
   else if (!strcasecmp(Name, "autoUpdatePage")) ttSetup.autoUpdatePage=atoi(Value);
   else if (!strcasecmp(Name, "OSDheightPct")) ttSetup.OSDheightPct=atoi(Value);
   else if (!strcasecmp(Name, "OSDwidthPct")) ttSetup.OSDwidthPct=atoi(Value);
+  else if (!strcasecmp(Name, "OSDvcentPct")) ttSetup.OSDvcentPct=atoi(Value);
+  else if (!strcasecmp(Name, "OSDhcentPct")) ttSetup.OSDhcentPct=atoi(Value);
   else if (!strcasecmp(Name, "inactivityTimeout")) /*ttSetup.inactivityTimeout=atoi(Value)*/;
   else if (!strcasecmp(Name, "HideMainMenu")) ttSetup.HideMainMenu=atoi(Value);
   else if (!strcasecmp(Name, "txtFontName")) ttSetup.txtFontName=strdup(Value);
@@ -315,6 +319,8 @@ void cTeletextSetupPage::Store(void) {
    ttSetup.autoUpdatePage=temp.autoUpdatePage;
    ttSetup.OSDheightPct=temp.OSDheightPct;
    ttSetup.OSDwidthPct=temp.OSDwidthPct;
+   ttSetup.OSDvcentPct=temp.OSDvcentPct;
+   ttSetup.OSDhcentPct=temp.OSDhcentPct;
    ttSetup.HideMainMenu=temp.HideMainMenu;
    ttSetup.txtFontName=temp.txtFontNames[temp.txtFontIndex];
    ttSetup.txtG0Block=temp.txtG0Block;
@@ -333,6 +339,8 @@ void cTeletextSetupPage::Store(void) {
    SetupStore("autoUpdatePage", ttSetup.autoUpdatePage);
    SetupStore("OSDheightPct", ttSetup.OSDheightPct);
    SetupStore("OSDwidthPct", ttSetup.OSDwidthPct);
+   SetupStore("OSDvcentPct", ttSetup.OSDvcentPct);
+   SetupStore("OSDhcentPct", ttSetup.OSDhcentPct);
    SetupStore("HideMainMenu", ttSetup.HideMainMenu);
    SetupStore("txtFontName", ttSetup.txtFontName);
    SetupStore("txtG0Block", ttSetup.txtG0Block);
@@ -375,6 +383,8 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    temp.autoUpdatePage=ttSetup.autoUpdatePage;
    temp.OSDheightPct=ttSetup.OSDheightPct;
    temp.OSDwidthPct=ttSetup.OSDwidthPct;
+   temp.OSDvcentPct=ttSetup.OSDvcentPct;
+   temp.OSDhcentPct=ttSetup.OSDhcentPct;
    temp.HideMainMenu=ttSetup.HideMainMenu;
    temp.txtFontName=ttSetup.txtFontName;
    temp.txtG0Block=ttSetup.txtG0Block;
@@ -398,6 +408,8 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    Add(new cMenuEditBoolItem(tr("Auto-update pages"), &temp.autoUpdatePage ));
    Add(new cMenuEditIntItem(tr("OSD width (%)"), &temp.OSDwidthPct, 10, 100));
    Add(new cMenuEditIntItem(tr("OSD height (%)"), &temp.OSDheightPct, 10, 100));
+   Add(new cMenuEditIntItem(tr("OSD horizontal center (%)"), &temp.OSDhcentPct, -50, +50));
+   Add(new cMenuEditIntItem(tr("OSD vertical center (%)"), &temp.OSDvcentPct, -50, +50));
    Add(new cMenuEditBoolItem(tr("Hide mainmenu entry"), &temp.HideMainMenu));
    Add(new cMenuEditStraItem(tr("Text Font"), &temp.txtFontIndex, temp.txtFontNames.Size(), &temp.txtFontNames[0]));
    Add(new cMenuEditStraItem(tr("G0 code block"), &temp.txtG0Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));

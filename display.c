@@ -54,9 +54,24 @@ void Display::SetMode(Display::Mode NewMode) {
     if ((ttSetup.OSDheightPct < 100) && ((OSDheight % vLines) > 0)) OSDheight = (OSDheight / vLines) * vLines;
 
     // calculate left/top offset for centering
-    x0 = cOsd::OsdLeft() + (cOsd::OsdWidth() - OSDwidth) / 2;
-    y0 = cOsd::OsdTop() + (cOsd::OsdHeight() - OSDheight) / 2;
-    dsyslog("OSD-Teletext: OSD area calculated by percent values: OsdLeft=%d OsdTop=%d OsdWidth=%d OsdHeight=%d OSDwidthPct=%d%% OSDheightPct=%d%% => x0=%d y0=%d width=%d height=%d", cOsd::OsdLeft(), cOsd::OsdTop(), cOsd::OsdWidth(), cOsd::OsdHeight(), ttSetup.OSDwidthPct, ttSetup.OSDheightPct, x0, y0, OSDwidth, OSDheight);
+    if (ttSetup.OSDhcentPct == 0) {
+        x0 = cOsd::OsdLeft() + (cOsd::OsdWidth() - OSDwidth) / 2;
+    } else {
+        x0 = ((cOsd::OsdWidth() - OSDwidth) / 2) + (cOsd::OsdWidth() * ttSetup.OSDhcentPct / 100);
+        if (x0 < 0) x0 = 0;
+        if (x0 >= (cOsd::OsdWidth() - OSDwidth)) x0 = (cOsd::OsdWidth() - OSDwidth) - 1;
+        x0 += cOsd::OsdLeft();
+    };
+
+    if (ttSetup.OSDvcentPct == 0) {
+        y0 = cOsd::OsdTop() + (cOsd::OsdHeight() - OSDheight) / 2;
+    } else {
+        y0 = ((cOsd::OsdHeight() - OSDheight) / 2) + (cOsd::OsdHeight() * ttSetup.OSDvcentPct / 100);
+        if (y0 < 0) y0 = 0;
+        if (y0 >= (cOsd::OsdHeight() - OSDheight)) y0 = (cOsd::OsdHeight() - OSDheight) - 1;
+        y0 += cOsd::OsdTop();
+    };
+    dsyslog("OSD-Teletext: OSD area calculated by percent values: OsdLeft=%d OsdTop=%d OsdWidth=%d OsdHeight=%d OSDwidthPct=%d%% OSDheightPct=%d%% Osdhcent=%d%% Osdvcent=%d%% => x0=%d y0=%d width=%d height=%d", cOsd::OsdLeft(), cOsd::OsdTop(), cOsd::OsdWidth(), cOsd::OsdHeight(), ttSetup.OSDwidthPct, ttSetup.OSDheightPct, ttSetup.OSDhcentPct, ttSetup.OSDvcentPct, x0, y0, OSDwidth, OSDheight);
 
     switch (NewMode) {
       case Display::Full:
