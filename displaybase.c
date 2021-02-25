@@ -111,9 +111,7 @@ void cDisplay::InitScaler() {
     fontWidth &= 0xfffe;
     fontHeight &= 0xfffe;
 
-
-    dsyslog("OSD-Teletext: OSD width = %d, height = %d", outputWidth, outputHeight);
-    dsyslog("OSD-Teletext: font width * 2 = %d, height = %d", fontWidth, fontHeight);
+    dsyslog("OSD-Teletext: OSD width=%d height=%d fontWidth*2=%d fontHeight=%d", outputWidth, outputHeight, fontWidth, fontHeight);
 
     int txtFontWidth = fontWidth;
     int txtFontHeight = fontHeight;
