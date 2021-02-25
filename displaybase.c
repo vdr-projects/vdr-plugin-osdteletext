@@ -111,7 +111,7 @@ void cDisplay::InitScaler() {
     fontWidth &= 0xfffe;
     fontHeight &= 0xfffe;
 
-    dsyslog("OSD-Teletext: OSD width=%d height=%d fontWidth*2=%d fontHeight=%d", outputWidth, outputHeight, fontWidth, fontHeight);
+    dsyslog("OSD-Teletext: OSD width=%d height=%d fontWidth*2=%d fontHeight=%d ScaleX=%d ScaleY=%d", outputWidth, outputHeight, fontWidth, fontHeight, ScaleX, ScaleY);
 
     int txtFontWidth = fontWidth;
     int txtFontHeight = fontHeight;
@@ -366,8 +366,13 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
     }
 
     if (Zoom == Zoom_Lower) {
-        y -= 11;
+        y -= 12;
+        if (y < 0) return;
     }
+
+    if (Zoom == Zoom_Upper) {
+        if (y > 11) return;
+    };
 
     int vx = x * fontWidth / 2;
     int vy = y * fontHeight / 2;
