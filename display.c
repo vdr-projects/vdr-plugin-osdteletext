@@ -71,7 +71,7 @@ void Display::SetMode(Display::Mode NewMode) {
         if (y0 >= (cOsd::OsdHeight() - OSDheight)) y0 = (cOsd::OsdHeight() - OSDheight) - 1;
         y0 += cOsd::OsdTop();
     };
-    dsyslog("OSD-Teletext: OSD area calculated by percent values: OsdLeft=%d OsdTop=%d OsdWidth=%d OsdHeight=%d OSDwidthPct=%d%% OSDheightPct=%d%% Osdhcent=%d%% Osdvcent=%d%% => x0=%d y0=%d width=%d height=%d", cOsd::OsdLeft(), cOsd::OsdTop(), cOsd::OsdWidth(), cOsd::OsdHeight(), ttSetup.OSDwidthPct, ttSetup.OSDheightPct, ttSetup.OSDhcentPct, ttSetup.OSDvcentPct, x0, y0, OSDwidth, OSDheight);
+    dsyslog("OSD-Teletext: OSD area calculated by percent values: OsdLeft=%d OsdTop=%d OsdWidth=%d OsdHeight=%d OSDwidthPct=%d%% OSDheightPct=%d%% OSDhcentPct=%d%% OSDvcentPct=%d%% => x0=%d y0=%d width=%d height=%d", cOsd::OsdLeft(), cOsd::OsdTop(), cOsd::OsdWidth(), cOsd::OsdHeight(), ttSetup.OSDwidthPct, ttSetup.OSDheightPct, ttSetup.OSDhcentPct, ttSetup.OSDvcentPct, x0, y0, OSDwidth, OSDheight);
 
     switch (NewMode) {
       case Display::Full:
