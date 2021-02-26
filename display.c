@@ -86,23 +86,27 @@ void Display::SetMode(Display::Mode NewMode) {
         // Shortcut to switch from HalfUpper to HalfLower:
         if (mode==Display::HalfLower) {
             // keep instance.
+            ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Upper);
             ((cDisplay32BPPHalf*)display)->SetUpper(true);
             break;
         }
         // Need to re-initialize *display:
         Delete();
         display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,true);
+        ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Upper);
         break;
       case Display::HalfLower:
         // Shortcut to switch from HalfUpper to HalfLower:
         if (mode==Display::HalfUpper) {
             // keep instance.
+            ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Lower);
             ((cDisplay32BPPHalf*)display)->SetUpper(false);
             break;
         }
         // Need to re-initialize *display:
         Delete();
         display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,false);
+        ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Lower);
         break;
     }
     mode=NewMode;
@@ -153,11 +157,6 @@ cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height)
     setOutputWidth(width);
     setOutputHeight(Height);
 
-#if defined(APIVERSNUM) && APIVERSNUM >= 20107
-    Width = 480;
-    Height = 250;
-#endif
-
     isyslog("OSD-Teletext: OSD area successful requested with x0=%d y0=%d width=%d height=%d bpp=%d", x0, y0, width, height, bpp);
 
     InitScaler();
@@ -181,7 +180,7 @@ void cDisplay32BPPHalf::InitOSD() {
     if (!osd) return;
 
     int width=(Width+1)&~1; // Width has to end on byte boundary, so round up
-    int height=Height;
+    int height=Height / 2;
 
     int bpp = 32;
     if (ttSetup.colorMode4bpp == true) {
@@ -200,7 +199,7 @@ void cDisplay32BPPHalf::InitOSD() {
         Skins.Message(mtError, "OSD-Teletext can't request OSD 'half' area, check plugin settings");
         return;
     }
-
+/*
     // Try full-size area first
     while (osd->CanHandleAreas(Areas, sizeof(Areas) / sizeof(tArea)) != oeOk) {
         // Out of memory, so shrink
@@ -224,18 +223,13 @@ void cDisplay32BPPHalf::InitOSD() {
     } else {
         Areas[0].y1=Areas[0].y1+10;
     }
-
+*/
     osd->SetAreas(Areas, sizeof(Areas) / sizeof(tArea));
 
     isyslog("OSD-Teletext: OSD 'half' area successful requested width=%d height=%d bpp=%d upper=%d", width, height, bpp, Upper);
 
     setOutputWidth(width);
-    setOutputHeight(Height);
-
-#if defined(APIVERSNUM) && APIVERSNUM >= 20107
-    Width = 480;
-    Height = 250;
-#endif
+    setOutputHeight(height);
 
     InitScaler();
 
