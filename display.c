@@ -26,52 +26,54 @@ cDisplay *Display::display=NULL;
 
 
 void Display::SetMode(Display::Mode NewMode) {
-    int hpixelPerCharMin = 8;
-    int vpixelPerCharMin = 10;
     int hChars = 40;
     int vLines = 25;
-    int OSDwidth  = hpixelPerCharMin * hChars;
-    int OSDheight = vpixelPerCharMin * vLines;
-    int x0;
-    int y0;
+    int OSDwidth;
+    int OSDheight;
+    int x0 = cOsd::OsdLeft(); // start with general OSD offset
+    int y0 = cOsd::OsdTop();  // start with general OSD offset
 
     // (re-)set display mode.
 
-    if (display!=NULL && NewMode==mode) return;
-    // No change, nothing to do
+    if (display!=NULL && NewMode==mode) return; // No change, nothing to do
 
-    // OSD origin, centered on VDR OSD
     // calculate from percentage and OSD maximum
     OSDwidth = (cOsd::OsdWidth() * ttSetup.OSDwidthPct) / 100;
     OSDheight = (cOsd::OsdHeight() * ttSetup.OSDheightPct) / 100;
-
-    // apply minimum limit if selected percent values are too less for hpixelPerCharMin/vpixelPerCharMin
-    if (OSDwidth  < (hpixelPerCharMin * hChars)) OSDwidth  = (hpixelPerCharMin * hChars);
-    if (OSDheight < (vpixelPerCharMin * vLines)) OSDheight = (vpixelPerCharMin * vLines);
 
     // align with hChars/vLines in case of less than 100 %
     if ((ttSetup.OSDwidthPct  < 100) && ((OSDwidth  % hChars) > 0)) OSDwidth  = (OSDwidth  / hChars) * hChars;
     if ((ttSetup.OSDheightPct < 100) && ((OSDheight % vLines) > 0)) OSDheight = (OSDheight / vLines) * vLines;
 
-    // calculate left/top offset for centering
-    if (ttSetup.OSDhcentPct == 0) {
-        x0 = cOsd::OsdLeft() + (cOsd::OsdWidth() - OSDwidth) / 2;
-    } else {
-        x0 = ((cOsd::OsdWidth() - OSDwidth) / 2) + (cOsd::OsdWidth() * ttSetup.OSDhcentPct / 100);
-        if (x0 < 0) x0 = 0;
-        if (x0 >= (cOsd::OsdWidth() - OSDwidth)) x0 = (cOsd::OsdWidth() - OSDwidth) - 1;
-        x0 += cOsd::OsdLeft();
+    if ((ttSetup.OSDwidthPct < 100) && (ttSetup.OSDleftPct > 0)) {
+        // check offset not exceeding maximum possible
+        if (ttSetup.OSDwidthPct + ttSetup.OSDleftPct > 100) {
+            // shift to maximum
+            x0 += cOsd::OsdWidth() - OSDwidth;
+        } else {
+            // add configured offset
+            x0 += (cOsd::OsdWidth() * ttSetup.OSDleftPct) / 100;
+
+            // add 50% of alignment offset to center proper
+            x0 += ((cOsd::OsdWidth() * ttSetup.OSDwidthPct) / 100 - OSDwidth) / 2;
+        };
     };
 
-    if (ttSetup.OSDvcentPct == 0) {
-        y0 = cOsd::OsdTop() + (cOsd::OsdHeight() - OSDheight) / 2;
-    } else {
-        y0 = ((cOsd::OsdHeight() - OSDheight) / 2) + (cOsd::OsdHeight() * ttSetup.OSDvcentPct / 100);
-        if (y0 < 0) y0 = 0;
-        if (y0 >= (cOsd::OsdHeight() - OSDheight)) y0 = (cOsd::OsdHeight() - OSDheight) - 1;
-        y0 += cOsd::OsdTop();
+    if ((ttSetup.OSDtopPct < 100) && (ttSetup.OSDtopPct > 0)) {
+        // check offset not exceeding maximum possible
+        if (ttSetup.OSDheightPct + ttSetup.OSDtopPct > 100) {
+            // shift to maximum
+            y0 += cOsd::OsdHeight() - OSDheight;
+        } else {
+            // add configured offset
+            y0 += cOsd::OsdHeight() * ttSetup.OSDtopPct / 100;
+
+            // add 50% of alignment offset to center proper
+            y0 += ((cOsd::OsdHeight() * ttSetup.OSDheightPct) / 100 - OSDheight) / 2;
+        };
     };
-    dsyslog("OSD-Teletext: OSD area calculated by percent values: OsdLeft=%d OsdTop=%d OsdWidth=%d OsdHeight=%d OSDwidthPct=%d%% OSDheightPct=%d%% OSDhcentPct=%d%% OSDvcentPct=%d%% => x0=%d y0=%d width=%d height=%d", cOsd::OsdLeft(), cOsd::OsdTop(), cOsd::OsdWidth(), cOsd::OsdHeight(), ttSetup.OSDwidthPct, ttSetup.OSDheightPct, ttSetup.OSDhcentPct, ttSetup.OSDvcentPct, x0, y0, OSDwidth, OSDheight);
+
+    dsyslog("OSD-Teletext: OSD area calculated by percent values: OsdLeft=%d OsdTop=%d OsdWidth=%d OsdHeight=%d OSDwidthPct=%d%% OSDheightPct=%d%% OSDleftPct=%d%% OSDtopPct=%d%% => x0=%d y0=%d OSDwidth=%d OSDheight=%d", cOsd::OsdLeft(), cOsd::OsdTop(), cOsd::OsdWidth(), cOsd::OsdHeight(), ttSetup.OSDwidthPct, ttSetup.OSDheightPct, ttSetup.OSDleftPct, ttSetup.OSDtopPct, x0, y0, OSDwidth, OSDheight);
 
     switch (NewMode) {
       case Display::Full:

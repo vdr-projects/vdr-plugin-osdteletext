@@ -1,7 +1,10 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
+2021-02-25: version 1.0.2
+- [pbiering] replace percent based vertical/horizontal center option by top/left (re-add dropped feature)
+
 2021-02-25: version 1.0.1
-- [pbiering] add percent based vertical/horizontal center option (re-add dropped feature)
+- [pbiering] add percent based vertical/horizontal center option
 
 2021-02-23: version 1.0.0
 - [pbiering] replace OSD sizing options by percent values and always-centric
