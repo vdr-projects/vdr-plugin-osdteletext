@@ -65,7 +65,7 @@ protected:
     double outputScaleY;
     // for 32bpp true color, If creation fails, may be NULL
 
-    int ScaleX,ScaleY;
+    // int ScaleX,ScaleY; // FIXED: no longer used
     int OffsetX,OffsetY;
     // Virtual coordinate system, see InitScaler
 
@@ -232,6 +232,7 @@ inline void cDisplay::cBox::SetToCharacter(int x, int y) {
     YMax=YMin+(10<<16)-1;
 }
 
+/*
 inline void cDisplay::cVirtualCoordinate::VirtualToPixel(cDisplay *Display, int x, int y) {
     // Map virtual coordinate to OSD pixel
     OsdX=x/Display->ScaleX+Display->OffsetX;
@@ -252,5 +253,6 @@ inline void cDisplay::cVirtualCoordinate::IncPixelY(cDisplay *Display) {
     OsdY++;
     VirtY+=Display->ScaleY;
 }
+*/
 
 #endif

@@ -28,7 +28,7 @@ cDisplay::cDisplay(int width, int height)
       Boxed(false), Width(width), Height(height), Background(clrGray50),
       osd(NULL), outputWidth(0), outputScaleX(1.0),
       outputHeight(0), outputScaleY(1.0),
-      ScaleX(1), ScaleY(1), OffsetX(0), OffsetY(0),
+      /* ScaleX(1), ScaleY(1), */ OffsetX(0), OffsetY(0),
       MessageFont(cFont::GetFont(fontSml)), MessageX(0), MessageY(0),
       MessageW(0), MessageH(0),
       TXTFont(0), TXTDblWFont(0), TXTDblHFont(0), TXTDblHWFont(0)
@@ -83,7 +83,7 @@ void cDisplay::InitScaler() {
     outputScaleY = (double)outputHeight/250.0;
 
     int height=Height-6;
-    int width=Width-6;
+    // int width=Width-6; // FIXED: no longer used
     OffsetX=3;
     OffsetY=3;
 
@@ -98,8 +98,8 @@ void cDisplay::InitScaler() {
     default:;
     }
 
-    ScaleX=(480<<16)/width;
-    ScaleY=(250<<16)/height;
+    // ScaleX=(480<<16)/width;  // FIXED: no longer used
+    // ScaleY=(250<<16)/height; // FIXED: no longer used
 
     fontWidth = (outputWidth * 2 / 40) & 0xfffe;
     if (Zoom == Zoom_Off) {
@@ -111,7 +111,7 @@ void cDisplay::InitScaler() {
     fontWidth &= 0xfffe;
     fontHeight &= 0xfffe;
 
-    dsyslog("OSD-Teletext: OSD width=%d height=%d fontWidth*2=%d fontHeight=%d ScaleX=%d ScaleY=%d", outputWidth, outputHeight, fontWidth, fontHeight, ScaleX, ScaleY);
+    dsyslog("OSD-Teletext: OSD width=%d height=%d fontWidth*2=%d fontHeight=%d", outputWidth, outputHeight, fontWidth, fontHeight);
 
     int txtFontWidth = fontWidth;
     int txtFontHeight = fontHeight;
