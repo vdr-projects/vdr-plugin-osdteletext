@@ -176,7 +176,7 @@ cDisplay32BPPHalf::cDisplay32BPPHalf(int x0, int y0, int width, int height, bool
 
 void cDisplay32BPPHalf::InitOSD() {
     delete osd;
-    osd = cOsdProvider::NewOsd(OsdX0, OsdY0);
+    osd = cOsdProvider::NewOsd(OsdX0, OsdY0 + Height / 2);
     if (!osd) return;
 
     int width=(Width+1)&~1; // Width has to end on byte boundary, so round up
