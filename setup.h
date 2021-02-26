@@ -42,6 +42,8 @@ public:
    int autoUpdatePage;
    int OSDheightPct;
    int OSDwidthPct;
+   int OSDvcentPct;
+   int OSDhcentPct;
    int inactivityTimeout;
    int HideMainMenu;
    cString txtFontName;
