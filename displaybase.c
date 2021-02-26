@@ -329,7 +329,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
     int tl = Utf8CharSet(t, buf);
     buf[tl] = 0;
 
-    const cFont *font;
+    const cFont *font = TXTFont; // FIXED: -Wmaybe-uninitialized
     int charset = c.GetCharset();
     int fontType = 0;
     int w = fontWidth / 2;
