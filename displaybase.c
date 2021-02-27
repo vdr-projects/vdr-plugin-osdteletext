@@ -179,21 +179,26 @@ bool cDisplay::SetConceal(bool conceal) {
 }
 
 void cDisplay::SetZoom(enumZoom zoom) {
+    dsyslog("OSD-Teletext: %s called: zoom=%d", __FUNCTION__, zoom);
 
     if (!osd) return;
     if (Zoom==zoom) return;
     Zoom=zoom;
 
+
     // Re-initialize scaler to let zoom take effect
     InitScaler();
 
     // Clear screen - mainly clear border
-    CleanDisplay();
+    // CleanDisplay(); // called later after SetBackgroundColor
+    Dirty=true;
+    DirtyAll=true;
 
     Flush();
 }
 
 void cDisplay::SetBackgroundColor(tColor c) {
+    // dsyslog("OSD-Teletext: %s called: tColor=0x%08x", __FUNCTION__, c);
     Background=c;
     CleanDisplay();
     Flush();
@@ -203,6 +208,7 @@ void cDisplay::CleanDisplay() {
     enumTeletextColor bgc=(Boxed)?(ttcTransparent):(ttcBlack);
     if (!osd) return;
 
+    // dsyslog("OSD-Teletext: %s called: outputWidth=%d outputHeight=%d boxed=%d color=0x%08x bgc=%d", __FUNCTION__, outputWidth, outputHeight, Boxed, GetColorRGB(bgc,0), bgc);
     osd->DrawRectangle(0, 0, outputWidth, outputHeight, GetColorRGB(bgc,0));
 
     // repaint all
@@ -238,6 +244,8 @@ void cDisplay::RenderTeletextCode(unsigned char *PageCode) {
     HoldFlush();
 
     cRenderPage::ReadTeletextHeader(PageCode);
+
+    // dsyslog("OSD-Teletext: %s called", __FUNCTION__);
 
     if (!Boxed && (Flags&0x60)!=0) {
         Boxed=true;
