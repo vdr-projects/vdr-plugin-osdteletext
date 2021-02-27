@@ -48,9 +48,16 @@ Andere Optionen:
    Automatisch aktualisieren: 
                Überprüft ständig, ob sich die Seite geändert hat und aktualisiert sie wenn nötig
    OSD-Breite, OSD-Höhe: 
-               Hier kann die Breite des OSD unabhängig von den Einstellungen für VDR
-               bestimmt werden. Für die Breite liegt die Zahl zwischen 40 und 56,
-               für die Höhe zwischen 12 und 21.
+               Hier kann die Größe des OSD unabhängig von den Einstellungen für VDR
+               bestimmt werden. Valider Bereich zwischen 10% und 100%
+   OSD Links, OSD Oben:
+               Hier kann die linke/obere Ecke des OSD unabhängig von den Einstellungen für VDR
+               bestimmt werden. Valider Bereich zwischen 0% und 90%
+   Vertikaler Text Offset:
+               Justage des vertikalen Offsets für Textdarstellung bei einer (skalierten) Anzahl von Pixels
+               Valider Bereich zwischen 0 und 10
+   16-Farben-Modus:
+               Benutze nur 16 Farben (4-Bit) (für ältere DVB Karten)
    Mindest Benutzer-Inaktivität:
                Bestimmt die Zeit (in Minuten), nach der das Plugin automatisch geschlossen wird, wenn
                der Benutzer solange keine Taste betätigt hat. Das kann durch setzen des Wertes auf 0

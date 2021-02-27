@@ -79,8 +79,15 @@ Other Setup options:
                if yes.
    OSD width, OSD height: 
                Adjusts the width and height of the OSD independent from VDR's
-               settings. The valid range is 40 to 56 for the width and 12 to
-               21 for the height.
+               settings. The valid range is 10% to 100%
+   OSD left, OSD top:
+               Adjusts the left and top edge of the OSD independent from VDR's
+               settings. The valid range is 0% to 90%
+   Text Vertical Offset:
+               Adjust the vertical offset by amount of (scaled) pixels
+               The valid range is 0 to 10
+   Color Mode 4bpp:
+               Enforce 16-color mode (for some older DVB cards)
    Minimum user inactivity: 
                Sets a timeout (in minutes) for user inactivity. When this
                timespan has elapsed and the user did not press any keys, the
