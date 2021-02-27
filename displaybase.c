@@ -26,8 +26,8 @@ int cDisplay::realFontWidths[4] = {0};
 cDisplay::cDisplay(int width, int height)
     : Zoom(Zoom_Off), Concealed(false), Blinked(false), FlushLock(0),
       Boxed(false), Width(width), Height(height), Background(clrGray50),
-      osd(NULL), outputWidth(0), outputScaleX(1.0),
-      outputHeight(0), outputScaleY(1.0),
+      osd(NULL), outputWidth(0), /* outputScaleX(1.0), */
+      outputHeight(0), /* outputScaleY(1.0), */
       /* ScaleX(1), ScaleY(1), */ OffsetX(0), OffsetY(0),
       MessageFont(cFont::GetFont(fontSml)), MessageX(0), MessageY(0),
       MessageW(0), MessageH(0),
@@ -79,11 +79,11 @@ void cDisplay::InitScaler() {
     // Set up the scaling factors. Also do zoom mode by
     // scaling differently.
 
-    outputScaleX = (double)outputWidth/480.0;
-    outputScaleY = (double)outputHeight / (((ttSetup.lineMode24 == true) ? 24 : 25) * 10.0);
+    // outputScaleX = (double)outputWidth/480.0; // EOL: no longer used
+    // outputScaleY = (double)outputHeight / (((ttSetup.lineMode24 == true) ? 24 : 25) * 10.0); // EOL: no longer used
 
     int height=Height-6;
-    // int width=Width-6; // FIXED: no longer used
+    // int width=Width-6; // EOL: no longer used
     OffsetX=3;
     OffsetY=3;
 
@@ -98,14 +98,14 @@ void cDisplay::InitScaler() {
     default:;
     }
 
-    // ScaleX=(480<<16)/width;  // FIXED: no longer used
-    // ScaleY=(250<<16)/height; // FIXED: no longer used
+    // ScaleX=(480<<16)/width;  // EOL: no longer used
+    // ScaleY=(250<<16)/height; // EOL: no longer used
 
     fontWidth = (outputWidth * 2 / 40) & 0xfffe;
     if (Zoom == Zoom_Off) {
         fontHeight = (outputHeight * 2 / ((ttSetup.lineMode24 == true) ? 24 : 25)) & 0xfffe;
     } else {
-        fontHeight = (outputHeight * 2 * 2 / 25) & 0xfffe; // in Zoom mode line 25 is not displayed
+        fontHeight = (outputHeight * 2 * 2 / ((ttSetup.lineMode24 == true) ? 24 : 25)) & 0xfffe; // in Zoom mode line 25 is not displayed
     }
     // use even font size for double sized characters (prevents rounding errors during character display)
     fontWidth &= 0xfffe;

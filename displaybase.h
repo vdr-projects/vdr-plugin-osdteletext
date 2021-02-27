@@ -60,12 +60,12 @@ protected:
     // The osd object. If creation fails, may be NULL
 
     int outputWidth;
-    double outputScaleX;
+    // double outputScaleX; // EOL: no longer used
     int outputHeight;
-    double outputScaleY;
+    // double outputScaleY; // EOL: no longer used
     // for 32bpp true color, If creation fails, may be NULL
 
-    // int ScaleX,ScaleY; // FIXED: no longer used
+    // int ScaleX,ScaleY; // EOL: no longer used
     int OffsetX,OffsetY;
     // Virtual coordinate system, see InitScaler
 
