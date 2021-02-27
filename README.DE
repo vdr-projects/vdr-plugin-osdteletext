@@ -58,8 +58,6 @@ Andere Optionen:
                Valider Bereich zwischen -10 und 10 (und abhängig vom ausgewählten Font)
    16-Farben-Modus:
                Benutze nur 16 Farben (4-Bit) (für ältere DVB Karten)
-   24-Zeilen Modus
-               Zeige (und skaliere entsprechend) nur 24 Zeilen
    Mindest Benutzer-Inaktivität:
                Bestimmt die Zeit (in Minuten), nach der das Plugin automatisch geschlossen wird, wenn
                der Benutzer solange keine Taste betätigt hat. Das kann durch setzen des Wertes auf 0
