@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-01-27 06:22+0100\n"
+"POT-Creation-Date: 2021-02-27 06:57+0100\n"
 "PO-Revision-Date: 2008-12-30 13:52+0100\n"
 "Last-Translator: Andrey Pridvorov <ua0lnj@bk.ru>\n"
 "Language-Team: Russian <vdr@linuxtv.org>\n"
@@ -83,17 +83,17 @@ msgstr "Показывать часы"
 msgid "Auto-update pages"
 msgstr "Автообновление страниц"
 
-msgid "OSD height"
-msgstr "Высота меню"
+msgid "OSD left (%)"
+msgstr ""
 
-msgid "OSD width"
-msgstr "Ширина меню"
+msgid "OSD top (%)"
+msgstr ""
 
-msgid "OSD horizontal align"
-msgstr "Горизонтальное положение OSD"
+msgid "OSD width (%)"
+msgstr ""
 
-msgid "OSD vertical align"
-msgstr "Вертикальное положение OSD"
+msgid "OSD height (%)"
+msgstr ""
 
 msgid "Hide mainmenu entry"
 msgstr "Скрыть в главном меню"
@@ -107,7 +107,10 @@ msgstr "G0 кодировка"
 msgid "G2 code block"
 msgstr "G2 кодировка"
 
-msgid "Color Mode 4bpp"
+msgid "Text Vertical Offset"
+msgstr ""
+
+msgid "16-Color Mode"
 msgstr ""
 
 msgid "Key bindings"
@@ -115,3 +118,15 @@ msgstr "Привязка кнопок"
 
 msgid "  Page number"
 msgstr "  Номер страницы"
+
+#~ msgid "OSD height"
+#~ msgstr "Высота меню"
+
+#~ msgid "OSD width"
+#~ msgstr "Ширина меню"
+
+#~ msgid "OSD horizontal align"
+#~ msgstr "Горизонтальное положение OSD"
+
+#~ msgid "OSD vertical align"
+#~ msgstr "Вертикальное положение OSD"

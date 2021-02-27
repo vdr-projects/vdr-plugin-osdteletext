@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-01-27 06:22+0100\n"
+"POT-Creation-Date: 2021-02-27 06:57+0100\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Rolf Ahrenberg <rahrenbe@cc.hut.fi>\n"
 "Language-Team: Finnish <vdr@linuxtv.org>\n"
@@ -82,17 +82,17 @@ msgstr "Näytä kello"
 msgid "Auto-update pages"
 msgstr "Automaattinen sivupäivitys"
 
-msgid "OSD height"
-msgstr "Korkeus"
+msgid "OSD left (%)"
+msgstr ""
 
-msgid "OSD width"
-msgstr "Leveys"
+msgid "OSD top (%)"
+msgstr ""
 
-msgid "OSD horizontal align"
-msgstr "Pystykeskitys"
+msgid "OSD width (%)"
+msgstr ""
 
-msgid "OSD vertical align"
-msgstr "Vaakakeskitys"
+msgid "OSD height (%)"
+msgstr ""
 
 msgid "Hide mainmenu entry"
 msgstr "Piilota valinta päävalikosta"
@@ -106,7 +106,10 @@ msgstr "G0-koodilohko"
 msgid "G2 code block"
 msgstr "G2-koodilohko"
 
-msgid "Color Mode 4bpp"
+msgid "Text Vertical Offset"
+msgstr ""
+
+msgid "16-Color Mode"
 msgstr ""
 
 msgid "Key bindings"
@@ -114,3 +117,15 @@ msgstr "Näppäintoiminnot"
 
 msgid "  Page number"
 msgstr "  Sivunumero"
+
+#~ msgid "OSD height"
+#~ msgstr "Korkeus"
+
+#~ msgid "OSD width"
+#~ msgstr "Leveys"
+
+#~ msgid "OSD horizontal align"
+#~ msgstr "Pystykeskitys"
+
+#~ msgid "OSD vertical align"
+#~ msgstr "Vaakakeskitys"

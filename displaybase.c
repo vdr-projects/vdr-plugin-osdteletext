@@ -28,7 +28,7 @@ cDisplay::cDisplay(int width, int height)
       Boxed(false), Width(width), Height(height), Background(clrGray50),
       osd(NULL), outputWidth(0), outputScaleX(1.0),
       outputHeight(0), outputScaleY(1.0),
-      ScaleX(1), ScaleY(1), OffsetX(0), OffsetY(0),
+      /* ScaleX(1), ScaleY(1), */ OffsetX(0), OffsetY(0),
       MessageFont(cFont::GetFont(fontSml)), MessageX(0), MessageY(0),
       MessageW(0), MessageH(0),
       TXTFont(0), TXTDblWFont(0), TXTDblHFont(0), TXTDblHWFont(0)
@@ -83,7 +83,7 @@ void cDisplay::InitScaler() {
     outputScaleY = (double)outputHeight/250.0;
 
     int height=Height-6;
-    int width=Width-6;
+    // int width=Width-6; // FIXED: no longer used
     OffsetX=3;
     OffsetY=3;
 
@@ -98,8 +98,8 @@ void cDisplay::InitScaler() {
     default:;
     }
 
-    ScaleX=(480<<16)/width;
-    ScaleY=(250<<16)/height;
+    // ScaleX=(480<<16)/width;  // FIXED: no longer used
+    // ScaleY=(250<<16)/height; // FIXED: no longer used
 
     fontWidth = (outputWidth * 2 / 40) & 0xfffe;
     if (Zoom == Zoom_Off) {
@@ -111,9 +111,7 @@ void cDisplay::InitScaler() {
     fontWidth &= 0xfffe;
     fontHeight &= 0xfffe;
 
-
-    dsyslog("OSD-Teletext: OSD width = %d, height = %d", outputWidth, outputHeight);
-    dsyslog("OSD-Teletext: font width * 2 = %d, height = %d", fontWidth, fontHeight);
+    dsyslog("OSD-Teletext: OSD width=%d height=%d fontWidth*2=%d fontHeight=%d", outputWidth, outputHeight, fontWidth, fontHeight);
 
     int txtFontWidth = fontWidth;
     int txtFontHeight = fontHeight;
@@ -311,10 +309,11 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
     enumTeletextColor ttfg=c.GetFGColor();
     enumTeletextColor ttbg=c.GetBGColor();
 
-    static int cache_txtVoffset   = -1;
-    static int cache_outputHeight = -1;
-    static int cache_OsdHeight    = -1;
+    static int cache_txtVoffset   = 0;
+    static int cache_outputHeight = 0;
+    static int cache_OsdHeight    = 0;
     static int cache_Vshift = 0;
+    static int cache_valid = 0;
 
     if (c.GetBoxedOut()) {
         ttbg=ttcTransparent;
@@ -331,7 +330,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
     int tl = Utf8CharSet(t, buf);
     buf[tl] = 0;
 
-    const cFont *font;
+    const cFont *font = TXTFont; // FIXED: -Wmaybe-uninitialized
     int charset = c.GetCharset();
     int fontType = 0;
     int w = fontWidth / 2;
@@ -368,8 +367,13 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
     }
 
     if (Zoom == Zoom_Lower) {
-        y -= 11;
+        y -= 12;
+        if (y < 0) return;
     }
+
+    if (Zoom == Zoom_Upper) {
+        if (y > 11) return;
+    };
 
     int vx = x * fontWidth / 2;
     int vy = y * fontHeight / 2;
@@ -428,10 +432,13 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
             charBm.DrawRectangle(0, 0, w, h, bg);
 //            charBm.DrawText(0, 0, buf, fg, bg, font);
             if (
-                 (cache_txtVoffset   < 0) || (cache_txtVoffset   != ttSetup.txtVoffset)
-              || (cache_outputHeight < 0) || (cache_outputHeight != outputHeight      )
-              || (cache_OsdHeight    < 0) || (cache_OsdHeight    != cOsd::OsdHeight() )
+                 (cache_valid == 0) || (
+                 (cache_txtVoffset   != ttSetup.txtVoffset)
+              || (cache_outputHeight != outputHeight      )
+              || (cache_OsdHeight    != cOsd::OsdHeight() )
+              )
             ) {
+                cache_valid = 1;
                 cache_txtVoffset   = ttSetup.txtVoffset;
                 cache_outputHeight = outputHeight;
                 cache_OsdHeight    = cOsd::OsdHeight();

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-01-27 06:22+0100\n"
+"POT-Creation-Date: 2021-02-27 06:57+0100\n"
 "PO-Revision-Date: 2010-11-06 19:59+0100\n"
 "Last-Translator: Diego Pierotto <vdr-italian@tiscali.it>\n"
 "Language-Team: Italian <vdr@linuxtv.org>\n"
@@ -89,17 +89,17 @@ msgstr "Mostra orologio"
 msgid "Auto-update pages"
 msgstr "Aggiorn. automatico pagine"
 
-msgid "OSD height"
-msgstr "Altezza OSD"
+msgid "OSD left (%)"
+msgstr ""
 
-msgid "OSD width"
-msgstr "Larghezza OSD"
+msgid "OSD top (%)"
+msgstr ""
 
-msgid "OSD horizontal align"
-msgstr "Allineamento orizzontale OSD"
+msgid "OSD width (%)"
+msgstr ""
 
-msgid "OSD vertical align"
-msgstr "Allineamento verticale OSD"
+msgid "OSD height (%)"
+msgstr ""
 
 msgid "Hide mainmenu entry"
 msgstr "Nascondi voce menu principale"
@@ -113,7 +113,10 @@ msgstr ""
 msgid "G2 code block"
 msgstr ""
 
-msgid "Color Mode 4bpp"
+msgid "Text Vertical Offset"
+msgstr ""
+
+msgid "16-Color Mode"
 msgstr ""
 
 msgid "Key bindings"
@@ -121,3 +124,15 @@ msgstr "Tasti associati"
 
 msgid "  Page number"
 msgstr "  Numero pagina"
+
+#~ msgid "OSD height"
+#~ msgstr "Altezza OSD"
+
+#~ msgid "OSD width"
+#~ msgstr "Larghezza OSD"
+
+#~ msgid "OSD horizontal align"
+#~ msgstr "Allineamento orizzontale OSD"
+
+#~ msgid "OSD vertical align"
+#~ msgstr "Allineamento verticale OSD"
