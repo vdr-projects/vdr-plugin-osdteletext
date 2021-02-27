@@ -417,7 +417,7 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    Add(new cMenuEditStraItem(tr("G0 code block"), &temp.txtG0Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
    Add(new cMenuEditStraItem(tr("G2 code block"), &temp.txtG2Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
    Add(new cMenuEditIntItem(tr("Text Vertical Offset"), &temp.txtVoffset, 0, 10));
-   Add(new cMenuEditBoolItem(tr("Color Mode 4bpp"), &temp.colorMode4bpp));
+   Add(new cMenuEditBoolItem(tr("16-Color Mode"), &temp.colorMode4bpp));
 
    //Using same string as VDR's setup menu
    //Add(new cMenuEditIntItem(tr("Setup.Miscellaneous$Min. user inactivity (min)"), &temp.inactivityTimeout));

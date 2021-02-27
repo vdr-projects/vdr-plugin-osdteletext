@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-02-25 19:26+0100\n"
+"POT-Creation-Date: 2021-02-27 06:57+0100\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Klaus Schmidinger <Klaus.Schmidinger@tvdr.de>\n"
 "Language-Team: German <vdr@linuxtv.org>\n"
@@ -82,17 +82,17 @@ msgstr "Uhr anzeigen"
 msgid "Auto-update pages"
 msgstr "Seiten aktualisieren"
 
+msgid "OSD left (%)"
+msgstr "OSD Links (%)"
+
+msgid "OSD top (%)"
+msgstr "OSD Oben (%)"
+
 msgid "OSD width (%)"
 msgstr "OSD Breite (%)"
 
 msgid "OSD height (%)"
 msgstr "OSD Höhe (%)"
-
-msgid "OSD horizontal center (%)"
-msgstr "OSD horizontale Mitte (%)"
-
-msgid "OSD vertical center (%)"
-msgstr "OSD vertikale Mitte (%)"
 
 msgid "Hide mainmenu entry"
 msgstr "Hauptmenüeintrag verstecken"
@@ -109,8 +109,8 @@ msgstr ""
 msgid "Text Vertical Offset"
 msgstr "Text vertikaler Offset"
 
-msgid "Color Mode 4bpp"
-msgstr "Farbmodus 4bpp"
+msgid "16-Color Mode"
+msgstr "16-Farben Modus"
 
 msgid "Key bindings"
 msgstr "Tastenzuweisung"
