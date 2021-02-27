@@ -54,6 +54,7 @@ public:
    int txtVoffset;
    const char *txtBlock[11];
    int colorMode4bpp;
+   int lineMode24;
 };
 
 extern TeletextSetup ttSetup;

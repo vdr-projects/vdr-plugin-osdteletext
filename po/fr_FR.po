@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-02-27 06:57+0100\n"
+"POT-Creation-Date: 2021-02-27 07:11+0100\n"
 "PO-Revision-Date: 2009-01-10 19:32+0100\n"
 "Last-Translator: Nival Michaël\n"
 "Language-Team: French <vdr@linuxtv.org>\n"
@@ -113,6 +113,9 @@ msgid "Text Vertical Offset"
 msgstr ""
 
 msgid "16-Color Mode"
+msgstr ""
+
+msgid "24-Line Mode"
 msgstr ""
 
 msgid "Key bindings"

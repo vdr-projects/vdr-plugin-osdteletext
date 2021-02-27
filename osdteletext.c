@@ -30,7 +30,7 @@ using namespace std;
 
 #define NUMELEMENTS(x) (sizeof(x) / sizeof(x[0]))
 
-static const char *VERSION        = "1.0.3";
+static const char *VERSION        = "1.0.4";
 static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
 static const char *MAINMENUENTRY  = trNOOP("Teletext");
 
@@ -284,6 +284,7 @@ bool cPluginTeletextosd::SetupParse(const char *Name, const char *Value)
   else if (!strcasecmp(Name, "txtG2Block")) ttSetup.txtG2Block=atoi(Value);
   else if (!strcasecmp(Name, "txtVoffset")) ttSetup.txtVoffset=atoi(Value);
   else if (!strcasecmp(Name, "colorMode4bpp")) ttSetup.colorMode4bpp=atoi(Value);
+  else if (!strcasecmp(Name, "lineMode24")) ttSetup.lineMode24=atoi(Value);
   else {
      for (int i=0;i<LastActionKey;i++) {
         if (!strcasecmp(Name, cTeletextSetupPage::actionKeyNames[i].internalName)) {
@@ -330,6 +331,7 @@ void cTeletextSetupPage::Store(void) {
    ttSetup.txtG2Block=temp.txtG2Block;
    ttSetup.txtVoffset=temp.txtVoffset;
    ttSetup.colorMode4bpp=temp.colorMode4bpp;
+   ttSetup.lineMode24=temp.lineMode24;
    //ttSetup.inactivityTimeout=temp.inactivityTimeout;
 
    for (int i=0;i<LastActionKey;i++) {
@@ -350,6 +352,7 @@ void cTeletextSetupPage::Store(void) {
    SetupStore("txtG2Block", ttSetup.txtG2Block);
    SetupStore("txtVoffset", ttSetup.txtVoffset);
    SetupStore("colorMode4bpp", ttSetup.colorMode4bpp);
+   SetupStore("lineMode24", ttSetup.lineMode24);
    //SetupStore("inactivityTimeout", ttSetup.inactivityTimeout);
 }
 
@@ -394,6 +397,7 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    temp.txtG2Block=ttSetup.txtG2Block;
    temp.txtVoffset=ttSetup.txtVoffset;
    temp.colorMode4bpp=ttSetup.colorMode4bpp;
+   temp.lineMode24=ttSetup.lineMode24;
    //temp.inactivityTimeout=ttSetup.inactivityTimeout;
 
    cFont::GetAvailableFontNames(&temp.txtFontNames, true);
@@ -419,6 +423,7 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    Add(new cMenuEditStraItem(tr("G2 code block"), &temp.txtG2Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
    Add(new cMenuEditIntItem(tr("Text Vertical Offset"), &temp.txtVoffset, -10, 10));
    Add(new cMenuEditBoolItem(tr("16-Color Mode"), &temp.colorMode4bpp));
+   Add(new cMenuEditBoolItem(tr("24-Line Mode"), &temp.lineMode24));
 
    //Using same string as VDR's setup menu
    //Add(new cMenuEditIntItem(tr("Setup.Miscellaneous$Min. user inactivity (min)"), &temp.inactivityTimeout));
