@@ -185,7 +185,6 @@ void cDisplay::SetZoom(enumZoom zoom) {
     if (Zoom==zoom) return;
     Zoom=zoom;
 
-
     // Re-initialize scaler to let zoom take effect
     InitScaler();
 
