@@ -309,10 +309,11 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
     enumTeletextColor ttfg=c.GetFGColor();
     enumTeletextColor ttbg=c.GetBGColor();
 
-    static int cache_txtVoffset   = -1;
-    static int cache_outputHeight = -1;
-    static int cache_OsdHeight    = -1;
+    static int cache_txtVoffset   = 0;
+    static int cache_outputHeight = 0;
+    static int cache_OsdHeight    = 0;
     static int cache_Vshift = 0;
+    static int cache_valid = 0;
 
     if (c.GetBoxedOut()) {
         ttbg=ttcTransparent;
@@ -431,10 +432,13 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
             charBm.DrawRectangle(0, 0, w, h, bg);
 //            charBm.DrawText(0, 0, buf, fg, bg, font);
             if (
-                 (cache_txtVoffset   < 0) || (cache_txtVoffset   != ttSetup.txtVoffset)
-              || (cache_outputHeight < 0) || (cache_outputHeight != outputHeight      )
-              || (cache_OsdHeight    < 0) || (cache_OsdHeight    != cOsd::OsdHeight() )
+                 (cache_valid == 0) || (
+                 (cache_txtVoffset   != ttSetup.txtVoffset)
+              || (cache_outputHeight != outputHeight      )
+              || (cache_OsdHeight    != cOsd::OsdHeight() )
+              )
             ) {
+                cache_valid = 1;
                 cache_txtVoffset   = ttSetup.txtVoffset;
                 cache_outputHeight = outputHeight;
                 cache_OsdHeight    = cOsd::OsdHeight();
