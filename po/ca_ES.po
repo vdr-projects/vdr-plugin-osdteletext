@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-01-27 06:22+0100\n"
+"POT-Creation-Date: 2021-02-27 06:57+0100\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Jordi Vilà <jvila@tinet.org>\n"
 "Language-Team: Catalan <vdr@linuxtv.org>\n"
@@ -84,16 +84,16 @@ msgstr "Visualitza l'hora"
 msgid "Auto-update pages"
 msgstr "Actualització pàgines automàtica"
 
-msgid "OSD height"
-msgstr "Altura OSD"
-
-msgid "OSD width"
-msgstr "Amplària OSD"
-
-msgid "OSD horizontal align"
+msgid "OSD left (%)"
 msgstr ""
 
-msgid "OSD vertical align"
+msgid "OSD top (%)"
+msgstr ""
+
+msgid "OSD width (%)"
+msgstr ""
+
+msgid "OSD height (%)"
 msgstr ""
 
 msgid "Hide mainmenu entry"
@@ -108,7 +108,10 @@ msgstr ""
 msgid "G2 code block"
 msgstr ""
 
-msgid "Color Mode 4bpp"
+msgid "Text Vertical Offset"
+msgstr ""
+
+msgid "16-Color Mode"
 msgstr ""
 
 msgid "Key bindings"
@@ -116,3 +119,9 @@ msgstr ""
 
 msgid "  Page number"
 msgstr "  Nombre de pàgina"
+
+#~ msgid "OSD height"
+#~ msgstr "Altura OSD"
+
+#~ msgid "OSD width"
+#~ msgstr "Amplària OSD"

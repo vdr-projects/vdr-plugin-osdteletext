@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-01-27 06:22+0100\n"
+"POT-Creation-Date: 2021-02-27 06:57+0100\n"
 "PO-Revision-Date: 2009-05-25 20:33+0200\n"
 "Last-Translator: Yarema P. aka Knedlyk <yupadmin@gmail.com>\n"
 "Language-Team: Ukrainian <vdr@linuxtv.org>\n"
@@ -82,17 +82,17 @@ msgstr "Показувати годинник"
 msgid "Auto-update pages"
 msgstr "Автооновлення сторінок"
 
-msgid "OSD height"
-msgstr "Висота OSD"
+msgid "OSD left (%)"
+msgstr ""
 
-msgid "OSD width"
-msgstr "Ширина OSD"
+msgid "OSD top (%)"
+msgstr ""
 
-msgid "OSD horizontal align"
-msgstr "Горизонтальне положення OSD"
+msgid "OSD width (%)"
+msgstr ""
 
-msgid "OSD vertical align"
-msgstr "Вертикальне положення OSD"
+msgid "OSD height (%)"
+msgstr ""
 
 msgid "Hide mainmenu entry"
 msgstr ""
@@ -106,7 +106,10 @@ msgstr ""
 msgid "G2 code block"
 msgstr ""
 
-msgid "Color Mode 4bpp"
+msgid "Text Vertical Offset"
+msgstr ""
+
+msgid "16-Color Mode"
 msgstr ""
 
 msgid "Key bindings"
@@ -114,3 +117,15 @@ msgstr "Призначення клавіш"
 
 msgid "  Page number"
 msgstr "  Номер сторінки"
+
+#~ msgid "OSD height"
+#~ msgstr "Висота OSD"
+
+#~ msgid "OSD width"
+#~ msgstr "Ширина OSD"
+
+#~ msgid "OSD horizontal align"
+#~ msgstr "Горизонтальне положення OSD"
+
+#~ msgid "OSD vertical align"
+#~ msgstr "Вертикальне положення OSD"
