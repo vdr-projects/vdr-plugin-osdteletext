@@ -105,7 +105,7 @@ void cDisplay::InitScaler() {
     if (Zoom == Zoom_Off) {
         fontHeight = (outputHeight * 2 / ((ttSetup.lineMode24 == true) ? 24 : 25)) & 0xfffe;
     } else {
-        fontHeight = (outputHeight * 2 / ((ttSetup.lineMode24 == true) ? 12 : 13)) & 0xfffe;
+        fontHeight = (outputHeight * 2 * 2 / 25) & 0xfffe; // in Zoom mode line 25 is not displayed
     }
     // use even font size for double sized characters (prevents rounding errors during character display)
     fontWidth &= 0xfffe;
@@ -368,11 +368,17 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
 
     if (Zoom == Zoom_Lower) {
         y -= 12;
-        if (y < 0) return;
-    }
+        if (y < 0) {
+            // display only line 12-23 (12 lines)
+            return;
+        };
+    };
 
     if (Zoom == Zoom_Upper) {
-        if (y > 11) return;
+        if (y > 11) {
+            // display only line 0-11 (12 lines)
+            return;
+        };
     };
 
     int vx = x * fontWidth / 2;
