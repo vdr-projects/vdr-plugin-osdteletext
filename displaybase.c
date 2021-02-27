@@ -26,8 +26,8 @@ int cDisplay::realFontWidths[4] = {0};
 cDisplay::cDisplay(int width, int height)
     : Zoom(Zoom_Off), Concealed(false), Blinked(false), FlushLock(0),
       Boxed(false), Width(width), Height(height), Background(clrGray50),
-      osd(NULL), outputWidth(0), outputScaleX(1.0),
-      outputHeight(0), outputScaleY(1.0),
+      osd(NULL), outputWidth(0), /* outputScaleX(1.0), */
+      outputHeight(0), /* outputScaleY(1.0), */
       /* ScaleX(1), ScaleY(1), */ OffsetX(0), OffsetY(0),
       MessageFont(cFont::GetFont(fontSml)), MessageX(0), MessageY(0),
       MessageW(0), MessageH(0),
@@ -79,11 +79,11 @@ void cDisplay::InitScaler() {
     // Set up the scaling factors. Also do zoom mode by
     // scaling differently.
 
-    outputScaleX = (double)outputWidth/480.0;
-    outputScaleY = (double)outputHeight / (((ttSetup.lineMode24 == true) ? 24 : 25) * 10.0);
+    // outputScaleX = (double)outputWidth/480.0; // EOL: no longer used
+    // outputScaleY = (double)outputHeight / (((ttSetup.lineMode24 == true) ? 24 : 25) * 10.0); // EOL: no longer used
 
     int height=Height-6;
-    // int width=Width-6; // FIXED: no longer used
+    // int width=Width-6; // EOL: no longer used
     OffsetX=3;
     OffsetY=3;
 
@@ -98,14 +98,14 @@ void cDisplay::InitScaler() {
     default:;
     }
 
-    // ScaleX=(480<<16)/width;  // FIXED: no longer used
-    // ScaleY=(250<<16)/height; // FIXED: no longer used
+    // ScaleX=(480<<16)/width;  // EOL: no longer used
+    // ScaleY=(250<<16)/height; // EOL: no longer used
 
     fontWidth = (outputWidth * 2 / 40) & 0xfffe;
     if (Zoom == Zoom_Off) {
         fontHeight = (outputHeight * 2 / ((ttSetup.lineMode24 == true) ? 24 : 25)) & 0xfffe;
     } else {
-        fontHeight = (outputHeight * 2 / ((ttSetup.lineMode24 == true) ? 12 : 13)) & 0xfffe;
+        fontHeight = (outputHeight * 2 * 2 / ((ttSetup.lineMode24 == true) ? 24 : 25)) & 0xfffe; // in Zoom mode line 25 is not displayed
     }
     // use even font size for double sized characters (prevents rounding errors during character display)
     fontWidth &= 0xfffe;
@@ -179,6 +179,7 @@ bool cDisplay::SetConceal(bool conceal) {
 }
 
 void cDisplay::SetZoom(enumZoom zoom) {
+    dsyslog("OSD-Teletext: %s called: zoom=%d", __FUNCTION__, zoom);
 
     if (!osd) return;
     if (Zoom==zoom) return;
@@ -188,12 +189,15 @@ void cDisplay::SetZoom(enumZoom zoom) {
     InitScaler();
 
     // Clear screen - mainly clear border
-    CleanDisplay();
+    // CleanDisplay(); // called later after SetBackgroundColor
+    Dirty=true;
+    DirtyAll=true;
 
     Flush();
 }
 
 void cDisplay::SetBackgroundColor(tColor c) {
+    // dsyslog("OSD-Teletext: %s called: tColor=0x%08x", __FUNCTION__, c);
     Background=c;
     CleanDisplay();
     Flush();
@@ -203,6 +207,7 @@ void cDisplay::CleanDisplay() {
     enumTeletextColor bgc=(Boxed)?(ttcTransparent):(ttcBlack);
     if (!osd) return;
 
+    // dsyslog("OSD-Teletext: %s called: outputWidth=%d outputHeight=%d boxed=%d color=0x%08x bgc=%d", __FUNCTION__, outputWidth, outputHeight, Boxed, GetColorRGB(bgc,0), bgc);
     osd->DrawRectangle(0, 0, outputWidth, outputHeight, GetColorRGB(bgc,0));
 
     // repaint all
@@ -238,6 +243,8 @@ void cDisplay::RenderTeletextCode(unsigned char *PageCode) {
     HoldFlush();
 
     cRenderPage::ReadTeletextHeader(PageCode);
+
+    // dsyslog("OSD-Teletext: %s called", __FUNCTION__);
 
     if (!Boxed && (Flags&0x60)!=0) {
         Boxed=true;
@@ -368,11 +375,17 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
 
     if (Zoom == Zoom_Lower) {
         y -= 12;
-        if (y < 0) return;
-    }
+        if (y < 0) {
+            // display only line 12-23 (12 lines)
+            return;
+        };
+    };
 
     if (Zoom == Zoom_Upper) {
-        if (y > 11) return;
+        if (y > 11) {
+            // display only line 0-11 (12 lines)
+            return;
+        };
     };
 
     int vx = x * fontWidth / 2;

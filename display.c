@@ -27,7 +27,7 @@ cDisplay *Display::display=NULL;
 
 void Display::SetMode(Display::Mode NewMode) {
     int hChars = 40;
-    int vLines = 25;
+    int vLines = (ttSetup.lineMode24 == true) ? 24 : 25;
     int OSDwidth;
     int OSDheight;
     int x0 = cOsd::OsdLeft(); // start with general OSD offset
@@ -73,7 +73,7 @@ void Display::SetMode(Display::Mode NewMode) {
         };
     };
 
-    dsyslog("OSD-Teletext: OSD area calculated by percent values: OsdLeft=%d OsdTop=%d OsdWidth=%d OsdHeight=%d OSDwidthPct=%d%% OSDheightPct=%d%% OSDleftPct=%d%% OSDtopPct=%d%% => x0=%d y0=%d OSDwidth=%d OSDheight=%d", cOsd::OsdLeft(), cOsd::OsdTop(), cOsd::OsdWidth(), cOsd::OsdHeight(), ttSetup.OSDwidthPct, ttSetup.OSDheightPct, ttSetup.OSDleftPct, ttSetup.OSDtopPct, x0, y0, OSDwidth, OSDheight);
+    dsyslog("OSD-Teletext: OSD area calculated by percent values: OsdLeft=%d OsdTop=%d OsdWidth=%d OsdHeight=%d OSDwidthPct=%d%% OSDheightPct=%d%% OSDleftPct=%d%% OSDtopPct=%d%% ttSetup.lineMode24=%d => x0=%d y0=%d OSDwidth=%d OSDheight=%d", cOsd::OsdLeft(), cOsd::OsdTop(), cOsd::OsdWidth(), cOsd::OsdHeight(), ttSetup.OSDwidthPct, ttSetup.OSDheightPct, ttSetup.OSDleftPct, ttSetup.OSDtopPct, ttSetup.lineMode24, x0, y0, OSDwidth, OSDheight);
 
     switch (NewMode) {
       case Display::Full:
@@ -161,7 +161,9 @@ cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height)
 
     InitScaler();
 
-    CleanDisplay();
+    // CleanDisplay(); // called later after SetBackgroundColor
+    Dirty=true;
+    DirtyAll=true;
 }
 
 
@@ -235,7 +237,7 @@ void cDisplay32BPPHalf::InitOSD() {
 
     InitScaler();
 
-    CleanDisplay();
+    // CleanDisplay(); // called later after SetBackgroundColor
 
     // In case we switched on the fly, do a full redraw
     Dirty=true;
