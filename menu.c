@@ -657,7 +657,8 @@ TeletextSetup::TeletextSetup()
     HideMainMenu(false),
     txtFontName("teletext2:Medium"),
     txtVoffset(0),
-    colorMode4bpp(false)
+    colorMode4bpp(false),
+    lineMode24(false)
 {
    //init key bindings
    for (int i=0;i<10;i++)

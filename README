@@ -88,6 +88,8 @@ Other Setup options:
                The valid range is 0 to 10
    Color Mode 4bpp:
                Enforce 16-color mode (for some older DVB cards)
+   24-line mode
+               Display (and scale for) only 24 lines
    Minimum user inactivity: 
                Sets a timeout (in minutes) for user inactivity. When this
                timespan has elapsed and the user did not press any keys, the

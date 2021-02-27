@@ -1,6 +1,9 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
-2021-02-25: version 1.0.3
+2021-02-27: version 1.0.4
+- [pbiering] add 24-line mode option
+
+2021-02-26: version 1.0.3
 - [pbiering] fix 'half' mode
 
 2021-02-25: version 1.0.2
