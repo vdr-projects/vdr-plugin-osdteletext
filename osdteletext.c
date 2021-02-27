@@ -195,6 +195,7 @@ bool cPluginTeletextosd::Start(void)
    if (ttSetup.OSDleftPct > 90) ttSetup.OSDleftPct = 0; // failsafe
    if (ttSetup.OSDtopPct  <  0) ttSetup.OSDtopPct  = 0; // failsafe
    if (ttSetup.OSDleftPct <  0) ttSetup.OSDleftPct = 0; // failsafe
+   if (abs(ttSetup.txtVoffset) > 10) ttSetup.txtVoffset = 0; // failsafe
 
    return true;
 }
@@ -416,7 +417,7 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    Add(new cMenuEditStraItem(tr("Text Font"), &temp.txtFontIndex, temp.txtFontNames.Size(), &temp.txtFontNames[0]));
    Add(new cMenuEditStraItem(tr("G0 code block"), &temp.txtG0Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
    Add(new cMenuEditStraItem(tr("G2 code block"), &temp.txtG2Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
-   Add(new cMenuEditIntItem(tr("Text Vertical Offset"), &temp.txtVoffset, 0, 10));
+   Add(new cMenuEditIntItem(tr("Text Vertical Offset"), &temp.txtVoffset, -10, 10));
    Add(new cMenuEditBoolItem(tr("16-Color Mode"), &temp.colorMode4bpp));
 
    //Using same string as VDR's setup menu

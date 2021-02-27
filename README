@@ -85,7 +85,7 @@ Other Setup options:
                settings. The valid range is 0% to 90%
    Text Vertical Offset:
                Adjust the vertical offset by amount of (scaled) pixels
-               The valid range is 0 to 10
+               The valid range is -10 to 10 (and depending on selected font)
    Color Mode 4bpp:
                Enforce 16-color mode (for some older DVB cards)
    Minimum user inactivity: 
