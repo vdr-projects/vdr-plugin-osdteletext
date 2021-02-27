@@ -176,7 +176,9 @@ cDisplay32BPPHalf::cDisplay32BPPHalf(int x0, int y0, int width, int height, bool
 
 void cDisplay32BPPHalf::InitOSD() {
     delete osd;
-    osd = cOsdProvider::NewOsd(OsdX0, OsdY0 + Height / 2);
+    int x0 = OsdX0;
+    int y0 = OsdY0 + Height / 2;
+    osd = cOsdProvider::NewOsd(x0, y0);
     if (!osd) return;
 
     int width=(Width+1)&~1; // Width has to end on byte boundary, so round up
@@ -195,7 +197,7 @@ void cDisplay32BPPHalf::InitOSD() {
     }
     if (osd->CanHandleAreas(Areas, sizeof(Areas) / sizeof(tArea)) != oeOk) {
         DELETENULL(osd);
-        esyslog("OSD-Teletext: can't create requested OSD 'half' area with width=%d height=%d bpp=%d", width, height, bpp);
+        esyslog("OSD-Teletext: can't create requested OSD 'half' area with x0=%d y0=%d width=%d height=%d bpp=%d", x0, y0, width, height, bpp);
         Skins.Message(mtError, "OSD-Teletext can't request OSD 'half' area, check plugin settings");
         return;
     }
@@ -226,7 +228,7 @@ void cDisplay32BPPHalf::InitOSD() {
 */
     osd->SetAreas(Areas, sizeof(Areas) / sizeof(tArea));
 
-    isyslog("OSD-Teletext: OSD 'half' area successful requested width=%d height=%d bpp=%d upper=%d", width, height, bpp, Upper);
+    isyslog("OSD-Teletext: OSD 'half' area successful requested x0=%d y0=%d width=%d height=%d bpp=%d upper=%d", x0, y0, width, height, bpp, Upper);
 
     setOutputWidth(width);
     setOutputHeight(height);
