@@ -88,14 +88,14 @@ void cDisplay::InitScaler() {
     OffsetY=3;
 
     switch (Zoom) {
-    case Zoom_Upper:
-        height=height*2;
-        break;
-    case Zoom_Lower:
-        OffsetY=OffsetY-height;
-        height=height*2;
-        break;
-    default:;
+        case Zoom_Upper:
+            height=height*2;
+            break;
+        case Zoom_Lower:
+            OffsetY=OffsetY-height;
+            height=height*2;
+            break;
+        default:;
     }
 
     // ScaleX=(480<<16)/width;  // EOL: no longer used
@@ -111,7 +111,7 @@ void cDisplay::InitScaler() {
     fontWidth &= 0xfffe;
     fontHeight &= 0xfffe;
 
-    dsyslog("OSD-Teletext: OSD width=%d height=%d fontWidth*2=%d fontHeight=%d", outputWidth, outputHeight, fontWidth, fontHeight);
+    dsyslog("OSD-Teletext: InitScaler width=%d height=%d fontWidth*2=%d fontHeight=%d lineMode24=%d Zoom=%d", outputWidth, outputHeight, fontWidth, fontHeight, ttSetup.lineMode24, Zoom);
 
     int txtFontWidth = fontWidth;
     int txtFontHeight = fontHeight;
@@ -179,7 +179,7 @@ bool cDisplay::SetConceal(bool conceal) {
 }
 
 void cDisplay::SetZoom(enumZoom zoom) {
-    dsyslog("OSD-Teletext: %s called: zoom=%d", __FUNCTION__, zoom);
+    dsyslog_osdteletext("OSD-Teletext: %s called: zoom=%d", __FUNCTION__, zoom);
 
     if (!osd) return;
     if (Zoom==zoom) return;
@@ -197,7 +197,7 @@ void cDisplay::SetZoom(enumZoom zoom) {
 }
 
 void cDisplay::SetBackgroundColor(tColor c) {
-    // dsyslog("OSD-Teletext: %s called: tColor=0x%08x", __FUNCTION__, c);
+    dsyslog_osdteletext("OSD-Teletext: %s called: tColor=0x%08x", __FUNCTION__, c);
     Background=c;
     CleanDisplay();
     Flush();
@@ -207,7 +207,7 @@ void cDisplay::CleanDisplay() {
     enumTeletextColor bgc=(Boxed)?(ttcTransparent):(ttcBlack);
     if (!osd) return;
 
-    // dsyslog("OSD-Teletext: %s called: outputWidth=%d outputHeight=%d boxed=%d color=0x%08x bgc=%d", __FUNCTION__, outputWidth, outputHeight, Boxed, GetColorRGB(bgc,0), bgc);
+    dsyslog_osdteletext("OSD-Teletext: %s called: outputWidth=%d outputHeight=%d boxed=%d color=0x%08x bgc=%d", __FUNCTION__, outputWidth, outputHeight, Boxed, GetColorRGB(bgc,0), bgc);
     osd->DrawRectangle(0, 0, outputWidth, outputHeight, GetColorRGB(bgc,0));
 
     // repaint all
@@ -244,7 +244,7 @@ void cDisplay::RenderTeletextCode(unsigned char *PageCode) {
 
     cRenderPage::ReadTeletextHeader(PageCode);
 
-    // dsyslog("OSD-Teletext: %s called", __FUNCTION__);
+    dsyslog_osdteletext("OSD-Teletext: %s called", __FUNCTION__);
 
     if (!Boxed && (Flags&0x60)!=0) {
         Boxed=true;
@@ -375,7 +375,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
 
     if (Zoom == Zoom_Lower) {
         y -= 12;
-        if (y < 0) {
+        if (y < 0 || y > 11) {
             // display only line 12-23 (12 lines)
             return;
         };
