@@ -179,12 +179,17 @@ cDisplay32BPPHalf::cDisplay32BPPHalf(int x0, int y0, int width, int height, bool
 void cDisplay32BPPHalf::InitOSD() {
     delete osd;
     int x0 = OsdX0;
-    int y0 = OsdY0 + Height / 2;
+
+    int height = Height / 2; // half heigth
+    int vLines = (ttSetup.lineMode24 == true) ? 24 : 25;
+    if ((height % vLines) > 0) height = (height / vLines) * vLines; // alignment
+
+    int y0 = OsdY0 + Height - height; // calculate y-offset
+
     osd = cOsdProvider::NewOsd(x0, y0);
     if (!osd) return;
 
     int width=(Width+1)&~1; // Width has to end on byte boundary, so round up
-    int height=Height / 2;
 
     int bpp = 32;
     if (ttSetup.colorMode4bpp == true) {
