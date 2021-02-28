@@ -209,7 +209,7 @@ void cDisplay::CleanDisplay() {
     if (!osd) return;
 
     DEBUG_OT_DBFC("called: outputWidth=%d outputHeight=%d boxed=%d color=0x%08x bgc=%d", outputWidth, outputHeight, Boxed, GetColorRGB(bgc,0), bgc);
-    if (m_debugmask & DEBUG_MASK_OT_ACT_BACK_RED)
+    if (m_debugmask & DEBUG_MASK_OT_ACT_OSD_BACK_RED)
         osd->DrawRectangle(0, 0, outputWidth - 1, outputHeight - 1, GetColorRGB(ttcRed,0));
     else
         osd->DrawRectangle(0, 0, outputWidth - 1, outputHeight - 1, GetColorRGB(bgc,0));
@@ -419,7 +419,10 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
             }
 
             cBitmap charBm(w, h, 24);
-            charBm.DrawRectangle(0, 0, w, h, bg);
+            if (m_debugmask & DEBUG_MASK_OT_ACT_CHAR_BACK_BLUE)
+                charBm.DrawRectangle(0, 0, w - 1, h - 1, GetColorRGB(ttcBlue,0));
+            else
+                charBm.DrawRectangle(0, 0, w - 1, h - 1, bg);
 
             // draw scaled graphics char
             int virtY = 0;
@@ -444,11 +447,14 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
         } else {
 #if 0
             // hi level osd devices (e.g. rpi and softhddevice openglosd currently do not support monospaced fonts with arbitrary width
-//            osd->DrawRectangle(vx, vy, vx + w - 1, vy + h - 1, bg);
-        osd->DrawText(vx, vy, buf, fg, bg, font);
+            // osd->DrawRectangle(vx, vy, vx + w - 1, vy + h - 1, bg);
+            osd->DrawText(vx, vy, buf, fg, bg, font);
 #else
             cBitmap charBm(w, h, 24);
-            charBm.DrawRectangle(0, 0, w, h, bg);
+            if (m_debugmask & DEBUG_MASK_OT_ACT_CHAR_BACK_BLUE)
+                charBm.DrawRectangle(0, 0, w - 1, h - 1, GetColorRGB(ttcBlue,0));
+            else
+                charBm.DrawRectangle(0, 0, w - 1, h - 1, bg);
 //            charBm.DrawText(0, 0, buf, fg, bg, font);
             if (
                  (cache_valid == 0) || (
