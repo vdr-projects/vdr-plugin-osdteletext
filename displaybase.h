@@ -21,6 +21,9 @@
 #include <vdr/osd.h>
 #include <string>
 
+// #define dsyslog_osdteletext(format, arg...)	dsyslog(format, ## arg)
+#define dsyslog_osdteletext(format, arg...)	{ }
+
 class cDisplay : public cRenderPage {
     // Class that extends the virtual cRenderPage with the capability
     // to render its contents to an OSD of variable size.
