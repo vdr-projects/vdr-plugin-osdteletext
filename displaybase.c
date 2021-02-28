@@ -375,7 +375,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
 
     if (Zoom == Zoom_Lower) {
         y -= 12;
-        if (y < 0) {
+        if (y < 0 || y > 11) {
             // display only line 12-23 (12 lines)
             return;
         };
