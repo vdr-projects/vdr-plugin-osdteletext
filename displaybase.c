@@ -19,6 +19,7 @@
 #include "displaybase.h"
 #include "txtfont.h"
 #include <iostream>
+#include "logging.h"
 
 std::string cDisplay::TXTFontFootprint = "";
 int cDisplay::realFontWidths[4] = {0};
@@ -67,7 +68,7 @@ cFont *cDisplay::GetFont(const char *name, int fontIndex, int height, int width)
             esyslog("osdteletext: font %s returned realWidth of 0 (should not happen, please try a different font)", name);
         }
     }
-    dsyslog("osdteletext: font %s index %d probed size (w/h) = (%d/%d), char width: %d", name, fontIndex, width, height, font->Width("g"));
+    DEBUG_OT_FONT("font %s index %d probed size (w/h) = (%d/%d), char width: %d", name, fontIndex, width, height, font->Width("g"));
     return font;
 }
 
@@ -179,7 +180,7 @@ bool cDisplay::SetConceal(bool conceal) {
 }
 
 void cDisplay::SetZoom(enumZoom zoom) {
-    dsyslog_osdteletext("osdteletext: %s called: zoom=%d", __FUNCTION__, zoom);
+    DEBUG_OT_DBFC("called: zoom=%d", zoom);
 
     if (!osd) return;
     if (Zoom==zoom) return;
@@ -197,7 +198,7 @@ void cDisplay::SetZoom(enumZoom zoom) {
 }
 
 void cDisplay::SetBackgroundColor(tColor c) {
-    dsyslog_osdteletext("osdteletext: %s called: tColor=0x%08x", __FUNCTION__, c);
+    DEBUG_OT_DBFC("called: tColor=0x%08x", c);
     Background=c;
     CleanDisplay();
     Flush();
@@ -207,8 +208,11 @@ void cDisplay::CleanDisplay() {
     enumTeletextColor bgc=(Boxed)?(ttcTransparent):(ttcBlack);
     if (!osd) return;
 
-    dsyslog_osdteletext("osdteletext: %s called: outputWidth=%d outputHeight=%d boxed=%d color=0x%08x bgc=%d", __FUNCTION__, outputWidth, outputHeight, Boxed, GetColorRGB(bgc,0), bgc);
-    osd->DrawRectangle(0, 0, outputWidth, outputHeight, GetColorRGB(bgc,0));
+    DEBUG_OT_DBFC("called: outputWidth=%d outputHeight=%d boxed=%d color=0x%08x bgc=%d", outputWidth, outputHeight, Boxed, GetColorRGB(bgc,0), bgc);
+    if (m_debugmask & DEBUG_MASK_OT_ACT_BACK_RED)
+        osd->DrawRectangle(0, 0, outputWidth, outputHeight, GetColorRGB(ttcRed,0));
+    else
+        osd->DrawRectangle(0, 0, outputWidth, outputHeight, GetColorRGB(bgc,0));
 
     // repaint all
     Dirty=true;
@@ -244,7 +248,7 @@ void cDisplay::RenderTeletextCode(unsigned char *PageCode) {
 
     cRenderPage::ReadTeletextHeader(PageCode);
 
-    dsyslog_osdteletext("osdteletext: %s called", __FUNCTION__);
+    DEBUG_OT_DBFC("called");
 
     if (!Boxed && (Flags&0x60)!=0) {
         Boxed=true;
@@ -387,6 +391,8 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
             return;
         };
     };
+
+    if ((m_debugmask & DEBUG_MASK_OT_ACT_LIMIT_LINES) && (y > 8)) return;
 
     int vx = x * fontWidth / 2;
     int vy = y * fontHeight / 2;

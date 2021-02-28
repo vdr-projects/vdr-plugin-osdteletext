@@ -300,6 +300,14 @@ bool cPluginTeletextosd::SetupParse(const char *Name, const char *Value)
   else if (!strcasecmp(Name, "txtVoffset")) ttSetup.txtVoffset=atoi(Value);
   else if (!strcasecmp(Name, "colorMode4bpp")) ttSetup.colorMode4bpp=atoi(Value);
   else if (!strcasecmp(Name, "lineMode24")) ttSetup.lineMode24=atoi(Value);
+  // ignore obsolete options
+#define DSYSLOG_IGNORE_OPTION dsyslog("osdteletext: ignore obsolete option in setup.conf: osdteletext.%s", Name);
+  else if (!strcasecmp(Name, "OSDHAlign"  )) { DSYSLOG_IGNORE_OPTION } // < 1.0.0
+  else if (!strcasecmp(Name, "OSDVAlign"  )) { DSYSLOG_IGNORE_OPTION } // < 1.0.0
+  else if (!strcasecmp(Name, "OSDheight"  )) { DSYSLOG_IGNORE_OPTION } // < 1.0.0
+  else if (!strcasecmp(Name, "OSDwidth"   )) { DSYSLOG_IGNORE_OPTION } // < 1.0.0
+  else if (!strcasecmp(Name, "OSDhcentPct")) { DSYSLOG_IGNORE_OPTION } // 1.0.0 - 1.0.4
+  else if (!strcasecmp(Name, "OSDvcentPct")) { DSYSLOG_IGNORE_OPTION } // 1.0.0 - 1.0.4
   else {
      for (int i=0;i<LastActionKey;i++) {
         if (!strcasecmp(Name, cTeletextSetupPage::actionKeyNames[i].internalName)) {
