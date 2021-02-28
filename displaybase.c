@@ -210,9 +210,9 @@ void cDisplay::CleanDisplay() {
 
     DEBUG_OT_DBFC("called: outputWidth=%d outputHeight=%d boxed=%d color=0x%08x bgc=%d", outputWidth, outputHeight, Boxed, GetColorRGB(bgc,0), bgc);
     if (m_debugmask & DEBUG_MASK_OT_ACT_BACK_RED)
-        osd->DrawRectangle(0, 0, outputWidth, outputHeight, GetColorRGB(ttcRed,0));
+        osd->DrawRectangle(0, 0, outputWidth - 1, outputHeight - 1, GetColorRGB(ttcRed,0));
     else
-        osd->DrawRectangle(0, 0, outputWidth, outputHeight, GetColorRGB(bgc,0));
+        osd->DrawRectangle(0, 0, outputWidth - 1, outputHeight - 1, GetColorRGB(bgc,0));
 
     // repaint all
     Dirty=true;
