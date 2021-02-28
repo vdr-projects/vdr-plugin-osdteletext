@@ -73,7 +73,7 @@ void Display::SetMode(Display::Mode NewMode) {
         };
     };
 
-    dsyslog("OSD-Teletext: OSD area calculated by percent values: OsdLeft=%d OsdTop=%d OsdWidth=%d OsdHeight=%d OSDwidthPct=%d%% OSDheightPct=%d%% OSDleftPct=%d%% OSDtopPct=%d%% ttSetup.lineMode24=%d => x0=%d y0=%d OSDwidth=%d OSDheight=%d", cOsd::OsdLeft(), cOsd::OsdTop(), cOsd::OsdWidth(), cOsd::OsdHeight(), ttSetup.OSDwidthPct, ttSetup.OSDheightPct, ttSetup.OSDleftPct, ttSetup.OSDtopPct, ttSetup.lineMode24, x0, y0, OSDwidth, OSDheight);
+    dsyslog("osdteletext: OSD area calculated by percent values: OsdLeft=%d OsdTop=%d OsdWidth=%d OsdHeight=%d OSDwidthPct=%d%% OSDheightPct=%d%% OSDleftPct=%d%% OSDtopPct=%d%% ttSetup.lineMode24=%d => x0=%d y0=%d OSDwidth=%d OSDheight=%d", cOsd::OsdLeft(), cOsd::OsdTop(), cOsd::OsdWidth(), cOsd::OsdHeight(), ttSetup.OSDwidthPct, ttSetup.OSDheightPct, ttSetup.OSDleftPct, ttSetup.OSDtopPct, ttSetup.lineMode24, x0, y0, OSDwidth, OSDheight);
 
     switch (NewMode) {
       case Display::Full:
@@ -138,17 +138,17 @@ cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height)
     int bpp = 32;
     if (ttSetup.colorMode4bpp == true) {
         bpp = 4;
-        dsyslog("OSD-Teletext: OSD config forced to bpp=%d", bpp);
+        dsyslog("osdteletext: OSD config forced to bpp=%d", bpp);
     };
     tArea Areas[] = { { 0, 0, width - 1, height - 1, bpp } };
     if (bpp == 32 && (osd->CanHandleAreas(Areas, sizeof(Areas) / sizeof(tArea)) != oeOk)) {
         bpp = 8;
         Areas[0].bpp = 8;
-        dsyslog("OSD-Teletext: OSD is not providing TrueColor, fallback to bpp=%d", bpp);
+        dsyslog("osdteletext: OSD is not providing TrueColor, fallback to bpp=%d", bpp);
     }
     if (osd->CanHandleAreas(Areas, sizeof(Areas) / sizeof(tArea)) != oeOk) {
         DELETENULL(osd);
-        esyslog("OSD-Teletext: can't create requested OSD area with x0=%d y0=%d width=%d height=%d bpp=%d", x0, y0, width, height, bpp);
+        esyslog("osdteletext: can't create requested OSD area with x0=%d y0=%d width=%d height=%d bpp=%d", x0, y0, width, height, bpp);
         Skins.Message(mtError, "OSD-Teletext can't request OSD area, check plugin settings");
         return;
     }
@@ -157,7 +157,7 @@ cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height)
     setOutputWidth(width);
     setOutputHeight(Height);
 
-    isyslog("OSD-Teletext: OSD area successful requested with x0=%d y0=%d width=%d height=%d bpp=%d", x0, y0, width, height, bpp);
+    isyslog("osdteletext: OSD area successful requested with x0=%d y0=%d width=%d height=%d bpp=%d", x0, y0, width, height, bpp);
 
     InitScaler();
 
@@ -194,17 +194,17 @@ void cDisplay32BPPHalf::InitOSD() {
     int bpp = 32;
     if (ttSetup.colorMode4bpp == true) {
         bpp = 4;
-        dsyslog("OSD-Teletext: OSD config forced to bpp=%d", bpp);
+        dsyslog("osdteletext: OSD config forced to bpp=%d", bpp);
     };
     tArea Areas[] = { { 0, 0, width - 1, height - 1, bpp } };
     if (bpp == 32 && (osd->CanHandleAreas(Areas, sizeof(Areas) / sizeof(tArea)) != oeOk)) {
         bpp = 8;
         Areas[0].bpp = 8;
-        dsyslog("OSD-Teletext: OSD is not providing TrueColor, fallback to bpp=%d", bpp);
+        dsyslog("osdteletext: OSD is not providing TrueColor, fallback to bpp=%d", bpp);
     }
     if (osd->CanHandleAreas(Areas, sizeof(Areas) / sizeof(tArea)) != oeOk) {
         DELETENULL(osd);
-        esyslog("OSD-Teletext: can't create requested OSD 'half' area with x0=%d y0=%d width=%d height=%d bpp=%d", x0, y0, width, height, bpp);
+        esyslog("osdteletext: can't create requested OSD 'half' area with x0=%d y0=%d width=%d height=%d bpp=%d", x0, y0, width, height, bpp);
         Skins.Message(mtError, "OSD-Teletext can't request OSD 'half' area, check plugin settings");
         return;
     }
@@ -235,7 +235,7 @@ void cDisplay32BPPHalf::InitOSD() {
 */
     osd->SetAreas(Areas, sizeof(Areas) / sizeof(tArea));
 
-    isyslog("OSD-Teletext: OSD 'half' area successful requested x0=%d y0=%d width=%d height=%d bpp=%d upper=%d", x0, y0, width, height, bpp, Upper);
+    isyslog("osdteletext: OSD 'half' area successful requested x0=%d y0=%d width=%d height=%d bpp=%d upper=%d", x0, y0, width, height, bpp, Upper);
 
     setOutputWidth(width);
     setOutputHeight(height);

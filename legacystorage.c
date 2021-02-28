@@ -45,7 +45,7 @@ int LegacyStorage::actualFileSize(int netFileSize) {
 void LegacyStorage::initMaxStorage(int maxMB) {
    struct statfs fs;
    if (statfs(getRootDir(), &fs)!=0) {
-      esyslog("OSD-Teletext: Error statfs'ing root directory \"%s\": %s, cache size uncontrolled", getRootDir(), strerror(errno));
+      esyslog("osdteletext: Error statfs'ing root directory \"%s\": %s, cache size uncontrolled", getRootDir(), strerror(errno));
       return;
    }
    fsBlockSize=fs.f_bsize;
@@ -54,7 +54,7 @@ void LegacyStorage::initMaxStorage(int maxMB) {
 
    if (maxMB>=0) {
       if (maxMB<3) {
-         esyslog("OSD-Teletext: Request to use at most %d MB for caching. This is not enough, using 3 MB", maxMB);
+         esyslog("osdteletext: Request to use at most %d MB for caching. This is not enough, using 3 MB", maxMB);
          maxMB=3;
       }
       maxBytes=MEGABYTE(maxMB);
@@ -69,7 +69,7 @@ void LegacyStorage::initMaxStorage(int maxMB) {
          maxBytes=MEGABYTE((int)freeMB);
          //maxPages= FilesForMegabytes(freeMB, fs.f_bsize);
          if (freeMB<3.0) {
-            esyslog("OSD-Teletext: Less than %.1f MB free on filesystem of root directory \"%s\"!", freeMB, getRootDir());
+            esyslog("osdteletext: Less than %.1f MB free on filesystem of root directory \"%s\"!", freeMB, getRootDir());
             maxBytes=MEGABYTE(3);
          }
       } else {
@@ -118,7 +118,7 @@ StorageHandle LegacyStorage::openForWriting(PageID page) {
    if (!fd && !wroteError) {
       //report error to syslog - once!
       wroteError=true;
-      esyslog("OSD-Teletext: Error opening teletext file %s: %s", filename, strerror(errno));
+      esyslog("osdteletext: Error opening teletext file %s: %s", filename, strerror(errno));
    }
    //make sure newly created files are counted
    if (fd && !existed)
@@ -134,7 +134,7 @@ ssize_t LegacyStorage::write(const void *ptr, size_t size, StorageHandle stream)
          freeSpace();
          return ::write((int)stream, ptr, size);
       case EINTR:
-         esyslog("OSD-Teletext: EINTR while writing. Please contact the author and tell him this happened.");
+         esyslog("osdteletext: EINTR while writing. Please contact the author and tell him this happened.");
          break;
       default:
          break;
