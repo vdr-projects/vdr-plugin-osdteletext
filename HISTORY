@@ -1,5 +1,10 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
+2021-03-12:
+- [pbiering] decrease thread priority to "low"
+- [pbiering] add info log for thread start/stop (incl. some statistics)
+- [pbiering] add optional debug log for cTxtReceiver::DecodeTXT
+
 2021-02-28:
 - [pbiering] align plugin prefix in log, cleanup some EOL code
 - [pbiering] fix OSD background rectangle size

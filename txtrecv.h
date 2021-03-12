@@ -54,6 +54,9 @@ private:
    bool storeTopText;
    cRingTxtFrames buffer;
    Storage *storage;
+   const cChannel* channel;
+   long int statTxtReceiverPageCount;
+   time_t statTxtReceiverTimeStart;
 protected:
    virtual void Activate(bool On);
 #if defined(APIVERSNUM) && APIVERSNUM >= 20301

@@ -117,6 +117,8 @@ Command line options:
                                   one-file-for-a-few-pages system.
      -t        --toptext          Store top text pages at cache.
                                   (unviewable pages)
+     -D        --debugmask <MASK> Debug mask <int> or 0x<hexint>
+                                  see logging.h for details
 
 Colors:
   On all sorts of output devices which are not limited as to color depth

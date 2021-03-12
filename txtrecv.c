@@ -14,6 +14,7 @@
 #include "tables.h"
 #include "setup.h"
 #include "menu.h"
+#include "logging.h"
 
 #include <vdr/channels.h>
 #include <vdr/device.h>
@@ -114,12 +115,15 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber, bool Li
 
 
 cTxtReceiver::cTxtReceiver(const cChannel* chan, bool storeTopText, Storage* storage)
- : cReceiver(chan, -1), cThread("osdteletext-receiver"),
+ : cReceiver(chan, -1), cThread("osdteletext-receiver", true),
    TxtPage(0), storeTopText(storeTopText), buffer((188+60)*75), storage(storage)
+   , channel(chan), statTxtReceiverPageCount(0)
 {
+   isyslog("osdteletext: cTxtReceiver started on channel Number=%d Name='%s' ID=%s storeTopText=%d\n", channel->Number(), channel->Name(), *ChannelID().ToString(), storeTopText);
    SetPids(NULL);
    AddPid(chan->Tpid());
    storage->prepareDirectory(ChannelID());
+   time(&statTxtReceiverTimeStart); // record start time
 
    // 10 ms timeout on getting TS frames
    buffer.SetTimeouts(0, 10);
@@ -132,6 +136,12 @@ cTxtReceiver::~cTxtReceiver()
    Activate(false);
    buffer.Clear();
    delete TxtPage;
+
+   // calculate and log statistics
+   time_t statTxtReceiverTimeStop;
+   time(&statTxtReceiverTimeStop);
+   double time_diff = difftime(statTxtReceiverTimeStop, statTxtReceiverTimeStart);
+   isyslog("osdteletext: cTxtReceiver stopped after %.0lf sec: cTelePage received on channel Number=%d Name='%s' ID=%s: %ld (%.3lf/sec)\n", time_diff, channel->Number(), channel->Name(), *ChannelID().ToString(), statTxtReceiverPageCount, statTxtReceiverPageCount / time_diff);
 }
 
 void cTxtReceiver::Stop()
@@ -248,6 +258,20 @@ void cTxtReceiver::DecodeTXT(uchar* TXT_buf)
    line = (hdr>>3) & 0x1f;
    ptr = &TXT_buf[10];
 
+   static int stat_pagecount = 0;
+   static long int stat_pagecount_total = 0;
+   static time_t stat_time_last;
+   static time_t stat_time_start;
+   static int init = 0;
+   if (init == 0) {
+      time(&stat_time_last);
+      time(&stat_time_start);
+      init = 1;
+   }
+   time_t stat_time_now;
+   double stat_time_diff_last;
+   double stat_time_diff_start;
+
    switch (line) {
    case 0: 
       {
@@ -281,6 +305,24 @@ void cTxtReceiver::DecodeTXT(uchar* TXT_buf)
       subno = (b2 + b3 * 256) & 0x3f7f;         // Sub Page Number
 
       TxtPage = new cTelePage(PageID(ChannelID(), pgno, subno), flags, lang, mag, storage);
+      DEBUG_OT_NEPG("new cTelePage pgno=%d subno=%d\n", pgno, subno);
+      stat_pagecount++;
+      stat_pagecount_total++;
+      statTxtReceiverPageCount++;
+      time(&stat_time_now);
+      stat_time_diff_last = difftime(stat_time_now, stat_time_last);
+      if (stat_time_diff_last >= 10) { // every 10 seconds
+         stat_time_diff_start = difftime(stat_time_now, stat_time_start);
+         DEBUG_OT_COPG("received cTelePages %d in %.0lf sec (total: %ld in %.0lf sec -> %.3lf/sec)\n"
+            , stat_pagecount
+            , stat_time_diff_last
+            , stat_pagecount_total
+            , stat_time_diff_start
+            , stat_pagecount_total / stat_time_diff_start
+         );
+         stat_pagecount = 0;
+         stat_time_last = stat_time_now;
+      };
       TxtPage->SetLine((int)line,(uchar *)ptr);
       break;
       }
@@ -298,3 +340,5 @@ void cTxtReceiver::DecodeTXT(uchar* TXT_buf)
       break;
    }
 }
+
+// vim: ts=3 sw=3 et
