@@ -1,5 +1,10 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
+2021-02-28:
+- [pbiering] align plugin prefix in log, cleanup some EOL code
+- [pbiering] fix OSD background rectangle size
+- [pbiering] fix char rectangle size
+
 2021-02-28: version 1.0.6
 - [pbiering] fix for 'half' and 'zoom' mode in combination with 24-line mode
 

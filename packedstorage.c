@@ -102,7 +102,7 @@ StorageHandle PackedStorage::openForWriting(PageID page) {
    if (desc==-1 && !wroteError) {
       //report error to syslog - once!
       wroteError=true;
-      esyslog("OSD-Teletext: Error opening teletext file %s: %s", filename, strerror(errno));
+      esyslog("osdteletext: Error opening teletext file %s: %s", filename, strerror(errno));
    }
 
    if (desc==-1)

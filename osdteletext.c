@@ -30,9 +30,11 @@ using namespace std;
 
 #define NUMELEMENTS(x) (sizeof(x) / sizeof(x[0]))
 
-static const char *VERSION        = "1.0.6";
+static const char *VERSION        = "1.0.6.2";
 static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
 static const char *MAINMENUENTRY  = trNOOP("Teletext");
+
+int m_debugmask = 0;
 
 class cPluginTeletextosd : public cPlugin {
 private:
@@ -134,7 +136,8 @@ const char *cPluginTeletextosd::CommandLineHelp(void)
          "                               one-file-per-page system.\n"
          "                               Default is \"packed\" for the \n"
          "                               one-file-for-a-few-pages system.\n"
-         "  -t,       --toptext          Store top text pages at cache. (unviewable pages)\n";
+         "  -t,       --toptext          Store top text pages at cache. (unviewable pages)\n"
+         "  -D|--debugmask <int|hexint>  Enable debugmask\n";
 }
 
 bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
@@ -145,11 +148,12 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
        { "max-cache",    required_argument,       NULL, 'n' },
        { "cache-system", required_argument,       NULL, 's' },
        { "toptext",      no_argument,             NULL, 't' },
+       { "debugmask",    required_argument,       NULL, 'D' },
        { NULL }
        };
 
    int c;
-   while ((c = getopt_long(argc, argv, "s:d:n:t", long_options, NULL)) != -1) {
+   while ((c = getopt_long(argc, argv, "s:d:n:tD:", long_options, NULL)) != -1) {
         switch (c) {
           case 's':
                     if (!optarg)
@@ -168,6 +172,17 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
                     break;
           case 't': storeTopText=true;
                     break;
+          case 'D':
+            if ((strlen(optarg) > 2) && (strncasecmp(optarg, "0x", 2) == 0)) {
+               // hex conversion
+               if (sscanf(optarg + 2, "%x", &m_debugmask) == 0) {
+                  esyslog("osdteletext: can't parse hexadecimal debug mask (skip): %s", optarg);
+               };
+            } else {
+				   m_debugmask = atoi(optarg);
+            };
+			   dsyslog("osdteletext: enable debug mask: %d (0x%02x)", m_debugmask, m_debugmask);
+            break;
         }
    }
    return true;
@@ -285,6 +300,14 @@ bool cPluginTeletextosd::SetupParse(const char *Name, const char *Value)
   else if (!strcasecmp(Name, "txtVoffset")) ttSetup.txtVoffset=atoi(Value);
   else if (!strcasecmp(Name, "colorMode4bpp")) ttSetup.colorMode4bpp=atoi(Value);
   else if (!strcasecmp(Name, "lineMode24")) ttSetup.lineMode24=atoi(Value);
+  // ignore obsolete options
+#define DSYSLOG_IGNORE_OPTION dsyslog("osdteletext: ignore obsolete option in setup.conf: osdteletext.%s", Name);
+  else if (!strcasecmp(Name, "OSDHAlign"  )) { DSYSLOG_IGNORE_OPTION } // < 1.0.0
+  else if (!strcasecmp(Name, "OSDVAlign"  )) { DSYSLOG_IGNORE_OPTION } // < 1.0.0
+  else if (!strcasecmp(Name, "OSDheight"  )) { DSYSLOG_IGNORE_OPTION } // < 1.0.0
+  else if (!strcasecmp(Name, "OSDwidth"   )) { DSYSLOG_IGNORE_OPTION } // < 1.0.0
+  else if (!strcasecmp(Name, "OSDhcentPct")) { DSYSLOG_IGNORE_OPTION } // 1.0.0 - 1.0.4
+  else if (!strcasecmp(Name, "OSDvcentPct")) { DSYSLOG_IGNORE_OPTION } // 1.0.0 - 1.0.4
   else {
      for (int i=0;i<LastActionKey;i++) {
         if (!strcasecmp(Name, cTeletextSetupPage::actionKeyNames[i].internalName)) {

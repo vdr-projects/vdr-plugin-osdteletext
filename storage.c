@@ -29,7 +29,7 @@ int Storage::doCleanUp() {
       }
       closedir(top);
    } else {
-      esyslog("OSD-Teletext: Error opening teletext storage directory \"%s\": %s", root, strerror(errno));
+      esyslog("osdteletext: Error opening teletext storage directory \"%s\": %s", root, strerror(errno));
    }
    return pagesDeleted;
 }
@@ -62,13 +62,13 @@ int Storage::cleanSubDir(const char *dir) {
       rmdir(dir);
    } else {
       if (!reportedError) {
-         esyslog("OSD-Teletext: Error opening teletext storage subdirectory \"%s\": %s", dir, strerror(errno));
+         esyslog("osdteletext: Error opening teletext storage subdirectory \"%s\": %s", dir, strerror(errno));
          reportedError=true;
       }
    }
 
    if (hadError && !reportedError) {
-      esyslog("OSD-Teletext: Error removing teletext storage subdirectory \"%s\": %s", dir, strerror(hadError));
+      esyslog("osdteletext: Error removing teletext storage subdirectory \"%s\": %s", dir, strerror(hadError));
       reportedError=true;
    }
    return bytesDeleted;
@@ -134,7 +134,7 @@ void Storage::getFilename(char *buffer, int bufLength, PageID page) {
 void Storage::prepareDirectory(tChannelID chan) {
    currentDir = cString::sprintf("%s/%s", root, *chan.ToString());
    if (!MakeDirs(currentDir, 1)) {
-      esyslog("OSD-Teletext: Error preparing directory for channel \"%s\"",
+      esyslog("osdteletext: Error preparing directory for channel \"%s\"",
               *chan.ToString());
       return;
    }

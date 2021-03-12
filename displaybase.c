@@ -19,6 +19,7 @@
 #include "displaybase.h"
 #include "txtfont.h"
 #include <iostream>
+#include "logging.h"
 
 std::string cDisplay::TXTFontFootprint = "";
 int cDisplay::realFontWidths[4] = {0};
@@ -64,10 +65,10 @@ cFont *cDisplay::GetFont(const char *name, int fontIndex, int height, int width)
                 }
             }
         } else {
-            esyslog("OSD-Teletext: font %s returned realWidth of 0 (should not happen, please try a different font)", name);
+            esyslog("osdteletext: font %s returned realWidth of 0 (should not happen, please try a different font)", name);
         }
     }
-    dsyslog("OSD-Teletext: font %s index %d probed size (w/h) = (%d/%d), char width: %d", name, fontIndex, width, height, font->Width("g"));
+    DEBUG_OT_FONT("font %s index %d probed size (w/h) = (%d/%d), char width: %d", name, fontIndex, width, height, font->Width("g"));
     return font;
 }
 
@@ -111,7 +112,7 @@ void cDisplay::InitScaler() {
     fontWidth &= 0xfffe;
     fontHeight &= 0xfffe;
 
-    dsyslog("OSD-Teletext: InitScaler width=%d height=%d fontWidth*2=%d fontHeight=%d lineMode24=%d Zoom=%d", outputWidth, outputHeight, fontWidth, fontHeight, ttSetup.lineMode24, Zoom);
+    dsyslog("osdteletext: InitScaler width=%d height=%d fontWidth*2=%d fontHeight=%d lineMode24=%d Zoom=%d", outputWidth, outputHeight, fontWidth, fontHeight, ttSetup.lineMode24, Zoom);
 
     int txtFontWidth = fontWidth;
     int txtFontHeight = fontHeight;
@@ -179,7 +180,7 @@ bool cDisplay::SetConceal(bool conceal) {
 }
 
 void cDisplay::SetZoom(enumZoom zoom) {
-    dsyslog_osdteletext("OSD-Teletext: %s called: zoom=%d", __FUNCTION__, zoom);
+    DEBUG_OT_DBFC("called: zoom=%d", zoom);
 
     if (!osd) return;
     if (Zoom==zoom) return;
@@ -197,7 +198,7 @@ void cDisplay::SetZoom(enumZoom zoom) {
 }
 
 void cDisplay::SetBackgroundColor(tColor c) {
-    dsyslog_osdteletext("OSD-Teletext: %s called: tColor=0x%08x", __FUNCTION__, c);
+    DEBUG_OT_DBFC("called: tColor=0x%08x", c);
     Background=c;
     CleanDisplay();
     Flush();
@@ -207,8 +208,11 @@ void cDisplay::CleanDisplay() {
     enumTeletextColor bgc=(Boxed)?(ttcTransparent):(ttcBlack);
     if (!osd) return;
 
-    dsyslog_osdteletext("OSD-Teletext: %s called: outputWidth=%d outputHeight=%d boxed=%d color=0x%08x bgc=%d", __FUNCTION__, outputWidth, outputHeight, Boxed, GetColorRGB(bgc,0), bgc);
-    osd->DrawRectangle(0, 0, outputWidth, outputHeight, GetColorRGB(bgc,0));
+    DEBUG_OT_DBFC("called: outputWidth=%d outputHeight=%d boxed=%d color=0x%08x bgc=%d", outputWidth, outputHeight, Boxed, GetColorRGB(bgc,0), bgc);
+    if (m_debugmask & DEBUG_MASK_OT_ACT_OSD_BACK_RED)
+        osd->DrawRectangle(0, 0, outputWidth - 1, outputHeight - 1, GetColorRGB(ttcRed,0));
+    else
+        osd->DrawRectangle(0, 0, outputWidth - 1, outputHeight - 1, GetColorRGB(bgc,0));
 
     // repaint all
     Dirty=true;
@@ -244,7 +248,7 @@ void cDisplay::RenderTeletextCode(unsigned char *PageCode) {
 
     cRenderPage::ReadTeletextHeader(PageCode);
 
-    dsyslog_osdteletext("OSD-Teletext: %s called", __FUNCTION__);
+    DEBUG_OT_DBFC("called");
 
     if (!Boxed && (Flags&0x60)!=0) {
         Boxed=true;
@@ -388,6 +392,8 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
         };
     };
 
+    if ((m_debugmask & DEBUG_MASK_OT_ACT_LIMIT_LINES) && (y > 8)) return;
+
     int vx = x * fontWidth / 2;
     int vy = y * fontHeight / 2;
 
@@ -413,7 +419,10 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
             }
 
             cBitmap charBm(w, h, 24);
-            charBm.DrawRectangle(0, 0, w, h, bg);
+            if (m_debugmask & DEBUG_MASK_OT_ACT_CHAR_BACK_BLUE)
+                charBm.DrawRectangle(0, 0, w - 1, h - 1, GetColorRGB(ttcBlue,0));
+            else
+                charBm.DrawRectangle(0, 0, w - 1, h - 1, bg);
 
             // draw scaled graphics char
             int virtY = 0;
@@ -438,11 +447,14 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
         } else {
 #if 0
             // hi level osd devices (e.g. rpi and softhddevice openglosd currently do not support monospaced fonts with arbitrary width
-//            osd->DrawRectangle(vx, vy, vx + w - 1, vy + h - 1, bg);
-        osd->DrawText(vx, vy, buf, fg, bg, font);
+            // osd->DrawRectangle(vx, vy, vx + w - 1, vy + h - 1, bg);
+            osd->DrawText(vx, vy, buf, fg, bg, font);
 #else
             cBitmap charBm(w, h, 24);
-            charBm.DrawRectangle(0, 0, w, h, bg);
+            if (m_debugmask & DEBUG_MASK_OT_ACT_CHAR_BACK_BLUE)
+                charBm.DrawRectangle(0, 0, w - 1, h - 1, GetColorRGB(ttcBlue,0));
+            else
+                charBm.DrawRectangle(0, 0, w - 1, h - 1, bg);
 //            charBm.DrawText(0, 0, buf, fg, bg, font);
             if (
                  (cache_valid == 0) || (
@@ -456,7 +468,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
                 cache_outputHeight = outputHeight;
                 cache_OsdHeight    = cOsd::OsdHeight();
                 cache_Vshift       = (cache_txtVoffset * cache_outputHeight) / cache_OsdHeight;
-                dsyslog("OSD-Teletext: DrawText vertical shift cache updated: txtVoffset=%d outputHeight=%d OsdHeight=%d => Vshift=%d", cache_txtVoffset, cache_outputHeight, cache_OsdHeight, cache_Vshift);
+                dsyslog("osdteletext: DrawText vertical shift cache updated: txtVoffset=%d outputHeight=%d OsdHeight=%d => Vshift=%d", cache_txtVoffset, cache_outputHeight, cache_OsdHeight, cache_Vshift);
             };
             charBm.DrawText(0, cache_Vshift, buf, fg, 0, font);
             osd->DrawBitmap(vx, vy, charBm);
@@ -545,11 +557,7 @@ void cDisplay::DrawMessage(const char *txt) {
     MessageX=x;
     MessageY=y;
 
-#if 0
-    dsyslog("OSD-Teletext/%s: display with MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d ScaleX=%d ScaleY=%d", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, ScaleX, ScaleY);
-#else
-    dsyslog("OSD-Teletext/%s: display with MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY);
-#endif
+    dsyslog("osdteletext: DrawMessage with MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d", MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY);
 
     // And flush all changes
     ReleaseFlush();
@@ -559,22 +567,6 @@ void cDisplay::ClearMessage() {
     if (!osd) return;
     if (MessageW==0 || MessageH==0) return;
 
-#if 0
-    // BUGGY, resulting in out-of-range
-    // map OSD pixel to virtual coordinate, use center of pixel
-    int x0=(MessageX-OffsetX)*ScaleX+ScaleX/2;
-    int y0=(MessageY-OffsetY)*ScaleY+ScaleY/2;
-    int x1=(MessageX+MessageW-1-OffsetX)*ScaleX+ScaleX/2;
-    int y1=(MessageY+MessageH-1-OffsetY)*ScaleY+ScaleY/2;
-
-    // map to character
-    x0=x0/(12<<16);
-    y0=y0/(10<<16);
-    x1=(x1+(12<<16)-1)/(12<<16);
-    y1=(y1+(10<<16)-1)/(10<<16);
-
-    dsyslog("OSD-Teletext/%s: called with MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d ScaleX=%d ScaleY=%d => x0=%d/y0=%d x1=%d/y1=%d", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, ScaleX, ScaleY, x0, y0, x1, y1);
-#else
     // NEW, reverse calculation based on how DrawChar
     // map to character x/y
     int x0 = (MessageX - OffsetX )         / (fontWidth  / 2);
@@ -582,18 +574,13 @@ void cDisplay::ClearMessage() {
     int x1 = (MessageX+MessageW-1-OffsetX) / (fontWidth  / 2);
     int y1 = (MessageY+MessageH-1-OffsetY) / (fontHeight / 2);
 
-    dsyslog("OSD-Teletext/%s: called with MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d => x0=%d/y0=%d x1=%d/y1=%d", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, x0, y0, x1, y1);
-#endif
+    dsyslog("osdteletext: %s called with MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d => x0=%d/y0=%d x1=%d/y1=%d", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, x0, y0, x1, y1);
 
 #define TESTOORX(X) (X < 0 || X >= 40)
 #define TESTOORY(Y) (Y < 0 || Y >= 25)
     if ( TESTOORX(x0) || TESTOORX(x1) || TESTOORY(y0) || TESTOORY(y1) ) {
-	// something out-of-range
-#if 0
-	esyslog("OSD-Teletext/%s: out-of-range detected(crop) MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d ScaleX=%d ScaleY=%d => x0=%d%s y0=%d%s x1=%d%s y1=%d%s", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, ScaleX, ScaleY,
-#else
-	esyslog("OSD-Teletext/%s: out-of-range detected(crop) MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d => x0=%d%s y0=%d%s x1=%d%s y1=%d%s", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY,
-#endif
+        // something out-of-range
+	    esyslog("osdteletext: %s out-of-range detected(crop) MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d => x0=%d%s y0=%d%s x1=%d%s y1=%d%s", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY,
 		x0, TESTOORX(x0) ? "!" : "",
 		y0, TESTOORY(y0) ? "!" : "",
 		x1, TESTOORX(x1) ? "!" : "",
@@ -609,7 +596,7 @@ void cDisplay::ClearMessage() {
 	if TESTOORY(y0) y0 = 25 - 1;
 	if TESTOORY(y1) y1 = 25 - 1;
     }
-    // dsyslog("OSD-Teletext/%s: call MakeDirty with area x0=%d/y0=%d <-> x1=%d/y1=%d", __FUNCTION__, x0, y0, x1, y1);
+    // dsyslog("osdteletext: %s: call MakeDirty with area x0=%d/y0=%d <-> x1=%d/y1=%d", __FUNCTION__, x0, y0, x1, y1);
     for (int x=x0;x<=x1;x++) {
         for (int y=y0;y<=y1;y++) {
             MakeDirty(x,y);
