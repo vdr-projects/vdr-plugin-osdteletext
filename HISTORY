@@ -1,6 +1,6 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
-2021-03-12:
+2021-03-12: version 1.0.7
 - [pbiering] decrease thread priority to "low"
 - [pbiering] add info log for thread start/stop (incl. some statistics)
 - [pbiering] add optional debug log for cTxtReceiver::DecodeTXT
