@@ -1,5 +1,8 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
+2021-03-20:
+- [pbiering] extend README with hints to reference pages (hint from https://www.vdr-portal.de/forum/index.php?thread/134254-osdteletext-1-0-0-released/&postID=1338016#post1338016)
+
 2021-03-12: version 1.0.7
 - [pbiering] decrease thread priority to "low"
 - [pbiering] add info log for thread start/stop (incl. some statistics)
