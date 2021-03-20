@@ -134,6 +134,7 @@ void cDisplay::InitScaler() {
 }
 
 bool cDisplay::SetBlink(bool blink) {
+    DEBUG_OT_BLINK("called with blink=%d", blink);
     int x,y;
     bool Change=false;
 

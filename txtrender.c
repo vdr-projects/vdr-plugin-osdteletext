@@ -16,6 +16,7 @@
 #include <strings.h>
 #include "txtrender.h"
 #include "menu.h"
+#include "logging.h"
 
 // Font tables
 
@@ -347,6 +348,7 @@ void cRenderPage::RenderTeletextCode(unsigned char *PageCode) {
             switch (ttc) {
             case 0x09: // Steady
                 c.SetBlink(false);
+                DEBUG_OT_BLINK("SetBlink(false) ttc=%d x=%d y=%d c=%02x", ttc, x, y, c.GetC());
                 break;
             case 0x0C: // Normal Size
                 if (Size!=sizeNormal) {
@@ -474,6 +476,7 @@ void cRenderPage::RenderTeletextCode(unsigned char *PageCode) {
                 break;
             case 0x08: // Flash
                 c.SetBlink(true);
+                DEBUG_OT_BLINK("SetBlink(true) ttc=%d x=%d y=%d c=%02x", ttc, x, y, c.GetC());
                 break;
             case 0x0A: // End Box
                 c.SetBoxedOut(true);
@@ -538,4 +541,4 @@ void cRenderPage::RenderTeletextCode(unsigned char *PageCode) {
     }       
 }
 
-
+// vim: ts=4 sw=4 et
