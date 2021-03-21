@@ -7,10 +7,12 @@
 extern int m_debugmask;
 
 #define DEBUG_MASK_OT		0x00000001	// general
-#define DEBUG_MASK_OT_FONT	0x00010000	// Font
-#define DEBUG_MASK_OT_DBFC	0x00040000	// DisplayBase Function Call
+#define DEBUG_MASK_OT_KNONE	0x00000010	// Knone action
 #define DEBUG_MASK_OT_NEPG	0x00000100	// new cTelePage
 #define DEBUG_MASK_OT_COPG	0x00000200	// regular log amount of new cTelePage
+#define DEBUG_MASK_OT_DD	0x00001000	// DrawDisplay
+#define DEBUG_MASK_OT_FONT	0x00010000	// Font
+#define DEBUG_MASK_OT_DBFC	0x00040000	// DisplayBase Function Call
 #define DEBUG_MASK_OT_BLINK	0x00100000	// Text Blink
 
 // special action mask
@@ -26,5 +28,7 @@ extern int m_debugmask;
 #define DEBUG_OT_NEPG   if (m_debugmask & DEBUG_MASK_OT_NEPG)   dsyslog_ot
 #define DEBUG_OT_COPG   if (m_debugmask & DEBUG_MASK_OT_COPG)   dsyslog_ot
 #define DEBUG_OT_BLINK  if (m_debugmask & DEBUG_MASK_OT_BLINK)  dsyslog_ot
+#define DEBUG_OT_DD     if (m_debugmask & DEBUG_MASK_OT_DD)     dsyslog_ot
+#define DEBUG_OT_KNONE  if (m_debugmask & DEBUG_MASK_OT_KNONE)  dsyslog_ot
 
 #endif
