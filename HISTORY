@@ -1,5 +1,8 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
+2021-03-21:
+- [pbiering] fix broken support of 'blink'
+
 2021-03-20:
 - [pbiering] extend README with hints to reference pages (hint from https://www.vdr-portal.de/forum/index.php?thread/134254-osdteletext-1-0-0-released/&postID=1338016#post1338016)
 
