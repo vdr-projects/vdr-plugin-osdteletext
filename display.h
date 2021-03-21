@@ -46,7 +46,7 @@ namespace Display {
     inline bool GetBlink()
         { if (display) return display->GetBlink(); else return false; }
     inline bool SetBlink(bool blink)
-        { if (display) display->SetBlink(blink); else return false; }
+        { if (display) return display->SetBlink(blink); else return false; }
     inline bool GetConceal()
         { if (display) return display->GetConceal(); else return false; }
     inline bool SetConceal(bool conceal)
