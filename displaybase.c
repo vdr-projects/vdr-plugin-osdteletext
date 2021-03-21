@@ -507,6 +507,27 @@ void cDisplay::DrawText(int x, int y, const char *text, int len) {
     Flush();
 }
 
+void cDisplay::DrawPageId(const char *text) {
+    // Draw Page ID string to OSD
+    static char text_last[9] = ""; // remember
+    DEBUG_OT_DRPI("called with text='%s' text_last='%s' Boxed=%d", text, text_last, Boxed);
+
+    if (Boxed && (strcmp(text, text_last) == 0)) {
+        // don't draw PageId a 2nd time on boxed pages
+        for (int i = 0; i < 8; i++) {
+            cTeletextChar c;
+            c.SetFGColor(ttcTransparent);
+            c.SetBGColor(ttcTransparent);
+            c.SetChar(0);
+            SetChar(i,0,c);
+        };
+        return;
+    };
+
+    DrawText(0,0,text,8);
+    strncpy(text_last, text, sizeof(text_last) - 1);
+}
+
 void cDisplay::DrawClock() {
     if (Boxed) return; // don't draw Clock in on boxed pages
 
