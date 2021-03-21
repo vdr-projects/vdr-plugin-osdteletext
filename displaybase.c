@@ -268,11 +268,11 @@ void cDisplay::RenderTeletextCode(unsigned char *PageCode) {
 
 
 void cDisplay::DrawDisplay() {
+    DEBUG_OT_DD("called with Blinked=%d Concealed=%d", Blinked, Concealed);
     int x,y;
     int cnt=0;
 
-    if (!IsDirty()) return;
-    // nothing to do
+    if (!IsDirty()) return; // nothing to do
 
     for (y = 0; y < ((ttSetup.lineMode24 == true) ? 24 : 25); y++) {
         for (x=0;x<40;x++) {
@@ -282,11 +282,11 @@ void cDisplay::DrawDisplay() {
                 cTeletextChar c=Page[x][y];
                 c.SetDirty(false);
                 if ((Blinked && c.GetBlink()) || (Concealed && c.GetConceal())) {
+                    DEBUG_OT_BLINK("blink by replacing char %08x with ' ' on x=%d y=%d", c.GetC(), x, y);
                     c.SetChar(0x20);
                     c.SetCharset(CHARSET_LATIN_G0_DE);
                 }
                 DrawChar(x,y,c);
-                Page[x][y]=c;
             }
         }
     }
