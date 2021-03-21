@@ -132,17 +132,26 @@ Colors:
 
 
 Testpages for verification
+    Page   | Reference
 
-Channel: 3sat
-  Page   | Reference
-  898-01 | https://blog.3sat.de/ttx/index.php?p=898_0001&c=0
-  898-02 | https://blog.3sat.de/ttx/index.php?p=898_0002&c=0
-  899-01 | https://blog.3sat.de/ttx/index.php?p=899_0001&c=0
-  899-02 | https://blog.3sat.de/ttx/index.php?p=899_0002&c=0
+  Channel: 3sat
+    898-01 | https://blog.3sat.de/ttx/index.php?p=898_0001&c=0
+    898-02 | https://blog.3sat.de/ttx/index.php?p=898_0002&c=0
+    899-01 | https://blog.3sat.de/ttx/index.php?p=899_0001&c=0
+    899-02 | https://blog.3sat.de/ttx/index.php?p=899_0002&c=0
 
-Channel: arte
-  199-01#
+  Channel: arte
+    199-01
 
-Channel: rbb
-  199-01
-  199-02
+  Channel: rbb
+    199-01
+    199-02
+
+
+Subtitle pages for verification
+
+  Channel: DasErste
+    150
+
+  Channel: 3sat
+    777
