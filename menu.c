@@ -103,10 +103,10 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber) {
    IntMap::iterator it;
    channelPageMap[currentChannelNumber] = currentPage;
    currentChannelNumber=ChannelNumber;
-   
+
    currentPage=0x100;
    currentSubPage=0;
-      
+
    //see if last page number on this channel was stored
    it=channelPageMap.find(ChannelNumber);
    if (it != channelPageMap.end()) { //found
@@ -675,4 +675,4 @@ TeletextSetup::TeletextSetup()
    mapKeyToAction[0]=SwitchChannel;
 }
 
-// vim: ts=4 sw=4 et
+// vim: ts=3 sw=3 et
