@@ -147,10 +147,16 @@ Testpages for verification
     199-01
     199-02
 
+  Channel: ORF2
+    886-00
+
+  Channel: ARD https://www.ard-text.de/index.php?page=<NUM>
+    (currently none)
+
 
 Subtitle pages for verification
 
-  Channel: DasErste
+  Channel: DasErste / BR Fernsehen
     150
 
   Channel: 3sat
