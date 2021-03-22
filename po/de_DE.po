@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-02-27 07:11+0100\n"
+"POT-Creation-Date: 2021-03-22 22:04+0100\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Klaus Schmidinger <Klaus.Schmidinger@tvdr.de>\n"
 "Language-Team: German <vdr@linuxtv.org>\n"
@@ -30,21 +30,6 @@ msgstr "Zeigt den Videotext auf dem OSD an"
 
 msgid "Teletext"
 msgstr "Videotext"
-
-msgid "Zoom"
-msgstr "Vergrößern"
-
-msgid "Half page"
-msgstr "Halbe Seite"
-
-msgid "Change channel"
-msgstr "Kanal wechseln"
-
-msgid "Switch background"
-msgstr "Hintergrund ändern"
-
-msgid "Jump to..."
-msgstr "Springe zu..."
 
 msgid "Latin 1"
 msgstr ""
@@ -94,6 +79,9 @@ msgstr "OSD Breite (%)"
 msgid "OSD height (%)"
 msgstr "OSD Höhe (%)"
 
+msgid "OSD frame (%)"
+msgstr "OSD Rahmen (%)"
+
 msgid "Hide mainmenu entry"
 msgstr "Hauptmenüeintrag verstecken"
 
@@ -120,3 +108,18 @@ msgstr "Tastenzuweisung"
 
 msgid "  Page number"
 msgstr "  Seitenzahl"
+
+#~ msgid "Zoom"
+#~ msgstr "Vergrößern"
+
+#~ msgid "Half page"
+#~ msgstr "Halbe Seite"
+
+#~ msgid "Change channel"
+#~ msgstr "Kanal wechseln"
+
+#~ msgid "Switch background"
+#~ msgstr "Hintergrund ändern"
+
+#~ msgid "Jump to..."
+#~ msgstr "Springe zu..."
