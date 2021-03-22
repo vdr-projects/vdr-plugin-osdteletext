@@ -34,6 +34,7 @@ protected:
    void SetNumber(int i);
    void ShowPage();
    void UpdateClock();
+   void UpdateFooter();
    bool DecodePage();
    void ChangePageRelative(Direction direction);
    void ChangeSubPageRelative(Direction direction);

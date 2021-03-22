@@ -11,12 +11,24 @@
 #ifndef __SETUP_H
 #define __SETUP_H
 
+#include <vdr/config.h>
+
 
 //There are two places to be kept in sync with these enums:
 //TeletextBrowser::TranslateKey and 
 //the constants in cPluginTeletextosd::initTexts
 enum eTeletextAction { Zoom, HalfPage, SwitchChannel,
                        DarkScreen, /*SuspendReceiving,*/ LastAction }; //and 100-899 => jump to page
+
+static const char *st_modes[] =
+{
+      tr("Zoom"),
+      tr("Half page"),
+      tr("Change channel"),
+      tr("Switch background"),
+      //tr("Suspend receiving"),
+      tr("Jump to...")
+};
 
 enum ActionKeys {
 ActionKeyRed,

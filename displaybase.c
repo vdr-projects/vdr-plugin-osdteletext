@@ -32,7 +32,7 @@ cDisplay::cDisplay(int width, int height)
       /* ScaleX(1), ScaleY(1), */ OffsetX(0), OffsetY(0),
       MessageFont(cFont::GetFont(fontSml)), MessageX(0), MessageY(0),
       MessageW(0), MessageH(0),
-      TXTFont(0), TXTDblWFont(0), TXTDblHFont(0), TXTDblHWFont(0)
+      TXTFont(0), TXTDblWFont(0), TXTDblHFont(0), TXTDblHWFont(0), TXTHlfHFont(0)
 {
 }
 
@@ -42,6 +42,7 @@ cDisplay::~cDisplay() {
     DELETENULL(TXTDblWFont);
     DELETENULL(TXTDblHFont);
     DELETENULL(TXTDblHWFont);
+    DELETENULL(TXTHlfHFont);
 }
 
 // This is an ugly hack, any ideas on how to get font size with characters (glyphs) of specified width/height?
@@ -99,14 +100,11 @@ void cDisplay::InitScaler() {
         default:;
     }
 
-    // ScaleX=(480<<16)/width;  // EOL: no longer used
-    // ScaleY=(250<<16)/height; // EOL: no longer used
-
     fontWidth = (outputWidth * 2 / 40) & 0xfffe;
     if (Zoom == Zoom_Off) {
         fontHeight = (outputHeight * 2 / ((ttSetup.lineMode24 == true) ? 24 : 25)) & 0xfffe;
     } else {
-        fontHeight = (outputHeight * 2 * 2 / ((ttSetup.lineMode24 == true) ? 24 : 25)) & 0xfffe; // in Zoom mode line 25 is not displayed
+        fontHeight = (outputHeight * 2 * 2 / ((ttSetup.lineMode24 == true) ? 24 : 25)) & 0xfffe;
     }
     // use even font size for double sized characters (prevents rounding errors during character display)
     fontWidth &= 0xfffe;
@@ -124,12 +122,14 @@ void cDisplay::InitScaler() {
         TXTDblWFont  = cFont::CreateFont(txtFontName, txtFontHeight / 2, realFontWidths[1]);
         TXTDblHFont  = cFont::CreateFont(txtFontName, txtFontHeight, realFontWidths[2]);
         TXTDblHWFont = cFont::CreateFont(txtFontName, txtFontHeight, realFontWidths[3]);
+        TXTHlfHFont  = cFont::CreateFont(txtFontName, txtFontHeight / 4, realFontWidths[0]);
     } else {
         TXTFontFootprint = footprint;
         TXTFont      = GetFont(txtFontName, 0, txtFontHeight / 2, txtFontWidth / 2);
         TXTDblWFont  = GetFont(txtFontName, 1, txtFontHeight / 2, txtFontWidth);
         TXTDblHFont  = GetFont(txtFontName, 2, txtFontHeight, txtFontWidth / 2);
         TXTDblHWFont = GetFont(txtFontName, 3, txtFontHeight, txtFontWidth);
+        TXTHlfHFont  = GetFont(txtFontName, 0, txtFontHeight / 4, txtFontWidth / 2);
     }
 }
 
@@ -378,18 +378,35 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
         }
     }
 
+    bool h_scale_div2 = false;
+
     if (Zoom == Zoom_Lower) {
         y -= 12;
         if (y < 0 || y > 11) {
-            // display only line 12-23 (12 lines)
-            return;
+            if ((ttSetup.lineMode24 == false) && (y == 12)) {
+                // display special line 24 in half height
+                h /= 2;
+                h_scale_div2 = true;
+                font = TXTHlfHFont;
+            } else {
+                // display only line 12-23 (12 lines)
+                return;
+            };
         };
     };
 
     if (Zoom == Zoom_Upper) {
         if (y > 11) {
-            // display only line 0-11 (12 lines)
-            return;
+            if ((ttSetup.lineMode24 == false) && (y == 24)) {
+                // display special line 24 in half height
+                y -= 12;
+                h /= 2;
+                h_scale_div2 = true;
+                font = TXTHlfHFont;
+            } else {
+                // display only line 0-11 (12 lines)
+                return;
+            };
         };
     };
 
@@ -429,7 +446,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
             int virtY = 0;
             while (virtY<=h) {
                 int bitline;
-                bitline=charmap[virtY * 10 / h];
+                bitline=charmap[virtY * 10 / h / ((h_scale_div2 == true) ? 2 : 1)];
 
                 int virtX=0;
                 while (virtX < w) {
@@ -471,13 +488,105 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
                 cache_Vshift       = (cache_txtVoffset * cache_outputHeight) / cache_OsdHeight;
                 dsyslog("osdteletext: DrawText vertical shift cache updated: txtVoffset=%d outputHeight=%d OsdHeight=%d => Vshift=%d", cache_txtVoffset, cache_outputHeight, cache_OsdHeight, cache_Vshift);
             };
-            charBm.DrawText(0, cache_Vshift, buf, fg, 0, font);
+            if (x == 0) {
+                DEBUG_OT_DCHR("x=%d y=%d vx=%d vy=%d w=%d h=%d h_scale_div2=%d char='%s'", x, y, vx, vy, w, h, h_scale_div2, buf);
+            };
+            charBm.DrawText(0, cache_Vshift, buf, fg, 0, font, 0, h / ((h_scale_div2 == true) ? 2 : 1));
             osd->DrawBitmap(vx, vy, charBm);
 #endif
         }
     }
-
 }
+
+uint8_t UTF8toTeletextChar(const uint8_t c1, const uint8_t c2, enumCharsets *TeletextCharset) {
+    // Convert UTF char into TeletextChar and set related TeletextCharset
+    uint8_t TeletextChar = '?'; // default "unknown"
+    *TeletextCharset = CHARSET_LATIN_G0; // default
+
+    switch (c1) {
+        case 0xc3:
+            switch (c2) {
+                // CHARSET_LATIN_G0_DE
+                case 0x84: // LATIN CAPITAL LETTER A WITH DIAERESIS
+                    TeletextChar = 0x5b; *TeletextCharset = CHARSET_LATIN_G0_DE;
+                    break;
+                case 0x96: // LATIN CAPITAL LETTER O WITH DIAERESIS
+                    TeletextChar = 0x5c; *TeletextCharset = CHARSET_LATIN_G0_DE;
+                    break;
+                case 0x9c: // LATIN CAPITAL LETTER U WITH DIAERESIS
+                    TeletextChar = 0x7d; *TeletextCharset = CHARSET_LATIN_G0_DE;
+                    break;
+                case 0xa4: // LATIN SMALL LETTER A WITH DIAERESIS
+                    TeletextChar = 0x7b; *TeletextCharset = CHARSET_LATIN_G0_DE;
+                    break;
+                case 0xb6: // LATIN SMALL LETTER O WITH DIAERESIS
+                    TeletextChar = 0x7c; *TeletextCharset = CHARSET_LATIN_G0_DE;
+                    break;
+                case 0xbc: // LATIN SMALL LETTER U WITH DIAERESIS
+                    TeletextChar = 0x7d; *TeletextCharset = CHARSET_LATIN_G0_DE;
+                    break;
+                case 0x9f: // LATIN SMALL LETTER SHARP S
+                    TeletextChar = 0x7e; *TeletextCharset = CHARSET_LATIN_G0_DE;
+                    break;
+             }
+        // TODO: implement other required mapping
+    }
+    return (TeletextChar);
+}
+
+void cDisplay::DrawTextExtended(const int x, const int y, const char *text, const int len, const enumAlignment alignment, const enumTeletextColor ttcFg, enumTeletextColor const ttcBg) {
+    // Copy text to teletext page with alignment and foreground/background color
+    int len_text_utf8 = Utf8StrLen(text);
+    int len_text = strlen(text);
+
+    DEBUG_OT_DTXTE("called with x=%d y=%d len=%d alignment=%d ttcFg=%d ttcBg=%d text='%s' strlen(text)=%d utf8len(text)=%d", x, y, len, alignment, ttcFg, ttcBg, text, len_text, len_text_utf8);
+
+    int fill_left = 0;
+
+    if (len_text_utf8 < len) {
+        if (alignment == AlignmentRight) {
+            fill_left = len - len_text_utf8;
+        } else if (alignment == AlignmentCenter) {
+            fill_left = (len - len_text_utf8) / 2;
+        };
+    };
+
+    cTeletextChar c;
+    c.SetFGColor(ttcFg);
+    c.SetBGColor(ttcBg);
+
+    int j = 0;
+    for (int i = 0; i < len; i++) {
+        if (i < fill_left) {
+            // fill left with space
+            c.SetChar(' ');
+        } else if (i > fill_left + len_text_utf8)  {
+            // fill right with space
+            c.SetChar(' ');
+        } else {
+            c.SetCharset(CHARSET_LATIN_G0); // default
+            uint8_t c1 = text[j];
+            if (j +1  < len_text) {
+                // check for UTF-8
+                if ((text[j + 1] & 0xC0) == 0x80) {
+                    // unicode
+                    uint8_t c2 = text[j + 1];
+                    enumCharsets Charset;
+                    uint8_t Char = UTF8toTeletextChar(c1, c2, &Charset);
+                    DEBUG_OT_DTXTE("unicode mapped i=%d c1=%x c2=%x -> c=%02x cs=%04x", i, c1, c2, Char, Charset);
+                    c.SetCharset(Charset);
+                    c1 = Char;
+                    j++;
+                }
+            };
+            c.SetChar(c1);
+            j++;
+        };
+        SetChar(x+i, y, c);
+    };
+
+    Flush();
+};
 
 void cDisplay::DrawText(int x, int y, const char *text, int len) {
     // Copy text to teletext page
@@ -526,6 +635,15 @@ void cDisplay::DrawPageId(const char *text) {
 
     DrawText(0,0,text,8);
     strncpy(text_last, text, sizeof(text_last) - 1);
+}
+
+void cDisplay::DrawFooter(const char *textRed, const char *textGreen, const char* textYellow, const char *textBlue) {
+    if (Boxed) return; // don't draw footer in on boxed pages
+
+    DrawTextExtended( 0, 24, textRed   , 10, AlignmentCenter, ttcWhite, ttcRed   );
+    DrawTextExtended(10, 24, textGreen , 10, AlignmentCenter, ttcWhite, ttcGreen );
+    DrawTextExtended(20, 24, textYellow, 10, AlignmentCenter, ttcWhite, ttcYellow);
+    DrawTextExtended(30, 24, textBlue  , 10, AlignmentCenter, ttcWhite, ttcBlue  );
 }
 
 void cDisplay::DrawClock() {

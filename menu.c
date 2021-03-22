@@ -182,6 +182,8 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
             }
             //updating clock
             UpdateClock();
+            //updating footer
+            UpdateFooter();
             //trigger blink
             bool Changed = Display::SetBlink(not(Display::GetBlink()));
             if (Changed) {
@@ -605,6 +607,7 @@ bool TeletextBrowser::DecodePage() {
       Display::RenderTeletextCode(cache);
       ShowPageNumber();
       UpdateClock();
+      UpdateFooter();
       Display::ReleaseFlush();
    } else {
       // page doesn't exist
@@ -645,6 +648,36 @@ int TeletextBrowser::PageCheckSum() {
 void TeletextBrowser::UpdateClock() {
    if ( ttSetup.showClock )
       Display::DrawClock();
+}
+
+void TeletextBrowser::UpdateFooter() {
+   DEBUG_OT_FOOT("called with lineMode24=%d", ttSetup.lineMode24);
+
+   if ( ttSetup.lineMode24 ) return; // nothing to do
+
+   eTeletextAction AkRed    = TranslateKey(kRed);
+   eTeletextAction AkGreen  = TranslateKey(kGreen);
+   eTeletextAction AkYellow = TranslateKey(kYellow);
+   eTeletextAction AkBlue   = TranslateKey(kBlue);
+   DEBUG_OT_FOOT("AkRed=%d AkGreen=%d AkYellow=%d AkBlue=%d", AkRed, AkGreen, AkYellow, AkBlue);
+
+   char textRed[11], textGreen[11], textYellow[11], textBlue[11];
+
+#define CONVERT_ACTION_TO_TEXT(text, mode) \
+   if (mode < 100) { \
+      snprintf(text, sizeof(text), "%s", st_modes[mode]); \
+   } else if (mode < 999) { \
+      snprintf(text, sizeof(text), "->%03d", mode); \
+   } else { \
+      snprintf(text, sizeof(text), "ERROR"); \
+   }; \
+
+   CONVERT_ACTION_TO_TEXT(textRed   , AkRed   );
+   CONVERT_ACTION_TO_TEXT(textGreen , AkGreen );
+   CONVERT_ACTION_TO_TEXT(textYellow, AkYellow);
+   CONVERT_ACTION_TO_TEXT(textBlue  , AkBlue  );
+   DEBUG_OT_FOOT("textRed='%s' textGreen='%s' text Yellow='%s' textBlue='%s'", textRed, textGreen, textYellow, textBlue);
+   Display::DrawFooter(textRed, textGreen, textYellow, textBlue);
 }
 
 TeletextSetup ttSetup;

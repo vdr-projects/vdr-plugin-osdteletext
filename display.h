@@ -74,6 +74,8 @@ namespace Display {
         { if (display) display->DrawClock(); }
     inline void DrawPageId(const char *text)
         { if (display) display->DrawPageId(text); }
+    inline void DrawFooter(const char *textRed, const char *textGreen, const char* textYellow, const char *textBlue)
+        { if (display) display->DrawFooter(textRed, textGreen, textYellow, textBlue); }
     inline void DrawMessage(const char *txt)
         { if (display) display->DrawMessage(txt); }
     inline void ClearMessage()
