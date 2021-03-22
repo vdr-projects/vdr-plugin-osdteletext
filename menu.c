@@ -661,7 +661,7 @@ void TeletextBrowser::UpdateFooter() {
    eTeletextAction AkBlue   = TranslateKey(kBlue);
    DEBUG_OT_FOOT("AkRed=%d AkGreen=%d AkYellow=%d AkBlue=%d", AkRed, AkGreen, AkYellow, AkBlue);
 
-   char textRed[11], textGreen[11], textYellow[11], textBlue[11];
+   char textRed[21], textGreen[21], textYellow[21], textBlue[21]; // 10x UTF-8 char + \0
 
 #define CONVERT_ACTION_TO_TEXT(text, mode) \
    if (mode < 100) { \
