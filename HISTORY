@@ -1,6 +1,7 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
 2021-03-22:
+- [pbiering] implement optional black frame (0-5%)
 - [pbiering] extend half mode with top instead bottom placement
 - [pbiering] replace bottom black line by button hint line
 
