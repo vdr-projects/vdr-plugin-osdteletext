@@ -269,14 +269,14 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
 }
 
 void TeletextBrowser::ExecuteAction(eTeletextAction e) {
-         switch (e) {
-            case Zoom:
-               if (selectingChannel) {
-                   selectingChannel=false;
-                   Display::ClearMessage();
-               }
+   switch (e) {
+      case Zoom:
+         if (selectingChannel) {
+             selectingChannel=false;
+             Display::ClearMessage();
+         }
                
-               switch (Display::GetZoom()) {
+         switch (Display::GetZoom()) {
                case cDisplay::Zoom_Off:
                   Display::SetZoom(cDisplay::Zoom_Upper);
                   break;
@@ -286,67 +286,70 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
                case cDisplay::Zoom_Lower:
                   Display::SetZoom(cDisplay::Zoom_Off);
                   break;
-               }
-               
-               break;
-            case HalfPage:
-               if (selectingChannel) {
-                   selectingChannel=false;
-                   Display::ClearMessage();
-               }
-                  
-               switch (Display::mode) {
-               case Display::HalfUpper:
-                  Display::SetMode(Display::HalfLower);
-                  break;
-               case Display::HalfLower:
-                  Display::SetMode(Display::Full);
-                  break;
-               case Display::Full:
-                  Display::SetMode(Display::HalfUpper);
-                  break;
-               }
-               ShowPage();
-               break;
-            case SwitchChannel:
-               selectingChannelNumber=0;
-               selectingChannel=true;
-               ShowAskForChannel();
-               break;
-            /*case SuspendReceiving:
-               if (!txtStatus)
-                  break;
-               //if (suspendedReceiving)
-                //  txtStatus->ForceSuspending(false);
-               //else
-                //  txtStatus->ForceSuspending(true);
-               //suspendedReceiving=(!suspendedReceiving);
-               break;*/
-            case DarkScreen:
-               ChangeBackground();
-               break;
-            default:
-               //In osdteletext.c, numbers are thought to be decimal, the setup page
-               //entries will display them in this way. It is a lot easier to do the
-               //conversion to hexadecimal here.
-               //This means, we convert the number to what it would be if the string
-               //had been parsed with hexadecimal base.
-               int pageNr=PSEUDO_HEX_TO_DECIMAL((int)e);
-               if (0x100<=pageNr && pageNr<=0x899) {
-                  if (selectingChannel) {
-                      selectingChannel=false;
-                      Display::ClearMessage();
-                  }
-                  SetPreviousPage(currentPage, currentSubPage, pageNr);
-                  currentPage=pageNr;
-                  cursorPos=0;
-                  currentSubPage=0;
-                  
-                  Display::ShowUpperHalf();
-                  ShowPage();
-               }
-               break;
          }
+         break;
+
+      case HalfPage:
+         if (selectingChannel) {
+             selectingChannel=false;
+             Display::ClearMessage();
+         }
+                  
+         switch (Display::mode) {
+            case Display::HalfUpper:
+               Display::SetMode(Display::HalfLower);
+               break;
+            case Display::HalfLower:
+               Display::SetMode(Display::Full);
+               break;
+            case Display::Full:
+               Display::SetMode(Display::HalfUpper);
+               break;
+            }
+            ShowPage();
+         break;
+
+      case SwitchChannel:
+         selectingChannelNumber=0;
+         selectingChannel=true;
+         ShowAskForChannel();
+         break;
+         /*case SuspendReceiving:
+            if (!txtStatus)
+               break;
+            //if (suspendedReceiving)
+             //  txtStatus->ForceSuspending(false);
+            //else
+             //  txtStatus->ForceSuspending(true);
+            //suspendedReceiving=(!suspendedReceiving);
+            break;*/
+
+      case DarkScreen:
+         ChangeBackground();
+         break;
+
+      default:
+         //In osdteletext.c, numbers are thought to be decimal, the setup page
+         //entries will display them in this way. It is a lot easier to do the
+         //conversion to hexadecimal here.
+         //This means, we convert the number to what it would be if the string
+         //had been parsed with hexadecimal base.
+         int pageNr=PSEUDO_HEX_TO_DECIMAL((int)e);
+         if (0x100<=pageNr && pageNr<=0x899) {
+            if (selectingChannel) {
+                selectingChannel=false;
+                Display::ClearMessage();
+            }
+            SetPreviousPage(currentPage, currentSubPage, pageNr);
+            currentPage=pageNr;
+            cursorPos=0;
+            currentSubPage=0;
+
+            Display::ShowUpperHalf();
+            ShowPage();
+         }
+         break;
+   }
 }
 
 // 3-state toggling between configured->transparent->black.
