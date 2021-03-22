@@ -300,6 +300,12 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
                Display::SetMode(Display::HalfLower);
                break;
             case Display::HalfLower:
+               Display::SetMode(Display::HalfUpperTop);
+               break;
+            case Display::HalfUpperTop:
+               Display::SetMode(Display::HalfLowerTop);
+               break;
+            case Display::HalfLowerTop:
                Display::SetMode(Display::Full);
                break;
             case Display::Full:

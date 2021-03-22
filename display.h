@@ -24,10 +24,11 @@ namespace Display {
     // and allows NULL-safe access to display members.
     // Additionally, selects via mode the actually used instance for *display.
 
-    enum Mode { Full, HalfUpper, HalfLower };
+    enum Mode { Full, HalfUpper, HalfLower, HalfUpperTop, HalfLowerTop };
     // Full mode: 2BPP or 4BPP full screen display, depending on memory constrains
     // HalfUpper: 4BPP display of upper half, drop lower half if out of memory
     // HalfLower: 4BPP display of lower half, drop upper half if out of memory
+    // *Top: display top of screen (default: bottom)
 
     extern Mode mode;
     extern cDisplay *display;
@@ -99,15 +100,19 @@ class cDisplay32BPPHalf : public cDisplay {
     // No need for color mapping
     bool Upper;
     // Prefer to show upper half or lower half?
+    bool Top;
+    // Prefer to show half on top or bottom?
 
     int OsdX0,OsdY0;
     // Needed to re-initialize osd
 
 public:
-    cDisplay32BPPHalf(int x0, int y0, int width, int height, bool upper);
+    cDisplay32BPPHalf(int x0, int y0, int width, int height, bool upper, bool top);
     bool GetUpper() { return Upper; }
     void SetUpper(bool upper)
         { if (Upper!=upper) { Upper=upper; InitOSD(); } }
+    void SetTop(bool top)
+        { if (Top!=top) { Top=top; InitOSD(); } }
 protected:
     void InitOSD();
 };
