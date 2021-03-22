@@ -267,7 +267,7 @@ void cDisplay32BPPHalf::InitOSD() {
 */
     osd->SetAreas(Areas, sizeof(Areas) / sizeof(tArea));
 
-    isyslog("osdteletext: OSD 'half' area successful requested x0=%d y0=%d width=%d height=%d bpp=%d upper=%d", x0, y0, width, height, bpp, Upper);
+    isyslog("osdteletext: OSD 'half' area successful requested x0=%d y0=%d width=%d height=%d bpp=%d Upper=%s Top=%s", x0, y0, width, height, bpp, (Upper == true) ? "yes" : "no", (Top == true) ? "yes" : "no");
 
     setOutputWidth(width);
     setOutputHeight(height);
