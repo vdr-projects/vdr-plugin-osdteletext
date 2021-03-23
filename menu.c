@@ -385,13 +385,13 @@ eTeletextAction TeletextBrowser::TranslateKey(eKeys Key) {
       case kGreen:   return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyGreen];
       case kYellow:  return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyYellow];
       case kBlue:    return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyBlue];
-      case kPlay:   return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyPlay];
+      case kPlay:    return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyPlay];
       //case kPause:   return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyPause];
-      case kStop:   return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyStop];
-      //case kRecord:   return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyRecord];
-      case kFastFwd:   return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyFastFwd];
-      case kFastRew:   return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyFastRew];
-      default: return (eTeletextAction)100; //just to keep gcc quiet
+      case kStop:    return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyStop];
+      //case kRecord:  return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyRecord];
+      case kFastFwd: return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyFastFwd];
+      case kFastRew: return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyFastRew];
+      default:       return (eTeletextAction)100; //just to keep gcc quiet
    }
 }
 
