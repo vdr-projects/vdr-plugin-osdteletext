@@ -80,7 +80,6 @@ void Display::SetMode(Display::Mode NewMode) {
         if (x0 > OSDwidthFrame) {
             x0 -= OSDwidthFrame;
         } else {
-            OSDwidthFrame = x0;
             x0 = 0;
         };
     };
@@ -90,7 +89,6 @@ void Display::SetMode(Display::Mode NewMode) {
         if (y0 > OSDheightFrame) {
             y0 -= OSDheightFrame;
         } else {
-            OSDheightFrame = y0;
             y0 = 0;
         };
     };
