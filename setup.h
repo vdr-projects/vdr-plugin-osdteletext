@@ -13,12 +13,32 @@
 
 #include <vdr/config.h>
 
+// min/max for setup
+#define OSDleftPctMin      0
+#define OSDleftPctMax     90
+#define OSDtopPctMin       0
+#define OSDtopPctMax      90
+#define OSDwidthPctMin    10
+#define OSDwidthPctMax   100
+#define OSDheightPctMin   10
+#define OSDheightPctMax  100
+#define OSDframePctMin     0
+#define OSDframePctMax     5
 
 //There are two places to be kept in sync with these enums:
 //TeletextBrowser::TranslateKey and 
-//the constants in cPluginTeletextosd::initTexts
+//the constants below (st_modes)
 enum eTeletextAction { Zoom, HalfPage, SwitchChannel,
-                       DarkScreen, /*SuspendReceiving,*/ LastAction }; //and 100-899 => jump to page
+                       DarkScreen, /*SuspendReceiving,*/ Config, LastAction }; //and 100-899 => jump to page
+
+enum eTeletextActionConfig {
+   Left,
+   Top,
+   Width,
+   Height,
+   Frame,
+   NotActive,
+};
 
 static const char *st_modes[] =
 {
@@ -27,20 +47,35 @@ static const char *st_modes[] =
       tr("Change channel"),
       tr("Switch background"),
       //tr("Suspend receiving"),
-      tr("Jump to...")
+      tr("Config"),
+      tr("Jump to..."),
+};
+
+static const char *config_modes[] =
+{
+   tr("Left-"),
+   tr("Left+"),
+   tr("Top-"),
+   tr("Top+"),
+   tr("Width-"),
+   tr("Width+"),
+   tr("Height-"),
+   tr("Height+"),
+   tr("Frame-"),
+   tr("Frame+"),
 };
 
 enum ActionKeys {
-ActionKeyRed,
-ActionKeyGreen,
-ActionKeyYellow,
-ActionKeyBlue,
-ActionKeyPlay,
-ActionKeyStop,
-ActionKeyFastFwd,
-ActionKeyFastRew,
+   ActionKeyRed,
+   ActionKeyGreen,
+   ActionKeyYellow,
+   ActionKeyBlue,
+   ActionKeyPlay,
+   ActionKeyStop,
+   ActionKeyFastFwd,
+   ActionKeyFastRew,
 
-LastActionKey
+   LastActionKey
 };
 
 //Default values are set in menu.c, setup menu, parsing and storing can be found in osdteletext.c
@@ -73,3 +108,5 @@ public:
 extern TeletextSetup ttSetup;
 
 #endif
+
+// vim: ts=3 sw=3 et

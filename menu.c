@@ -10,7 +10,7 @@
   
 #include <map>
 #include <time.h>
-    
+
 #include <vdr/interface.h>
 #include <vdr/config.h>
 
@@ -43,6 +43,7 @@ tChannelID TeletextBrowser::channel;
 int TeletextBrowser::currentChannelNumber=0;
 TeletextBrowser* TeletextBrowser::self=0;
 
+eTeletextActionConfig configMode = NotActive;
 
 TeletextBrowser::TeletextBrowser(cTxtStatus *txtSt,Storage *s)
   : cursorPos(0), pageFound(true), selectingChannel(false),
@@ -123,6 +124,8 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber) {
 
 
 eOSState TeletextBrowser::ProcessKey(eKeys Key) {
+   bool changedConfig = false;
+
    if (Key != kNone)
       lastActivity = time(NULL);
    
@@ -249,11 +252,25 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
          ShowPage();
          break; 
          
-              
       case kRed: 
+         if (configMode != NotActive) { // catch config mode
+            changedConfig = ExecuteActionConfig(configMode, -1); // decrement
+            break;
+         };
       case kGreen: 
-      case kBlue:
+         if (configMode != NotActive) { // catch config mode
+            changedConfig = ExecuteActionConfig(configMode, +1); // increment
+            break;
+         };
       case kYellow:
+         if (configMode != NotActive) { // key is inactive in config mode (displaying value)
+            break;
+         };
+      case kBlue:
+         if (configMode != NotActive) { // catch config mode
+            ExecuteAction(Config);
+            break;
+         };
       //case kUser1:case kUser2:case kUser3:case kUser4:case kUser5:
       //case kUser6:case kUser7:case kUser8:case kUser9:
       case kPlay:case kPause:case kStop: case kRecord:case kFastFwd:case kFastRew:
@@ -265,8 +282,48 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
          break;             
       default: break;
    }
+
+   if (changedConfig) {
+      Display::Mode mode = Display::mode; // remember mode
+      Display::Delete();
+      Display::SetMode(mode); // recreate with remembered mode
+      ShowPage();
+   };
+
    return osContinue;
 }
+
+bool TeletextBrowser::ExecuteActionConfig(eTeletextActionConfig e, int delta) {
+   bool changedConfig = false;
+
+#define COND_ADJ_VALUE(value, min, max) \
+   if (((value + delta) >= min) && ((value + delta) <= max)) { \
+      value += delta; \
+      changedConfig = true; \
+   };
+
+   switch (configMode) {
+      case Left:
+         COND_ADJ_VALUE(ttSetup.OSDleftPct, OSDleftPctMin, OSDleftPctMax);
+         break;
+      case Top:
+         COND_ADJ_VALUE(ttSetup.OSDtopPct, OSDtopPctMin, OSDtopPctMax);
+         break;
+      case Width:
+         COND_ADJ_VALUE(ttSetup.OSDwidthPct, OSDwidthPctMin, OSDwidthPctMax);
+         break;
+      case Height:
+         COND_ADJ_VALUE(ttSetup.OSDheightPct, OSDheightPctMin, OSDheightPctMax);
+         break;
+      case Frame:
+         COND_ADJ_VALUE(ttSetup.OSDframePct, OSDframePctMin, OSDframePctMax);
+         break;
+      default:
+         // nothing todo
+         break;
+   };
+   return (changedConfig);
+};
 
 void TeletextBrowser::ExecuteAction(eTeletextAction e) {
    switch (e) {
@@ -332,6 +389,18 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
 
       case DarkScreen:
          ChangeBackground();
+         break;
+
+      case Config:
+         switch(configMode) {
+            case NotActive : configMode = Left     ; break; // start config mode
+            case Left      : configMode = Top      ; break;
+            case Top       : configMode = Width    ; break;
+            case Width     : configMode = Height   ; break;
+            case Height    : configMode = Frame    ; break;
+            case Frame     : configMode = NotActive; break; // stop config mode
+         };
+         ShowPage();
          break;
 
       default:
@@ -664,27 +733,58 @@ void TeletextBrowser::UpdateFooter() {
 
    if ( ttSetup.lineMode24 ) return; // nothing to do
 
-   eTeletextAction AkRed    = TranslateKey(kRed);
-   eTeletextAction AkGreen  = TranslateKey(kGreen);
-   eTeletextAction AkYellow = TranslateKey(kYellow);
-   eTeletextAction AkBlue   = TranslateKey(kBlue);
-   DEBUG_OT_FOOT("AkRed=%d AkGreen=%d AkYellow=%d AkBlue=%d", AkRed, AkGreen, AkYellow, AkBlue);
-
    char textRed[21], textGreen[21], textYellow[21], textBlue[21]; // 10x UTF-8 char + \0
 
-#define CONVERT_ACTION_TO_TEXT(text, mode) \
-   if (mode < 100) { \
-      snprintf(text, sizeof(text), "%s", st_modes[mode]); \
-   } else if (mode < 999) { \
-      snprintf(text, sizeof(text), "->%03d", mode); \
-   } else { \
-      snprintf(text, sizeof(text), "ERROR"); \
-   }; \
+   if (configMode == NotActive) {
+      eTeletextAction AkRed    = TranslateKey(kRed);
+      eTeletextAction AkGreen  = TranslateKey(kGreen);
+      eTeletextAction AkYellow = TranslateKey(kYellow);
+      eTeletextAction AkBlue   = TranslateKey(kBlue);
+      DEBUG_OT_FOOT("AkRed=%d AkGreen=%d AkYellow=%d AkBlue=%d", AkRed, AkGreen, AkYellow, AkBlue);
 
-   CONVERT_ACTION_TO_TEXT(textRed   , AkRed   );
-   CONVERT_ACTION_TO_TEXT(textGreen , AkGreen );
-   CONVERT_ACTION_TO_TEXT(textYellow, AkYellow);
-   CONVERT_ACTION_TO_TEXT(textBlue  , AkBlue  );
+#define CONVERT_ACTION_TO_TEXT(text, mode) \
+      if (mode < 100) { \
+         snprintf(text, sizeof(text), "%s", st_modes[mode]); \
+      } else if (mode < 999) { \
+         snprintf(text, sizeof(text), "->%03d", mode); \
+      } else { \
+         snprintf(text, sizeof(text), "ERROR"); \
+      }; \
+
+      CONVERT_ACTION_TO_TEXT(textRed   , AkRed   );
+      CONVERT_ACTION_TO_TEXT(textGreen , AkGreen );
+      CONVERT_ACTION_TO_TEXT(textYellow, AkYellow);
+      CONVERT_ACTION_TO_TEXT(textBlue  , AkBlue  );
+   } else {
+      snprintf(textRed   , sizeof(textRed)   , "%s", config_modes[configMode * 2]    ); // <mode>-
+      snprintf(textGreen , sizeof(textGreen) , "%s", config_modes[configMode * 2 + 1]); // <mode>+
+      int value = -1;
+      switch (configMode) {
+         case Left:
+            value = ttSetup.OSDleftPct;
+            break;
+         case Top:
+            value = ttSetup.OSDtopPct;
+            break;
+         case Width:
+            value = ttSetup.OSDwidthPct;
+            break;
+         case Height:
+            value = ttSetup.OSDheightPct;
+            break;
+         case Frame:
+            value = ttSetup.OSDframePct;
+            break;
+         default:
+            break;
+      };
+      if (value == -1) {
+         snprintf(textYellow, sizeof(textYellow), "%s", "ERROR"); // should not happen
+      } else {
+         snprintf(textYellow, sizeof(textYellow), "%d %%", value);
+      };
+      snprintf(textBlue  , sizeof(textBlue)  , "%s", st_modes[Config]); // option itself
+   };
    DEBUG_OT_FOOT("textRed='%s' textGreen='%s' text Yellow='%s' textBlue='%s'", textRed, textGreen, textYellow, textBlue);
    Display::DrawFooter(textRed, textGreen, textYellow, textBlue);
 }
@@ -710,11 +810,12 @@ TeletextSetup::TeletextSetup()
     lineMode24(false)
 {
    //init key bindings
-   for (int i=0;i<10;i++)
-      mapKeyToAction[0]=(eTeletextAction)0;
-   mapKeyToAction[3]=Zoom;
-   mapKeyToAction[2]=HalfPage;   
-   mapKeyToAction[0]=SwitchChannel;
+   for (int i=0; i < LastActionKey; i++)
+      mapKeyToAction[i]=(eTeletextAction)0;
+   mapKeyToAction[ActionKeyBlue]=Zoom;
+   mapKeyToAction[ActionKeyYellow]=HalfPage;
+   mapKeyToAction[ActionKeyRed]=SwitchChannel;
+   mapKeyToAction[ActionKeyStop]=Config;
 }
 
 // vim: ts=3 sw=3 et

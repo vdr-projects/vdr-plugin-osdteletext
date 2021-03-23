@@ -30,7 +30,7 @@ using namespace std;
 
 #define NUMELEMENTS(x) (sizeof(x) / sizeof(x[0]))
 
-static const char *VERSION        = "1.0.7.dev.4";
+static const char *VERSION        = "1.0.7.dev.5";
 static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
 static const char *MAINMENUENTRY  = trNOOP("Teletext");
 
@@ -218,6 +218,13 @@ bool cPluginTeletextosd::Start(void)
 
 void cPluginTeletextosd::Stop(void)
 {
+   // store potentially changed values TODO detect real change
+   SetupStore("OSDheightPct", ttSetup.OSDheightPct);
+   SetupStore("OSDwidthPct", ttSetup.OSDwidthPct);
+   SetupStore("OSDtopPct", ttSetup.OSDtopPct);
+   SetupStore("OSDleftPct", ttSetup.OSDleftPct);
+   SetupStore("OSDframePct", ttSetup.OSDframePct);
+
    DELETENULL(txtStatus);
    if (storage) {
       storage->cleanUp();
@@ -431,11 +438,11 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    //Add(new cMenuEditBoolItem(tr("Setup$Suspend receiving"), &temp.suspendReceiving ));
 
    Add(new cMenuEditBoolItem(tr("Auto-update pages"), &temp.autoUpdatePage ));
-   Add(new cMenuEditIntItem(tr("OSD left (%)"), &temp.OSDleftPct, 0, 90));
-   Add(new cMenuEditIntItem(tr("OSD top (%)"), &temp.OSDtopPct, 0, 90));
-   Add(new cMenuEditIntItem(tr("OSD width (%)"), &temp.OSDwidthPct, 10, 100));
-   Add(new cMenuEditIntItem(tr("OSD height (%)"), &temp.OSDheightPct, 10, 100));
-   Add(new cMenuEditIntItem(tr("OSD frame (%)"), &temp.OSDframePct, 0, 5));
+   Add(new cMenuEditIntItem(tr("OSD left (%)"), &temp.OSDleftPct, OSDleftPctMin, OSDleftPctMax));
+   Add(new cMenuEditIntItem(tr("OSD top (%)"), &temp.OSDtopPct, OSDtopPctMin, OSDtopPctMax));
+   Add(new cMenuEditIntItem(tr("OSD width (%)"), &temp.OSDwidthPct, OSDwidthPctMin, OSDwidthPctMax));
+   Add(new cMenuEditIntItem(tr("OSD height (%)"), &temp.OSDheightPct, OSDheightPctMin, OSDheightPctMax));
+   Add(new cMenuEditIntItem(tr("OSD frame (%)"), &temp.OSDframePct, OSDframePctMin, OSDframePctMax));
    Add(new cMenuEditBoolItem(tr("Hide mainmenu entry"), &temp.HideMainMenu));
    Add(new cMenuEditStraItem(tr("Text Font"), &temp.txtFontIndex, temp.txtFontNames.Size(), &temp.txtFontNames[0]));
    Add(new cMenuEditStraItem(tr("G0 code block"), &temp.txtG0Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
