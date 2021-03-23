@@ -392,6 +392,12 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
          break;
 
       case Config:
+         if (ttSetup.lineMode24) {
+            // config mode is only supported in 25-line mode
+            Display::ClearMessage();
+            Display::DrawMessage(tr("*** Config mode is not supported in 24-line mode ***"));
+            break;
+         };
          switch(configMode) {
             case NotActive : configMode = Left     ; break; // start config mode
             case Left      : configMode = Top      ; break;

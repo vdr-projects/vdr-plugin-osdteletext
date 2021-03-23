@@ -5,16 +5,19 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: VDR 1.5.7\n"
+"Project-Id-Version: VDR 2.4.4\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-03-22 22:04+0100\n"
+"POT-Creation-Date: 2021-03-23 09:15+0100\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
-"Last-Translator: Klaus Schmidinger <Klaus.Schmidinger@tvdr.de>\n"
+"Last-Translator: Peter Bieringer <pb@bieringer.de>\n"
 "Language-Team: German <vdr@linuxtv.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+msgid "*** Config mode is not supported in 24-line mode ***"
+msgstr "*** Konfig-Modus ist im 24-Zeilen-Modus nicht unterstützt ***"
 
 msgid "Channel (press OK): "
 msgstr "Sender (OK drücken): "
@@ -109,17 +112,50 @@ msgstr "Tastenzuweisung"
 msgid "  Page number"
 msgstr "  Seitenzahl"
 
-#~ msgid "Zoom"
-#~ msgstr "Vergrößern"
+msgid "Zoom"
+msgstr "Vergrößern"
 
-#~ msgid "Half page"
-#~ msgstr "Halbe Seite"
+msgid "Half page"
+msgstr "Halbe Seite"
 
-#~ msgid "Change channel"
-#~ msgstr "Kanal wechseln"
+msgid "Change channel"
+msgstr "Kanal wechseln"
 
-#~ msgid "Switch background"
-#~ msgstr "Hintergrund ändern"
+msgid "Switch background"
+msgstr "Hintergrund ändern"
 
-#~ msgid "Jump to..."
-#~ msgstr "Springe zu..."
+msgid "Config"
+msgstr "Konfiguration"
+
+msgid "Jump to..."
+msgstr "Springe zu..."
+
+msgid "Left-"
+msgstr "Links-"
+
+msgid "Left+"
+msgstr "Links+"
+
+msgid "Top-"
+msgstr "Open-"
+
+msgid "Top+"
+msgstr "Oben+"
+
+msgid "Width-"
+msgstr "Breite-"
+
+msgid "Width+"
+msgstr "Breite+"
+
+msgid "Height-"
+msgstr "Höhe-"
+
+msgid "Height+"
+msgstr "Höhe+"
+
+msgid "Frame-"
+msgstr "Rahmen-"
+
+msgid "Frame+"
+msgstr "Rahmen+"
