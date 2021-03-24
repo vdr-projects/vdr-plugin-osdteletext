@@ -38,6 +38,8 @@ public:
         Zoom_Lower
     } Zoom;
 
+    enum enumAlignment { AlignmentLeft, AlignmentCenter, AlignmentRight } Alignment;
+
 protected:
     bool Concealed;
     // Hidden text internal state
@@ -79,6 +81,7 @@ protected:
     const cFont *TXTDblWFont;
     const cFont *TXTDblHFont;
     const cFont *TXTDblHWFont;
+    const cFont *TXTHlfHFont;
     int fontHeight;
     int fontWidth;
 
@@ -205,6 +208,14 @@ public:
     void DrawText(int x, int y, const char *text, int len);
     // Draw some characters in teletext page.
     // Max len chars, fill up with spaces
+
+    void DrawTextExtended(const int x, const int y, const char *text, int len, const enumAlignment alignment, const enumTeletextColor ttcFg, const enumTeletextColor ttcBg);
+    // Draw some characters in teletext page.
+    // Max len chars, fill up with spaces
+    // with alignment, foreground and background color
+
+    void DrawFooter(const char *textRed, const char *textGreen, const char* textYellow, const char *textBlue);
+    // Draw footer to OSD
 
     void DrawClock();
     // Draw current time to OSD

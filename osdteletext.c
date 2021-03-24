@@ -30,7 +30,7 @@ using namespace std;
 
 #define NUMELEMENTS(x) (sizeof(x) / sizeof(x[0]))
 
-static const char *VERSION        = "1.0.7.dev.2";
+static const char *VERSION        = "1.0.7.dev.3";
 static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
 static const char *MAINMENUENTRY  = trNOOP("Teletext");
 
@@ -241,16 +241,6 @@ void cPluginTeletextosd::initTexts() {
    };
 
    cTeletextSetupPage::actionKeyNames = st_actionKeyNames;
-
-   static const char *st_modes[] =
-   {
-      tr("Zoom"),
-      tr("Half page"),
-      tr("Change channel"),
-      tr("Switch background"),
-      //tr("Suspend receiving"),
-      tr("Jump to...")
-   };
 
    cTeletextSetupPage::modes = st_modes;
 }

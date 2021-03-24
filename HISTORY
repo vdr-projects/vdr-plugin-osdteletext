@@ -1,5 +1,8 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
+2021-03-22:
+- [pbiering] replace bottom black line by button hint line
+
 2021-03-21:
 - [pbiering] fix broken support of 'blink'
 - [pbiering] hide clock on boxed pages

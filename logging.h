@@ -13,9 +13,12 @@ extern int m_debugmask;
 #define DEBUG_MASK_OT_DD	0x00001000	// DrawDisplay
 #define DEBUG_MASK_OT_MSG	0x00002000	// Draw/Clear Message
 #define DEBUG_MASK_OT_DRPI	0x00004000	// DrawPageId
+#define DEBUG_MASK_OT_FOOT	0x00008000	// DrawFooter
 #define DEBUG_MASK_OT_FONT	0x00010000	// Font
 #define DEBUG_MASK_OT_DBFC	0x00040000	// DisplayBase Function Call
 #define DEBUG_MASK_OT_BLINK	0x00100000	// Text Blink
+#define DEBUG_MASK_OT_DCHR	0x00200000	// DrawChar
+#define DEBUG_MASK_OT_DTXTE	0x00400000	// DrawTextExtended
 
 // special action mask
 #define DEBUG_MASK_OT_ACT_LIMIT_LINES		0x10000000	// Limit Lines (debugging for detecting pixel offset issues)
@@ -34,5 +37,8 @@ extern int m_debugmask;
 #define DEBUG_OT_KNONE  if (m_debugmask & DEBUG_MASK_OT_KNONE)  dsyslog_ot
 #define DEBUG_OT_MSG    if (m_debugmask & DEBUG_MASK_OT_MSG)    dsyslog_ot
 #define DEBUG_OT_DRPI   if (m_debugmask & DEBUG_MASK_OT_DRPI)   dsyslog_ot
+#define DEBUG_OT_FOOT   if (m_debugmask & DEBUG_MASK_OT_FOOT)   dsyslog_ot
+#define DEBUG_OT_DCHR   if (m_debugmask & DEBUG_MASK_OT_DCHR)   dsyslog_ot
+#define DEBUG_OT_DTXTE  if (m_debugmask & DEBUG_MASK_OT_DTXTE)  dsyslog_ot
 
 #endif
