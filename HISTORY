@@ -1,5 +1,8 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
+2021-03-24:
+- [pbiering] add 24-line-mode as optional key action toggle
+
 2021-03-23:
 - [pbiering] implement OSD config mode
 
