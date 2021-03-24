@@ -124,6 +124,8 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber) {
 
 
 eOSState TeletextBrowser::ProcessKey(eKeys Key) {
+   cDisplay::enumZoom zoomR;
+   Display::Mode modeR;
    bool changedConfig = false;
 
    if (Key != kNone)
@@ -153,6 +155,7 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
          } else
             SetNumber(0);
          break;
+
       case kOk: 
          if (selectingChannel) {
             selectingChannel=false;
@@ -169,7 +172,9 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
             }
          }
          break;        
+
       case kBack: return osEnd; 
+
       case kNone: //approx. every second
          DEBUG_OT_KNONE("section 'kNone' reached");
          //checking if page changed
@@ -197,6 +202,7 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
          if (ttSetup.inactivityTimeout && (time(NULL) - lastActivity > ttSetup.inactivityTimeout*60))
             return osEnd;
          break;
+
       case kUp:
          if (selectingChannel) {
              selectingChannel=false;
@@ -211,6 +217,7 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
          Display::ShowUpperHalf();
          ShowPage();
          break;
+
       case kDown:
          if (selectingChannel) {
              selectingChannel=false;
@@ -224,6 +231,7 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
          Display::ShowUpperHalf();
          ShowPage();
          break;       
+
       case kRight:
          if (selectingChannel) {
              selectingChannel=false;
@@ -237,6 +245,7 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
          Display::ShowUpperHalf();
          ShowPage();
          break;       
+
       case kLeft:
          if (selectingChannel) {
              selectingChannel=false;
@@ -284,9 +293,11 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
    }
 
    if (changedConfig) {
-      Display::Mode mode = Display::mode; // remember mode
+      zoomR = Display::GetZoom(); // remember zoom
+      modeR = Display::mode; // remember mode
       Display::Delete();
-      Display::SetMode(mode); // recreate with remembered mode
+      Display::SetMode(modeR); // apply remembered mode
+      Display::SetZoom(zoomR); // apply remembered zoom
       ShowPage();
    };
 
@@ -326,8 +337,12 @@ bool TeletextBrowser::ExecuteActionConfig(eTeletextActionConfig e, int delta) {
 };
 
 void TeletextBrowser::ExecuteAction(eTeletextAction e) {
+   cDisplay::enumZoom zoomR;
+   Display::Mode modeR;
+
    switch (e) {
       case Zoom:
+         DEBUG_OT_KEYS("key action: 'Zoom' Display::GetZoom=%d", Display::GetZoom());
          if (selectingChannel) {
              selectingChannel=false;
              Display::ClearMessage();
@@ -347,6 +362,7 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
          break;
 
       case HalfPage:
+         DEBUG_OT_KEYS("key action: 'Half Page' Display::mode=%d", Display::mode);
          if (selectingChannel) {
              selectingChannel=false;
              Display::ClearMessage();
@@ -373,11 +389,13 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
          break;
 
       case SwitchChannel:
+         DEBUG_OT_KEYS("key action: 'SwitchChannel'");
          selectingChannelNumber=0;
          selectingChannel=true;
          ShowAskForChannel();
          break;
-         /*case SuspendReceiving:
+
+      /*case SuspendReceiving:
             if (!txtStatus)
                break;
             //if (suspendedReceiving)
@@ -388,10 +406,28 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
             break;*/
 
       case DarkScreen:
+         DEBUG_OT_KEYS("key action: 'DarkScreen'");
          ChangeBackground();
          break;
 
+      case LineMode24:
+         DEBUG_OT_KEYS("key action: 'LineMode24' lineMode24=%d", ttSetup.lineMode24);
+         // toggle LineMode24
+         if (ttSetup.lineMode24 != 0) {
+            ttSetup.lineMode24 = 0;
+         } else {
+            ttSetup.lineMode24 = 1;
+         };
+         zoomR = Display::GetZoom(); // remember zoom
+         modeR = Display::mode; // remember mode
+         Display::Delete();
+         Display::SetMode(modeR); // apply remembered mode
+         Display::SetZoom(zoomR); // apply remembered zoom
+         ShowPage();
+         break;
+
       case Config:
+         DEBUG_OT_KEYS("key action: 'Config' lineMode24=%d configMode=%d", ttSetup.lineMode24, configMode);
          if (ttSetup.lineMode24) {
             // config mode is only supported in 25-line mode
             Display::ClearMessage();
@@ -822,6 +858,8 @@ TeletextSetup::TeletextSetup()
    mapKeyToAction[ActionKeyYellow]=HalfPage;
    mapKeyToAction[ActionKeyRed]=SwitchChannel;
    mapKeyToAction[ActionKeyStop]=Config;
+   mapKeyToAction[ActionKeyFastRew]=LineMode24;
+   mapKeyToAction[ActionKeyFastFwd]=DarkScreen;
 }
 
 // vim: ts=3 sw=3 et

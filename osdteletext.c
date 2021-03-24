@@ -224,6 +224,7 @@ void cPluginTeletextosd::Stop(void)
    SetupStore("OSDtopPct", ttSetup.OSDtopPct);
    SetupStore("OSDleftPct", ttSetup.OSDleftPct);
    SetupStore("OSDframePct", ttSetup.OSDframePct);
+   SetupStore("lineMode24", ttSetup.lineMode24);
 
    DELETENULL(txtStatus);
    if (storage) {

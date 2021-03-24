@@ -29,7 +29,7 @@
 //TeletextBrowser::TranslateKey and 
 //the constants below (st_modes)
 enum eTeletextAction { Zoom, HalfPage, SwitchChannel,
-                       DarkScreen, /*SuspendReceiving,*/ Config, LastAction }; //and 100-899 => jump to page
+                       DarkScreen, /*SuspendReceiving,*/ Config, LineMode24, LastAction }; //and 100-899 => jump to page
 
 enum eTeletextActionConfig {
    Left,
@@ -48,6 +48,7 @@ static const char *st_modes[] =
       tr("Switch background"),
       //tr("Suspend receiving"),
       tr("Config"),
+      tr("24-LineMode"),
       tr("Jump to..."),
 };
 
