@@ -211,6 +211,7 @@ bool cPluginTeletextosd::Start(void)
    if (ttSetup.OSDtopPct  <  0) ttSetup.OSDtopPct  = 0; // failsafe
    if (ttSetup.OSDleftPct <  0) ttSetup.OSDleftPct = 0; // failsafe
    if (ttSetup.OSDframePct < 0) ttSetup.OSDframePct = 0; // failsafe
+   if (ttSetup.OSDframePct > 0.05) ttSetup.OSDframePct = 0.05; // failsafe
    if (abs(ttSetup.txtVoffset) > 10) ttSetup.txtVoffset = 0; // failsafe
 
    return true;
@@ -283,7 +284,7 @@ bool cPluginTeletextosd::SetupParse(const char *Name, const char *Value)
   else if (!strcasecmp(Name, "OSDwidthPct")) ttSetup.OSDwidthPct=atoi(Value);
   else if (!strcasecmp(Name, "OSDtopPct")) ttSetup.OSDtopPct=atoi(Value);
   else if (!strcasecmp(Name, "OSDleftPct")) ttSetup.OSDleftPct=atoi(Value);
-  else if (!strcasecmp(Name, "OSDframePct")) ttSetup.OSDframePct=atoi(Value);
+  else if (!strcasecmp(Name, "OSDframePct")) ttSetup.OSDframePct=atod(Value) / 100;
   else if (!strcasecmp(Name, "inactivityTimeout")) /*ttSetup.inactivityTimeout=atoi(Value)*/;
   else if (!strcasecmp(Name, "HideMainMenu")) ttSetup.HideMainMenu=atoi(Value);
   else if (!strcasecmp(Name, "txtFontName")) ttSetup.txtFontName=strdup(Value);
@@ -362,7 +363,7 @@ void cTeletextSetupPage::Store(void) {
    SetupStore("OSDwidthPct", ttSetup.OSDwidthPct);
    SetupStore("OSDtopPct", ttSetup.OSDtopPct);
    SetupStore("OSDleftPct", ttSetup.OSDleftPct);
-   SetupStore("OSDframePct", ttSetup.OSDframePct);
+   SetupStore("OSDframePct", ttSetup.OSDframePct) * 100;
    SetupStore("HideMainMenu", ttSetup.HideMainMenu);
    SetupStore("txtFontName", ttSetup.txtFontName);
    SetupStore("txtG0Block", ttSetup.txtG0Block);
@@ -435,7 +436,7 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    Add(new cMenuEditIntItem(tr("OSD top (%)"), &temp.OSDtopPct, 0, 90));
    Add(new cMenuEditIntItem(tr("OSD width (%)"), &temp.OSDwidthPct, 10, 100));
    Add(new cMenuEditIntItem(tr("OSD height (%)"), &temp.OSDheightPct, 10, 100));
-   Add(new cMenuEditIntItem(tr("OSD frame (%)"), &temp.OSDframePct, 0, 5));
+   Add(new cMenuEditPrcItem(tr("OSD frame (%)"), &temp.OSDframePct, 0.0, 0.05, 1));
    Add(new cMenuEditBoolItem(tr("Hide mainmenu entry"), &temp.HideMainMenu));
    Add(new cMenuEditStraItem(tr("Text Font"), &temp.txtFontIndex, temp.txtFontNames.Size(), &temp.txtFontNames[0]));
    Add(new cMenuEditStraItem(tr("G0 code block"), &temp.txtG0Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));

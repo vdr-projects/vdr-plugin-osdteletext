@@ -56,7 +56,7 @@ public:
    int OSDwidthPct;
    int OSDtopPct;
    int OSDleftPct;
-   int OSDframePct;
+   double OSDframePct;
    int inactivityTimeout;
    int HideMainMenu;
    cString txtFontName;
