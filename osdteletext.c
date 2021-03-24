@@ -432,11 +432,11 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    //Add(new cMenuEditBoolItem(tr("Setup$Suspend receiving"), &temp.suspendReceiving ));
 
    Add(new cMenuEditBoolItem(tr("Auto-update pages"), &temp.autoUpdatePage ));
-   Add(new cMenuEditIntItem(tr("OSD left (%)"), &temp.OSDleftPct, 0, 90));
-   Add(new cMenuEditIntItem(tr("OSD top (%)"), &temp.OSDtopPct, 0, 90));
-   Add(new cMenuEditIntItem(tr("OSD width (%)"), &temp.OSDwidthPct, 10, 100));
-   Add(new cMenuEditIntItem(tr("OSD height (%)"), &temp.OSDheightPct, 10, 100));
-   Add(new cMenuEditPrcItem(tr("OSD frame (%)"), &temp.OSDframePct, 0.0, 0.05, 1));
+   Add(new cMenuEditIntItem(tr("OSD left (%)"), &temp.OSDleftPct, OSDleftPctMin, OSDleftPctMax));
+   Add(new cMenuEditIntItem(tr("OSD top (%)"), &temp.OSDtopPct, OSDtopPctMin, OSDtopPctMax));
+   Add(new cMenuEditIntItem(tr("OSD width (%)"), &temp.OSDwidthPct, OSDwidthPctMin, OSDwidthPctMax));
+   Add(new cMenuEditIntItem(tr("OSD height (%)"), &temp.OSDheightPct, OSDheightPctMin, OSDheightPctMax));
+   Add(new cMenuEditPrcItem(tr("OSD frame (%)"), &temp.OSDframePct, OSDframePctMin / 100.0, OSDframePctMax / 100.0, 1));
    Add(new cMenuEditBoolItem(tr("Hide mainmenu entry"), &temp.HideMainMenu));
    Add(new cMenuEditStraItem(tr("Text Font"), &temp.txtFontIndex, temp.txtFontNames.Size(), &temp.txtFontNames[0]));
    Add(new cMenuEditStraItem(tr("G0 code block"), &temp.txtG0Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
