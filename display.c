@@ -88,11 +88,26 @@ void Display::SetMode(Display::Mode NewMode) {
             // keep instance.
             ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Upper);
             ((cDisplay32BPPHalf*)display)->SetUpper(true);
+            ((cDisplay32BPPHalf*)display)->SetTop(false);
             break;
         }
         // Need to re-initialize *display:
         Delete();
-        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,true);
+        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,true,false);
+        ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Upper);
+        break;
+      case Display::HalfUpperTop:
+        // Shortcut to switch from HalfUpperTop to HalfLowerTop:
+        if (mode==Display::HalfLowerTop) {
+            // keep instance.
+            ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Upper);
+            ((cDisplay32BPPHalf*)display)->SetUpper(true);
+            ((cDisplay32BPPHalf*)display)->SetTop(true);
+            break;
+        }
+        // Need to re-initialize *display:
+        Delete();
+        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,true,true);
         ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Upper);
         break;
       case Display::HalfLower:
@@ -101,11 +116,26 @@ void Display::SetMode(Display::Mode NewMode) {
             // keep instance.
             ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Lower);
             ((cDisplay32BPPHalf*)display)->SetUpper(false);
+            ((cDisplay32BPPHalf*)display)->SetTop(false);
             break;
         }
         // Need to re-initialize *display:
         Delete();
-        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,false);
+        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,false,false);
+        ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Lower);
+        break;
+      case Display::HalfLowerTop:
+        // Shortcut to switch from HalfUpperTop to HalfLowerTop:
+        if (mode==Display::HalfUpperTop) {
+            // keep instance.
+            ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Lower);
+            ((cDisplay32BPPHalf*)display)->SetUpper(false);
+            ((cDisplay32BPPHalf*)display)->SetTop(true);
+            break;
+        }
+        // Need to re-initialize *display:
+        Delete();
+        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,false,true);
         ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Lower);
         break;
     }
@@ -167,8 +197,8 @@ cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height)
 }
 
 
-cDisplay32BPPHalf::cDisplay32BPPHalf(int x0, int y0, int width, int height, bool upper)
-    : cDisplay(width,height), Upper(upper), OsdX0(x0), OsdY0(y0)
+cDisplay32BPPHalf::cDisplay32BPPHalf(int x0, int y0, int width, int height, bool upper, bool top)
+    : cDisplay(width,height), Upper(upper), Top(top), OsdX0(x0), OsdY0(y0)
 {
     osd=NULL;
 
@@ -184,7 +214,9 @@ void cDisplay32BPPHalf::InitOSD() {
     int vLines = (ttSetup.lineMode24 == true) ? 24 : 25;
     if ((height % vLines) > 0) height = (height / vLines) * vLines; // alignment
 
-    int y0 = OsdY0 + Height - height; // calculate y-offset
+    int y0 = OsdY0;
+    if (!Top)
+        y0 += Height - height; // calculate y-offset
 
     osd = cOsdProvider::NewOsd(x0, y0);
     if (!osd) return;
@@ -235,7 +267,7 @@ void cDisplay32BPPHalf::InitOSD() {
 */
     osd->SetAreas(Areas, sizeof(Areas) / sizeof(tArea));
 
-    isyslog("osdteletext: OSD 'half' area successful requested x0=%d y0=%d width=%d height=%d bpp=%d upper=%d", x0, y0, width, height, bpp, Upper);
+    isyslog("osdteletext: OSD 'half' area successful requested x0=%d y0=%d width=%d height=%d bpp=%d Upper=%s Top=%s", x0, y0, width, height, bpp, (Upper == true) ? "yes" : "no", (Top == true) ? "yes" : "no");
 
     setOutputWidth(width);
     setOutputHeight(height);
