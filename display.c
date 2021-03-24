@@ -80,43 +80,39 @@ void Display::SetMode(Display::Mode NewMode) {
     };
 
     if ((ttSetup.OSDwidthPct < 100) && (ttSetup.OSDframePct > 0)) {
-        OSDwidthFrame = OSDwidth * ttSetup.OSDframePct / 100 * ttSetup.OSDwidthPct / 100;
+        OSDwidthFrame = cOsd::OsdWidth() * ttSetup.OSDframePct / 100;
         OSDleftFrame = OSDwidthFrame;
         OSDrightFrame = OSDwidthFrame;
-        if (x0 >= OSDleftFrame) {
-            x0 -= OSDleftFrame;
-        } else if (x0 > 0) {
-            x0 = 0;
-            OSDleftFrame -= x0; // left side reduce frame
-        } else {
-            x0 = 0;
-            OSDleftFrame = 0;  // leftmost, no frame
-        };
 
-        if (x0 + OSDwidth + OSDrightFrame > cOsd::OsdWidth()) {
+        x0 -= OSDleftFrame;
+        if (x0 < 0) {
+            OSDleftFrame += x0;
+            x0 = 0;
+        };
+        if (OSDleftFrame < 0) OSDleftFrame = 0;
+
+        if (x0 + OSDwidth + OSDrightFrame + OSDleftFrame > cOsd::OsdWidth()) {
             // limit right frame instead drawing out-of-area
-            OSDrightFrame = cOsd::OsdWidth() - OSDwidth - x0;
+            OSDrightFrame = cOsd::OsdWidth() - OSDwidth - x0 - OSDleftFrame;
             if (OSDrightFrame < 0) OSDrightFrame = 0;
         };
     };
 
     if ((ttSetup.OSDheightPct < 100) && (ttSetup.OSDframePct > 0)) {
-        OSDheightFrame = OSDheight * ttSetup.OSDframePct / 100 * ttSetup.OSDheightPct / 100;
+        OSDheightFrame = cOsd::OsdHeight() * ttSetup.OSDframePct / 100;
         OSDtopFrame = OSDheightFrame;
         OSDbottomFrame = OSDheightFrame;
-        if (y0 >= OSDheightFrame) {
-            y0 -= OSDheightFrame;
-        } else if (y0 > 0) {
-            y0 = 0;
-            OSDtopFrame -= y0; // left side reduce frame
-        } else {
-            y0 = 0;
-            OSDtopFrame = 0;  // topmost, no frame
-        };
 
-        if (y0 + OSDheight + OSDbottomFrame > cOsd::OsdHeight()) {
+        y0 -= OSDtopFrame;
+        if (y0 < 0) {
+            OSDtopFrame += y0;
+            y0 = 0;
+        };
+        if (OSDtopFrame < 0) OSDtopFrame = 0;
+
+        if (y0 + OSDheight + OSDtopFrame + OSDbottomFrame > cOsd::OsdHeight()) {
             // limit bottom frame instead drawing out-of-area
-            OSDbottomFrame = cOsd::OsdHeight() - OSDheight - y0;
+            OSDbottomFrame = cOsd::OsdHeight() - OSDheight - y0 - OSDtopFrame;
             if (OSDbottomFrame < 0) OSDbottomFrame = 0;
         };
     };
