@@ -371,7 +371,7 @@ void cTeletextSetupPage::Store(void) {
    SetupStore("OSDwidthPct", ttSetup.OSDwidthPct);
    SetupStore("OSDtopPct", ttSetup.OSDtopPct);
    SetupStore("OSDleftPct", ttSetup.OSDleftPct);
-   SetupStore("OSDframePct", ttSetup.OSDframePct) * 100;
+   SetupStore("OSDframePct", ttSetup.OSDframePct * 100);
    SetupStore("HideMainMenu", ttSetup.HideMainMenu);
    SetupStore("txtFontName", ttSetup.txtFontName);
    SetupStore("txtG0Block", ttSetup.txtG0Block);
