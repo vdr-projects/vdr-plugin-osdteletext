@@ -444,7 +444,7 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    Add(new cMenuEditIntItem(tr("OSD top (%)"), &temp.OSDtopPct, OSDtopPctMin, OSDtopPctMax));
    Add(new cMenuEditIntItem(tr("OSD width (%)"), &temp.OSDwidthPct, OSDwidthPctMin, OSDwidthPctMax));
    Add(new cMenuEditIntItem(tr("OSD height (%)"), &temp.OSDheightPct, OSDheightPctMin, OSDheightPctMax));
-   Add(new cMenuEditPrcItem(tr("OSD frame (%)"), &temp.OSDframePct, OSDframePctMin / 100, OSDframePctMax / 100, 0.05, 1));
+   Add(new cMenuEditPrcItem(tr("OSD frame (%)"), &temp.OSDframePct, OSDframePctMin / 100.0, OSDframePctMax / 100.0, 1));
    Add(new cMenuEditBoolItem(tr("Hide mainmenu entry"), &temp.HideMainMenu));
    Add(new cMenuEditStraItem(tr("Text Font"), &temp.txtFontIndex, temp.txtFontNames.Size(), &temp.txtFontNames[0]));
    Add(new cMenuEditStraItem(tr("G0 code block"), &temp.txtG0Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
