@@ -32,6 +32,10 @@ void Display::SetMode(Display::Mode NewMode) {
     int OSDheight;
     int OSDwidthFrame  = 0;
     int OSDheightFrame = 0;
+    int OSDleftFrame  = 0;
+    int OSDrightFrame = 0;
+    int OSDtopFrame  = 0;
+    int OSDbottomFrame = 0;
     int x0 = cOsd::OsdLeft(); // start with general OSD offset
     int y0 = cOsd::OsdTop();  // start with general OSD offset
 
@@ -77,37 +81,64 @@ void Display::SetMode(Display::Mode NewMode) {
 
     if ((ttSetup.OSDwidthPct < 100) && (ttSetup.OSDframePct > 0)) {
         OSDwidthFrame = OSDwidth * ttSetup.OSDframePct / 100 * ttSetup.OSDwidthPct / 100;
-        if (x0 > OSDwidthFrame) {
-            x0 -= OSDwidthFrame;
+        OSDleftFrame = OSDwidthFrame;
+        OSDrightFrame = OSDwidthFrame;
+        if (x0 >= OSDleftFrame) {
+            x0 -= OSDleftFrame;
+        } else if (x0 > 0) {
+            x0 = 0;
+            OSDleftFrame -= x0; // left side reduce frame
         } else {
             x0 = 0;
+            OSDleftFrame = 0;  // leftmost, no frame
+        };
+
+        if (x0 + OSDwidth + OSDrightFrame > cOsd::OsdWidth()) {
+            // limit right frame instead drawing out-of-area
+            OSDrightFrame = cOsd::OsdWidth() - OSDwidth - x0;
+            if (OSDrightFrame < 0) OSDrightFrame = 0;
         };
     };
 
     if ((ttSetup.OSDheightPct < 100) && (ttSetup.OSDframePct > 0)) {
         OSDheightFrame = OSDheight * ttSetup.OSDframePct / 100 * ttSetup.OSDheightPct / 100;
-        if (y0 > OSDheightFrame) {
+        OSDtopFrame = OSDheightFrame;
+        OSDbottomFrame = OSDheightFrame;
+        if (y0 >= OSDheightFrame) {
             y0 -= OSDheightFrame;
+        } else if (y0 > 0) {
+            y0 = 0;
+            OSDtopFrame -= y0; // left side reduce frame
         } else {
             y0 = 0;
+            OSDtopFrame = 0;  // topmost, no frame
+        };
+
+        if (y0 + OSDheight + OSDbottomFrame > cOsd::OsdHeight()) {
+            // limit bottom frame instead drawing out-of-area
+            OSDbottomFrame = cOsd::OsdHeight() - OSDheight - y0;
+            if (OSDbottomFrame < 0) OSDbottomFrame = 0;
         };
     };
 
-    dsyslog("osdteletext: OSD area calculated by percent values: OL=%d OT=%d OW=%d OH=%d OwP=%d%% OhP=%d%% OlP=%d%% OtP=%d%% OfP=%d%% lineMode24=%d => x0=%d y0=%d Ow=%d Oh=%d OwF=%d OhF=%d"
+    dsyslog("osdteletext: OSD area calculated by percent values: OL=%d OT=%d OW=%d OH=%d OwP=%d%% OhP=%d%% OlP=%d%% OtP=%d%% OfP=%d%% lineMode24=%d => x0=%d y0=%d Ow=%d Oh=%d OwF=%d OhF=%d OlF=%d OrF=%d OtF=%d ObF=%d"
         , cOsd::OsdLeft(), cOsd::OsdTop(), cOsd::OsdWidth(), cOsd::OsdHeight()
         , ttSetup.OSDwidthPct, ttSetup.OSDheightPct, ttSetup.OSDleftPct, ttSetup.OSDtopPct
         , ttSetup.OSDframePct
         , ttSetup.lineMode24
         , x0, y0
         , OSDwidth, OSDheight
-        , OSDwidthFrame, OSDheightFrame);
+        , OSDwidthFrame, OSDheightFrame
+        , OSDleftFrame, OSDrightFrame
+        , OSDtopFrame, OSDbottomFrame
+    );
 
     switch (NewMode) {
       case Display::Full:
         // Need to re-initialize *display:
         Delete();
         // Try 32BPP display first:
-        display=new cDisplay32BPP(x0,y0,OSDwidth,OSDheight,OSDwidthFrame,OSDheightFrame);
+        display=new cDisplay32BPP(x0,y0,OSDwidth,OSDheight,OSDleftFrame,OSDrightFrame,OSDtopFrame,OSDbottomFrame);
         break;
       case Display::HalfUpper:
         // Shortcut to switch from HalfUpper to HalfLower:
@@ -120,7 +151,7 @@ void Display::SetMode(Display::Mode NewMode) {
         }
         // Need to re-initialize *display:
         Delete();
-        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,OSDwidthFrame,OSDheightFrame,true,false);
+        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,OSDleftFrame,OSDrightFrame,OSDtopFrame,OSDbottomFrame,true,false);
         ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Upper);
         break;
       case Display::HalfUpperTop:
@@ -134,7 +165,7 @@ void Display::SetMode(Display::Mode NewMode) {
         }
         // Need to re-initialize *display:
         Delete();
-        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,OSDwidthFrame,OSDheightFrame,true,true);
+        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,OSDleftFrame,OSDrightFrame,OSDtopFrame,OSDbottomFrame,true,true);
         ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Upper);
         break;
       case Display::HalfLower:
@@ -148,7 +179,7 @@ void Display::SetMode(Display::Mode NewMode) {
         }
         // Need to re-initialize *display:
         Delete();
-        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,OSDwidthFrame,OSDheightFrame,false,false);
+        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,OSDleftFrame,OSDrightFrame,OSDtopFrame,OSDbottomFrame,false,false);
         ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Lower);
         break;
       case Display::HalfLowerTop:
@@ -162,7 +193,7 @@ void Display::SetMode(Display::Mode NewMode) {
         }
         // Need to re-initialize *display:
         Delete();
-        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,OSDwidthFrame,OSDheightFrame,false,true);
+        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,OSDleftFrame,OSDrightFrame,OSDtopFrame,OSDbottomFrame,false,true);
         ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Lower);
         break;
     }
@@ -182,7 +213,7 @@ void Display::ShowUpperHalf() {
 }
 
 
-cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height, int widthFrame, int heightFrame)
+cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height, int leftFrame, int rightFrame, int topFrame, int bottomFrame)
     : cDisplay(width,height) {
     // 32BPP display for True Color OSD providers
 
@@ -197,7 +228,7 @@ cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height, int widthFra
         bpp = 4;
         dsyslog("osdteletext: OSD config forced to bpp=%d", bpp);
     };
-    tArea Areas[] = { { 0, 0, width - 1 + 2 * widthFrame, height - 1 + 2 * heightFrame, bpp } };
+    tArea Areas[] = { { 0, 0, width - 1 + leftFrame + rightFrame, height - 1 + topFrame + bottomFrame, bpp } };
     if (bpp == 32 && (osd->CanHandleAreas(Areas, sizeof(Areas) / sizeof(tArea)) != oeOk)) {
         bpp = 8;
         Areas[0].bpp = 8;
@@ -213,10 +244,15 @@ cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height, int widthFra
 
     setOutputWidth(width);
     setOutputHeight(Height);
-    setWidthFrame(widthFrame);
-    setHeightFrame(heightFrame);
+    setLeftFrame(leftFrame);
+    setRightFrame(rightFrame);
+    setTopFrame(topFrame);
+    setBottomFrame(bottomFrame);
 
-    isyslog("osdteletext: OSD area successful requested with x0=%d y0=%d width=%d height=%d bpp=%d wF=%d hF=%d", x0, y0, width, height, bpp, widthFrame, heightFrame);
+    isyslog("osdteletext: OSD area successful requested with x0=%d y0=%d width=%d height=%d bpp=%d lF=%d rF=%d tF=%d bF=%d"
+        , x0, y0, width, height, bpp
+        , leftFrame, rightFrame, topFrame, bottomFrame
+    );
 
     InitScaler();
 
@@ -226,8 +262,10 @@ cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height, int widthFra
 }
 
 
-cDisplay32BPPHalf::cDisplay32BPPHalf(int x0, int y0, int width, int height, int widthFrame, int heightFrame, bool upper, bool top)
-    : cDisplay(width,height), widthFrame(widthFrame), heightFrame(heightFrame), Upper(upper), Top(top), OsdX0(x0), OsdY0(y0)
+cDisplay32BPPHalf::cDisplay32BPPHalf(int x0, int y0, int width, int height, int leftFrame, int rightFrame, int topFrame, int bottomFrame, bool upper, bool top)
+    : cDisplay(width,height), leftFrame(leftFrame)
+      , rightFrame(rightFrame), topFrame(topFrame), bottomFrame(bottomFrame)
+      , Upper(upper), Top(top), OsdX0(x0), OsdY0(y0)
 {
     osd=NULL;
 
@@ -257,7 +295,7 @@ void cDisplay32BPPHalf::InitOSD() {
         bpp = 4;
         dsyslog("osdteletext: OSD config forced to bpp=%d", bpp);
     };
-    tArea Areas[] = { { 0, 0, width - 1 + 2 * widthFrame, height - 1 + 2 * heightFrame, bpp } };
+    tArea Areas[] = { { 0, 0, width - 1 + leftFrame + rightFrame, height - 1 + topFrame + bottomFrame, bpp } };
     if (bpp == 32 && (osd->CanHandleAreas(Areas, sizeof(Areas) / sizeof(tArea)) != oeOk)) {
         bpp = 8;
         Areas[0].bpp = 8;
@@ -296,12 +334,19 @@ void cDisplay32BPPHalf::InitOSD() {
 */
     osd->SetAreas(Areas, sizeof(Areas) / sizeof(tArea));
 
-    isyslog("osdteletext: OSD 'half' area successful requested x0=%d y0=%d width=%d height=%d bpp=%d wF=%d hF=%d Upper=%s Top=%s", x0, y0, width, height, bpp, widthFrame, heightFrame, (Upper == true) ? "yes" : "no", (Top == true) ? "yes" : "no");
+    isyslog("osdteletext: OSD 'half' area successful requested x0=%d y0=%d width=%d height=%d bpp=%d lF=%d rF=%d tF=%d bF=%d Upper=%s Top=%s"
+        , x0, y0, width, height, bpp
+        , leftFrame, rightFrame, topFrame, bottomFrame
+        , (Upper == true) ? "yes" : "no"
+        , (Top == true) ? "yes" : "no"
+    );
 
     setOutputWidth(width);
     setOutputHeight(height);
-    setWidthFrame(widthFrame);
-    setHeightFrame(heightFrame);
+    setLeftFrame(leftFrame);
+    setRightFrame(rightFrame);
+    setTopFrame(topFrame);
+    setBottomFrame(bottomFrame);
 
     InitScaler();
 
