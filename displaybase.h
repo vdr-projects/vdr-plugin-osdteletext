@@ -68,7 +68,7 @@ protected:
     int outputHeight;
     // for 32bpp true color, If creation fails, may be NULL
 
-    int widthFrame, heightFrame;
+    int leftFrame, rightFrame, topFrame, bottomFrame;
     // frame border
 
     int OffsetX,OffsetY;
@@ -116,8 +116,10 @@ public:
 
     void setOutputWidth(int w) { outputWidth = w; };
     void setOutputHeight(int h) { outputHeight = h; };
-    void setWidthFrame(int wf) { widthFrame = wf; };
-    void setHeightFrame(int hf) { heightFrame = hf; };
+    void setLeftFrame(int lF) { leftFrame = lF; };
+    void setRightFrame(int rF) { rightFrame = rF; };
+    void setTopFrame(int tF) { topFrame = tF; };
+    void setBottomFrame(int bF) { bottomFrame = bF; };
 
     static std::string GFXFontFootprint;
     static std::string TXTFontFootprint;
