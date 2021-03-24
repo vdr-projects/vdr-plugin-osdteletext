@@ -129,3 +129,35 @@ Colors:
   The mapping is currently optimized for German ARD, ZDF and RTL. If you are
   for some reason really and definitely not satisfied with my choices, edit
   colormapping.h and recompile.
+
+
+Testpages for verification
+    Page   | Reference
+
+  Channel: 3sat
+    898-01 | https://blog.3sat.de/ttx/index.php?p=898_0001&c=0
+    898-02 | https://blog.3sat.de/ttx/index.php?p=898_0002&c=0
+    899-01 | https://blog.3sat.de/ttx/index.php?p=899_0001&c=0
+    899-02 | https://blog.3sat.de/ttx/index.php?p=899_0002&c=0
+
+  Channel: arte
+    199-01
+
+  Channel: rbb
+    199-01
+    199-02
+
+  Channel: ORF2
+    886-00
+
+  Channel: ARD https://www.ard-text.de/index.php?page=<NUM>
+    (currently none)
+
+
+Subtitle pages for verification
+
+  Channel: DasErste / BR Fernsehen
+    150
+
+  Channel: 3sat
+    777

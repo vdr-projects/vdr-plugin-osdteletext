@@ -16,6 +16,7 @@
 #include <strings.h>
 #include "txtrender.h"
 #include "menu.h"
+#include "logging.h"
 
 // Font tables
 
@@ -271,8 +272,7 @@ void cRenderPage::ReadTeletextHeader(unsigned char *Header) {
 
 void cRenderPage::RenderTeletextCode(unsigned char *PageCode) {
     int x,y;
-    bool EmptyNextLine=false;
-    // Skip one line, in case double height chars were/will be used
+    bool EmptyNextLine=false; // Skip one line, in case double height chars were/will be used
 
     // Get code pages:
     int LocalG0CodePage=(FirstG0CodePage & 0x78) 
@@ -346,6 +346,7 @@ void cRenderPage::RenderTeletextCode(unsigned char *PageCode) {
             // Handle all 'Set-At' spacing codes
             switch (ttc) {
             case 0x09: // Steady
+                DEBUG_OT_BLINK("set bc.SetBlink(false) ttc=%d x=%d y=%d", ttc, x, y);
                 c.SetBlink(false);
                 break;
             case 0x0C: // Normal Size
@@ -473,6 +474,7 @@ void cRenderPage::RenderTeletextCode(unsigned char *PageCode) {
                 c.SetConceal(false);
                 break;
             case 0x08: // Flash
+                DEBUG_OT_BLINK("set c.SetBlink(true) ttc=%d x=%d y=%d", ttc, x, y);
                 c.SetBlink(true);
                 break;
             case 0x0A: // End Box
@@ -538,4 +540,4 @@ void cRenderPage::RenderTeletextCode(unsigned char *PageCode) {
     }       
 }
 
-
+// vim: ts=4 sw=4 et

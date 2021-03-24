@@ -18,6 +18,7 @@
 #include "display.h"
 #include "setup.h"
 #include "txtrecv.h"
+#include "logging.h"
 
 #define GET_HUNDREDS(x) ( ( (x) - ((x)%256) ) /256 )
 #define GET_TENS(x)  ( (( (x) - ((x)%16) )%256 ) /16 )
@@ -102,10 +103,10 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber) {
    IntMap::iterator it;
    channelPageMap[currentChannelNumber] = currentPage;
    currentChannelNumber=ChannelNumber;
-   
+
    currentPage=0x100;
    currentSubPage=0;
-      
+
    //see if last page number on this channel was stored
    it=channelPageMap.find(ChannelNumber);
    if (it != channelPageMap.end()) { //found
@@ -167,6 +168,7 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
          break;        
       case kBack: return osEnd; 
       case kNone: //approx. every second
+         DEBUG_OT_KNONE("section 'kNone' reached");
          //checking if page changed
          if ( pageFound && ttSetup.autoUpdatePage && cursorPos==0 && !selectingChannel && (PageCheckSum() != checkSum) ) {
             ShowPage();
@@ -180,6 +182,11 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
             }
             //updating clock
             UpdateClock();
+            //trigger blink
+            bool Changed = Display::SetBlink(not(Display::GetBlink()));
+            if (Changed) {
+                // currently nothing to do
+            };
          }
          //check for activity timeout
          if (ttSetup.inactivityTimeout && (time(NULL) - lastActivity > ttSetup.inactivityTimeout*60))
@@ -667,3 +674,5 @@ TeletextSetup::TeletextSetup()
    mapKeyToAction[2]=HalfPage;   
    mapKeyToAction[0]=SwitchChannel;
 }
+
+// vim: ts=3 sw=3 et

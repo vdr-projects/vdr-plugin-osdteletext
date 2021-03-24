@@ -209,8 +209,7 @@ public:
     void DrawClock();
     // Draw current time to OSD
 
-    void DrawPageId(const char *text)
-        { DrawText(0,0,text,8); }
+    void DrawPageId(const char *text);
     // Draw Page ID string to OSD
 
     void DrawMessage(const char *txt);
@@ -218,7 +217,6 @@ public:
 
     void ClearMessage();
     // Remove message box and redraw hidden content
-
 
 private:
     cFont *GetFont(const char *name, int index, int height, int width);

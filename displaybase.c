@@ -134,6 +134,7 @@ void cDisplay::InitScaler() {
 }
 
 bool cDisplay::SetBlink(bool blink) {
+    DEBUG_OT_BLINK("called with blink=%d", blink);
     int x,y;
     bool Change=false;
 
@@ -267,11 +268,11 @@ void cDisplay::RenderTeletextCode(unsigned char *PageCode) {
 
 
 void cDisplay::DrawDisplay() {
+    DEBUG_OT_DD("called with Blinked=%d Concealed=%d", Blinked, Concealed);
     int x,y;
     int cnt=0;
 
-    if (!IsDirty()) return;
-    // nothing to do
+    if (!IsDirty()) return; // nothing to do
 
     for (y = 0; y < ((ttSetup.lineMode24 == true) ? 24 : 25); y++) {
         for (x=0;x<40;x++) {
@@ -281,11 +282,11 @@ void cDisplay::DrawDisplay() {
                 cTeletextChar c=Page[x][y];
                 c.SetDirty(false);
                 if ((Blinked && c.GetBlink()) || (Concealed && c.GetConceal())) {
+                    DEBUG_OT_BLINK("blink by replacing char %08x with ' ' on x=%d y=%d", c.GetC(), x, y);
                     c.SetChar(0x20);
                     c.SetCharset(CHARSET_LATIN_G0_DE);
                 }
                 DrawChar(x,y,c);
-                Page[x][y]=c;
             }
         }
     }
@@ -506,7 +507,30 @@ void cDisplay::DrawText(int x, int y, const char *text, int len) {
     Flush();
 }
 
+void cDisplay::DrawPageId(const char *text) {
+    // Draw Page ID string to OSD
+    static char text_last[9] = ""; // remember
+    DEBUG_OT_DRPI("called with text='%s' text_last='%s' Boxed=%d", text, text_last, Boxed);
+
+    if (Boxed && (strcmp(text, text_last) == 0)) {
+        // don't draw PageId a 2nd time on boxed pages
+        for (int i = 0; i < 8; i++) {
+            cTeletextChar c;
+            c.SetFGColor(ttcTransparent);
+            c.SetBGColor(ttcTransparent);
+            c.SetChar(0);
+            SetChar(i,0,c);
+        };
+        return;
+    };
+
+    DrawText(0,0,text,8);
+    strncpy(text_last, text, sizeof(text_last) - 1);
+}
+
 void cDisplay::DrawClock() {
+    if (Boxed) return; // don't draw Clock in on boxed pages
+
     char text[9];
     time_t t=time(0);
     struct tm loct;
@@ -557,7 +581,7 @@ void cDisplay::DrawMessage(const char *txt) {
     MessageX=x;
     MessageY=y;
 
-    dsyslog("osdteletext: DrawMessage with MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d", MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY);
+    DEBUG_OT_MSG("MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d", MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY);
 
     // And flush all changes
     ReleaseFlush();
@@ -574,7 +598,7 @@ void cDisplay::ClearMessage() {
     int x1 = (MessageX+MessageW-1-OffsetX) / (fontWidth  / 2);
     int y1 = (MessageY+MessageH-1-OffsetY) / (fontHeight / 2);
 
-    dsyslog("osdteletext: %s called with MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d => x0=%d/y0=%d x1=%d/y1=%d", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, x0, y0, x1, y1);
+    DEBUG_OT_MSG("MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d => x0=%d/y0=%d x1=%d/y1=%d", MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, x0, y0, x1, y1);
 
 #define TESTOORX(X) (X < 0 || X >= 40)
 #define TESTOORY(Y) (Y < 0 || Y >= 25)
@@ -596,7 +620,7 @@ void cDisplay::ClearMessage() {
 	if TESTOORY(y0) y0 = 25 - 1;
 	if TESTOORY(y1) y1 = 25 - 1;
     }
-    // dsyslog("osdteletext: %s: call MakeDirty with area x0=%d/y0=%d <-> x1=%d/y1=%d", __FUNCTION__, x0, y0, x1, y1);
+    // DEBUG_OT_MSG("call MakeDirty with area x0=%d/y0=%d <-> x1=%d/y1=%d", x0, y0, x1, y1);
     for (int x=x0;x<=x1;x++) {
         for (int y=y0;y<=y1;y++) {
             MakeDirty(x,y);
