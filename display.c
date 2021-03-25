@@ -86,7 +86,7 @@ void Display::SetMode(Display::Mode NewMode) {
         OSDleftFrame = (cOsd::OsdWidth() - OSDwidth) / 2;
         OSDrightFrame = cOsd::OsdWidth() - OSDwidth - OSDleftFrame;
     };
- 
+
     if (ttSetup.OSDheightPct < 100) {
         if (ttSetup.OSDtopPct > 0) {
             // check offset not exceeding maximum possible
