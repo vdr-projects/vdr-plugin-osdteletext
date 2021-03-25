@@ -1,5 +1,8 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
+2021-03-25:
+- [pbiering] fix related to boxed chars in case page is not boxed itself
+
 2021-03-24:
 - [pbiering] add 24-line-mode as optional key action toggle
 
