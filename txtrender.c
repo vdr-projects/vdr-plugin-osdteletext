@@ -312,9 +312,11 @@ void cRenderPage::RenderTeletextCode(unsigned char *PageCode) {
         c.SetCharset(FirstG0);
         
         if (y==0 && (Flags&0x10)) {
+            DEBUG_OT_BOXED("set c.SetBoxed(true) Flags=%02x x=%d y=%d", Flags, x, y);
             c.SetBoxedOut(true);    
         }
         if (Flags&0x60) {
+            DEBUG_OT_BOXED("set c.SetBoxed(true) Flags=%02x x=%d y=%d", Flags, x, y);
             c.SetBoxedOut(true);    
         }
 
@@ -474,13 +476,15 @@ void cRenderPage::RenderTeletextCode(unsigned char *PageCode) {
                 c.SetConceal(false);
                 break;
             case 0x08: // Flash
-                DEBUG_OT_BLINK("set c.SetBlink(true) ttc=%d x=%d y=%d", ttc, x, y);
+                DEBUG_OT_BLINK("set c.SetBlink(true) ttc=%02x x=%d y=%d", ttc, x, y);
                 c.SetBlink(true);
                 break;
             case 0x0A: // End Box
+                DEBUG_OT_BOXED("set c.SetBoxed(true)  End Box  ttc=%02x x=%d y=%d", ttc, x, y);
                 c.SetBoxedOut(true);
                 break;
             case 0x0B: // Start Box
+                DEBUG_OT_BOXED("set c.SetBoxed(false) StartBox ttc=%02x x=%d y=%d", ttc, x, y);
                 c.SetBoxedOut(false);
                 break;
             case 0x0D: // Double Height
@@ -534,6 +538,7 @@ void cRenderPage::RenderTeletextCode(unsigned char *PageCode) {
         c.SetCharset(FirstG0);
         c.SetChar(' ');
         if (Flags&0x60) {
+            DEBUG_OT_BOXED("set c.SetBoxed(true) Flags=%02x ttc=(space) x=%d y=%d", Flags, x, y);
             c.SetBoxedOut(true);    
         }
         SetChar(x,24,c);

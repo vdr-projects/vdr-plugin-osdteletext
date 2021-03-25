@@ -328,12 +328,12 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
     static int cache_Vshift = 0;
     static int cache_valid = 0;
 
-    if (c.GetBoxedOut()) {
+    if (!osd) return;
+
+    if (Boxed && c.GetBoxedOut()) {
         ttbg=ttcTransparent;
         ttfg=ttcTransparent;
     }
-
-    if (!osd) return;
 
     tColor fg=GetColorRGB(ttfg, 0);
     tColor bg=GetColorRGB(ttbg, 0);
@@ -461,6 +461,13 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
                 }
                 virtY++;
             }
+#if 0
+            if (x == 0) {
+#else
+            if (y == 16) {
+#endif
+                DEBUG_OT_DCHR("x=%d y=%d vx=%d vy=%d w=%d h=%d h_scale_div2=%d ttfg=%d ttbg=%d BoxedOut=%d graphics charmap=0x%04x", x, y, vx, vy, w, h, h_scale_div2, ttfg, ttbg, c.GetBoxedOut(), *charmap);
+            };
 
             osd->DrawBitmap(vx + leftFrame, vy + topFrame, charBm);
         } else {
@@ -489,8 +496,12 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
                 cache_Vshift       = (cache_txtVoffset * cache_outputHeight) / cache_OsdHeight;
                 dsyslog("osdteletext: DrawText vertical shift cache updated: txtVoffset=%d outputHeight=%d OsdHeight=%d => Vshift=%d", cache_txtVoffset, cache_outputHeight, cache_OsdHeight, cache_Vshift);
             };
+#if 0
             if (x == 0) {
-                DEBUG_OT_DCHR("x=%d y=%d vx=%d vy=%d w=%d h=%d h_scale_div2=%d char='%s'", x, y, vx, vy, w, h, h_scale_div2, buf);
+#else
+            if (y == 16) {
+#endif
+                DEBUG_OT_DCHR("x=%d y=%d vx=%d vy=%d w=%d h=%d h_scale_div2=%d ttfg=%d ttbg=%d BoxedOut=%d text char='%s'", x, y, vx, vy, w, h, h_scale_div2, ttfg, ttbg, c.GetBoxedOut(), buf);
             };
             charBm.DrawText(0, cache_Vshift, buf, fg, 0, font, 0, h / ((h_scale_div2 == true) ? 2 : 1));
             osd->DrawBitmap(vx + leftFrame, vy + topFrame, charBm);
@@ -540,7 +551,7 @@ void cDisplay::DrawTextExtended(const int x, const int y, const char *text, cons
     int len_text_utf8 = Utf8StrLen(text);
     int len_text = strlen(text);
 
-    DEBUG_OT_DTXTE("called with x=%d y=%d len=%d alignment=%d ttcFg=%d ttcBg=%d text='%s' strlen(text)=%d utf8len(text)=%d", x, y, len, alignment, ttcFg, ttcBg, text, len_text, len_text_utf8);
+    DEBUG_OT_DTXT("called with x=%d y=%d len=%d alignment=%d ttcFg=%d ttcBg=%d text='%s' strlen(text)=%d utf8len(text)=%d", x, y, len, alignment, ttcFg, ttcBg, text, len_text, len_text_utf8);
 
     int fill_left = 0;
 
@@ -574,7 +585,7 @@ void cDisplay::DrawTextExtended(const int x, const int y, const char *text, cons
                     uint8_t c2 = text[j + 1];
                     enumCharsets Charset;
                     uint8_t Char = UTF8toTeletextChar(c1, c2, &Charset);
-                    DEBUG_OT_DTXTE("unicode mapped i=%d c1=%x c2=%x -> c=%02x cs=%04x", i, c1, c2, Char, Charset);
+                    DEBUG_OT_DTXT("unicode mapped i=%d c1=%x c2=%x -> c=%02x cs=%04x", i, c1, c2, Char, Charset);
                     c.SetCharset(Charset);
                     c1 = Char;
                     j++;

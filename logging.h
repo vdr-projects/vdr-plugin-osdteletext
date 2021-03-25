@@ -19,7 +19,7 @@ extern int m_debugmask;
 #define DEBUG_MASK_OT_DBFC	0x00040000	// DisplayBase Function Call
 #define DEBUG_MASK_OT_BLINK	0x00100000	// Text Blink
 #define DEBUG_MASK_OT_DCHR	0x00200000	// DrawChar
-#define DEBUG_MASK_OT_DTXTE	0x00400000	// DrawTextExtended
+#define DEBUG_MASK_OT_BOXED	0x00400000	// BoxedOut
 #define DEBUG_MASK_OT_DTXT 	0x00800000	// DrawText
 #define DEBUG_MASK_OT_CACHE	0x01000000	// Caching System
 
@@ -43,7 +43,7 @@ extern int m_debugmask;
 #define DEBUG_OT_DRPI   if (m_debugmask & DEBUG_MASK_OT_DRPI)   dsyslog_ot
 #define DEBUG_OT_FOOT   if (m_debugmask & DEBUG_MASK_OT_FOOT)   dsyslog_ot
 #define DEBUG_OT_DCHR   if (m_debugmask & DEBUG_MASK_OT_DCHR)   dsyslog_ot
-#define DEBUG_OT_DTXTE  if (m_debugmask & DEBUG_MASK_OT_DTXTE)  dsyslog_ot
+#define DEBUG_OT_BOXED  if (m_debugmask & DEBUG_MASK_OT_BOXED)  dsyslog_ot
 #define DEBUG_OT_DTXT   if (m_debugmask & DEBUG_MASK_OT_DTXT )  dsyslog_ot
 #define DEBUG_OT_CACHE  if (m_debugmask & DEBUG_MASK_OT_CACHE)  dsyslog_ot
 
