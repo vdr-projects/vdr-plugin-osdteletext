@@ -56,6 +56,12 @@ Keys:
      Jump to...:    Jumps to the page you configure.
      Switch background: Toggles background transparency between a value
                     configured in setup, fully black, and fully transparent.
+     Config:        Enter OSD configuration mode, currently supported
+                     Left,Top +/-
+                     Width,Height +/-
+                     Frame +/-
+                     Text Vertical Offset +/-
+     24-Line-Mode:  Hide button line (line 25)
 
    How to configure the key bindings:
    In the plugins setup menu, you can assign one of actions to each key.
@@ -83,6 +89,8 @@ Other Setup options:
    OSD left, OSD top:
                Adjusts the left and top edge of the OSD independent from VDR's
                settings. The valid range is 0% to 90%
+   Frame:
+               Adjust black surrounding frame sized by amount of pixel
    Text Vertical Offset:
                Adjust the vertical offset by amount of (scaled) pixels
                The valid range is -10 to 10 (and depending on selected font)
