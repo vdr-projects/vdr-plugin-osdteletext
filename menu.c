@@ -307,7 +307,7 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
 bool TeletextBrowser::ExecuteActionConfig(eTeletextActionConfig e, int delta) {
    bool changedConfig = false;
 
-#define COND_ADJ_VALUE(value, min, max) \
+#define COND_ADJ_VALUE(value, min, max, delta) \
    if (((value + delta) >= min) && ((value + delta) <= max)) { \
       value += delta; \
       changedConfig = true; \
@@ -315,19 +315,19 @@ bool TeletextBrowser::ExecuteActionConfig(eTeletextActionConfig e, int delta) {
 
    switch (configMode) {
       case Left:
-         COND_ADJ_VALUE(ttSetup.OSDleftPct, OSDleftPctMin, OSDleftPctMax);
+         COND_ADJ_VALUE(ttSetup.OSDleftPct, OSDleftPctMin, OSDleftPctMax, delta);
          break;
       case Top:
-         COND_ADJ_VALUE(ttSetup.OSDtopPct, OSDtopPctMin, OSDtopPctMax);
+         COND_ADJ_VALUE(ttSetup.OSDtopPct, OSDtopPctMin, OSDtopPctMax, delta);
          break;
       case Width:
-         COND_ADJ_VALUE(ttSetup.OSDwidthPct, OSDwidthPctMin, OSDwidthPctMax);
+         COND_ADJ_VALUE(ttSetup.OSDwidthPct, OSDwidthPctMin, OSDwidthPctMax, delta);
          break;
       case Height:
-         COND_ADJ_VALUE(ttSetup.OSDheightPct, OSDheightPctMin, OSDheightPctMax);
+         COND_ADJ_VALUE(ttSetup.OSDheightPct, OSDheightPctMin, OSDheightPctMax, delta);
          break;
       case Frame:
-         COND_ADJ_VALUE(ttSetup.OSDframePct, OSDframePctMin, OSDframePctMax);
+         COND_ADJ_VALUE(ttSetup.OSDframePix, OSDframePixMin, OSDframePixMax, delta);
          break;
       default:
          // nothing todo
@@ -800,30 +800,33 @@ void TeletextBrowser::UpdateFooter() {
    } else {
       snprintf(textRed   , sizeof(textRed)   , "%s", config_modes[configMode * 2]    ); // <mode>-
       snprintf(textGreen , sizeof(textGreen) , "%s", config_modes[configMode * 2 + 1]); // <mode>+
-      int value = -1;
+      int valuePct = -1;
+      int valuePix = -1;
       switch (configMode) {
          case Left:
-            value = ttSetup.OSDleftPct;
+            valuePct = ttSetup.OSDleftPct;
             break;
          case Top:
-            value = ttSetup.OSDtopPct;
+            valuePct = ttSetup.OSDtopPct;
             break;
          case Width:
-            value = ttSetup.OSDwidthPct;
+            valuePct = ttSetup.OSDwidthPct;
             break;
          case Height:
-            value = ttSetup.OSDheightPct;
+            valuePct = ttSetup.OSDheightPct;
             break;
          case Frame:
-            value = ttSetup.OSDframePct;
+            valuePix = ttSetup.OSDframePix;
             break;
          default:
             break;
       };
-      if (value == -1) {
+      if ((valuePct < 0) && (valuePix < 0)) {
          snprintf(textYellow, sizeof(textYellow), "%s", "ERROR"); // should not happen
-      } else {
-         snprintf(textYellow, sizeof(textYellow), "%d %%", value);
+      } else if (valuePct >= 0) {
+         snprintf(textYellow, sizeof(textYellow), "%d %%", valuePct);
+      } else if (valuePix >= 0) {
+         snprintf(textYellow, sizeof(textYellow), "%d Px", valuePix);
       };
       snprintf(textBlue  , sizeof(textBlue)  , "%s", st_modes[Config]); // option itself
    };
