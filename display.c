@@ -45,72 +45,84 @@ void Display::SetMode(Display::Mode NewMode) {
     OSDwidth = (cOsd::OsdWidth() * ttSetup.OSDwidthPct) / 100;
     OSDheight = (cOsd::OsdHeight() * ttSetup.OSDheightPct) / 100;
 
-    // align with hChars/vLines in case of less than 100 %
-    if ((ttSetup.OSDwidthPct  < 100) && ((OSDwidth  % hChars) > 0)) OSDwidth  = (OSDwidth  / hChars) * hChars;
-    if ((ttSetup.OSDheightPct < 100) && ((OSDheight % vLines) > 0)) OSDheight = (OSDheight / vLines) * vLines;
+    // align with hChars/vLines
+    if ((OSDwidth  % hChars) > 0) OSDwidth  = (OSDwidth  / hChars) * hChars;
+    if ((OSDheight % vLines) > 0) OSDheight = (OSDheight / vLines) * vLines;
 
-    if ((ttSetup.OSDwidthPct < 100) && (ttSetup.OSDleftPct > 0)) {
-        // check offset not exceeding maximum possible
-        if (ttSetup.OSDwidthPct + ttSetup.OSDleftPct > 100) {
-            // shift to maximum
-            x0 += cOsd::OsdWidth() - OSDwidth;
-        } else {
-            // add configured offset
-            x0 += (cOsd::OsdWidth() * ttSetup.OSDleftPct) / 100;
+    if (ttSetup.OSDwidthPct < 100) {
+        if (ttSetup.OSDleftPct > 0) {
+            // check offset not exceeding maximum possible
+            if (ttSetup.OSDwidthPct + ttSetup.OSDleftPct > 100) {
+                // shift to maximum
+                x0 += cOsd::OsdWidth() - OSDwidth;
+            } else {
+                // add configured offset
+                x0 += (cOsd::OsdWidth() * ttSetup.OSDleftPct) / 100;
 
-            // add 50% of alignment offset to center proper
-            x0 += ((cOsd::OsdWidth() * ttSetup.OSDwidthPct) / 100 - OSDwidth) / 2;
+                // add 50% of alignment offset to center proper
+                x0 += ((cOsd::OsdWidth() * ttSetup.OSDwidthPct) / 100 - OSDwidth) / 2;
+            };
         };
+
+        if (ttSetup.OSDframePix > 0) {
+            OSDleftFrame = ttSetup.OSDframePix;
+            OSDrightFrame = ttSetup.OSDframePix;
+
+            x0 -= OSDleftFrame;
+            if (x0 < 0) {
+                OSDleftFrame += x0;
+                x0 = 0;
+            };
+            if (OSDleftFrame < 0) OSDleftFrame = 0;
+
+            if (x0 + OSDwidth + OSDrightFrame + OSDleftFrame > cOsd::OsdWidth()) {
+                // limit right frame instead drawing out-of-area
+                OSDrightFrame = cOsd::OsdWidth() - OSDwidth - x0 - OSDleftFrame;
+                if (OSDrightFrame < 0) OSDrightFrame = 0;
+            };
+        };
+    } else {
+        // horizontal center with black frame left/right
+        OSDleftFrame = (cOsd::OsdWidth() - OSDwidth) / 2;
+        OSDrightFrame = cOsd::OsdWidth() - OSDwidth - OSDleftFrame;
     };
+ 
+    if (ttSetup.OSDheightPct < 100) {
+        if (ttSetup.OSDtopPct > 0) {
+            // check offset not exceeding maximum possible
+            if (ttSetup.OSDheightPct + ttSetup.OSDtopPct > 100) {
+                // shift to maximum
+                y0 += cOsd::OsdHeight() - OSDheight;
+            } else {
+                // add configured offset
+                y0 += cOsd::OsdHeight() * ttSetup.OSDtopPct / 100;
 
-    if ((ttSetup.OSDtopPct < 100) && (ttSetup.OSDtopPct > 0)) {
-        // check offset not exceeding maximum possible
-        if (ttSetup.OSDheightPct + ttSetup.OSDtopPct > 100) {
-            // shift to maximum
-            y0 += cOsd::OsdHeight() - OSDheight;
-        } else {
-            // add configured offset
-            y0 += cOsd::OsdHeight() * ttSetup.OSDtopPct / 100;
-
-            // add 50% of alignment offset to center proper
-            y0 += ((cOsd::OsdHeight() * ttSetup.OSDheightPct) / 100 - OSDheight) / 2;
+                // add 50% of alignment offset to center proper
+                y0 += ((cOsd::OsdHeight() * ttSetup.OSDheightPct) / 100 - OSDheight) / 2;
+            };
         };
-    };
 
-    if ((ttSetup.OSDwidthPct < 100) && (ttSetup.OSDframePix > 0)) {
-        OSDleftFrame = ttSetup.OSDframePix;
-        OSDrightFrame = ttSetup.OSDframePix;
+        if (ttSetup.OSDframePix > 0) {
+            OSDtopFrame = ttSetup.OSDframePix;
+            OSDbottomFrame = ttSetup.OSDframePix;
 
-        x0 -= OSDleftFrame;
-        if (x0 < 0) {
-            OSDleftFrame += x0;
-            x0 = 0;
+            y0 -= OSDtopFrame;
+            if (y0 < 0) {
+                OSDtopFrame += y0;
+                y0 = 0;
+            };
+            if (OSDtopFrame < 0) OSDtopFrame = 0;
+
+            if (y0 + OSDheight + OSDtopFrame + OSDbottomFrame > cOsd::OsdHeight()) {
+                // limit bottom frame instead drawing out-of-area
+                OSDbottomFrame = cOsd::OsdHeight() - OSDheight - y0 - OSDtopFrame;
+                if (OSDbottomFrame < 0) OSDbottomFrame = 0;
+            };
         };
-        if (OSDleftFrame < 0) OSDleftFrame = 0;
-
-        if (x0 + OSDwidth + OSDrightFrame + OSDleftFrame > cOsd::OsdWidth()) {
-            // limit right frame instead drawing out-of-area
-            OSDrightFrame = cOsd::OsdWidth() - OSDwidth - x0 - OSDleftFrame;
-            if (OSDrightFrame < 0) OSDrightFrame = 0;
-        };
-    };
-
-    if ((ttSetup.OSDheightPct < 100) && (ttSetup.OSDframePix > 0)) {
-        OSDtopFrame = ttSetup.OSDframePix;
-        OSDbottomFrame = ttSetup.OSDframePix;
-
-        y0 -= OSDtopFrame;
-        if (y0 < 0) {
-            OSDtopFrame += y0;
-            y0 = 0;
-        };
-        if (OSDtopFrame < 0) OSDtopFrame = 0;
-
-        if (y0 + OSDheight + OSDtopFrame + OSDbottomFrame > cOsd::OsdHeight()) {
-            // limit bottom frame instead drawing out-of-area
-            OSDbottomFrame = cOsd::OsdHeight() - OSDheight - y0 - OSDtopFrame;
-            if (OSDbottomFrame < 0) OSDbottomFrame = 0;
-        };
+    } else {
+        // vertical center with black frame top/bottom
+        OSDtopFrame = (cOsd::OsdHeight() - OSDheight) / 2;
+        OSDbottomFrame = cOsd::OsdHeight() - OSDheight - OSDtopFrame;
     };
 
     dsyslog("osdteletext: OSD area calculated by percent values: OL=%d OT=%d OW=%d OH=%d OwP=%d%% OhP=%d%% OlP=%d%% OtP=%d%% OfPx=%d lineMode24=%d => x0=%d y0=%d Ow=%d Oh=%d OlF=%d OrF=%d OtF=%d ObF=%d"
