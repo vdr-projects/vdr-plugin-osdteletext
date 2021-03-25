@@ -30,8 +30,6 @@ void Display::SetMode(Display::Mode NewMode) {
     int vLines = (ttSetup.lineMode24 == true) ? 24 : 25;
     int OSDwidth;
     int OSDheight;
-    int OSDwidthFrame  = 0;
-    int OSDheightFrame = 0;
     int OSDleftFrame  = 0;
     int OSDrightFrame = 0;
     int OSDtopFrame  = 0;
@@ -79,10 +77,9 @@ void Display::SetMode(Display::Mode NewMode) {
         };
     };
 
-    if ((ttSetup.OSDwidthPct < 100) && (ttSetup.OSDframePct > 0)) {
-        OSDwidthFrame = cOsd::OsdWidth() * ttSetup.OSDframePct;
-        OSDleftFrame = OSDwidthFrame;
-        OSDrightFrame = OSDwidthFrame;
+    if ((ttSetup.OSDwidthPct < 100) && (ttSetup.OSDframePix > 0)) {
+        OSDleftFrame = ttSetup.OSDframePix;
+        OSDrightFrame = ttSetup.OSDframePix;
 
         x0 -= OSDleftFrame;
         if (x0 < 0) {
@@ -98,10 +95,9 @@ void Display::SetMode(Display::Mode NewMode) {
         };
     };
 
-    if ((ttSetup.OSDheightPct < 100) && (ttSetup.OSDframePct > 0)) {
-        OSDheightFrame = cOsd::OsdHeight() * ttSetup.OSDframePct;
-        OSDtopFrame = OSDheightFrame;
-        OSDbottomFrame = OSDheightFrame;
+    if ((ttSetup.OSDheightPct < 100) && (ttSetup.OSDframePix > 0)) {
+        OSDtopFrame = ttSetup.OSDframePix;
+        OSDbottomFrame = ttSetup.OSDframePix;
 
         y0 -= OSDtopFrame;
         if (y0 < 0) {
@@ -117,14 +113,13 @@ void Display::SetMode(Display::Mode NewMode) {
         };
     };
 
-    dsyslog("osdteletext: OSD area calculated by percent values: OL=%d OT=%d OW=%d OH=%d OwP=%d%% OhP=%d%% OlP=%d%% OtP=%d%% OfP=%.1f%% lineMode24=%d => x0=%d y0=%d Ow=%d Oh=%d OwF=%d OhF=%d OlF=%d OrF=%d OtF=%d ObF=%d"
+    dsyslog("osdteletext: OSD area calculated by percent values: OL=%d OT=%d OW=%d OH=%d OwP=%d%% OhP=%d%% OlP=%d%% OtP=%d%% OfPx=%d lineMode24=%d => x0=%d y0=%d Ow=%d Oh=%d OlF=%d OrF=%d OtF=%d ObF=%d"
         , cOsd::OsdLeft(), cOsd::OsdTop(), cOsd::OsdWidth(), cOsd::OsdHeight()
         , ttSetup.OSDwidthPct, ttSetup.OSDheightPct, ttSetup.OSDleftPct, ttSetup.OSDtopPct
-        , ttSetup.OSDframePct * 100
+        , ttSetup.OSDframePix
         , ttSetup.lineMode24
         , x0, y0
         , OSDwidth, OSDheight
-        , OSDwidthFrame, OSDheightFrame
         , OSDleftFrame, OSDrightFrame
         , OSDtopFrame, OSDbottomFrame
     );
