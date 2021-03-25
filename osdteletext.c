@@ -213,7 +213,7 @@ bool cPluginTeletextosd::Start(void)
    SETUP_MIN_MAX_CHECK(ttSetup.OSDleftPct  , OSDleftPctMin  , OSDleftPctMax  )
    SETUP_MIN_MAX_CHECK(ttSetup.OSDtopPct   , OSDtopPctMin   , OSDtopPctMax   )
    SETUP_MIN_MAX_CHECK(ttSetup.OSDframePix , OSDframePixMin , OSDframePixMax )
-   if (abs(ttSetup.txtVoffset) > 10) ttSetup.txtVoffset = 0; // failsafe
+   SETUP_MIN_MAX_CHECK(ttSetup.txtVoffset  , txtVoffsetMin  , txtVoffsetMax  )
 
    return true;
 }
@@ -226,6 +226,7 @@ void cPluginTeletextosd::Stop(void)
    SetupStore("OSDtopPct", ttSetup.OSDtopPct);
    SetupStore("OSDleftPct", ttSetup.OSDleftPct);
    SetupStore("OSDframePix", ttSetup.OSDframePix);
+   SetupStore("txtVoffset", ttSetup.txtVoffset);
    SetupStore("lineMode24", ttSetup.lineMode24);
 
    DELETENULL(txtStatus);
@@ -451,7 +452,7 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    Add(new cMenuEditStraItem(tr("Text Font"), &temp.txtFontIndex, temp.txtFontNames.Size(), &temp.txtFontNames[0]));
    Add(new cMenuEditStraItem(tr("G0 code block"), &temp.txtG0Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
    Add(new cMenuEditStraItem(tr("G2 code block"), &temp.txtG2Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
-   Add(new cMenuEditIntItem(tr("Text Vertical Offset"), &temp.txtVoffset, -10, 10));
+   Add(new cMenuEditIntItem(tr("Text Vertical Offset"), &temp.txtVoffset, txtVoffsetMin, txtVoffsetMax));
    Add(new cMenuEditBoolItem(tr("16-Color Mode"), &temp.colorMode4bpp));
    Add(new cMenuEditBoolItem(tr("24-Line Mode"), &temp.lineMode24));
 

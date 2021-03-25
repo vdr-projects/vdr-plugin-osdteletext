@@ -24,6 +24,8 @@
 #define OSDheightPctMax  100
 #define OSDframePixMin     0
 #define OSDframePixMax   100
+#define txtVoffsetMin    -10
+#define txtVoffsetMax    +10
 
 //There are two places to be kept in sync with these enums:
 //TeletextBrowser::TranslateKey and 
@@ -37,7 +39,14 @@ enum eTeletextActionConfig {
    Width,
    Height,
    Frame,
+   Voffset,
    NotActive,
+};
+
+enum eTeletextActionValueType {
+   Pct,
+   Pix,
+   None,
 };
 
 static const char *st_modes[] =
@@ -64,6 +73,8 @@ static const char *config_modes[] =
    tr("Height+"),
    tr("Frame-"),
    tr("Frame+"),
+   tr("TxVoffset-"),
+   tr("TxVoffset+"),
 };
 
 enum ActionKeys {

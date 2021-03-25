@@ -329,6 +329,9 @@ bool TeletextBrowser::ExecuteActionConfig(eTeletextActionConfig e, int delta) {
       case Frame:
          COND_ADJ_VALUE(ttSetup.OSDframePix, OSDframePixMin, OSDframePixMax, delta);
          break;
+      case Voffset:
+         COND_ADJ_VALUE(ttSetup.txtVoffset, txtVoffsetMin, txtVoffsetMax, delta);
+         break;
       default:
          // nothing todo
          break;
@@ -440,7 +443,8 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
             case Top       : configMode = Width    ; break;
             case Width     : configMode = Height   ; break;
             case Height    : configMode = Frame    ; break;
-            case Frame     : configMode = NotActive; break; // stop config mode
+            case Frame     : configMode = Voffset  ; break;
+            case Voffset   : configMode = NotActive; break; // stop config mode
          };
          ShowPage();
          break;
@@ -800,34 +804,50 @@ void TeletextBrowser::UpdateFooter() {
    } else {
       snprintf(textRed   , sizeof(textRed)   , "%s", config_modes[configMode * 2]    ); // <mode>-
       snprintf(textGreen , sizeof(textGreen) , "%s", config_modes[configMode * 2 + 1]); // <mode>+
-      int valuePct = -1;
-      int valuePix = -1;
+      int valuePct = 0;
+      int valuePix = 0;
+      eTeletextActionValueType valueType = None;
       switch (configMode) {
          case Left:
             valuePct = ttSetup.OSDleftPct;
+            valueType = Pct;
             break;
          case Top:
             valuePct = ttSetup.OSDtopPct;
+            valueType = Pct;
             break;
          case Width:
             valuePct = ttSetup.OSDwidthPct;
+            valueType = Pct;
             break;
          case Height:
             valuePct = ttSetup.OSDheightPct;
+            valueType = Pct;
             break;
          case Frame:
             valuePix = ttSetup.OSDframePix;
+            valueType = Pix;
+            break;
+         case Voffset:
+            valuePix = ttSetup.txtVoffset;
+            valueType = Pix;
             break;
          default:
             break;
       };
-      if ((valuePct < 0) && (valuePix < 0)) {
-         snprintf(textYellow, sizeof(textYellow), "%s", "ERROR"); // should not happen
-      } else if (valuePct >= 0) {
-         snprintf(textYellow, sizeof(textYellow), "%d %%", valuePct);
-      } else if (valuePix >= 0) {
-         snprintf(textYellow, sizeof(textYellow), "%d Px", valuePix);
+
+      switch(valueType) {
+         case Pct:
+            snprintf(textYellow, sizeof(textYellow), "%d %%", valuePct);
+            break;
+         case Pix:
+            snprintf(textYellow, sizeof(textYellow), "%d Px", valuePix);
+            break;
+         default:
+            snprintf(textYellow, sizeof(textYellow), "%s", "ERROR"); // should not happen
+            break;
       };
+
       snprintf(textBlue  , sizeof(textBlue)  , "%s", st_modes[Config]); // option itself
    };
    DEBUG_OT_FOOT("textRed='%s' textGreen='%s' text Yellow='%s' textBlue='%s'", textRed, textGreen, textYellow, textBlue);
