@@ -46,6 +46,7 @@ protected:
    int  PageCheckSum();
    void ShowPageNumber();
    void ExecuteAction(eTeletextAction e);
+   bool ExecuteActionConfig(eTeletextActionConfig e, int delta);
    int nextValidPageNumber(int start, Direction direction);
    char fileName[PATH_MAX];
    char page[40][24];
