@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 2.4.4\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-03-25 06:19+0100\n"
+"POT-Creation-Date: 2021-03-25 08:17+0100\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Peter Bieringer <pb@bieringer.de>\n"
 "Language-Team: German <vdr@linuxtv.org>\n"
@@ -162,3 +162,9 @@ msgstr "Rahmen-"
 
 msgid "Frame+"
 msgstr "Rahmen+"
+
+msgid "TxVoffset-"
+msgstr ""
+
+msgid "TxVoffset+"
+msgstr ""
