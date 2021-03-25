@@ -13,6 +13,17 @@
 
 #include <vdr/config.h>
 
+// min/max for setup
+#define OSDleftPctMin      0
+#define OSDleftPctMax     90
+#define OSDtopPctMin       0
+#define OSDtopPctMax      90
+#define OSDwidthPctMin    10
+#define OSDwidthPctMax   100
+#define OSDheightPctMin   10
+#define OSDheightPctMax  100
+#define OSDframePixMin     0
+#define OSDframePixMax   100
 
 //There are two places to be kept in sync with these enums:
 //TeletextBrowser::TranslateKey and 
@@ -56,6 +67,7 @@ public:
    int OSDwidthPct;
    int OSDtopPct;
    int OSDleftPct;
+   int OSDframePix;
    int inactivityTimeout;
    int HideMainMenu;
    cString txtFontName;

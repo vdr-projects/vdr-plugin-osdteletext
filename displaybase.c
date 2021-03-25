@@ -27,9 +27,10 @@ int cDisplay::realFontWidths[4] = {0};
 cDisplay::cDisplay(int width, int height)
     : Zoom(Zoom_Off), Concealed(false), Blinked(false), FlushLock(0),
       Boxed(false), Width(width), Height(height), Background(clrGray50),
-      osd(NULL), outputWidth(0), /* outputScaleX(1.0), */
-      outputHeight(0), /* outputScaleY(1.0), */
-      /* ScaleX(1), ScaleY(1), */ OffsetX(0), OffsetY(0),
+      osd(NULL),
+      outputWidth(0), outputHeight(0),
+      leftFrame(0), rightFrame(0), topFrame(0), bottomFrame(0),
+      OffsetX(0), OffsetY(0),
       MessageFont(cFont::GetFont(fontSml)), MessageX(0), MessageY(0),
       MessageW(0), MessageH(0),
       TXTFont(0), TXTDblWFont(0), TXTDblHFont(0), TXTDblHWFont(0), TXTHlfHFont(0)
@@ -211,9 +212,9 @@ void cDisplay::CleanDisplay() {
 
     DEBUG_OT_DBFC("called: outputWidth=%d outputHeight=%d boxed=%d color=0x%08x bgc=%d", outputWidth, outputHeight, Boxed, GetColorRGB(bgc,0), bgc);
     if (m_debugmask & DEBUG_MASK_OT_ACT_OSD_BACK_RED)
-        osd->DrawRectangle(0, 0, outputWidth - 1, outputHeight - 1, GetColorRGB(ttcRed,0));
+        osd->DrawRectangle(0, 0, outputWidth - 1 + leftFrame + rightFrame, outputHeight - 1 + topFrame + bottomFrame, GetColorRGB(ttcRed,0));
     else
-        osd->DrawRectangle(0, 0, outputWidth - 1, outputHeight - 1, GetColorRGB(bgc,0));
+        osd->DrawRectangle(0, 0, outputWidth - 1 + leftFrame + rightFrame, outputHeight - 1 + topFrame + bottomFrame, GetColorRGB(bgc,0));
 
     // repaint all
     Dirty=true;
@@ -461,7 +462,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
                 virtY++;
             }
 
-            osd->DrawBitmap(vx, vy, charBm);
+            osd->DrawBitmap(vx + leftFrame, vy + topFrame, charBm);
         } else {
 #if 0
             // hi level osd devices (e.g. rpi and softhddevice openglosd currently do not support monospaced fonts with arbitrary width
@@ -492,7 +493,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
                 DEBUG_OT_DCHR("x=%d y=%d vx=%d vy=%d w=%d h=%d h_scale_div2=%d char='%s'", x, y, vx, vy, w, h, h_scale_div2, buf);
             };
             charBm.DrawText(0, cache_Vshift, buf, fg, 0, font, 0, h / ((h_scale_div2 == true) ? 2 : 1));
-            osd->DrawBitmap(vx, vy, charBm);
+            osd->DrawBitmap(vx + leftFrame, vy + topFrame, charBm);
 #endif
         }
     }

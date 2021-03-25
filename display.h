@@ -89,12 +89,15 @@ class cDisplay32BPP : public cDisplay {
     // No need for color mapping
     // Uses cPixmap instead of cBitmap
 public:
-    cDisplay32BPP(int x0, int y0, int width, int height);
+    cDisplay32BPP(int x0, int y0, int width, int height, int leftFrame, int rightFrame, int topFrame, int bottomFrame);
 };
 
 
 
 class cDisplay32BPPHalf : public cDisplay {
+    int leftFrame, rightFrame, topFrame, bottomFrame;
+    // frame border
+
     // 32BPP (true color) OSD display with auto size reduction on memory constrains
     // Automatically tries to make visible area as big as possible
     // No need for color mapping
@@ -107,7 +110,7 @@ class cDisplay32BPPHalf : public cDisplay {
     // Needed to re-initialize osd
 
 public:
-    cDisplay32BPPHalf(int x0, int y0, int width, int height, bool upper, bool top);
+    cDisplay32BPPHalf(int x0, int y0, int width, int height, int leftFrame, int rightFrame, int topFrame, int bottomFrame, bool upper, bool top);
     bool GetUpper() { return Upper; }
     void SetUpper(bool upper)
         { if (Upper!=upper) { Upper=upper; InitOSD(); } }

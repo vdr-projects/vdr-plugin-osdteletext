@@ -65,12 +65,12 @@ protected:
     // The osd object. If creation fails, may be NULL
 
     int outputWidth;
-    // double outputScaleX; // EOL: no longer used
     int outputHeight;
-    // double outputScaleY; // EOL: no longer used
     // for 32bpp true color, If creation fails, may be NULL
 
-    // int ScaleX,ScaleY; // EOL: no longer used
+    int leftFrame, rightFrame, topFrame, bottomFrame;
+    // frame border
+
     int OffsetX,OffsetY;
     // Virtual coordinate system, see InitScaler
 
@@ -116,6 +116,10 @@ public:
 
     void setOutputWidth(int w) { outputWidth = w; };
     void setOutputHeight(int h) { outputHeight = h; };
+    void setLeftFrame  (int lF) { leftFrame = lF;   };
+    void setRightFrame (int rF) { rightFrame = rF;  };
+    void setTopFrame   (int tF) { topFrame = tF;    };
+    void setBottomFrame(int bF) { bottomFrame = bF; };
 
     static std::string GFXFontFootprint;
     static std::string TXTFontFootprint;
