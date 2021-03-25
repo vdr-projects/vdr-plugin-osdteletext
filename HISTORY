@@ -1,5 +1,8 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
+2022-03-25:
+- [pbiering] fix/enable toggle support for concealed chars and hint after page number if concealed chars exist, do not display concealed chars by default
+
 2022-03-25: version 1.1.0
 - [pbiering] fix related to boxed chars in case page is not boxed itself
 

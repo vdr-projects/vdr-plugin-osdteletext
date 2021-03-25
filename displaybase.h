@@ -151,6 +151,8 @@ public:
     bool SetConceal(bool conceal);
     // Hidden text. Set to true to see hidden text.
     // Returns true if there are concealed characters.
+    bool HasConceal();
+    // Returns true if there are concealed characters.
 
     enumZoom GetZoom() { return Zoom; }
     void SetZoom(enumZoom zoom);

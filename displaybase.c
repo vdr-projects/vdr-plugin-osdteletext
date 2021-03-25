@@ -25,7 +25,7 @@ std::string cDisplay::TXTFontFootprint = "";
 int cDisplay::realFontWidths[4] = {0};
 
 cDisplay::cDisplay(int width, int height)
-    : Zoom(Zoom_Off), Concealed(false), Blinked(false), FlushLock(0),
+    : Zoom(Zoom_Off), Concealed(true), Blinked(false), FlushLock(0),
       Boxed(false), Width(width), Height(height), Background(clrGray50),
       osd(NULL),
       outputWidth(0), outputHeight(0),
@@ -179,6 +179,22 @@ bool cDisplay::SetConceal(bool conceal) {
     Flush();
 
     return Change;
+}
+
+bool cDisplay::HasConceal() {
+    int x,y;
+    bool HasConceal=false;
+
+    // check all concealed chars
+    for (y=0;y<25;y++) {
+        for (x=0;x<40;x++) {
+            if (Page[x][y].GetConceal()) {
+                HasConceal=true;
+            }
+        }
+    }
+
+    return HasConceal;
 }
 
 void cDisplay::SetZoom(enumZoom zoom) {
@@ -499,9 +515,9 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
 #if 0
             if (x == 0) {
 #else
-            if (y == 16) {
+            if (y == 9) {
 #endif
-                DEBUG_OT_DCHR("x=%d y=%d vx=%d vy=%d w=%d h=%d h_scale_div2=%d ttfg=%d ttbg=%d BoxedOut=%d text char='%s'", x, y, vx, vy, w, h, h_scale_div2, ttfg, ttbg, c.GetBoxedOut(), buf);
+                DEBUG_OT_DCHR("x=%d y=%d vx=%d vy=%d w=%d h=%d h_scale_div2=%d ttfg=%d ttbg=%d BoxedOut=%d text charset=%04x char='%s'", x, y, vx, vy, w, h, h_scale_div2, ttfg, ttbg, c.GetBoxedOut(), charset, buf);
             };
             charBm.DrawText(0, cache_Vshift, buf, fg, 0, font, 0, h / ((h_scale_div2 == true) ? 2 : 1));
             osd->DrawBitmap(vx + leftFrame, vy + topFrame, charBm);
@@ -632,12 +648,13 @@ void cDisplay::DrawText(int x, int y, const char *text, int len) {
 void cDisplay::DrawPageId(const char *text) {
     // Draw Page ID string to OSD
     static char text_last[9] = ""; // remember
-    DEBUG_OT_DRPI("called with text='%s' text_last='%s' Boxed=%d", text, text_last, Boxed);
+    cTeletextChar c;
+
+    DEBUG_OT_DRPI("called with text='%s' text_last='%s' Boxed=%d HasConceal=%d GetConceal=%d", text, text_last, Boxed, HasConceal(), GetConceal());
 
     if (Boxed && (strcmp(text, text_last) == 0)) {
         // don't draw PageId a 2nd time on boxed pages
         for (int i = 0; i < 8; i++) {
-            cTeletextChar c;
             c.SetFGColor(ttcTransparent);
             c.SetBGColor(ttcTransparent);
             c.SetChar(0);
@@ -648,6 +665,19 @@ void cDisplay::DrawPageId(const char *text) {
 
     DrawText(0,0,text,8);
     strncpy(text_last, text, sizeof(text_last) - 1);
+
+    if (HasConceal()) {
+        c.SetBGColor(ttcBlack);
+        if (GetConceal()) {
+            c.SetFGColor(ttcYellow);
+            c.SetChar('?');
+        } else {
+            c.SetFGColor(ttcGreen);
+            c.SetChar('!');
+        };
+        DEBUG_OT_DRPI("trigger DrawChar for Conceiled hint ttfg=%x ttbg=%x", c.GetFGColor(), c.GetBGColor());
+        SetChar(6, 0, c);
+    };
 }
 
 void cDisplay::DrawFooter(const char *textRed, const char *textGreen, const char* textYellow, const char *textBlue) {

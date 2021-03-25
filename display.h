@@ -51,7 +51,9 @@ namespace Display {
     inline bool GetConceal()
         { if (display) return display->GetConceal(); else return false; }
     inline bool SetConceal(bool conceal)
-        { if (display) display->SetConceal(conceal); else return false; }
+        { if (display) return display->SetConceal(conceal); else return false; }
+    inline bool HasConceal()
+        { if (display) return display->HasConceal(); else return false; }
     inline cDisplay::enumZoom GetZoom()
         { if (display) return display->GetZoom(); else return cDisplay::Zoom_Off; }
     inline void SetZoom(cDisplay::enumZoom zoom)
