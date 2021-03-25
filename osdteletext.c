@@ -204,14 +204,16 @@ bool cPluginTeletextosd::Start(void)
    initTexts();
    if (startReceiver)
       txtStatus=new cTxtStatus(storeTopText, storage);
-   if (ttSetup.OSDheightPct<10)  ttSetup.OSDheightPct=10;
-   if (ttSetup.OSDwidthPct<10)   ttSetup.OSDwidthPct=10;
-   if (ttSetup.OSDtopPct  > 90) ttSetup.OSDtopPct  = 0; // failsafe
-   if (ttSetup.OSDleftPct > 90) ttSetup.OSDleftPct = 0; // failsafe
-   if (ttSetup.OSDtopPct  <  0) ttSetup.OSDtopPct  = 0; // failsafe
-   if (ttSetup.OSDleftPct <  0) ttSetup.OSDleftPct = 0; // failsafe
-   if (ttSetup.OSDframePct < 0) ttSetup.OSDframePct = 0; // failsafe
-   if (abs(ttSetup.txtVoffset) > 10) ttSetup.txtVoffset = 0; // failsafe
+#define SETUP_MIN_MAX_CHECK(value, min, max) \
+   if (value < min) value = min; \
+   if (value > max) value = max;
+
+   SETUP_MIN_MAX_CHECK(ttSetup.OSDwidthPct , OSDwidthPctMin , OSDwidthPctMax )
+   SETUP_MIN_MAX_CHECK(ttSetup.OSDheightPct, OSDheightPctMin, OSDheightPctMax)
+   SETUP_MIN_MAX_CHECK(ttSetup.OSDleftPct  , OSDleftPctMin  , OSDleftPctMax  )
+   SETUP_MIN_MAX_CHECK(ttSetup.OSDtopPct   , OSDtopPctMin   , OSDtopPctMax   )
+   SETUP_MIN_MAX_CHECK(ttSetup.OSDframePix , OSDframePixMin , OSDframePixMax )
+   SETUP_MIN_MAX_CHECK(ttSetup.txtVoffset  , txtVoffsetMin  , txtVoffsetMax  )
 
    return true;
 }
@@ -223,7 +225,8 @@ void cPluginTeletextosd::Stop(void)
    SetupStore("OSDwidthPct", ttSetup.OSDwidthPct);
    SetupStore("OSDtopPct", ttSetup.OSDtopPct);
    SetupStore("OSDleftPct", ttSetup.OSDleftPct);
-   SetupStore("OSDframePct", ttSetup.OSDframePct);
+   SetupStore("OSDframePix", ttSetup.OSDframePix);
+   SetupStore("txtVoffset", ttSetup.txtVoffset);
    SetupStore("lineMode24", ttSetup.lineMode24);
 
    DELETENULL(txtStatus);
@@ -291,7 +294,7 @@ bool cPluginTeletextosd::SetupParse(const char *Name, const char *Value)
   else if (!strcasecmp(Name, "OSDwidthPct")) ttSetup.OSDwidthPct=atoi(Value);
   else if (!strcasecmp(Name, "OSDtopPct")) ttSetup.OSDtopPct=atoi(Value);
   else if (!strcasecmp(Name, "OSDleftPct")) ttSetup.OSDleftPct=atoi(Value);
-  else if (!strcasecmp(Name, "OSDframePct")) ttSetup.OSDframePct=atoi(Value);
+  else if (!strcasecmp(Name, "OSDframePix")) ttSetup.OSDframePix=atoi(Value);
   else if (!strcasecmp(Name, "inactivityTimeout")) /*ttSetup.inactivityTimeout=atoi(Value)*/;
   else if (!strcasecmp(Name, "HideMainMenu")) ttSetup.HideMainMenu=atoi(Value);
   else if (!strcasecmp(Name, "txtFontName")) ttSetup.txtFontName=strdup(Value);
@@ -308,6 +311,7 @@ bool cPluginTeletextosd::SetupParse(const char *Name, const char *Value)
   else if (!strcasecmp(Name, "OSDwidth"   )) { DSYSLOG_IGNORE_OPTION } // < 1.0.0
   else if (!strcasecmp(Name, "OSDhcentPct")) { DSYSLOG_IGNORE_OPTION } // 1.0.0 - 1.0.4
   else if (!strcasecmp(Name, "OSDvcentPct")) { DSYSLOG_IGNORE_OPTION } // 1.0.0 - 1.0.4
+  else if (!strcasecmp(Name, "OSDframePct")) { DSYSLOG_IGNORE_OPTION } // > 1.0.6 && < 1.0.7
   else {
      for (int i=0;i<LastActionKey;i++) {
         if (!strcasecmp(Name, cTeletextSetupPage::actionKeyNames[i].internalName)) {
@@ -348,7 +352,7 @@ void cTeletextSetupPage::Store(void) {
    ttSetup.OSDwidthPct=temp.OSDwidthPct;
    ttSetup.OSDtopPct=temp.OSDtopPct;
    ttSetup.OSDleftPct=temp.OSDleftPct;
-   ttSetup.OSDframePct=temp.OSDframePct;
+   ttSetup.OSDframePix=temp.OSDframePix;
    ttSetup.HideMainMenu=temp.HideMainMenu;
    ttSetup.txtFontName=temp.txtFontNames[temp.txtFontIndex];
    ttSetup.txtG0Block=temp.txtG0Block;
@@ -370,7 +374,7 @@ void cTeletextSetupPage::Store(void) {
    SetupStore("OSDwidthPct", ttSetup.OSDwidthPct);
    SetupStore("OSDtopPct", ttSetup.OSDtopPct);
    SetupStore("OSDleftPct", ttSetup.OSDleftPct);
-   SetupStore("OSDframePct", ttSetup.OSDframePct);
+   SetupStore("OSDframePix", ttSetup.OSDframePix);
    SetupStore("HideMainMenu", ttSetup.HideMainMenu);
    SetupStore("txtFontName", ttSetup.txtFontName);
    SetupStore("txtG0Block", ttSetup.txtG0Block);
@@ -416,7 +420,7 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    temp.OSDwidthPct=ttSetup.OSDwidthPct;
    temp.OSDtopPct=ttSetup.OSDtopPct;
    temp.OSDleftPct=ttSetup.OSDleftPct;
-   temp.OSDframePct=ttSetup.OSDframePct;
+   temp.OSDframePix=ttSetup.OSDframePix;
    temp.HideMainMenu=ttSetup.HideMainMenu;
    temp.txtFontName=ttSetup.txtFontName;
    temp.txtG0Block=ttSetup.txtG0Block;
@@ -443,12 +447,12 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    Add(new cMenuEditIntItem(tr("OSD top (%)"), &temp.OSDtopPct, OSDtopPctMin, OSDtopPctMax));
    Add(new cMenuEditIntItem(tr("OSD width (%)"), &temp.OSDwidthPct, OSDwidthPctMin, OSDwidthPctMax));
    Add(new cMenuEditIntItem(tr("OSD height (%)"), &temp.OSDheightPct, OSDheightPctMin, OSDheightPctMax));
-   Add(new cMenuEditIntItem(tr("OSD frame (%)"), &temp.OSDframePct, OSDframePctMin, OSDframePctMax));
+   Add(new cMenuEditIntItem(tr("OSD frame pixel"), &temp.OSDframePix, OSDframePixMin, OSDframePixMax));
    Add(new cMenuEditBoolItem(tr("Hide mainmenu entry"), &temp.HideMainMenu));
    Add(new cMenuEditStraItem(tr("Text Font"), &temp.txtFontIndex, temp.txtFontNames.Size(), &temp.txtFontNames[0]));
    Add(new cMenuEditStraItem(tr("G0 code block"), &temp.txtG0Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
    Add(new cMenuEditStraItem(tr("G2 code block"), &temp.txtG2Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
-   Add(new cMenuEditIntItem(tr("Text Vertical Offset"), &temp.txtVoffset, -10, 10));
+   Add(new cMenuEditIntItem(tr("Text Vertical Offset"), &temp.txtVoffset, txtVoffsetMin, txtVoffsetMax));
    Add(new cMenuEditBoolItem(tr("16-Color Mode"), &temp.colorMode4bpp));
    Add(new cMenuEditBoolItem(tr("24-Line Mode"), &temp.lineMode24));
 

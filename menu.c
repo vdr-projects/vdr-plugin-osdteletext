@@ -307,7 +307,7 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
 bool TeletextBrowser::ExecuteActionConfig(eTeletextActionConfig e, int delta) {
    bool changedConfig = false;
 
-#define COND_ADJ_VALUE(value, min, max) \
+#define COND_ADJ_VALUE(value, min, max, delta) \
    if (((value + delta) >= min) && ((value + delta) <= max)) { \
       value += delta; \
       changedConfig = true; \
@@ -315,19 +315,22 @@ bool TeletextBrowser::ExecuteActionConfig(eTeletextActionConfig e, int delta) {
 
    switch (configMode) {
       case Left:
-         COND_ADJ_VALUE(ttSetup.OSDleftPct, OSDleftPctMin, OSDleftPctMax);
+         COND_ADJ_VALUE(ttSetup.OSDleftPct, OSDleftPctMin, OSDleftPctMax, delta);
          break;
       case Top:
-         COND_ADJ_VALUE(ttSetup.OSDtopPct, OSDtopPctMin, OSDtopPctMax);
+         COND_ADJ_VALUE(ttSetup.OSDtopPct, OSDtopPctMin, OSDtopPctMax, delta);
          break;
       case Width:
-         COND_ADJ_VALUE(ttSetup.OSDwidthPct, OSDwidthPctMin, OSDwidthPctMax);
+         COND_ADJ_VALUE(ttSetup.OSDwidthPct, OSDwidthPctMin, OSDwidthPctMax, delta);
          break;
       case Height:
-         COND_ADJ_VALUE(ttSetup.OSDheightPct, OSDheightPctMin, OSDheightPctMax);
+         COND_ADJ_VALUE(ttSetup.OSDheightPct, OSDheightPctMin, OSDheightPctMax, delta);
          break;
       case Frame:
-         COND_ADJ_VALUE(ttSetup.OSDframePct, OSDframePctMin, OSDframePctMax);
+         COND_ADJ_VALUE(ttSetup.OSDframePix, OSDframePixMin, OSDframePixMax, delta);
+         break;
+      case Voffset:
+         COND_ADJ_VALUE(ttSetup.txtVoffset, txtVoffsetMin, txtVoffsetMax, delta);
          break;
       default:
          // nothing todo
@@ -440,7 +443,8 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
             case Top       : configMode = Width    ; break;
             case Width     : configMode = Height   ; break;
             case Height    : configMode = Frame    ; break;
-            case Frame     : configMode = NotActive; break; // stop config mode
+            case Frame     : configMode = Voffset  ; break;
+            case Voffset   : configMode = NotActive; break; // stop config mode
          };
          ShowPage();
          break;
@@ -800,31 +804,50 @@ void TeletextBrowser::UpdateFooter() {
    } else {
       snprintf(textRed   , sizeof(textRed)   , "%s", config_modes[configMode * 2]    ); // <mode>-
       snprintf(textGreen , sizeof(textGreen) , "%s", config_modes[configMode * 2 + 1]); // <mode>+
-      int value = -1;
+      int valuePct = 0;
+      int valuePix = 0;
+      eTeletextActionValueType valueType = None;
       switch (configMode) {
          case Left:
-            value = ttSetup.OSDleftPct;
+            valuePct = ttSetup.OSDleftPct;
+            valueType = Pct;
             break;
          case Top:
-            value = ttSetup.OSDtopPct;
+            valuePct = ttSetup.OSDtopPct;
+            valueType = Pct;
             break;
          case Width:
-            value = ttSetup.OSDwidthPct;
+            valuePct = ttSetup.OSDwidthPct;
+            valueType = Pct;
             break;
          case Height:
-            value = ttSetup.OSDheightPct;
+            valuePct = ttSetup.OSDheightPct;
+            valueType = Pct;
             break;
          case Frame:
-            value = ttSetup.OSDframePct;
+            valuePix = ttSetup.OSDframePix;
+            valueType = Pix;
+            break;
+         case Voffset:
+            valuePix = ttSetup.txtVoffset;
+            valueType = Pix;
             break;
          default:
             break;
       };
-      if (value == -1) {
-         snprintf(textYellow, sizeof(textYellow), "%s", "ERROR"); // should not happen
-      } else {
-         snprintf(textYellow, sizeof(textYellow), "%d %%", value);
+
+      switch(valueType) {
+         case Pct:
+            snprintf(textYellow, sizeof(textYellow), "%d %%", valuePct);
+            break;
+         case Pix:
+            snprintf(textYellow, sizeof(textYellow), "%d Px", valuePix);
+            break;
+         default:
+            snprintf(textYellow, sizeof(textYellow), "%s", "ERROR"); // should not happen
+            break;
       };
+
       snprintf(textBlue  , sizeof(textBlue)  , "%s", st_modes[Config]); // option itself
    };
    DEBUG_OT_FOOT("textRed='%s' textGreen='%s' text Yellow='%s' textBlue='%s'", textRed, textGreen, textYellow, textBlue);

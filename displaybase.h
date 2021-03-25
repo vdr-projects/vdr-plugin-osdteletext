@@ -116,9 +116,9 @@ public:
 
     void setOutputWidth(int w) { outputWidth = w; };
     void setOutputHeight(int h) { outputHeight = h; };
-    void setLeftFrame(int lF) { leftFrame = lF; };
-    void setRightFrame(int rF) { rightFrame = rF; };
-    void setTopFrame(int tF) { topFrame = tF; };
+    void setLeftFrame  (int lF) { leftFrame = lF;   };
+    void setRightFrame (int rF) { rightFrame = rF;  };
+    void setTopFrame   (int tF) { topFrame = tF;    };
     void setBottomFrame(int bF) { bottomFrame = bF; };
 
     static std::string GFXFontFootprint;
