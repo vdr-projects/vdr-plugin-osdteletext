@@ -591,6 +591,7 @@ void cDisplay::DrawTextExtended(const int x, const int y, const char *text, cons
 
 void cDisplay::DrawText(int x, int y, const char *text, int len) {
     // Copy text to teletext page
+    DEBUG_OT_DTXT("called with x=%d y=%d len=%d text='%s' strlen(text)=%ld", x, y, len, text, strlen(text));
 
     cTeletextChar c;
     c.SetFGColor(ttcWhite);
