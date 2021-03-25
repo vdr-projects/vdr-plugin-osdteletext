@@ -22,8 +22,8 @@
 #define OSDwidthPctMax   100
 #define OSDheightPctMin   10
 #define OSDheightPctMax  100
-#define OSDframePctMin     0
-#define OSDframePctMax     5
+#define OSDframePixMin     0
+#define OSDframePixMax   100
 
 //There are two places to be kept in sync with these enums:
 //TeletextBrowser::TranslateKey and 
@@ -92,7 +92,7 @@ public:
    int OSDwidthPct;
    int OSDtopPct;
    int OSDleftPct;
-   double OSDframePct;
+   int OSDframePix;
    int inactivityTimeout;
    int HideMainMenu;
    cString txtFontName;
