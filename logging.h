@@ -22,6 +22,7 @@ extern int m_debugmask;
 #define DEBUG_MASK_OT_BOXED	0x00400000	// BoxedOut
 #define DEBUG_MASK_OT_DTXT 	0x00800000	// DrawText
 #define DEBUG_MASK_OT_CACHE	0x01000000	// Caching System
+#define DEBUG_MASK_OT_TXTRD	0x80000000	// Text Rendering dump to stdout
 
 // special action mask
 #define DEBUG_MASK_OT_ACT_LIMIT_LINES		0x10000000	// Limit Lines (debugging for detecting pixel offset issues)

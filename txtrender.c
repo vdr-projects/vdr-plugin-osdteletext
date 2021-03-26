@@ -235,14 +235,12 @@ enum enumSizeMode {
     sizeDoubleSize
 };
 
-/*
 // Debug only: List of teletext spacing code short names
 const char *(names[0x20])={
     "AlBk","AlRd","AlGr","AlYl","AlBl","AlMg","AlCy","AlWh",
     "Flsh","Stdy","EnBx","StBx","SzNo","SzDh","SzDw","SzDs",
     "MoBk","MoRd","MoGr","MoYl","MoBl","MoMg","MoCy","MoWh",
     "Conc","GrCn","GrSp","ESC", "BkBl","StBk","HoMo","ReMo"};
-*/
 
 void cRenderPage::ReadTeletextHeader(unsigned char *Header) {
     // Format of buffer:
@@ -282,10 +280,14 @@ void cRenderPage::RenderTeletextCode(unsigned char *PageCode) {
     enumCharsets SecondG0=GetG0Charset(SecondG0CodePage);
     // Reserved for later use:
     // enumCharsets FirstG2=GetG2Charset(LocalG0CodePage);
-    
+
     for (y=0;y<24;(EmptyNextLine?y+=2:y++)) {
         // Start of line: Set start of line defaults
         
+        if (m_debugmask & DEBUG_MASK_OT_TXTRD) {
+            printf("y=%02d ", y);
+        };
+
         // Hold Mosaics mode: Remember last mosaic char/charset 
         // for next spacing code
         bool HoldMosaics=false;
@@ -334,16 +336,15 @@ void cRenderPage::RenderTeletextCode(unsigned char *PageCode) {
 
             if (y==0 && x<8) continue;
             // no displayable data here...
-            
-/*          // Debug only: Output line data and spacing codes
-            if (y==6) {
+
+            if (m_debugmask & DEBUG_MASK_OT_TXTRD) {
+                // Debug only: Output line data and spacing codes
                 if (ttc<0x20)
-                    printf("%s ",names[ttc]);
+                    printf("%s(%02x) ",names[ttc], ttc);
                 else
                     printf("%02x ",ttc);
                 if (x==39) printf("\n");
-            }
-*/          
+            };
             
             // Handle all 'Set-At' spacing codes
             switch (ttc) {
