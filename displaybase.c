@@ -515,9 +515,9 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
 #if 0
             if (x == 0) {
 #else
-            if (y == 9) {
+            if (y == 2 || y == 3) {
 #endif
-                DEBUG_OT_DCHR("x=%d y=%d vx=%d vy=%d w=%d h=%d h_scale_div2=%d ttfg=%d ttbg=%d BoxedOut=%d text charset=%04x char='%s'", x, y, vx, vy, w, h, h_scale_div2, ttfg, ttbg, c.GetBoxedOut(), charset, buf);
+                DEBUG_OT_DCHR("x=%d y=%d vx=%d vy=%d w=%d h=%d h_scale_div2=%d ttfg=%d ttbg=%d BoxedOut=%d text charset=0x%04x char='%s'", x, y, vx, vy, w, h, h_scale_div2, ttfg, ttbg, c.GetBoxedOut(), charset, buf);
             };
             charBm.DrawText(0, cache_Vshift, buf, fg, 0, font, 0, h / ((h_scale_div2 == true) ? 2 : 1));
             osd->DrawBitmap(vx + leftFrame, vy + topFrame, charBm);
