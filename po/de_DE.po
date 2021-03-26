@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 2.4.4\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-03-25 08:17+0100\n"
+"POT-Creation-Date: 2021-03-25 21:23+0100\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Peter Bieringer <pb@bieringer.de>\n"
 "Language-Team: German <vdr@linuxtv.org>\n"
@@ -129,6 +129,9 @@ msgstr "Konfiguration"
 
 msgid "24-LineMode"
 msgstr "24-ZeilenModus"
+
+msgid "Answer"
+msgstr "Antwort"
 
 msgid "Jump to..."
 msgstr "Springe zu..."

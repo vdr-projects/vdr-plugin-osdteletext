@@ -58,7 +58,7 @@ static const char *st_modes[] =
       //tr("Suspend receiving"),
       tr("Config"),
       tr("24-LineMode"),
-      tr("ToggleConceal"),
+      tr("Answer"),
       tr("Jump to..."),
 };
 
