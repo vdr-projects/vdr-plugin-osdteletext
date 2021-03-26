@@ -126,6 +126,7 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber) {
 eOSState TeletextBrowser::ProcessKey(eKeys Key) {
    cDisplay::enumZoom zoomR;
    Display::Mode modeR;
+   tColor bgcR;
    bool changedConfig = false;
 
    if (Key != kNone)
@@ -295,9 +296,11 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
    if (changedConfig) {
       zoomR = Display::GetZoom(); // remember zoom
       modeR = Display::mode; // remember mode
+      bgcR = Display::GetBackgroundColor(); // remember color
       Display::Delete();
       Display::SetMode(modeR); // apply remembered mode
       Display::SetZoom(zoomR); // apply remembered zoom
+      Display::SetBackgroundColor(bgcR); // apply remembered color
       ShowPage();
    };
 
@@ -342,6 +345,7 @@ bool TeletextBrowser::ExecuteActionConfig(eTeletextActionConfig e, int delta) {
 void TeletextBrowser::ExecuteAction(eTeletextAction e) {
    cDisplay::enumZoom zoomR;
    Display::Mode modeR;
+   tColor bgcR;
 
    switch (e) {
       case Zoom:
@@ -423,9 +427,11 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
          };
          zoomR = Display::GetZoom(); // remember zoom
          modeR = Display::mode; // remember mode
+         bgcR = Display::GetBackgroundColor(); // remember color
          Display::Delete();
          Display::SetMode(modeR); // apply remembered mode
          Display::SetZoom(zoomR); // apply remembered zoom
+         Display::SetBackgroundColor(bgcR); // apply remembered color
          ShowPage();
          break;
 
