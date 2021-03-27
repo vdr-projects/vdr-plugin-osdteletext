@@ -449,6 +449,12 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
          ShowPage();
          break;
 
+      case ToggleConceal:
+         DEBUG_OT_KEYS("key action: 'ToggleConceal' Concealed=%d -> %d", Display::GetConceal(), not(Display::GetConceal()));
+         Display::SetConceal(not(Display::GetConceal()));
+         ShowPage();
+         break;
+
       default:
          //In osdteletext.c, numbers are thought to be decimal, the setup page
          //entries will display them in this way. It is a lot easier to do the
@@ -687,6 +693,7 @@ void TeletextBrowser::ShowPage() {
 }
 
 void TeletextBrowser::ShowPageNumber() {
+   DEBUG_OT_DRPI("called with currentPage=%03x currentSubPage=%02x", currentPage, currentSubPage);
    char str[8];
    sprintf(str, "%3x-%02x", currentPage, currentSubPage);
    if (cursorPos>0) {
@@ -877,12 +884,13 @@ TeletextSetup::TeletextSetup()
    //init key bindings
    for (int i=0; i < LastActionKey; i++)
       mapKeyToAction[i]=(eTeletextAction)0;
-   mapKeyToAction[ActionKeyBlue]=Zoom;
+   mapKeyToAction[ActionKeyRed]=DarkScreen;
+   mapKeyToAction[ActionKeyGreen]=(eTeletextAction)100;
    mapKeyToAction[ActionKeyYellow]=HalfPage;
-   mapKeyToAction[ActionKeyRed]=SwitchChannel;
+   mapKeyToAction[ActionKeyBlue]=Zoom;
    mapKeyToAction[ActionKeyStop]=Config;
    mapKeyToAction[ActionKeyFastRew]=LineMode24;
-   mapKeyToAction[ActionKeyFastFwd]=DarkScreen;
+   mapKeyToAction[ActionKeyFastFwd]=ToggleConceal;
 }
 
 // vim: ts=3 sw=3 et
