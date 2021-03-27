@@ -126,7 +126,7 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber) {
 eOSState TeletextBrowser::ProcessKey(eKeys Key) {
    cDisplay::enumZoom zoomR;
    Display::Mode modeR;
-   tColor bgcR;
+   tColor bgcR, bgcSetup = ttSetup.configuredClrBackground;
    bool changedConfig = false;
 
    if (Key != kNone)
@@ -296,7 +296,11 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
    if (changedConfig) {
       zoomR = Display::GetZoom(); // remember zoom
       modeR = Display::mode; // remember mode
-      bgcR = Display::GetBackgroundColor(); // remember color
+      if (ttSetup.configuredClrBackground != bgcSetup) {
+         bgcR = ttSetup.configuredClrBackground; // color was changed during config
+      } else {
+         bgcR = Display::GetBackgroundColor(); // remember color
+      };
       Display::Delete();
       Display::SetMode(modeR, bgcR); // new with remembered color
       Display::SetZoom(zoomR); // apply remembered zoom
@@ -308,10 +312,17 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
 
 bool TeletextBrowser::ExecuteActionConfig(eTeletextActionConfig e, int delta) {
    bool changedConfig = false;
+   int BackTransVal;
 
 #define COND_ADJ_VALUE(value, min, max, delta) \
    if (((value + delta) >= min) && ((value + delta) <= max)) { \
       value += delta; \
+      changedConfig = true; \
+   } else if ((value + delta) < min) { \
+      value = min; \
+      changedConfig = true; \
+   } else if ((value + delta) > max) { \
+      value = max; \
       changedConfig = true; \
    };
 
@@ -333,6 +344,12 @@ bool TeletextBrowser::ExecuteActionConfig(eTeletextActionConfig e, int delta) {
          break;
       case Voffset:
          COND_ADJ_VALUE(ttSetup.txtVoffset, txtVoffsetMin, txtVoffsetMax, delta);
+         break;
+      case BackTrans:
+         BackTransVal = ((uint32_t) ttSetup.configuredClrBackground) >> 24;
+         DEBUG_OT_KEYS("key action: 'Config->BackTrans' BackTransVal=%d BackTransMin=%d BackTransMax=%d delta=%d", BackTransVal, BackTransMin, BackTransMax, delta * 8);
+         COND_ADJ_VALUE(BackTransVal, BackTransMin, BackTransMax, delta * 8);
+         ttSetup.configuredClrBackground = ((uint32_t) BackTransVal) << 24;
          break;
       default:
          // nothing todo
@@ -448,7 +465,8 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
             case Width     : configMode = Height   ; break;
             case Height    : configMode = Frame    ; break;
             case Frame     : configMode = Voffset  ; break;
-            case Voffset   : configMode = NotActive; break; // stop config mode
+            case Voffset   : configMode = BackTrans; break;
+            case BackTrans : configMode = NotActive; break; // stop config mode
          };
          ShowPage();
          break;
@@ -813,35 +831,38 @@ void TeletextBrowser::UpdateFooter() {
       CONVERT_ACTION_TO_TEXT(textYellow, AkYellow);
       CONVERT_ACTION_TO_TEXT(textBlue  , AkBlue  );
    } else {
-      snprintf(textRed   , sizeof(textRed)   , "%s", config_modes[configMode * 2]    ); // <mode>-
-      snprintf(textGreen , sizeof(textGreen) , "%s", config_modes[configMode * 2 + 1]); // <mode>+
-      int valuePct = 0;
-      int valuePix = 0;
+      snprintf(textRed   , sizeof(textRed)   , "%s-", config_modes[configMode]); // <mode>-
+      snprintf(textGreen , sizeof(textGreen) , "%s+", config_modes[configMode]); // <mode>+
+      int valueInt = 0;
       eTeletextActionValueType valueType = None;
       switch (configMode) {
          case Left:
-            valuePct = ttSetup.OSDleftPct;
+            valueInt = ttSetup.OSDleftPct;
             valueType = Pct;
             break;
          case Top:
-            valuePct = ttSetup.OSDtopPct;
+            valueInt = ttSetup.OSDtopPct;
             valueType = Pct;
             break;
          case Width:
-            valuePct = ttSetup.OSDwidthPct;
+            valueInt = ttSetup.OSDwidthPct;
             valueType = Pct;
             break;
          case Height:
-            valuePct = ttSetup.OSDheightPct;
+            valueInt = ttSetup.OSDheightPct;
             valueType = Pct;
             break;
          case Frame:
-            valuePix = ttSetup.OSDframePix;
+            valueInt = ttSetup.OSDframePix;
             valueType = Pix;
             break;
          case Voffset:
-            valuePix = ttSetup.txtVoffset;
+            valueInt = ttSetup.txtVoffset;
             valueType = Pix;
+            break;
+         case BackTrans:
+            valueInt = ((uint32_t) ttSetup.configuredClrBackground) >> 24;
+            valueType = Int;
             break;
          default:
             break;
@@ -849,10 +870,13 @@ void TeletextBrowser::UpdateFooter() {
 
       switch(valueType) {
          case Pct:
-            snprintf(textYellow, sizeof(textYellow), "%d %%", valuePct);
+            snprintf(textYellow, sizeof(textYellow), "%d %%", valueInt);
             break;
          case Pix:
-            snprintf(textYellow, sizeof(textYellow), "%d Px", valuePix);
+            snprintf(textYellow, sizeof(textYellow), "%d Px", valueInt);
+            break;
+         case Int:
+            snprintf(textYellow, sizeof(textYellow), "%d", valueInt);
             break;
          default:
             snprintf(textYellow, sizeof(textYellow), "%s", "ERROR"); // should not happen

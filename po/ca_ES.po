@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-02-27 07:11+0100\n"
+"POT-Creation-Date: 2021-03-27 07:22+0100\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Jordi Vilà <jvila@tinet.org>\n"
 "Language-Team: Catalan <vdr@linuxtv.org>\n"
@@ -17,6 +17,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+msgid "*** Config mode is not supported in 24-line mode ***"
+msgstr ""
 
 msgid "Channel (press OK): "
 msgstr "Canal (premi OK):"
@@ -32,21 +35,6 @@ msgstr "Visualitza el teletext en l'OSD"
 
 msgid "Teletext"
 msgstr "Teletext"
-
-msgid "Zoom"
-msgstr "Zoom"
-
-msgid "Half page"
-msgstr "Mitja pàgina"
-
-msgid "Change channel"
-msgstr "Canvi cadena"
-
-msgid "Switch background"
-msgstr "Canvia el fons"
-
-msgid "Jump to..."
-msgstr "Salta a..."
 
 msgid "Latin 1"
 msgstr ""
@@ -96,6 +84,9 @@ msgstr ""
 msgid "OSD height (%)"
 msgstr ""
 
+msgid "OSD frame pixel"
+msgstr ""
+
 msgid "Hide mainmenu entry"
 msgstr ""
 
@@ -122,6 +113,51 @@ msgstr ""
 
 msgid "  Page number"
 msgstr "  Nombre de pàgina"
+
+msgid "Zoom"
+msgstr "Zoom"
+
+msgid "Half page"
+msgstr "Mitja pàgina"
+
+msgid "Change channel"
+msgstr "Canvi cadena"
+
+msgid "Switch background"
+msgstr "Canvia el fons"
+
+msgid "Config"
+msgstr ""
+
+msgid "24-LineMode"
+msgstr ""
+
+msgid "Answer"
+msgstr ""
+
+msgid "Jump to..."
+msgstr "Salta a..."
+
+msgid "Left"
+msgstr ""
+
+msgid "Top"
+msgstr ""
+
+msgid "Width"
+msgstr ""
+
+msgid "Height"
+msgstr ""
+
+msgid "Frame"
+msgstr ""
+
+msgid "TxVoffset"
+msgstr ""
+
+msgid "BackTrans"
+msgstr ""
 
 #~ msgid "OSD height"
 #~ msgstr "Altura OSD"

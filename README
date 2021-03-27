@@ -61,6 +61,7 @@ Keys:
                      Width,Height +/-
                      Frame +/-
                      Text Vertical Offset +/-
+                     Background Transparency +/-
      24-Line-Mode:  Hide button line (line 25)
 
    How to configure the key bindings:
