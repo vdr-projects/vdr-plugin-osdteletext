@@ -25,7 +25,8 @@ Display::Mode Display::mode=Display::Full;
 cDisplay *Display::display=NULL;
 
 
-void Display::SetMode(Display::Mode NewMode) {
+void Display::SetMode(Display::Mode NewMode, tColor Background) {
+    // Background is optional and default predefined in display.h
     int hChars = 40;
     int vLines = (ttSetup.lineMode24 == true) ? 24 : 25;
     int OSDwidth;
@@ -204,7 +205,7 @@ void Display::SetMode(Display::Mode NewMode) {
     // If display is invalid, clean up immediately:
     if (!display->Valid()) Delete();
     // Pass through OSD black transparency
-    SetBackgroundColor((tColor)ttSetup.configuredClrBackground);
+    SetBackgroundColor(Background);
 }
 
 void Display::ShowUpperHalf() {
