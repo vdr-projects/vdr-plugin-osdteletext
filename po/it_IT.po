@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-02-27 07:11+0100\n"
+"POT-Creation-Date: 2021-03-27 07:22+0100\n"
 "PO-Revision-Date: 2010-11-06 19:59+0100\n"
 "Last-Translator: Diego Pierotto <vdr-italian@tiscali.it>\n"
 "Language-Team: Italian <vdr@linuxtv.org>\n"
@@ -22,6 +22,9 @@ msgstr ""
 "X-Poedit-Language: Italian\n"
 "X-Poedit-Country: ITALY\n"
 "X-Poedit-SourceCharset: utf-8\n"
+
+msgid "*** Config mode is not supported in 24-line mode ***"
+msgstr ""
 
 msgid "Channel (press OK): "
 msgstr "Canale (premi OK): "
@@ -37,21 +40,6 @@ msgstr "Mostra il teletext in OSD"
 
 msgid "Teletext"
 msgstr "Teletext"
-
-msgid "Zoom"
-msgstr "Ingrandisci"
-
-msgid "Half page"
-msgstr "Metà pagina"
-
-msgid "Change channel"
-msgstr "Cambia canale"
-
-msgid "Switch background"
-msgstr "Cambia sfondo"
-
-msgid "Jump to..."
-msgstr "Vai a..."
 
 msgid "Latin 1"
 msgstr ""
@@ -101,6 +89,9 @@ msgstr ""
 msgid "OSD height (%)"
 msgstr ""
 
+msgid "OSD frame pixel"
+msgstr ""
+
 msgid "Hide mainmenu entry"
 msgstr "Nascondi voce menu principale"
 
@@ -127,6 +118,51 @@ msgstr "Tasti associati"
 
 msgid "  Page number"
 msgstr "  Numero pagina"
+
+msgid "Zoom"
+msgstr "Ingrandisci"
+
+msgid "Half page"
+msgstr "Metà pagina"
+
+msgid "Change channel"
+msgstr "Cambia canale"
+
+msgid "Switch background"
+msgstr "Cambia sfondo"
+
+msgid "Config"
+msgstr ""
+
+msgid "24-LineMode"
+msgstr ""
+
+msgid "Answer"
+msgstr ""
+
+msgid "Jump to..."
+msgstr "Vai a..."
+
+msgid "Left"
+msgstr ""
+
+msgid "Top"
+msgstr ""
+
+msgid "Width"
+msgstr ""
+
+msgid "Height"
+msgstr ""
+
+msgid "Frame"
+msgstr ""
+
+msgid "TxVoffset"
+msgstr ""
+
+msgid "BackTrans"
+msgstr ""
 
 #~ msgid "OSD height"
 #~ msgstr "Altezza OSD"
