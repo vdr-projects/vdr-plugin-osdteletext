@@ -143,7 +143,7 @@ msgid "Left+"
 msgstr "Links+"
 
 msgid "Top-"
-msgstr "Open-"
+msgstr "Oben-"
 
 msgid "Top+"
 msgstr "Oben+"
