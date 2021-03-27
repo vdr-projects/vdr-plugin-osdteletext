@@ -30,7 +30,7 @@ using namespace std;
 
 #define NUMELEMENTS(x) (sizeof(x) / sizeof(x[0]))
 
-static const char *VERSION        = "1.1.0.dev.2";
+static const char *VERSION        = "1.1.0.dev.3";
 static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
 static const char *MAINMENUENTRY  = trNOOP("Teletext");
 
@@ -228,6 +228,7 @@ void cPluginTeletextosd::Stop(void)
    SetupStore("OSDframePix", ttSetup.OSDframePix);
    SetupStore("txtVoffset", ttSetup.txtVoffset);
    SetupStore("lineMode24", ttSetup.lineMode24);
+   SetupStore("configuredClrBackground", (int)(ttSetup.configuredClrBackground >> 24));
 
    DELETENULL(txtStatus);
    if (storage) {

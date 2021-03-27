@@ -1,6 +1,7 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
 2022-03-27:
+- [pbiering] add backgorund transparency to OSD config mode
 - [pbiering] remember background color when toggling through 'Half' mode
 
 2022-03-25:

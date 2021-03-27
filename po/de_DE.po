@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 2.4.4\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-03-25 21:23+0100\n"
+"POT-Creation-Date: 2021-03-27 07:22+0100\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Peter Bieringer <pb@bieringer.de>\n"
 "Language-Team: German <vdr@linuxtv.org>\n"
@@ -136,38 +136,23 @@ msgstr "Antwort"
 msgid "Jump to..."
 msgstr "Springe zu..."
 
-msgid "Left-"
-msgstr "Links-"
+msgid "Left"
+msgstr "Links"
 
-msgid "Left+"
-msgstr "Links+"
+msgid "Top"
+msgstr "Oben"
 
-msgid "Top-"
-msgstr "Oben-"
+msgid "Width"
+msgstr "Breite"
 
-msgid "Top+"
-msgstr "Oben+"
+msgid "Height"
+msgstr "Höhe"
 
-msgid "Width-"
-msgstr "Breite-"
+msgid "Frame"
+msgstr "Rahmen"
 
-msgid "Width+"
-msgstr "Breite+"
-
-msgid "Height-"
-msgstr "Höhe-"
-
-msgid "Height+"
-msgstr "Höhe+"
-
-msgid "Frame-"
-msgstr "Rahmen-"
-
-msgid "Frame+"
-msgstr "Rahmen+"
-
-msgid "TxVoffset-"
+msgid "TxVoffset"
 msgstr ""
 
-msgid "TxVoffset+"
-msgstr ""
+msgid "BackTrans"
+msgstr "HinteTran"
