@@ -26,7 +26,9 @@ class cTelePage {
   int mag;
   unsigned char flags;
   unsigned char lang;
+ public:
   PageID page;
+ private:
   unsigned char pagebuf[27*40];
   Storage* storage;
  public:

@@ -274,7 +274,6 @@ void cTxtReceiver::DecodeTXT(uchar* TXT_buf)
 
    switch (line) {
    case 0: 
-      {
       unsigned char b1, b2, b3, b4;
       int pgno, subno;
       b1 = unham16 (ptr);    
@@ -305,7 +304,7 @@ void cTxtReceiver::DecodeTXT(uchar* TXT_buf)
       subno = (b2 + b3 * 256) & 0x3f7f;         // Sub Page Number
 
       TxtPage = new cTelePage(PageID(ChannelID(), pgno, subno), flags, lang, mag, storage);
-      DEBUG_OT_NEPG("new cTelePage pgno=%d subno=%d\n", pgno, subno);
+      DEBUG_OT_NEPG("new cTelePage pgno=%03x subno=%02x flags=0x%02x lang=0x%02x\n", pgno, subno, flags, lang);
       stat_pagecount++;
       stat_pagecount_total++;
       statTxtReceiverPageCount++;
@@ -324,19 +323,41 @@ void cTxtReceiver::DecodeTXT(uchar* TXT_buf)
          stat_time_last = stat_time_now;
       };
       TxtPage->SetLine((int)line,(uchar *)ptr);
+      if ((TxtPage->page.page == 0x898) && (m_debugmask & DEBUG_MASK_OT_TXTRCVD)) {
+         // 898-01 (3sat test page) TODO: additional check for ChannelID
+         printf("%s: dump line contents pgno=%03x subno=%02x flags=0x%02x lang=0x%02x\n", __FUNCTION__, pgno, subno, flags, lang);
+         printf("p=%03x-%02x line=%02d:", TxtPage->page.page, TxtPage->page.subPage, line);
+         for (int i = 0; i < 40; i++) {
+            printf(" %02x", ptr[i]);
+         };
+         printf("\n");
+      };
       break;
-      }
    case 1 ... 25: 
-      {
-      if (TxtPage) TxtPage->SetLine((int)line,(uchar *)ptr); 
+      if (TxtPage) {
+          TxtPage->SetLine((int)line,(uchar *)ptr);
+          if ((TxtPage->page.page == 0x898) && (m_debugmask & DEBUG_MASK_OT_TXTRCVD)) {
+             // 898-01 (3sat test page) TODO: additional check for ChannelID
+             printf("p=%03x-%02x line=%02d:", TxtPage->page.page, TxtPage->page.subPage, line);
+             for (int i = 0; i < 40; i++) {
+                printf(" %02x", ptr[i]);
+             };
+             printf("\n");
+          };
+      };
       break;
-      }
-   /*case 23: 
-      {
-      SaveAndDeleteTxtPage();
-      break;
-      }*/
    default:
+      if (TxtPage) {
+          //TxtPage->SetLine((int)line,(uchar *)ptr);
+          if ((TxtPage->page.page == 0x898) && (m_debugmask & DEBUG_MASK_OT_TXTRCVD)) {
+             // 898-01 (3sat test page) TODO: additional check for ChannelID
+             printf("p=%03x-%02x line=%02d:", TxtPage->page.page, TxtPage->page.subPage, line);
+             for (int i = 0; i < 40; i++) {
+                printf(" %02x", ptr[i]);
+             };
+             printf("\n");
+          };
+      };
       break;
    }
 }
