@@ -7,6 +7,7 @@
 extern int m_debugmask;
 
 #define DEBUG_MASK_OT		0x00000001	// general
+#define DEBUG_MASK_OT_CACHE	0x00000002	// Caching System
 #define DEBUG_MASK_OT_KNONE	0x00000010	// Knone action
 #define DEBUG_MASK_OT_KEYS	0x00000020	// Keys action
 #define DEBUG_MASK_OT_NEPG	0x00000100	// new cTelePage
@@ -21,8 +22,8 @@ extern int m_debugmask;
 #define DEBUG_MASK_OT_DCHR	0x00200000	// DrawChar
 #define DEBUG_MASK_OT_BOXED	0x00400000	// BoxedOut
 #define DEBUG_MASK_OT_DTXT 	0x00800000	// DrawText
-#define DEBUG_MASK_OT_CACHE	0x01000000	// Caching System
-#define DEBUG_MASK_OT_TXTRD	0x80000000	// Text Rendering dump to stdout
+#define DEBUG_MASK_OT_TXTRCVD	0x04000000	// Text Receiver dump to stdout (particular page only, see code)
+#define DEBUG_MASK_OT_TXTRD	0x08000000	// Text Rendering dump to stdout
 
 // special action mask
 #define DEBUG_MASK_OT_ACT_LIMIT_LINES		0x10000000	// Limit Lines (debugging for detecting pixel offset issues)
