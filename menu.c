@@ -298,9 +298,8 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
       modeR = Display::mode; // remember mode
       bgcR = Display::GetBackgroundColor(); // remember color
       Display::Delete();
-      Display::SetMode(modeR); // apply remembered mode
+      Display::SetMode(modeR, bgcR); // new with remembered color
       Display::SetZoom(zoomR); // apply remembered zoom
-      Display::SetBackgroundColor(bgcR); // apply remembered color
       ShowPage();
    };
 
@@ -377,19 +376,19 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
                   
          switch (Display::mode) {
             case Display::HalfUpper:
-               Display::SetMode(Display::HalfLower);
+               Display::SetMode(Display::HalfLower, Display::GetBackgroundColor());
                break;
             case Display::HalfLower:
-               Display::SetMode(Display::HalfUpperTop);
+               Display::SetMode(Display::HalfUpperTop, Display::GetBackgroundColor());
                break;
             case Display::HalfUpperTop:
-               Display::SetMode(Display::HalfLowerTop);
+               Display::SetMode(Display::HalfLowerTop, Display::GetBackgroundColor());
                break;
             case Display::HalfLowerTop:
-               Display::SetMode(Display::Full);
+               Display::SetMode(Display::Full, Display::GetBackgroundColor());
                break;
             case Display::Full:
-               Display::SetMode(Display::HalfUpper);
+               Display::SetMode(Display::HalfUpper, Display::GetBackgroundColor());
                break;
             }
             ShowPage();
@@ -429,9 +428,8 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
          modeR = Display::mode; // remember mode
          bgcR = Display::GetBackgroundColor(); // remember color
          Display::Delete();
-         Display::SetMode(modeR); // apply remembered mode
+         Display::SetMode(modeR, bgcR); // new with remembered color
          Display::SetZoom(zoomR); // apply remembered zoom
-         Display::SetBackgroundColor(bgcR); // apply remembered color
          ShowPage();
          break;
 
