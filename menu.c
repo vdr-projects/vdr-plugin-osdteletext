@@ -302,7 +302,7 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
          bgcR = Display::GetBackgroundColor(); // remember color
       };
       Display::Delete();
-      Display::SetMode(modeR, bgcR); // new with remembered color
+      Display::SetMode(modeR, bgcR); // new with remembered mode and backgroud color
       Display::SetZoom(zoomR); // apply remembered zoom
       ShowPage();
    };
@@ -445,7 +445,7 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
          modeR = Display::mode; // remember mode
          bgcR = Display::GetBackgroundColor(); // remember color
          Display::Delete();
-         Display::SetMode(modeR, bgcR); // new with remembered color
+         Display::SetMode(modeR, bgcR); // new with remembered mode and background color
          Display::SetZoom(zoomR); // apply remembered zoom
          ShowPage();
          break;

@@ -675,7 +675,7 @@ void cDisplay::DrawPageId(const char *text) {
             c.SetFGColor(ttcGreen);
             c.SetChar('!');
         };
-        DEBUG_OT_DRPI("trigger DrawChar for Conceiled hint ttfg=%x ttbg=%x", c.GetFGColor(), c.GetBGColor());
+        DEBUG_OT_DRPI("trigger SetChar for Conceiled hint ttfg=%x ttbg=%x", c.GetFGColor(), c.GetBGColor());
         SetChar(6, 0, c);
     };
 }
