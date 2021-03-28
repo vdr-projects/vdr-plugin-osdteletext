@@ -6902,7 +6902,7 @@ unsigned int* GetFontChar(cTeletextChar c, unsigned int *buffer) {
 }
 
 unsigned int GetVTXChar(cTeletextChar c) {
-    // convert  character for character/charset to utf8
+    // convert character for character/charset to utf8
     int convertedChar = 0;
     enumCharsets font = c.GetCharset();
     int chr = c.GetChar();
