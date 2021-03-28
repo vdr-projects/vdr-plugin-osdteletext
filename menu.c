@@ -295,9 +295,9 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
          // continue below
 
       case kPlay:
-      case kPause:   // not passed into plugin somehow
+      //case kPause:   // not passed into plugin somehow
       case kStop:
-      case kRecord:  // not passed into plugin somehow
+      //case kRecord:  // not passed into plugin somehow
       case kFastFwd:
       case kFastRew:
          if (cursorPos != 0) {
