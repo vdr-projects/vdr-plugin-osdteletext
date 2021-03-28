@@ -81,7 +81,7 @@ Keys:
 
      Pause       :  Stop updating page (toggle)
                      OSD will display red   '*' while paused
-                     OSD will display green '>' after continue (one page further)
+                     OSD will display green '>' after release (until next page update)
 
    How to configure the key bindings:
    In the plugins setup menu, you can assign one of actions to each key.
