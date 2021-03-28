@@ -250,7 +250,7 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
          ChangeSubPageRelative(DirectionForward);
          Display::ShowUpperHalf();
          ShowPage();
-         break;       
+         break;
 
       case kLeft:
          if (selectingChannel) {
@@ -272,30 +272,43 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
             changedConfig = ExecuteActionConfig(configMode, -1); // decrement
             break;
          };
+         // continue below
+
       case kGreen: 
          if (configMode != NotActive) { // catch config mode
             changedConfig = ExecuteActionConfig(configMode, +1); // increment
             break;
          };
+         // continue below
+
       case kYellow:
          if (configMode != NotActive) { // key is inactive in config mode (displaying value)
             break;
          };
+         // continue below
+
       case kBlue:
          if (configMode != NotActive) { // catch config mode
             ExecuteAction(Config);
             break;
          };
-      //case kUser1:case kUser2:case kUser3:case kUser4:case kUser5:
-      //case kUser6:case kUser7:case kUser8:case kUser9:
-      case kPlay:case kPause:case kStop: case kRecord:case kFastFwd:case kFastRew:
+         // continue below
+
+      case kPlay:
+      case kPause:   // not passed into plugin somehow
+      case kStop:
+      case kRecord:  // not passed into plugin somehow
+      case kFastFwd:
+      case kFastRew:
          if (cursorPos != 0) {
             //fully reset
             SetNumber(-3);
          }
          ExecuteAction(TranslateKey(Key));
          break;             
-      default: break;
+
+      default:
+         break;
    }
 
    if (changedConfig) {
