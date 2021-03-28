@@ -379,7 +379,10 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
     if (charset == CHARSET_GRAPHICS_G1 || charset == CHARSET_GRAPHICS_G1_SEP) {
         isGraphicsChar = true;
     } else {
-        isGraphicsChar = false;
+        if (c.GetChar() == 0x7f) // filled rectangle
+            isGraphicsChar = true;
+        else
+            isGraphicsChar = false;
         switch(fontType) {
             case 0:
                 font = TXTFont;
