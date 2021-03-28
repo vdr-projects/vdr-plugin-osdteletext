@@ -33,7 +33,7 @@
 //TeletextBrowser::TranslateKey and 
 //the constants below (st_modes)
 enum eTeletextAction { Zoom, HalfPage, SwitchChannel,
-                       DarkScreen, /*SuspendReceiving,*/ Config, LineMode24, ToggleConceal, LastAction }; //and 100-899 => jump to page
+                       DarkScreen, /*SuspendReceiving,*/ Config, LineMode24, ToggleConceal, TogglePause, LastAction }; //and 100-899 => jump to page
 
 enum eTeletextActionConfig {
    Left,
@@ -63,6 +63,7 @@ static const char *st_modes[] =
       tr("Config"),
       tr("24-LineMode"),
       tr("Answer"),
+      tr("Pause"),
       tr("Jump to..."),
 };
 
@@ -79,6 +80,7 @@ static const char *config_modes[] =
 };
 
 enum ActionKeys {
+   // keep in sync: static const ActionKeyName st_actionKeyNames in osdteletext.c
    ActionKeyRed,
    ActionKeyGreen,
    ActionKeyYellow,
@@ -87,6 +89,7 @@ enum ActionKeys {
    ActionKeyStop,
    ActionKeyFastFwd,
    ActionKeyFastRew,
+   ActionKeyOk,
 
    LastActionKey
 };
@@ -95,7 +98,7 @@ enum ActionKeys {
 class TeletextSetup {
 public:
    TeletextSetup();
-   int mapKeyToAction[10]; //4 color keys + kPlay, kPause etc.
+   int mapKeyToAction[(int) ActionKeys::LastActionKey]; // see enum ActionKeys
    unsigned int configuredClrBackground;
    int showClock;
    int suspendReceiving;

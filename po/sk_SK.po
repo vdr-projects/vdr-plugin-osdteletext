@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: osdteletext-0.9.0\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-03-27 07:22+0100\n"
+"POT-Creation-Date: 2021-03-27 22:31+0100\n"
 "PO-Revision-Date: 2011-02-15 21:11+0100\n"
 "Last-Translator: Milan Hrala <hrala.milan@gmail.com>\n"
 "Language-Team: Slovak <hrala.milan@gmail.com>\n"
@@ -131,6 +131,9 @@ msgid "24-LineMode"
 msgstr ""
 
 msgid "Answer"
+msgstr ""
+
+msgid "Pause"
 msgstr ""
 
 msgid "Jump to..."

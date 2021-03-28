@@ -27,6 +27,7 @@ int cDisplay::realFontWidths[4] = {0};
 cDisplay::cDisplay(int width, int height)
     : Zoom(Zoom_Off), Concealed(true), Blinked(false), FlushLock(0),
       Boxed(false), Width(width), Height(height), Background(clrGray50),
+      Paused(false),
       osd(NULL),
       outputWidth(0), outputHeight(0),
       leftFrame(0), rightFrame(0), topFrame(0), bottomFrame(0),
@@ -648,11 +649,12 @@ void cDisplay::DrawText(int x, int y, const char *text, int len) {
 void cDisplay::DrawPageId(const char *text) {
     // Draw Page ID string to OSD
     static char text_last[9] = ""; // remember
+    static bool paused_last = false;
     cTeletextChar c;
 
     DEBUG_OT_DRPI("called with text='%s' text_last='%s' Boxed=%d HasConceal=%d GetConceal=%d", text, text_last, Boxed, HasConceal(), GetConceal());
 
-    if (Boxed && (strcmp(text, text_last) == 0)) {
+    if (! GetPaused() && Boxed && (strcmp(text, text_last) == 0)) {
         // don't draw PageId a 2nd time on boxed pages
         for (int i = 0; i < 8; i++) {
             c.SetFGColor(ttcTransparent);
@@ -677,6 +679,22 @@ void cDisplay::DrawPageId(const char *text) {
         };
         DEBUG_OT_DRPI("trigger SetChar for Conceiled hint ttfg=%x ttbg=%x", c.GetFGColor(), c.GetBGColor());
         SetChar(6, 0, c);
+    };
+
+    if (GetPaused()) {
+        paused_last = true;
+        c.SetBGColor(ttcBlack);
+        c.SetFGColor(ttcRed);
+        c.SetChar('*');
+        DEBUG_OT_DRPI("trigger SetChar for Paused hint ttfg=%x ttbg=%x", c.GetFGColor(), c.GetBGColor());
+        SetChar(7, 0, c);
+    } else if (paused_last == true) {
+        paused_last = false;
+        c.SetBGColor(ttcBlack);
+        c.SetFGColor(ttcGreen);
+        c.SetChar('>');
+        DEBUG_OT_DRPI("trigger SetChar for Paused finished hint ttfg=%x ttbg=%x", c.GetFGColor(), c.GetBGColor());
+        SetChar(7, 0, c);
     };
 }
 
