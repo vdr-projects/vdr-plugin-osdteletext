@@ -132,6 +132,8 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
    if (Key != kNone)
       lastActivity = time(NULL);
    
+   DEBUG_OT_KEYS("called with Key=%d", Key);
+
    switch (Key) {
       case k1: SetNumber(1);break;
       case k2: SetNumber(2);break;
@@ -171,7 +173,9 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
             } else {
                ShowPage();
             }
-         }
+         } else {
+            ExecuteAction(TranslateKey(Key));
+         };
          break;        
 
       case kBack: return osEnd; 
@@ -180,7 +184,8 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
          DEBUG_OT_KNONE("section 'kNone' reached");
          //checking if page changed
          if ( pageFound && ttSetup.autoUpdatePage && cursorPos==0 && !selectingChannel && (PageCheckSum() != checkSum) ) {
-            ShowPage();
+            if (! Display::GetPaused())
+               ShowPage();
          //check if page was previously not found and is available now
          } else if (!pageFound && CheckFirstSubPage(0)) {
             ShowPage();
@@ -477,6 +482,12 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
          ShowPage();
          break;
 
+      case TogglePause:
+         DEBUG_OT_KEYS("key action: 'TogglePause' paused=%d -> %d", Display::GetPaused(), not(Display::GetPaused()));
+         Display::SetPaused(not(Display::GetPaused())); // toggle paused status
+         ShowPage();
+         break;
+
       default:
          //In osdteletext.c, numbers are thought to be decimal, the setup page
          //entries will display them in this way. It is a lot easier to do the
@@ -529,9 +540,10 @@ eTeletextAction TeletextBrowser::TranslateKey(eKeys Key) {
       case kYellow:  return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyYellow];
       case kBlue:    return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyBlue];
       case kPlay:    return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyPlay];
-      //case kPause:   return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyPause];
+      //case kPause:   return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyPause]; // not passed into plugin somehow
+      case kOk:      return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyOk];
       case kStop:    return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyStop];
-      //case kRecord:  return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyRecord];
+      //case kRecord:  return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyRecord]; // not passed into plugin somehow
       case kFastFwd: return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyFastFwd];
       case kFastRew: return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyFastRew];
       default:       return (eTeletextAction)100; //just to keep gcc quiet
@@ -919,6 +931,7 @@ TeletextSetup::TeletextSetup()
    mapKeyToAction[ActionKeyStop]=Config;
    mapKeyToAction[ActionKeyFastRew]=LineMode24;
    mapKeyToAction[ActionKeyFastFwd]=ToggleConceal;
+   mapKeyToAction[ActionKeyOk]=TogglePause;
 }
 
 // vim: ts=3 sw=3 et

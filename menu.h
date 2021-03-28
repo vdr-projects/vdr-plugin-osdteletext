@@ -58,6 +58,7 @@ protected:
    int selectingChannelNumber;
    int checkSum;
    cTxtStatus *txtStatus;
+   bool paused;
    bool suspendedReceiving;
    int previousPage;
    int previousSubPage;

@@ -23,6 +23,7 @@ using namespace std;
 #include "setup.h"
 #include "legacystorage.h"
 #include "packedstorage.h"
+#include "logging.h"
 
 #if defined(APIVERSNUM) && APIVERSNUM < 10739
 #error "VDR-1.7.39 API version or greater is required!"
@@ -30,7 +31,7 @@ using namespace std;
 
 #define NUMELEMENTS(x) (sizeof(x) / sizeof(x[0]))
 
-static const char *VERSION        = "1.1.0.dev.4";
+static const char *VERSION        = "1.1.0.dev.5";
 static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
 static const char *MAINMENUENTRY  = trNOOP("Teletext");
 
@@ -250,7 +251,8 @@ void cPluginTeletextosd::initTexts() {
       { "Action_kPlay",     trVDR("Key$Play") },
       { "Action_kStop",     trVDR("Key$Stop") },
       { "Action_kFastFwd",  trVDR("Key$FastFwd") },
-      { "Action_kFastRew",  trVDR("Key$FastRew") }
+      { "Action_kFastRew",  trVDR("Key$FastRew") },
+      { "Action_kOk",       trVDR("Key$Ok") },
    };
 
    cTeletextSetupPage::actionKeyNames = st_actionKeyNames;
@@ -472,6 +474,7 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
 }
 
 eOSState cTeletextSetupPage::ProcessKey(eKeys Key) {
+   DEBUG_OT_KEYS("called with Key=%d", Key);
    eOSState state = cMenuSetupPage::ProcessKey(Key);
    if (Key != kRight && Key!=kLeft)
       return state;

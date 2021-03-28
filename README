@@ -38,14 +38,21 @@ Keys:
    Have a look at the plugin's setup page to learn the current assignment
    and adapt it to your needs.
 
-   Available Keys: Blue, Red, Yellow, Green, Play, Stop, FastFwd, FastRwd
-   Actions: "Zoom", "Half page", "Switch channel", "Switch background",
+   Available Keys:
+	Blue, Red, Yellow, Green,
+	Stop, FastFwd, FastRwd, Ok
+
+   Actions:
+	"Zoom", "Half page", "Switch channel", "Switch background",
+	"Config", "24-Line-Mode", "Answer", "Pause"
             "Jump to..." a specific page.
 
    Description of the actions:
      Zoom:          Zoom to upper half/lower half/back to full page
+
      Half Page:     Reduce OSD window to the lower half of the screen and
                     display upper half/lower half/back to full size
+
      Switch channel:Show pages of a channel different from the one currently
                     tuned to. This does _not_ include any tuning or channel
                     switching with vdr's core. You must have tuned to the
@@ -53,16 +60,28 @@ Keys:
                     been stored on disk. When you press the key associated
                     with that action, you are asked for the channel number.
                     Press OK after you entered it with the number keys.
+
      Jump to...:    Jumps to the page you configure.
+
      Switch background: Toggles background transparency between a value
                     configured in setup, fully black, and fully transparent.
+
      Config:        Enter OSD configuration mode, currently supported
                      Left,Top +/-
                      Width,Height +/-
                      Frame +/-
                      Text Vertical Offset +/-
                      Background Transparency +/-
+
      24-Line-Mode:  Hide button line (line 25)
+
+     Answer      :  Display concealed chars (toggle)
+                     OSD will display yellow '?' in case page contains concealed chars
+                     OSD will display green  '!' while concealed chars are displayed
+
+     Pause       :  Stop updating page (toggle)
+                     OSD will display red   '*' while paused
+                     OSD will display green '>' after continue (one page further)
 
    How to configure the key bindings:
    In the plugins setup menu, you can assign one of actions to each key.
