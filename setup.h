@@ -98,7 +98,7 @@ enum ActionKeys {
 class TeletextSetup {
 public:
    TeletextSetup();
-   int mapKeyToAction[(int) ActionKeys::LastActionKey]; //4 color keys + kPlay, kPause etc.
+   int mapKeyToAction[(int) ActionKeys::LastActionKey]; // see enum ActionKeys
    unsigned int configuredClrBackground;
    int showClock;
    int suspendReceiving;
