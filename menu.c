@@ -132,6 +132,8 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
    if (Key != kNone)
       lastActivity = time(NULL);
    
+   DEBUG_OT_KEYS("called with Key=%d", Key);
+
    switch (Key) {
       case k1: SetNumber(1);break;
       case k2: SetNumber(2);break;
@@ -171,7 +173,9 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
             } else {
                ShowPage();
             }
-         }
+         } else {
+            ExecuteAction(TranslateKey(Key));
+         };
          break;        
 
       case kBack: return osEnd; 
@@ -180,7 +184,8 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
          DEBUG_OT_KNONE("section 'kNone' reached");
          //checking if page changed
          if ( pageFound && ttSetup.autoUpdatePage && cursorPos==0 && !selectingChannel && (PageCheckSum() != checkSum) ) {
-            ShowPage();
+            if (! Display::GetPaused())
+               ShowPage();
          //check if page was previously not found and is available now
          } else if (!pageFound && CheckFirstSubPage(0)) {
             ShowPage();
@@ -245,7 +250,7 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
          ChangeSubPageRelative(DirectionForward);
          Display::ShowUpperHalf();
          ShowPage();
-         break;       
+         break;
 
       case kLeft:
          if (selectingChannel) {
@@ -267,30 +272,43 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
             changedConfig = ExecuteActionConfig(configMode, -1); // decrement
             break;
          };
+         // continue below
+
       case kGreen: 
          if (configMode != NotActive) { // catch config mode
             changedConfig = ExecuteActionConfig(configMode, +1); // increment
             break;
          };
+         // continue below
+
       case kYellow:
          if (configMode != NotActive) { // key is inactive in config mode (displaying value)
             break;
          };
+         // continue below
+
       case kBlue:
          if (configMode != NotActive) { // catch config mode
             ExecuteAction(Config);
             break;
          };
-      //case kUser1:case kUser2:case kUser3:case kUser4:case kUser5:
-      //case kUser6:case kUser7:case kUser8:case kUser9:
-      case kPlay:case kPause:case kStop: case kRecord:case kFastFwd:case kFastRew:
+         // continue below
+
+      case kPlay:
+      //case kPause:   // not passed into plugin somehow
+      case kStop:
+      //case kRecord:  // not passed into plugin somehow
+      case kFastFwd:
+      case kFastRew:
          if (cursorPos != 0) {
             //fully reset
             SetNumber(-3);
          }
          ExecuteAction(TranslateKey(Key));
          break;             
-      default: break;
+
+      default:
+         break;
    }
 
    if (changedConfig) {
@@ -302,7 +320,7 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
          bgcR = Display::GetBackgroundColor(); // remember color
       };
       Display::Delete();
-      Display::SetMode(modeR, bgcR); // new with remembered color
+      Display::SetMode(modeR, bgcR); // new with remembered mode and backgroud color
       Display::SetZoom(zoomR); // apply remembered zoom
       ShowPage();
    };
@@ -445,7 +463,7 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
          modeR = Display::mode; // remember mode
          bgcR = Display::GetBackgroundColor(); // remember color
          Display::Delete();
-         Display::SetMode(modeR, bgcR); // new with remembered color
+         Display::SetMode(modeR, bgcR); // new with remembered mode and background color
          Display::SetZoom(zoomR); // apply remembered zoom
          ShowPage();
          break;
@@ -474,6 +492,12 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
       case ToggleConceal:
          DEBUG_OT_KEYS("key action: 'ToggleConceal' Concealed=%d -> %d", Display::GetConceal(), not(Display::GetConceal()));
          Display::SetConceal(not(Display::GetConceal()));
+         ShowPage();
+         break;
+
+      case TogglePause:
+         DEBUG_OT_KEYS("key action: 'TogglePause' paused=%d -> %d", Display::GetPaused(), not(Display::GetPaused()));
+         Display::SetPaused(not(Display::GetPaused())); // toggle paused status
          ShowPage();
          break;
 
@@ -529,9 +553,10 @@ eTeletextAction TeletextBrowser::TranslateKey(eKeys Key) {
       case kYellow:  return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyYellow];
       case kBlue:    return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyBlue];
       case kPlay:    return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyPlay];
-      //case kPause:   return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyPause];
+      //case kPause:   return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyPause]; // not passed into plugin somehow
+      case kOk:      return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyOk];
       case kStop:    return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyStop];
-      //case kRecord:  return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyRecord];
+      //case kRecord:  return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyRecord]; // not passed into plugin somehow
       case kFastFwd: return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyFastFwd];
       case kFastRew: return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyFastRew];
       default:       return (eTeletextAction)100; //just to keep gcc quiet
@@ -919,6 +944,7 @@ TeletextSetup::TeletextSetup()
    mapKeyToAction[ActionKeyStop]=Config;
    mapKeyToAction[ActionKeyFastRew]=LineMode24;
    mapKeyToAction[ActionKeyFastFwd]=ToggleConceal;
+   mapKeyToAction[ActionKeyOk]=TogglePause;
 }
 
 // vim: ts=3 sw=3 et

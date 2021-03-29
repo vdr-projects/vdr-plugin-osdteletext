@@ -61,6 +61,9 @@ protected:
     // Color to be used for black background
     // - allow transparency
 
+    bool Paused;
+    // Paused internal state
+
     cOsd *osd;
     // The osd object. If creation fails, may be NULL
 
@@ -153,6 +156,10 @@ public:
     // Returns true if there are concealed characters.
     bool HasConceal();
     // Returns true if there are concealed characters.
+
+    void SetPaused(bool paused) { Paused = paused; return; };
+    bool GetPaused() { return Paused; };
+    // Returns true if paused
 
     enumZoom GetZoom() { return Zoom; }
     void SetZoom(enumZoom zoom);
