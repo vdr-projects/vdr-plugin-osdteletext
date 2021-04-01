@@ -1,6 +1,6 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
-2022-03-28:
+2022-03-28: version 1.1.1
 - [pbiering] fix missing implementation of graphics char 0x7f (filled rectangle)
 - [pbiering] implement 'Paused' toggle
 
