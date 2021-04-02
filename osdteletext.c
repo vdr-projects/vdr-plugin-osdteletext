@@ -31,7 +31,7 @@ using namespace std;
 
 #define NUMELEMENTS(x) (sizeof(x) / sizeof(x[0]))
 
-static const char *VERSION        = "1.1.1";
+static const char *VERSION        = "1.9.9.dev.1";
 static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
 static const char *MAINMENUENTRY  = trNOOP("Teletext");
 
@@ -139,7 +139,7 @@ const char *cPluginTeletextosd::CommandLineHelp(void)
          "                               Default is \"packed\" for the \n"
          "                               one-file-for-a-few-pages system.\n"
          "  -t,       --toptext          Store top text pages at cache. (unviewable pages)\n"
-         "  -P|--debugpage <int|hexint>  Enable debugpage (int: autoconvert internallyto hex)\n"
+         "  -P|--debugpage <int|hexint>  Enable debugpage (int: autoconvert internally to hex)\n"
          "  -D|--debugmask <int|hexint>  Enable debugmask\n";
 }
 
