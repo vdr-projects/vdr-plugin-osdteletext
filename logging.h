@@ -4,8 +4,9 @@
 
 #include <vdr/tools.h>
 
-extern int m_debugmask;
-extern int m_debugpage;
+extern unsigned int m_debugmask;
+extern unsigned int m_debugpage;
+extern unsigned int m_debugpsub;
 
 #define DEBUG_MASK_OT		0x00000001	// general
 #define DEBUG_MASK_OT_CACHE	0x00000002	// Caching System

@@ -35,8 +35,9 @@ static const char *VERSION        = "1.9.9.dev.1";
 static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
 static const char *MAINMENUENTRY  = trNOOP("Teletext");
 
-int m_debugmask = 0;
-int m_debugpage = 0;
+unsigned int m_debugmask = 0;
+unsigned int m_debugpage = 0;
+unsigned int m_debugpsub = 0;
 
 class cPluginTeletextosd : public cPlugin {
 private:
@@ -139,7 +140,8 @@ const char *cPluginTeletextosd::CommandLineHelp(void)
          "                               Default is \"packed\" for the \n"
          "                               one-file-for-a-few-pages system.\n"
          "  -t,       --toptext          Store top text pages at cache. (unviewable pages)\n"
-         "  -P|--debugpage <int|hexint>  Enable debugpage (int: autoconvert internally to hex)\n"
+         "  -P|--debugpage <int|hexint>  Specify page to debug (int: autoconvert internally to hex)\n"
+         "  -S|--debugpsub <int|hexint>  Specify sub-page to debug (int: autoconvert internally to hex)\n"
          "  -D|--debugmask <int|hexint>  Enable debugmask\n";
 }
 
@@ -153,6 +155,7 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
        { "toptext",      no_argument,             NULL, 't' },
        { "debugmask",    required_argument,       NULL, 'D' },
        { "debugpage",    required_argument,       NULL, 'P' },
+       { "debugpsub",    required_argument,       NULL, 'S' },
        { NULL }
        };
 
@@ -187,6 +190,7 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
             };
 			   dsyslog("osdteletext: enable debug mask: %d (0x%02x)", m_debugmask, m_debugmask);
             break;
+
           case 'P':
             if ((strlen(optarg) > 2) && (strncasecmp(optarg, "0x", 2) == 0)) {
                // hex conversion
@@ -200,6 +204,21 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
                };
             };
 			   dsyslog("osdteletext: enable debug page: %03x)", m_debugpage);
+            break;
+
+          case 'S':
+            if ((strlen(optarg) > 2) && (strncasecmp(optarg, "0x", 2) == 0)) {
+               // hex conversion
+               if (sscanf(optarg + 2, "%x", &m_debugpsub) == 0) {
+                  esyslog("osdteletext: can't parse hexadecimal debug sub-page (skip): %s", optarg);
+               };
+            } else {
+               // hex conversion
+               if (sscanf(optarg, "%x", &m_debugpsub) == 0) {
+                  esyslog("osdteletext: can't parse hexadecimal debug sub-page (skip): %s", optarg);
+               };
+            };
+			   dsyslog("osdteletext: enable debug sub-page: %03x)", m_debugpsub);
             break;
         }
    }
