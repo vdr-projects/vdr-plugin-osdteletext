@@ -5,6 +5,7 @@
 #include <vdr/tools.h>
 
 extern int m_debugmask;
+extern int m_debugpage;
 
 #define DEBUG_MASK_OT		0x00000001	// general
 #define DEBUG_MASK_OT_CACHE	0x00000002	// Caching System
@@ -48,5 +49,6 @@ extern int m_debugmask;
 #define DEBUG_OT_BOXED  if (m_debugmask & DEBUG_MASK_OT_BOXED)  dsyslog_ot
 #define DEBUG_OT_DTXT   if (m_debugmask & DEBUG_MASK_OT_DTXT )  dsyslog_ot
 #define DEBUG_OT_CACHE  if (m_debugmask & DEBUG_MASK_OT_CACHE)  dsyslog_ot
+#define DEBUG_OT_TXTRCVD if (m_debugmask & DEBUG_MASK_OT_TXTRCVD) dsyslog_ot
 
 #endif

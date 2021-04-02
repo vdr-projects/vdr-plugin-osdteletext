@@ -36,6 +36,7 @@ static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
 static const char *MAINMENUENTRY  = trNOOP("Teletext");
 
 int m_debugmask = 0;
+int m_debugpage = 0;
 
 class cPluginTeletextosd : public cPlugin {
 private:
@@ -138,6 +139,7 @@ const char *cPluginTeletextosd::CommandLineHelp(void)
          "                               Default is \"packed\" for the \n"
          "                               one-file-for-a-few-pages system.\n"
          "  -t,       --toptext          Store top text pages at cache. (unviewable pages)\n"
+         "  -P|--debugpage <int|hexint>  Enable debugpage (int: autoconvert internallyto hex)\n"
          "  -D|--debugmask <int|hexint>  Enable debugmask\n";
 }
 
@@ -150,6 +152,7 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
        { "cache-system", required_argument,       NULL, 's' },
        { "toptext",      no_argument,             NULL, 't' },
        { "debugmask",    required_argument,       NULL, 'D' },
+       { "debugpage",    required_argument,       NULL, 'P' },
        { NULL }
        };
 
@@ -183,6 +186,20 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
 				   m_debugmask = atoi(optarg);
             };
 			   dsyslog("osdteletext: enable debug mask: %d (0x%02x)", m_debugmask, m_debugmask);
+            break;
+          case 'P':
+            if ((strlen(optarg) > 2) && (strncasecmp(optarg, "0x", 2) == 0)) {
+               // hex conversion
+               if (sscanf(optarg + 2, "%x", &m_debugpage) == 0) {
+                  esyslog("osdteletext: can't parse hexadecimal debug page (skip): %s", optarg);
+               };
+            } else {
+               // hex conversion
+               if (sscanf(optarg, "%x", &m_debugpage) == 0) {
+                  esyslog("osdteletext: can't parse hexadecimal debug page (skip): %s", optarg);
+               };
+            };
+			   dsyslog("osdteletext: enable debug page: %03x)", m_debugpage);
             break;
         }
    }
