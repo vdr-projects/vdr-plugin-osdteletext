@@ -49,11 +49,11 @@ void cTelePage::SetLine(const int line, uchar *myptr, const char *debugPrefix)
    int dc = 0;
 
    if (strlen(debugPrefix) > 0) {
-      printf("DEBUG: %s#%02d <:", debugPrefix, line); \
-      for (int i = 0; i < 40; i++) { \
-         printf(" %02x", myptr[i]); \
-      }; \
-      printf("\n"); \
+      printf("DEBUG: %s#%02d <:", debugPrefix, line);
+      for (int i = 0; i < 40; i++) {
+         printf(" %02x", myptr[i]);
+      };
+      printf("\n");
    };
 
    switch(line) {
@@ -103,7 +103,7 @@ void cTelePage::SetLine(const int line, uchar *myptr, const char *debugPrefix)
          break;
 
       default:
-         esyslog("osdteletext: cTelePage::SetLine called with unsupported line=%d (code issue)\n", line);
+         // esyslog("osdteletext: cTelePage::SetLine called with unsupported line=%d (code issue)\n", line);
          break;
    };
 
@@ -156,6 +156,10 @@ void cTelePage::SetLine(const int line, uchar *myptr, const char *debugPrefix)
       case 27:
          // line 27 contain only a 16-bit CRC at the end
          memcpy(buf + 40 * dc + 1, myptr + 1, 39); // store byte 2-40
+         break;
+
+      default:
+         // no storage
          break;
    };
 
@@ -404,16 +408,17 @@ void cTxtReceiver::DecodeTXT(uchar* TXT_buf)
    double stat_time_diff_start;
 
    static char debugPrefix[16];
-   switch (line) {
-   case 0: 
+
+   if (line == 0) {
       unsigned char b1, b2, b3, b4;
       int pgno, subno;
       b1 = unham16 (ptr);    
       // Page no, 10- and 1-digit
 
-      if (b1 == 0xff) break;
+      if (b1 == 0xff) return;
+
       SaveAndDeleteTxtPage();
-      snprintf(debugPrefix, sizeof(debugPrefix), "%s", ""); // clear
+      snprintf(debugPrefix, sizeof(debugPrefix), "%s", ""); // clear debug status
 
       b2 = unham16 (ptr+2); // Sub-code 0..6 + C4
       b3 = unham16 (ptr+4); // Sub-code 8..13 + C5,C6
@@ -461,32 +466,28 @@ void cTxtReceiver::DecodeTXT(uchar* TXT_buf)
             if (m_debugpage == TxtPage->page.page) {
                // select debug for all sub-pages
                snprintf(debugPrefix, sizeof(debugPrefix), "p=%03x*%02x", TxtPage->page.page, TxtPage->page.subPage);
-            }
+            } else if (m_debugline >= 0) {
+               // all pages, but specific line only
+               snprintf(debugPrefix, sizeof(debugPrefix), "p=%03x!%02x", TxtPage->page.page, TxtPage->page.subPage);
+            };
          } else {
             if ((m_debugpage == TxtPage->page.page) && (m_debugpsub == TxtPage->page.subPage)) {
-               // select debug only for matching sub-page
-               snprintf(debugPrefix, sizeof(debugPrefix), "p=%03x-%02x", TxtPage->page.page, TxtPage->page.subPage);
-            }
+               if ((m_debugline < 0) || (m_debugline == line)) {
+                  // select debug only for matching sub-page
+                  snprintf(debugPrefix, sizeof(debugPrefix), "p=%03x-%02x", TxtPage->page.page, TxtPage->page.subPage);
+               };
+            };
          };
       };
+   };
 
-      TxtPage->SetLine(line,(uchar *)ptr, debugPrefix);
-      break;
-   case 1 ... 25: 
-      if (TxtPage) {
+   if (TxtPage) {
+      if ((strlen(debugPrefix) > 0) && ((m_debugline < 0) || (m_debugline == line))) {
          TxtPage->SetLine(line,(uchar *)ptr, debugPrefix);
+      } else {
+         TxtPage->SetLine(line,(uchar *)ptr, "");
       };
-      break;
-   case 26 ... 29:
-      if (TxtPage) {
-         TxtPage->SetLine(line,(uchar *)ptr, debugPrefix);
-      };
-   default:
-      if (TxtPage) {
-         // TODO: implement support for others if needed (seen e.g. X/31)
-      };
-      break;
-   }
+   };
 }
 
 // vim: ts=3 sw=3 et
