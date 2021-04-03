@@ -243,8 +243,9 @@ const char *(names[0x20])={
     "Conc","GrCn","GrSp","ESC", "BkBl","StBk","HoMo","ReMo"};
 
 void cRenderPage::ReadTeletextHeader(unsigned char *Header) {
-    // Format of buffer:
-    //   0     String "VTXV4"
+    // Format of buffer, see also structure TelePageData in storage.h
+    // Header: 12 bytes (0-11)
+    //   0     String "VTXV5"
     //   5     always 0x01
     //   6     magazine number
     //   7     page number
@@ -252,7 +253,14 @@ void cRenderPage::ReadTeletextHeader(unsigned char *Header) {
     //   9     lang
     //   10    always 0x00
     //   11    always 0x00
-    //   12    teletext data, 40x24 bytes
+    // Teletext base data starting from byte 12
+    //   12    teletext data, 25x40 bytes
+    // VTXV5 extension
+    //   X25 ( 1x40)
+    //   X26 (16x40)
+    //   X27 (16x40)
+    //   X28 (16x40)
+    //   M29 (16x40)
     // Format of flags:
     //   0x80  C4 - Erase page
     //   0x40  C5 - News flash
