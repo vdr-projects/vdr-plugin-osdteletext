@@ -17,6 +17,7 @@
 #include "txtrender.h"
 #include "menu.h"
 #include "logging.h"
+#include "txtfont.h"
 
 // Font tables
 
@@ -550,7 +551,113 @@ void cRenderPage::RenderTeletextCode(unsigned char *PageCode) {
             c.SetBoxedOut(true);    
         }
         SetChar(x,24,c);
-    }       
+    }
+
+    /* VTXV5 handling starts here */
+
+    DEBUG_OT_TXTRDT("start X/26 handling"); /* X/26 */
+    unsigned char* PageCode_X26 = PageCode + 25*40 + 40; // X/1-24 + X/25
+    for (int row = 0; row <= 15; row++) {
+        // convert X/26/0-15 into triplets
+        if (PageCode_X26[row*40] == 0) {
+            // row empty
+            continue;
+        } else if (PageCode_X26[row*40] & 0x80 != 0x80) {
+            DEBUG_OT_TXTRDT("invalid X/26 row (DesignationCode flag not valid)");
+            continue;
+        };
+        for (int triplet = 0; triplet < 13; triplet++) {
+            uint8_t addr = PageCode_X26[row*40 + 1 + triplet*3];
+            uint8_t mode = PageCode_X26[row*40 + 2 + triplet*3];
+            uint8_t data = PageCode_X26[row*40 + 3 + triplet*3];
+
+            int found = 0;
+            const char* info;
+
+            if ((mode == 0x04) && (addr >= 40) && (addr <= 63)) {
+                // 0x04 = 0b00100
+                // "Set Active Position"
+                found = 1;
+                if (addr == 40) {
+                    y = 24;
+                } else {
+                    y = addr - 40;
+                };
+                x = data;
+                DEBUG_OT_TXTRDT("X/26 triplet found: row=%d triplet=%d SetActivePosition y=%d x=%d\n", row, triplet, y, x);
+            } else if ((mode == 0x04) && (addr >= 0) && (addr <= 39)) {
+                // 0x04 = 0b00100
+                // RESERVED
+                found = 1;
+            } else if ((mode == 0x1f) && (addr == 0x3f)) {
+                // 0x1f =  0b11111
+                // "Termination Marker"
+                found = 1;
+                if (m_debugmask & DEBUG_MASK_OT_TXTRDT) {
+                    switch(data & 0x07) {
+                        case 0x00: // 0b000
+                            info = "Intermediate (G)POP sub-page. End of object, more objects follow on this page.";
+                            break;
+                        case 0x01: // 0b001
+                            info = "Intermediate (G)POP sub-page. End of last object on this page.";
+                            break;
+                        case 0x02: // 0b010
+                            info = "Last (G)POP sub-page. End of object, more objects follow on this page.";
+                            break;
+                        case 0x03: // 0b011
+                            info = "Last (G)POP sub-page. End of last object on this page.";
+                            break;
+                        case 0x04: // 0b100
+                            info = "Local Object definitions. End of object, more objects follow on this page.";
+                            break;
+                        case 0x05: // 0b101
+                            info = "Local Object definitions. End of last object on this page.";
+                            break;
+                        case 0x06: // 0b110
+                            info = "Local enhancement data. End of enhancement data, Local Object definitions follow.";
+                            break;
+                        case 0x07: // 0b111
+                            info = "Local enhancement data. End of enhancement data, no Local Object definitions follow.";
+                            break;
+                    };
+                    DEBUG_OT_TXTRDT("X/26 triplet found: row=%d triplet=%d TerminationMarker: %s\n", row, triplet, info);
+                };
+            } else if (((mode & 0x10) == 0x10) && (addr >= 0) && (addr <= 39)) {
+                // 0x1x =  0b1xxxx
+                // Characters Including Diacritical Marks
+                x = addr;
+                cTeletextChar c = GetChar(x, y);
+                if (mode == 0x1000) {
+                    info = "character without diacritical mark";
+                    // No diacritical mark exists for mode description value 10000. An unmodified G0 character is then displayed unless the 7 bits of the data field have the value 0101010 (2/A) when the symbol "@" shall be displayed.
+                    if (data == 0x2a) {
+                        // set char to '@'
+                        c.SetChar(0x80);
+                    } else {
+                        c.SetChar(data);
+                    };
+                    DEBUG_OT_TXTRDT("X/26 triplet found: row=%d triplet=%d: %s\n", row, triplet, info);
+                    found = 1;
+                } else {
+                    info = "G0 character with diacritical mark";
+                    found = 1;
+                    uint8_t mark = mode & 0x0f;
+                    DEBUG_OT_TXTRDT("X/26 triplet found: row=%d triplet=%d: %s x=%d mark=%d data=0x%02x\n", row, triplet, info, x, mark, data);
+                    if (data >= 0x20) {
+                        DEBUG_OT_TXTRDT("X/26 triplet exec : y=%02d x=%02d change Char=0x%02x Charset=0x%04x mark=%x => Char=0x%02x Charset=0x%04x\n", y, x, c.GetChar(), c.GetCharset(), mark, X26_G0_CharWithDiacritcalMarkMapping(data, mark), CHARSET_LATIN_G0);
+                        c.SetCharset(CHARSET_LATIN_G0);
+                        c.SetChar(X26_G0_CharWithDiacritcalMarkMapping(data, mark));
+                    } else {
+                        // ignore: Data field values < 20 hex are reserved but decoders should still set the column co-ordinate of the Active Position to the value of the address field.
+                    };
+                };
+                SetChar(x, y, c);
+            };
+
+            if (found == 0)
+                DEBUG_OT_TXTRDT("X/26 triplet found: row=%d triplet=%d UNSUPPORTED addr=0x%02x mode=0x%02x data=0x%02x\n", row, triplet, addr, mode, data);
+        };
+    };
 }
 
 // vim: ts=4 sw=4 et
