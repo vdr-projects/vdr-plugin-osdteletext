@@ -6897,6 +6897,10 @@ unsigned int GetVTXChar(cTeletextChar c) {
             if (chr>=0x20 && chr<0x80) {
                 convertedChar = chr;
             }
+            if (chr>=0xa0 && chr<0xff) {
+                // pass ISO-8859-1 converted from "X/26 G0 character with diacritical mark"
+                convertedChar = chr;
+            }
         }
         break;
     case CHARSET_LATIN_G0_EN:
@@ -7016,5 +7020,111 @@ unsigned int GetVTXChar(cTeletextChar c) {
     }
     return convertedChar;
 }
+
+
+/* X/26 "G0 character with diacritical mark" mapping */
+// extract from G2 column 4:
+// 0: no modification
+// 1: GRAVE (GRAVIS)
+// 2: ACUTE (AKUT)
+// 3: CIRCUMFLEX (ZIRKUMFLEX)
+// 4: TILDE (TILDE)
+// 8: DIAERESIS (TREMA)
+// A: RING ABOVE (RING DARÜBER)
+// B: CEDILLA (CEDILLE)
+uint8_t X26_G0_CharWithDiacritcalMarkMapping(uint8_t c, uint8_t mark) {
+    uint8_t m = c; // default unmodified char
+
+    switch(c) {
+        case 0x41: // A 0xc0...0xc5
+        case 0x61: // a 0xe0...0xe5
+            switch(mark) {
+                case 0x1:  m = 0xc0 + c - 0x41; break; // GRAVE
+                case 0x2:  m = 0xc1 + c - 0x41; break; // ACUTE
+                case 0x3:  m = 0xc2 + c - 0x41; break; // CIRCUMFLEX
+                case 0x4:  m = 0xc3 + c - 0x41; break; // TILDE
+                case 0x8:  m = 0xc4 + c - 0x41; break; // DIAERESIS
+                case 0xa:  m = 0xc5 + c - 0x41; break; // RING ABOVE
+            };
+            break;
+
+        // UNSUPPORTED "AE" 0xc6 0xe6
+
+        case 0x43: // C 0xc7
+        case 0x63: // c 0xe7
+            switch(mark) {
+                case 0xb:  m = 0xc7 + c - 0x43; break; // CEDILLA
+            };
+            break;
+
+        case 0x45: // E 0xc8...0xcb
+        case 0x65: // e 0xe8...0xeb
+            switch(mark) {
+                case 0x1:  m = 0xc8 + c - 0x45; break; // GRAVE
+                case 0x2:  m = 0xc9 + c - 0x45; break; // ACUTE
+                case 0x3:  m = 0xca + c - 0x45; break; // CIRCUMFLEX
+                case 0x8:  m = 0xcb + c - 0x45; break; // DIAERESIS
+            };
+            break;
+
+        case 0x49: // I 0xcc...0xcf
+        case 0x69: // i 0xec...0xef
+            switch(mark) {
+                case 0x1:  m = 0xcc + c - 0x49; break; // GRAVE
+                case 0x2:  m = 0xcd + c - 0x49; break; // ACUTE
+                case 0x3:  m = 0xce + c - 0x49; break; // CIRCUMFLEX
+                case 0x8:  m = 0xcf + c - 0x49; break; // DIAERESIS
+            };
+            break;
+
+        // UNSUPPORTED "ETH" 0xd0 0xf0
+
+        case 0x4e: // N 0xd1
+        case 0x6e: // n 0xf1
+            switch(mark) {
+                case 0x4:  m = 0xd1 + c - 0x4e; break; // TILDE
+            };
+            break;
+
+        case 0x4f: // O 0xd2...0xd6
+        case 0x6f: // o 0xf2...0xf6
+            switch(mark) {
+                case 0x1:  m = 0xd2 + c - 0x4f; break; // GRAVE
+                case 0x2:  m = 0xd3 + c - 0x4f; break; // ACUTE
+                case 0x3:  m = 0xd4 + c - 0x4f; break; // CIRCUMFLEX
+                case 0x4:  m = 0xd5 + c - 0x4f; break; // TILDE
+                case 0x8:  m = 0xd6 + c - 0x4f; break; // DIAERESIS
+            };
+            break;
+
+        // UNSUPPORTED "MULTIPLICATION SIGN" 0xd7
+        // UNSUPPORTED "DIVISION SIGN" 0xf7
+        // UNSUPPORTED "O WITH STROKE" 0xd8 0xf8
+
+        case 0x55: // U 0xd9...0xdc
+        case 0x75: // u 0xf9...0xfc
+            switch(mark) {
+                case 0x1:  m = 0xd9 + c - 0x55; break; // GRAVE
+                case 0x2:  m = 0xda + c - 0x55; break; // ACUTE
+                case 0x3:  m = 0xdb + c - 0x55; break; // CIRCUMFLEX
+                case 0x8:  m = 0xdc + c - 0x55; break; // DIAERESIS
+            };
+            break;
+
+        case 0x59: // Y 0xdd
+        case 0x79: // y 0xfd
+            switch(mark) {
+                case 0x2:  m = 0xdd + c - 0x59; break; // ACUTE
+            };
+            break;
+
+        // UNSUPPORTED "SHARP S" 0xdf
+        // UNSUPPORTED "THRON" 0xff
+        default:
+            break;
+    };
+
+    return m;
+};
 
 // vim: ts=4 sw=4 et
