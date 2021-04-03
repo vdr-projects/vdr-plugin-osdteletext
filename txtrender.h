@@ -227,7 +227,7 @@ class cRenderPage {
     
 protected:
     cTeletextChar Page[40][25];
-    
+
     int Flags;
     //   0x80  C4 - Erase page
     //   0x40  C5 - News flash
@@ -304,7 +304,7 @@ public:
     void RenderTeletextCode(unsigned char *PageCode);
     // Interprete teletext code referenced by PageCode
     // and draw the whole page content into this object
-    // PageCode must be a 40*24 bytes buffer
+    // PageCode must be a buffer containing TelePageData structure (see storage.h)
 };
 
 
