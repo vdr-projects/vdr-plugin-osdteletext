@@ -339,8 +339,7 @@ void cRenderPage::RenderTeletextCode(unsigned char *PageCode) {
 
         // Move through line
         for (x=0;x<40;x++) {
-            unsigned char ttc=PageCode[x+40*y] & 0x7f;
-            // skip parity check
+            unsigned char ttc=PageCode[x+40*y];
 
             if (y==0 && x<8) continue;
             // no displayable data here...
