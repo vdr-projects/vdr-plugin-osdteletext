@@ -761,7 +761,7 @@ void TeletextBrowser::ShowAskForChannel() {
 //this is taken and adapted from the teletext plugin since it uses its data
 bool TeletextBrowser::DecodePage() {
    // Load the page and decodes it
-   unsigned char cache[40*24+12];
+   unsigned char cache[sizeof(TelePageData)];
    StorageHandle fd;
    // Take a look if there is a xxx-00 page
    if (currentSubPage==0) {
