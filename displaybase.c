@@ -261,7 +261,7 @@ tColor cDisplay::GetColorRGBAlternate(enumTeletextColor ttc, int Area) {
 void cDisplay::RenderTeletextCode(unsigned char *PageCode) {
     // Interprete teletext code referenced by PageCode
     // and draw the whole page content into OSD.
-    // PageCode must be a 40*24+12 bytes buffer
+    // PageCode must be a buffer containing TelePageData structure (see storage.h)
 
     HoldFlush();
 
@@ -277,6 +277,11 @@ void cDisplay::RenderTeletextCode(unsigned char *PageCode) {
         CleanDisplay();
     } else
         CleanDisplay();
+
+    if (memcmp(PageCode, "VTXV5", 5) != 0) {
+        esyslog("osdteletext: cDisplay::RenderTeletextCode called with PageCode which is not starting with 'VTXV5' (not supported)");
+        return;
+    };
 
     cRenderPage::RenderTeletextCode(PageCode+12);
 
