@@ -29,12 +29,12 @@ class cTelePage {
  public:
   PageID page;
  private:
-  unsigned char pagebuf[27*40];
+  TelePageData pagedata;
   Storage* storage;
  public:
   cTelePage(PageID page, uchar flags, uchar lang, int mag, Storage *s);
   ~cTelePage();
-  void SetLine(int, uchar*);
+  void SetLine(int, uchar*, const char*);
   void save();
   bool IsTopTextPage();
  };
