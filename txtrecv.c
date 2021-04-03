@@ -76,8 +76,10 @@ void cTelePage::SetLine(const int line, uchar *myptr, const char *debugPrefix)
          break;
 
       case 25:
-         // X/25
-         memcpy(pagedata.pagebuf_X25, myptr, 40);
+         buf = pagedata.pagebuf_X25;
+         for (int i = 0; i < 40; i++) {
+            buf[i] = myptr[i] & 0x7f; // clear of parity bit
+         };
          break;
 
       case 26:
