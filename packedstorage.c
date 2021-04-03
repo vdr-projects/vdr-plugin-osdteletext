@@ -73,9 +73,9 @@ bool PackedStorage::seekTo(PageID page, int desc, bool create) {
 }
 
 void PackedStorage::getFilename(char *buffer, int bufLength, PageID page) {
-   //This is a different scheme: page 576_07 will have the name 570s.vtx, the same as e.g. 571_01 or 575_00
+   //This is a different scheme: page 576_07 will have the name 570s.vtx5, the same as e.g. 571_01 or 575_00
    //Think of "the five hundred seventies"
-   snprintf(buffer, bufLength, "%s/%s/%03xs.vtx", getRootDir(),
+   snprintf(buffer, bufLength, "%s/%s/%03xs.vtx5", getRootDir(),
             *page.channel.ToString(), (page.page & 0xFF0));
 }
 
