@@ -160,11 +160,15 @@ void cTelePage::SetLine(const int line, uchar *myptr, const char *debugPrefix)
    };
 
    if (strlen(debugPrefix) > 0) {
-      printf("DEBUG: %s#%02d >:", debugPrefix, line); \
-      for (int i = 0; i < 40; i++) { \
-         printf(" %02x", buf[i]); \
-      }; \
-      printf("\n"); \
+      if (buf != NULL) {
+         printf("DEBUG: %s#%02d >:", debugPrefix, line);
+         for (int i = 0; i < 40; i++) {
+            printf(" %02x", buf[i]);
+         };
+         printf("\n");
+      } else {
+         printf("DEBUG: %s#%02d >: NOT-SELECTED-TO-STORE\n", debugPrefix, line);
+      };
    };
 }
 
