@@ -556,6 +556,7 @@ void cRenderPage::RenderTeletextCode(unsigned char *PageCode) {
     /* VTXV5 handling starts here */
 
     DEBUG_OT_TXTRDT("start X/26 handling"); /* X/26 */
+    x = -1; y = -1; // reset x/y
     unsigned char* PageCode_X26 = PageCode + 25*40 + 40; // X/1-24 + X/25
     for (int row = 0; row <= 15; row++) {
         // convert X/26/0-15 into triplets
@@ -624,7 +625,14 @@ void cRenderPage::RenderTeletextCode(unsigned char *PageCode) {
                 };
             } else if (((mode & 0x10) == 0x10) && (addr >= 0) && (addr <= 39)) {
                 // 0x1x =  0b1xxxx
-                // Characters Including Diacritical Marks
+                // G0 Characters Including Diacritical Marks
+
+                if (y == -1) {
+                    // "Set Active Position" not seen so far -> no y known so far -> SKIP
+                    DEBUG_OT_TXTRDT("misplaced X/26 triplet 'G0 Characters Including Diacritical Marks' misses 'Set Active Position' in advance");
+                    continue;
+                };
+
                 x = addr;
                 cTeletextChar c = GetChar(x, y);
                 if (mode == 0x1000) {
