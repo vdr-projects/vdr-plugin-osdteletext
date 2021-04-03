@@ -206,7 +206,7 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
                   esyslog("osdteletext: can't parse hexadecimal debug page (skip): %s", optarg);
                };
             };
-			   dsyslog("osdteletext: enable debug page: %03x)", m_debugpage);
+			   dsyslog("osdteletext: enable debug page: %03x", m_debugpage);
             break;
 
           case 'S':
