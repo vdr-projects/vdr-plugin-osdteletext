@@ -134,11 +134,13 @@ void cTelePage::SetLine(const int line, uchar *myptr, const char *debugPrefix)
                                      | ((myptr[triplet*3 + 2] & 0x03) << 4); // A4-5 mask 1-2 (9-10)  and shift to 5-6
                   buf[triplet*3 + 2] = ((myptr[triplet*3 + 2] & 0x7c) >> 2); // M0-4 mask 3-7 (11-15) and shift to 1-5
                   buf[triplet*3 + 3] = ((myptr[triplet*3 + 3] & 0x7f)     ); // D0-6 mask 1-7         and nothing to shift
+#if 0
                   if (strlen(debugPrefix) > 0)
                      printf("DEBUG: %s#%02d T: t=%d i1=%02x i2=%02x i3=%02x -> o1=%02x o2=%02x o3=%02x\n", debugPrefix, line, triplet
                            , myptr[1 + triplet*3], myptr[2 + triplet*3], myptr[3 + triplet*3]
                            , buf[triplet*3 + 1], buf[triplet*3 + 2], buf[triplet*3 + 3]
                      );
+#endif
                   break;
 
                case 28:
