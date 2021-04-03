@@ -628,7 +628,7 @@ void cRenderPage::RenderTeletextCode(unsigned char *PageCode) {
                 x = addr;
                 cTeletextChar c = GetChar(x, y);
                 if (mode == 0x1000) {
-                    info = "character without diacritical mark";
+                    info = "G0 character without diacritical mark";
                     // No diacritical mark exists for mode description value 10000. An unmodified G0 character is then displayed unless the 7 bits of the data field have the value 0101010 (2/A) when the symbol "@" shall be displayed.
                     if (data == 0x2a) {
                         // set char to '@'
