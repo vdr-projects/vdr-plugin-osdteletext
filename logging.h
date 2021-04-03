@@ -24,6 +24,7 @@ extern unsigned int m_debugpsub;
 #define DEBUG_MASK_OT_DCHR	0x00200000	// DrawChar
 #define DEBUG_MASK_OT_BOXED	0x00400000	// BoxedOut
 #define DEBUG_MASK_OT_DTXT 	0x00800000	// DrawText
+#define DEBUG_MASK_OT_TXTRDT	0x01000000	// Text Rendering triplet
 #define DEBUG_MASK_OT_TXTRCVD	0x04000000	// Text Receiver dump to stdout (particular page only, see code)
 #define DEBUG_MASK_OT_TXTRD	0x08000000	// Text Rendering dump to stdout
 
@@ -50,6 +51,8 @@ extern unsigned int m_debugpsub;
 #define DEBUG_OT_BOXED  if (m_debugmask & DEBUG_MASK_OT_BOXED)  dsyslog_ot
 #define DEBUG_OT_DTXT   if (m_debugmask & DEBUG_MASK_OT_DTXT )  dsyslog_ot
 #define DEBUG_OT_CACHE  if (m_debugmask & DEBUG_MASK_OT_CACHE)  dsyslog_ot
+#define DEBUG_OT_TXTRDT if (m_debugmask & DEBUG_MASK_OT_TXTRDT) dsyslog_ot
 #define DEBUG_OT_TXTRCVD if (m_debugmask & DEBUG_MASK_OT_TXTRCVD) dsyslog_ot
+#define DEBUG_OT_TXTRD  if (m_debugmask & DEBUG_MASK_OT_TXTRD) dsyslog_ot
 
 #endif
