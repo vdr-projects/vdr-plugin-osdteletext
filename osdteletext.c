@@ -221,12 +221,12 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
                   esyslog("osdteletext: can't parse hexadecimal debug sub-page (skip): %s", optarg);
                };
             };
-			   dsyslog("osdteletext: enable debug sub-page: %03x)", m_debugpsub);
+			   dsyslog("osdteletext: enable debug sub-page: %03x", m_debugpsub);
             break;
 
           case 'L':
             m_debugline = atoi(optarg);
-			   dsyslog("osdteletext: enable debug page line: %d)", m_debugline);
+			   dsyslog("osdteletext: enable debug page line: %d", m_debugline);
             break;
         }
    }
