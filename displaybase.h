@@ -227,7 +227,7 @@ public:
     // Max len chars, fill up with spaces
     // with alignment, foreground and background color
 
-    void DrawFooter(const char *textRed, const char *textGreen, const char* textYellow, const char *textBlue);
+    void DrawFooter(const char *textRed, const char *textGreen, const char* textYellow, const char *textBlue, const FooterFlags flag);
     // Draw footer to OSD
 
     void DrawClock();

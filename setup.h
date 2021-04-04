@@ -41,6 +41,7 @@ enum eTeletextActionConfig {
    Width,
    Height,
    Frame,
+   Font,
    Voffset,
    BackTrans,
    NotActive,
@@ -50,6 +51,7 @@ enum eTeletextActionValueType {
    Pct,
    Pix,
    Int,
+   Str,
    None,
 };
 
@@ -75,6 +77,7 @@ static const char *config_modes[] =
    tr("Width"),
    tr("Height"),
    tr("Frame"),
+   tr("Text Font"),
    tr("TxVoffset"),
    tr("BackTrans"),
 };
@@ -92,6 +95,12 @@ enum ActionKeys {
    ActionKeyOk,
 
    LastActionKey
+};
+
+enum FooterFlags {
+   FooterNormal,
+   FooterYellowValue,
+   FooterGreenYellowValue
 };
 
 //Default values are set in menu.c, setup menu, parsing and storing can be found in osdteletext.c

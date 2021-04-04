@@ -706,13 +706,30 @@ void cDisplay::DrawPageId(const char *text) {
     };
 }
 
-void cDisplay::DrawFooter(const char *textRed, const char *textGreen, const char* textYellow, const char *textBlue) {
+void cDisplay::DrawFooter(const char *textRed, const char *textGreen, const char* textYellow, const char *textBlue, const FooterFlags flag) {
     if (Boxed) return; // don't draw footer in on boxed pages
 
-    DrawTextExtended( 0, 24, textRed   , 10, AlignmentCenter, ttcWhite, ttcRed   );
-    DrawTextExtended(10, 24, textGreen , 10, AlignmentCenter, ttcWhite, ttcGreen );
-    DrawTextExtended(20, 24, textYellow, 10, AlignmentCenter, ttcWhite, ttcYellow);
-    DrawTextExtended(30, 24, textBlue  , 10, AlignmentCenter, ttcWhite, ttcBlue  );
+    switch(flag) {
+        case FooterNormal:
+            DrawTextExtended( 0, 24, textRed   , 10, AlignmentCenter, ttcWhite, ttcRed    );
+            DrawTextExtended(10, 24, textGreen , 10, AlignmentCenter, ttcWhite, ttcGreen  );
+            DrawTextExtended(20, 24, textYellow, 10, AlignmentCenter, ttcWhite, ttcYellow );
+            DrawTextExtended(30, 24, textBlue  , 10, AlignmentCenter, ttcWhite, ttcBlue   );
+            break;
+
+        case FooterYellowValue:
+            DrawTextExtended( 0, 24, textRed   , 10, AlignmentCenter, ttcWhite, ttcRed    );
+            DrawTextExtended(10, 24, textGreen , 10, AlignmentCenter, ttcWhite, ttcGreen  );
+            DrawTextExtended(20, 24, textYellow, 10, AlignmentCenter, ttcWhite, ttcMagenta);
+            DrawTextExtended(30, 24, textBlue  , 10, AlignmentCenter, ttcWhite, ttcBlue   );
+            break;
+
+        case FooterGreenYellowValue:
+            DrawTextExtended( 0, 24, textRed   , 10, AlignmentCenter, ttcWhite, ttcRed    );
+            DrawTextExtended(10, 24, textGreen , 20, AlignmentCenter, ttcWhite, ttcMagenta);
+            DrawTextExtended(30, 24, textBlue  , 10, AlignmentCenter, ttcWhite, ttcBlue   );
+            break;
+   };
 }
 
 void cDisplay::DrawClock() {

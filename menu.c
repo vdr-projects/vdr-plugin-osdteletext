@@ -348,27 +348,41 @@ bool TeletextBrowser::ExecuteActionConfig(eTeletextActionConfig e, int delta) {
       case Left:
          COND_ADJ_VALUE(ttSetup.OSDleftPct, OSDleftPctMin, OSDleftPctMax, delta);
          break;
+
       case Top:
          COND_ADJ_VALUE(ttSetup.OSDtopPct, OSDtopPctMin, OSDtopPctMax, delta);
          break;
+
       case Width:
          COND_ADJ_VALUE(ttSetup.OSDwidthPct, OSDwidthPctMin, OSDwidthPctMax, delta);
          break;
+
       case Height:
          COND_ADJ_VALUE(ttSetup.OSDheightPct, OSDheightPctMin, OSDheightPctMax, delta);
          break;
+
       case Frame:
          COND_ADJ_VALUE(ttSetup.OSDframePix, OSDframePixMin, OSDframePixMax, delta);
          break;
+
+      case Font:
+         ttSetup.txtFontIndex++;
+         if (ttSetup.txtFontIndex >= ttSetup.txtFontNames.Size()) ttSetup.txtFontIndex = 0; // rollover
+         ttSetup.txtFontName = ttSetup.txtFontNames[ttSetup.txtFontIndex];
+         changedConfig = true;
+         break;
+
       case Voffset:
          COND_ADJ_VALUE(ttSetup.txtVoffset, txtVoffsetMin, txtVoffsetMax, delta);
          break;
+
       case BackTrans:
          BackTransVal = ((uint32_t) ttSetup.configuredClrBackground) >> 24;
          DEBUG_OT_KEYS("key action: 'Config->BackTrans' BackTransVal=%d BackTransMin=%d BackTransMax=%d delta=%d", BackTransVal, BackTransMin, BackTransMax, delta * 8);
          COND_ADJ_VALUE(BackTransVal, BackTransMin, BackTransMax, delta * 8);
          ttSetup.configuredClrBackground = ((uint32_t) BackTransVal) << 24;
          break;
+
       default:
          // nothing todo
          break;
@@ -482,7 +496,8 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
             case Top       : configMode = Width    ; break;
             case Width     : configMode = Height   ; break;
             case Height    : configMode = Frame    ; break;
-            case Frame     : configMode = Voffset  ; break;
+            case Frame     : configMode = Font     ; break;
+            case Font      : configMode = Voffset  ; break;
             case Voffset   : configMode = BackTrans; break;
             case BackTrans : configMode = NotActive; break; // stop config mode
          };
@@ -833,7 +848,9 @@ void TeletextBrowser::UpdateFooter() {
 
    if ( ttSetup.lineMode24 ) return; // nothing to do
 
-   char textRed[21], textGreen[21], textYellow[21], textBlue[21]; // 10x UTF-8 char + \0
+   char textRed[81]= "", textGreen[81] = "", textYellow[81] = "", textBlue[81] = ""; // 40x UTF-8 char + \0
+   FooterFlags flag = FooterNormal; // default
+   eTeletextActionValueType valueType = None;
 
    if (configMode == NotActive) {
       eTeletextAction AkRed    = TranslateKey(kRed);
@@ -856,10 +873,32 @@ void TeletextBrowser::UpdateFooter() {
       CONVERT_ACTION_TO_TEXT(textYellow, AkYellow);
       CONVERT_ACTION_TO_TEXT(textBlue  , AkBlue  );
    } else {
-      snprintf(textRed   , sizeof(textRed)   , "%s-", config_modes[configMode]); // <mode>-
-      snprintf(textGreen , sizeof(textGreen) , "%s+", config_modes[configMode]); // <mode>+
+      switch (configMode) {
+         case Left:
+         case Top:
+         case Width:
+         case Height:
+         case Frame:
+         case Voffset:
+         case BackTrans:
+            snprintf(textRed   , sizeof(textRed)   , "%s-", config_modes[configMode]); // <mode>-
+            snprintf(textGreen , sizeof(textGreen) , "%s+", config_modes[configMode]); // <mode>+
+            flag = FooterYellowValue;
+            break;
+
+         case Font:
+            snprintf(textRed   , sizeof(textRed)   , "%s" , config_modes[configMode]); // <mode>
+            DEBUG_OT_FOOT("ttSetup.txtFontIndex=%d ttSetup.txtFontNames[%d]='%s'", ttSetup.txtFontIndex, ttSetup.txtFontIndex, ttSetup.txtFontNames[ttSetup.txtFontIndex]);
+            snprintf(textGreen, sizeof(textGreen)  , "%s", ttSetup.txtFontNames[ttSetup.txtFontIndex]); // FontName
+            flag = FooterGreenYellowValue;
+            break;
+
+         default:
+            break;
+      };
+
       int valueInt = 0;
-      eTeletextActionValueType valueType = None;
+      char *valueStr = NULL;
       switch (configMode) {
          case Left:
             valueInt = ttSetup.OSDleftPct;
@@ -913,6 +952,17 @@ void TeletextBrowser::UpdateFooter() {
             snprintf(textYellow, sizeof(textYellow), "%d", valueInt);
             break;
 
+         case Str:
+            if (valueStr != NULL)
+               snprintf(textYellow, sizeof(textYellow), "%s", valueStr);
+            else
+               snprintf(textYellow, sizeof(textYellow), "%s", "ERROR-STR"); // should not happen
+            break;
+
+         case None:
+            // handled above directly
+            break;
+
          default:
             snprintf(textYellow, sizeof(textYellow), "%s", "ERROR"); // should not happen
             break;
@@ -920,8 +970,9 @@ void TeletextBrowser::UpdateFooter() {
 
       snprintf(textBlue  , sizeof(textBlue)  , "%s", st_modes[Config]); // option itself
    };
-   DEBUG_OT_FOOT("textRed='%s' textGreen='%s' text Yellow='%s' textBlue='%s'", textRed, textGreen, textYellow, textBlue);
-   Display::DrawFooter(textRed, textGreen, textYellow, textBlue);
+
+   DEBUG_OT_FOOT("textRed='%s' textGreen='%s' text Yellow='%s' textBlue='%s' flag=%d", textRed, textGreen, textYellow, textBlue, flag);
+   Display::DrawFooter(textRed, textGreen, textYellow, textBlue, flag);
 }
 
 TeletextSetup ttSetup;

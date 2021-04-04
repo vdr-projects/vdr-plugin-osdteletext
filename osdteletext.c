@@ -31,7 +31,7 @@ using namespace std;
 
 #define NUMELEMENTS(x) (sizeof(x) / sizeof(x[0]))
 
-static const char *VERSION        = "1.9.9.dev.1";
+static const char *VERSION        = "1.9.9.dev.2";
 static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
 static const char *MAINMENUENTRY  = trNOOP("Teletext");
 
@@ -252,6 +252,13 @@ bool cPluginTeletextosd::Start(void)
    SETUP_MIN_MAX_CHECK(ttSetup.OSDframePix , OSDframePixMin , OSDframePixMax )
    SETUP_MIN_MAX_CHECK(ttSetup.txtVoffset  , txtVoffsetMin  , txtVoffsetMax  )
 
+   // read available fonts into structure and map index
+   cFont::GetAvailableFontNames(&ttSetup.txtFontNames, true);
+   ttSetup.txtFontIndex = ttSetup.txtFontNames.Find(ttSetup.txtFontName);
+   if (ttSetup.txtFontIndex < 0) {
+       ttSetup.txtFontIndex = 0;
+   }
+
    return true;
 }
 
@@ -263,6 +270,7 @@ void cPluginTeletextosd::Stop(void)
    SetupStore("OSDtopPct", ttSetup.OSDtopPct);
    SetupStore("OSDleftPct", ttSetup.OSDleftPct);
    SetupStore("OSDframePix", ttSetup.OSDframePix);
+   SetupStore("txtFontName", ttSetup.txtFontName);
    SetupStore("txtVoffset", ttSetup.txtVoffset);
    SetupStore("lineMode24", ttSetup.lineMode24);
    SetupStore("configuredClrBackground", (int)(ttSetup.configuredClrBackground >> 24));
