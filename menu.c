@@ -865,30 +865,37 @@ void TeletextBrowser::UpdateFooter() {
             valueInt = ttSetup.OSDleftPct;
             valueType = Pct;
             break;
+
          case Top:
             valueInt = ttSetup.OSDtopPct;
             valueType = Pct;
             break;
+
          case Width:
             valueInt = ttSetup.OSDwidthPct;
             valueType = Pct;
             break;
+
          case Height:
             valueInt = ttSetup.OSDheightPct;
             valueType = Pct;
             break;
+
          case Frame:
             valueInt = ttSetup.OSDframePix;
             valueType = Pix;
             break;
+
          case Voffset:
             valueInt = ttSetup.txtVoffset;
             valueType = Pix;
             break;
+
          case BackTrans:
             valueInt = ((uint32_t) ttSetup.configuredClrBackground) >> 24;
             valueType = Int;
             break;
+
          default:
             break;
       };
@@ -897,12 +904,15 @@ void TeletextBrowser::UpdateFooter() {
          case Pct:
             snprintf(textYellow, sizeof(textYellow), "%d %%", valueInt);
             break;
+
          case Pix:
             snprintf(textYellow, sizeof(textYellow), "%d Px", valueInt);
             break;
+
          case Int:
             snprintf(textYellow, sizeof(textYellow), "%d", valueInt);
             break;
+
          default:
             snprintf(textYellow, sizeof(textYellow), "%s", "ERROR"); // should not happen
             break;
