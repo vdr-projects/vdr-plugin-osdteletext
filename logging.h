@@ -7,6 +7,7 @@
 extern unsigned int m_debugmask;
 extern unsigned int m_debugpage;
 extern unsigned int m_debugpsub;
+extern          int m_debugline;
 
 #define DEBUG_MASK_OT		0x00000001	// general
 #define DEBUG_MASK_OT_CACHE	0x00000002	// Caching System

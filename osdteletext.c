@@ -38,6 +38,7 @@ static const char *MAINMENUENTRY  = trNOOP("Teletext");
 unsigned int m_debugmask = 0;
 unsigned int m_debugpage = 0;
 unsigned int m_debugpsub = 0;
+int m_debugline = -1;
 
 class cPluginTeletextosd : public cPlugin {
 private:
@@ -142,6 +143,7 @@ const char *cPluginTeletextosd::CommandLineHelp(void)
          "  -t,       --toptext          Store top text pages at cache. (unviewable pages)\n"
          "  -P|--debugpage <int|hexint>  Specify page to debug (int: autoconvert internally to hex)\n"
          "  -S|--debugpsub <int|hexint>  Specify sub-page to debug (int: autoconvert internally to hex)\n"
+         "  -L|--debugline <int>         Specify line of page to debug\n"
          "  -D|--debugmask <int|hexint>  Enable debugmask\n";
 }
 
@@ -156,6 +158,7 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
        { "debugmask",    required_argument,       NULL, 'D' },
        { "debugpage",    required_argument,       NULL, 'P' },
        { "debugpsub",    required_argument,       NULL, 'S' },
+       { "debugline",    required_argument,       NULL, 'L' },
        { NULL }
        };
 
@@ -203,7 +206,7 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
                   esyslog("osdteletext: can't parse hexadecimal debug page (skip): %s", optarg);
                };
             };
-			   dsyslog("osdteletext: enable debug page: %03x)", m_debugpage);
+			   dsyslog("osdteletext: enable debug page: %03x", m_debugpage);
             break;
 
           case 'S':
@@ -218,7 +221,12 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
                   esyslog("osdteletext: can't parse hexadecimal debug sub-page (skip): %s", optarg);
                };
             };
-			   dsyslog("osdteletext: enable debug sub-page: %03x)", m_debugpsub);
+			   dsyslog("osdteletext: enable debug sub-page: %03x", m_debugpsub);
+            break;
+
+          case 'L':
+            m_debugline = atoi(optarg);
+			   dsyslog("osdteletext: enable debug page line: %d", m_debugline);
             break;
         }
    }
