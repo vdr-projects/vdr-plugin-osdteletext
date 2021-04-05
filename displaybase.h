@@ -88,8 +88,8 @@ protected:
     int fontHeight;
     int fontWidth;
 
-    static int realFontWidths[4];
-
+    static int realFontWidths[5];
+    static int realFontHeights[5];
 
     class cBox {
         // helper class. Represents a character's box in virtual coordinates
