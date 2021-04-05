@@ -3,6 +3,7 @@ VDR Plugin 'osdteletext' Revision History
 2022-04-03:
 - [pbiering] add support for "G0 character with diacritical mark" by implementation related support of X/26
 - [pbiering] introduce new page cache storage format VTXV5 to cover X/25-28 and M/29 extension
+- [pbiering] fix not working selection of cache-system 'legacy'
 
 2022-03-28: version 1.1.1
 - [pbiering] fix missing implementation of graphics char 0x7f (filled rectangle)

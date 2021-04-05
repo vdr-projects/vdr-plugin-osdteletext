@@ -241,10 +241,14 @@ bool cPluginTeletextosd::Start(void)
    //perhaps due to a crash they have not been deleted.
    switch (storageSystem) {
       case Storage::StorageSystemLegacy:
-         storage =  new LegacyStorage(maxStorage);
+         isyslog("osdteletext: selected storage system: legacy");
+         storage = new LegacyStorage(maxStorage);
+         break;
       case Storage::StorageSystemPacked:
       default:
-        storage = new PackedStorage(maxStorage);
+         isyslog("osdteletext: selected storage system: packed");
+         storage = new PackedStorage(maxStorage);
+         break;
    }
 
    initTexts();
