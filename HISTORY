@@ -1,5 +1,8 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
+2022-04-06:
+- [pbiering] improve font scaling
+
 2022-04-04:
 - [pbiering] add "Text Font" option to OSD config
 

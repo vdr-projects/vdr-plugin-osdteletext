@@ -21,7 +21,8 @@
 #include "logging.h"
 
 std::string cDisplay::TXTFontFootprint = "";
-int cDisplay::realFontWidths[4] = {0};
+int cDisplay::realFontWidths[5] = {0};
+int cDisplay::realFontHeights[5] = {0};
 
 cDisplay::cDisplay(int width, int height)
     : Zoom(Zoom_Off), Concealed(true), Blinked(false), FlushLock(0),
@@ -46,22 +47,31 @@ cDisplay::~cDisplay() {
     DELETENULL(TXTHlfHFont);
 }
 
-// This is an ugly hack, any ideas on how to get font size with characters (glyphs) of specified width/height?
+// This is an improved detection mechanism (still ugly hack, any ideas on how to get font size with characters (glyphs) of specified width/height?)
+// TODO: shrinking in case of italic fonts
 cFont *cDisplay::GetFont(const char *name, int fontIndex, int height, int width) {
+    const int heightOrig = height;
+    const int widthOrig = width;
+    DEBUG_OT_FONT("called with font %s index %d with requested w=%3d h=%3d", name, fontIndex, widthOrig, heightOrig);
     cFont *font = cFont::CreateFont(name, height, width);
     if (font != NULL) {
-        int realWidth = font->Width('g');
+        int realWidth = font->Width('W');
+        int realHeight = font->Height();
+        DEBUG_OT_FONT("INITIAL     fontWidth =%3d -> realWidth =%3d    requestedWidth =%3d", width, realWidth, widthOrig);
         if (realWidth > 0) {
-            for (int i = width * width / realWidth; i < width * 4; i++) {
+            for (int i = (width * width) / realWidth; i < width * 4; i++) {
                 DELETENULL(font);
-                font = cFont::CreateFont(name, height, i);
+                font = cFont::CreateFont(name, heightOrig, i);
                 if (font != NULL) {
-                        realWidth = font->Width('g');
-                    if (realWidth > width) {
-                        DELETENULL(font);
+                    realWidth = font->Width('W');
+                    DEBUG_OT_FONT("TEST result fontWidth =%3d -> realWidth =%3d %s requestedWidth =%3d"
+                        , i, realWidth
+                        , (realWidth > widthOrig) ? "> " : "<="
+                        , widthOrig);
+                    if (realWidth > widthOrig) {
+                        // too large, select last one and finish
                         width = i - 1;
-                        font = cFont::CreateFont(name, height, width);
-                        realFontWidths[fontIndex] = width;
+                        realFontWidths[fontIndex] = width; // store in cache
                         break;
                     }
                 }
@@ -69,8 +79,35 @@ cFont *cDisplay::GetFont(const char *name, int fontIndex, int height, int width)
         } else {
             esyslog("osdteletext: font %s returned realWidth of 0 (should not happen, please try a different font)", name);
         }
+
+        DEBUG_OT_FONT("INITIAL     fontHeight=%3d -> realHeight=%3d    requestedHeight=%3d", height, realHeight, heightOrig);
+        if (realHeight > 0) {
+            for (int i = height * height / realHeight; i < height * 4; i++) {
+                DELETENULL(font);
+                font = cFont::CreateFont(name, i, widthOrig);
+                if (font != NULL) {
+                    realHeight = font->Height();
+                    DEBUG_OT_FONT("TEST result fontHeight=%3d -> realHeight=%3d %s requestedHeight=%3d"
+                        , i, realHeight
+                        , (realHeight > heightOrig) ? "> " : "<="
+                        , heightOrig);
+                    if (realHeight > heightOrig) {
+                        // too large, select last one and finish
+                        height = i - 1;
+                        realFontHeights[fontIndex] = height; // store in cache
+                        break;
+                    }
+                }
+            }
+        } else {
+            esyslog("osdteletext: font %s returned realHeight of 0 (should not happen, please try a different font)", name);
+        }
     }
-    DEBUG_OT_FONT("font %s index %d probed size (w/h) = (%d/%d), char width: %d", name, fontIndex, width, height, font->Width("g"));
+
+    DELETENULL(font);
+    font = cFont::CreateFont(name, height, width); // recreate with final height and width from above
+
+    DEBUG_OT_FONT("font %s index %d with requested w=%3d h=%3d => probed size w=%3d h=%3d", name, fontIndex, widthOrig, heightOrig, width, height);
     return font;
 }
 
@@ -117,20 +154,22 @@ void cDisplay::InitScaler() {
     int txtFontHeight = fontHeight;
     const char *txtFontName = ttSetup.txtFontName;
     std::string footprint = GetFontFootprint(txtFontName);
-
     if (footprint.compare(TXTFontFootprint) == 0) {
-        TXTFont      = cFont::CreateFont(txtFontName, txtFontHeight / 2, realFontWidths[0]);
-        TXTDblWFont  = cFont::CreateFont(txtFontName, txtFontHeight / 2, realFontWidths[1]);
-        TXTDblHFont  = cFont::CreateFont(txtFontName, txtFontHeight, realFontWidths[2]);
-        TXTDblHWFont = cFont::CreateFont(txtFontName, txtFontHeight, realFontWidths[3]);
-        TXTHlfHFont  = cFont::CreateFont(txtFontName, txtFontHeight / 4, realFontWidths[0]);
+        // cached
+        DEBUG_OT_FONT("call cFont::CreateFont for: %s", txtFontName);
+        TXTFont      = cFont::CreateFont(txtFontName, realFontHeights[0], realFontWidths[0]);
+        TXTDblWFont  = cFont::CreateFont(txtFontName, realFontHeights[1], realFontWidths[1]);
+        TXTDblHFont  = cFont::CreateFont(txtFontName, realFontHeights[2], realFontWidths[2]);
+        TXTDblHWFont = cFont::CreateFont(txtFontName, realFontHeights[3], realFontWidths[3]);
+        TXTHlfHFont  = cFont::CreateFont(txtFontName, realFontHeights[4], realFontWidths[4]);
     } else {
         TXTFontFootprint = footprint;
+        DEBUG_OT_FONT("call GetFont for: %s", txtFontName);
         TXTFont      = GetFont(txtFontName, 0, txtFontHeight / 2, txtFontWidth / 2);
         TXTDblWFont  = GetFont(txtFontName, 1, txtFontHeight / 2, txtFontWidth);
         TXTDblHFont  = GetFont(txtFontName, 2, txtFontHeight, txtFontWidth / 2);
         TXTDblHWFont = GetFont(txtFontName, 3, txtFontHeight, txtFontWidth);
-        TXTHlfHFont  = GetFont(txtFontName, 0, txtFontHeight / 4, txtFontWidth / 2);
+        TXTHlfHFont  = GetFont(txtFontName, 4, txtFontHeight / 4, txtFontWidth / 2);
     }
 }
 
@@ -485,21 +524,10 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
                 }
                 virtY++;
             }
-#if 0
-            if (x == 0) {
-#else
-            if (y == 16) {
-#endif
-                DEBUG_OT_DCHR("x=%d y=%d vx=%d vy=%d w=%d h=%d h_scale_div2=%d ttfg=%d ttbg=%d BoxedOut=%d graphics charmap=0x%04x", x, y, vx, vy, w, h, h_scale_div2, ttfg, ttbg, c.GetBoxedOut(), *charmap);
-            };
 
             osd->DrawBitmap(vx + leftFrame, vy + topFrame, charBm);
+
         } else {
-#if 0
-            // hi level osd devices (e.g. rpi and softhddevice openglosd currently do not support monospaced fonts with arbitrary width
-            // osd->DrawRectangle(vx, vy, vx + w - 1, vy + h - 1, bg);
-            osd->DrawText(vx, vy, buf, fg, bg, font);
-#else
             cBitmap charBm(w, h, 24);
             if (m_debugmask & DEBUG_MASK_OT_ACT_CHAR_BACK_BLUE)
                 charBm.DrawRectangle(0, 0, w - 1, h - 1, GetColorRGB(ttcBlue,0));
@@ -520,16 +548,53 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
                 cache_Vshift       = (cache_txtVoffset * cache_outputHeight) / cache_OsdHeight;
                 dsyslog("osdteletext: DrawText vertical shift cache updated: txtVoffset=%d outputHeight=%d OsdHeight=%d => Vshift=%d", cache_txtVoffset, cache_outputHeight, cache_OsdHeight, cache_Vshift);
             };
-#if 0
-            if (x == 0) {
-#else
-            if (y == 2 || y == 3) {
-#endif
-                DEBUG_OT_DCHR("x=%d y=%d vx=%d vy=%d w=%d h=%d h_scale_div2=%d ttfg=%d ttbg=%d BoxedOut=%d text charset=0x%04x char='%s'", x, y, vx, vy, w, h, h_scale_div2, ttfg, ttbg, c.GetBoxedOut(), charset, buf);
+
+            if ((m_debugline >= 0) && (y == m_debugline)) {
+                DEBUG_OT_DCHR("y=%2d x=%2d vy=%4d vx=%4d w=%d h=%d cache_Vshift=%d ttfg=%d ttbg=%d BoxedOut=%d text charset=0x%04x char='%s'", y, x, vy, vx, w, h, cache_Vshift, ttfg, ttbg, c.GetBoxedOut(), charset, buf);
             };
-            charBm.DrawText(0, cache_Vshift, buf, fg, 0, font, 0, h / ((h_scale_div2 == true) ? 2 : 1));
+
+            charBm.DrawText(0, cache_Vshift, buf, fg, 0, font, 0, 0);
+
+            if (m_debugmask & DEBUG_MASK_OT_DCHR) {
+                // draw a bunch of markers into bitmap
+                tColor color = GetColorRGB(ttcRed,0);
+                if(((x % 2 != 0) && ((y % 2) == 0)) || ((x % 2 == 0) && ((y % 2) != 0)))
+                    color = GetColorRGB(ttcBlue,0);
+                for (int i = 0; i < w; i++) {
+                    charBm.DrawPixel(i , 0    , color); // horizontal top
+                    charBm.DrawPixel(i , h - 1, color); // horizontal bottom
+                    if ((h > 2) && ((i % 5) == 0)) {
+                        // mark at 5
+                        charBm.DrawPixel(i , 0 + 1, color); // horizontal top
+                        charBm.DrawPixel(i , h - 2, color); // horizontal bottom
+                    };
+                    if ((h > 4) && ((i % 10) == 0)) {
+                        // mark at 10
+                        charBm.DrawPixel(i , 0 + 2, color); // horizontal top
+                        charBm.DrawPixel(i , 0 + 3, color); // horizontal top
+                        charBm.DrawPixel(i , h - 2, color); // horizontal bottom
+                        charBm.DrawPixel(i , h - 3, color); // horizontal bottom
+                    };
+                };
+                for (int i = 0; i < h; i++) {
+                    charBm.DrawPixel(0     , i, color); // vertical left
+                    charBm.DrawPixel(w - 1 , i, color); // vertical right
+                    if ((w > 2) && ((i % 5) == 0)) {
+                        // mark at 5
+                        charBm.DrawPixel(0 + 1 , i, color); // vertical left
+                        charBm.DrawPixel(w - 1 , i, color); // vertical right
+                    };
+                    if ((w > 4) && ((i % 10) == 0)) {
+                        // mark at 10
+                        charBm.DrawPixel(0 + 2 , i, color); // vertical left
+                        charBm.DrawPixel(0 + 3 , i, color); // vertical left
+                        charBm.DrawPixel(w - 2 , i, color); // vertical right
+                        charBm.DrawPixel(w - 3 , i, color); // vertical right
+                    };
+                };
+            };
+
             osd->DrawBitmap(vx + leftFrame, vy + topFrame, charBm);
-#endif
         }
     }
 }
