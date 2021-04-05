@@ -1,4 +1,6 @@
 /*************************************************************** -*- c++ -*-
+ *       Copyright (c) 2005      by Udo Richter                            *
+ *       Copyright (c) 2021      by Peter Bieringer (extenions)            *
  *                                                                         *
  *   txtrender.c - Teletext display abstraction and teletext code          *
  *                 renderer                                                *
@@ -7,9 +9,6 @@
  *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
- *                                                                         *
- *   Changelog:                                                            *
- *     2005-03    initial version (c) Udo Richter                          *
  *                                                                         *
  ***************************************************************************/
 

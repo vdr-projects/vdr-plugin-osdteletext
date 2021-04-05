@@ -1,5 +1,6 @@
 /*************************************************************** -*- c++ -*-
  *       Copyright (c) 2003,2004 by Marcel Wiesweg                         *
+ *       Copyright (c) 2021      by Peter Bieringer (extenions)            *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
