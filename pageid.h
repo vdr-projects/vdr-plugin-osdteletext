@@ -24,8 +24,8 @@ struct PageID {
    PageID(tChannelID id, int p, int s) { set(id, p, s); }
    void set(tChannelID id, int p, int s) { channel=id; page=p; subPage=s; }
    tChannelID channel;
-   int page;
-   int subPage;
+   unsigned int page;
+   unsigned int subPage;
 };
 
 #endif

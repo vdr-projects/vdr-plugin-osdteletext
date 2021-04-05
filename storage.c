@@ -46,8 +46,8 @@ int Storage::cleanSubDir(const char *dir) {
       int filesize;
       while ((txtfile = readdir(d)) != NULL) {
          int len=strlen(txtfile->d_name);
-         //check that the file end with .vtx to avoid accidents and disasters
-         if (strcmp(txtfile->d_name+len-4, ".vtx")==0) {
+         //check that the file end with .vtx5 to avoid accidents and disasters
+         if (strcmp(txtfile->d_name+len-5, ".vtx5")==0) {
             snprintf(fullPath, PATH_MAX, "%s/%s", dir, txtfile->d_name);
             stat(fullPath, &txtfilestat);
             filesize=actualFileSize(txtfilestat.st_size);
@@ -127,7 +127,7 @@ bool Storage::exists(const char* file) {
 }
 
 void Storage::getFilename(char *buffer, int bufLength, PageID page) {
-   snprintf(buffer, bufLength, "%s/%s/%03x_%02x.vtx", getRootDir(),
+   snprintf(buffer, bufLength, "%s/%s/%03x_%02x.vtx5", getRootDir(),
             *page.channel.ToString(), page.page, page.subPage);
 }
 

@@ -1,5 +1,6 @@
 /*************************************************************** -*- c++ -*-
  *       Copyright (c) 2003,2004 by Marcel Wiesweg                         *
+ *       Copyright (c) 2021      by Peter Bieringer (extenions)            *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -31,15 +32,149 @@
 cTelePage::cTelePage(PageID t_page, uchar t_flags, uchar t_lang,int t_mag, Storage *s)
   : mag(t_mag), flags(t_flags), lang(t_lang), page(t_page), storage(s)
 {
-   memset(pagebuf,' ',26*40);
+   memset(pagedata.pagebuf    ,' ',25 * 40);  // clear X/0-24 buffer with spaces
+   memset(pagedata.pagebuf_X25, 0,  1 * 40);  // clear X25 buffer
+   memset(pagedata.pagebuf_X26, 0, 16 * 40);  // clear X26 buffer
+   memset(pagedata.pagebuf_X27, 0, 16 * 40);  // clear X27 buffer
+   memset(pagedata.pagebuf_X28, 0, 16 * 40);  // clear X28 buffer
+   memset(pagedata.pagebuf_M29, 0, 16 * 40);  // clear M29 buffer
 }
 
 cTelePage::~cTelePage() {
 }
 
-void cTelePage::SetLine(int line, uchar *myptr)
+
+void cTelePage::SetLine(const int line, uchar *myptr, const char *debugPrefix)
 {
-   memcpy(pagebuf+40*line,myptr,40);
+   unsigned char *buf = NULL;
+   int dc = 0;
+
+   if (strlen(debugPrefix) > 0) {
+      printf("DEBUG: %s#%02d <:", debugPrefix, line);
+      for (int i = 0; i < 40; i++) {
+         printf(" %02x", myptr[i]);
+      };
+      printf("\n");
+   };
+
+   switch(line) {
+      case 0:
+         // VTX header
+         buf = pagedata.pagebuf;
+         memcpy(buf, myptr, 8); // copy first 8 bytes raw
+         // copy 32 VTX
+         for (int i = 8; i < 40; i++) {
+            buf[i] = myptr[i] & 0x7f; // clear of parity bit
+         };
+         break;
+
+      case 1 ... 24:
+         // standard VTX, clear parity bit
+         buf = pagedata.pagebuf + 40 * line;
+         for (int i = 0; i < 40; i++) {
+            buf[i] = myptr[i] & 0x7f; // clear of parity bit
+         };
+         break;
+
+      case 25:
+         buf = pagedata.pagebuf_X25;
+         for (int i = 0; i < 40; i++) {
+            buf[i] = myptr[i] & 0x7f; // clear of parity bit
+         };
+         break;
+
+      case 26:
+         buf = pagedata.pagebuf_X26;
+         // further handling below
+         break;
+
+      case 27:
+         buf = pagedata.pagebuf_X27;
+         // further handling below
+         break;
+
+      case 28:
+         buf = pagedata.pagebuf_X28;
+         // further handling below
+         break;
+
+      case 29:
+         buf = pagedata.pagebuf_M29;
+         // further handling below
+         break;
+
+      default:
+         // esyslog("osdteletext: cTelePage::SetLine called with unsupported line=%d (code issue)\n", line);
+         break;
+   };
+
+   switch(line) {
+      case 26 ... 29:
+         // line 26-29 contain DesignationCode
+         dc = unhamtab[myptr[0]] & 0x0f;
+         buf += dc * 40; // shift buffer start to DesignationCode row
+         buf[0] = dc | 0x80; // store unhammed DesignationCode | 0x80 (shows "used")
+         break;
+   };
+
+   switch(line) {
+      case 26:
+      case 28:
+      case 29:
+         // unhamming 24/18 triplet
+         for (int triplet = 0; triplet < 13; triplet++) {
+            switch(line) {
+               case 26:
+                  // ETSI 8.3 unhamming 24/18
+                  //  1   2   3   4   5   6   7   8 |  9  10  11  12  13  14  15  16 |  17  18  19  20  21  22  23  24
+                  // P1  P2  D1  P3  D2  D3  D4  P4 | D5  D6  D7  D8  D9 D10 D11  P5 | D12 D13 D14 D15 D16 D17 D18  P6
+                  // ETSI 12.3.1 X/26 address / mode / data
+                  //         A0      A1  A2  A3     | A4  A5  M0  M1  M2  M3  M4     |  D0  D1  D2  D3  D4  D5  D6
+                  buf[triplet*3 + 1] = ((myptr[triplet*3 + 1] & 0x04) >> 2)  // A0   mask 3           and shift to 1
+                                     | ((myptr[triplet*3 + 1] & 0x70) >> 3)  // A1-3 mask 5-7         and shift to 2-4
+                                     | ((myptr[triplet*3 + 2] & 0x03) << 4); // A4-5 mask 1-2 (9-10)  and shift to 5-6
+                  buf[triplet*3 + 2] = ((myptr[triplet*3 + 2] & 0x7c) >> 2); // M0-4 mask 3-7 (11-15) and shift to 1-5
+                  buf[triplet*3 + 3] = ((myptr[triplet*3 + 3] & 0x7f)     ); // D0-6 mask 1-7         and nothing to shift
+#if 0
+                  if (strlen(debugPrefix) > 0)
+                     printf("DEBUG: %s#%02d T: t=%d i1=%02x i2=%02x i3=%02x -> o1=%02x o2=%02x o3=%02x\n", debugPrefix, line, triplet
+                           , myptr[1 + triplet*3], myptr[2 + triplet*3], myptr[3 + triplet*3]
+                           , buf[triplet*3 + 1], buf[triplet*3 + 2], buf[triplet*3 + 3]
+                     );
+#endif
+                  break;
+
+               case 28:
+                  // TODO implement
+                  break;
+               case 29:
+                  // TODO implement
+                  break;
+            };
+         };
+         break;
+
+      case 27:
+         // line 27 contain only a 16-bit CRC at the end
+         memcpy(buf + 40 * dc + 1, myptr + 1, 39); // store byte 2-40
+         break;
+
+      default:
+         // no storage
+         break;
+   };
+
+   if (strlen(debugPrefix) > 0) {
+      if (buf != NULL) {
+         printf("DEBUG: %s#%02d >:", debugPrefix, line);
+         for (int i = 0; i < 40; i++) {
+            printf(" %02x", buf[i]);
+         };
+         printf("\n");
+      } else {
+         printf("DEBUG: %s#%02d >: NOT-SELECTED-TO-STORE\n", debugPrefix, line);
+      };
+   };
 }
 
 void cTelePage::save()
@@ -47,15 +182,16 @@ void cTelePage::save()
    unsigned char buf;
    StorageHandle fd;
    if ( (fd=storage->openForWriting(page)) ) {
-      storage->write("VTXV4",5,fd);
-      buf=0x01; storage->write(&buf,1,fd);
-      buf=mag;  storage->write(&buf,1,fd);
-      buf=page.page; storage->write(&buf,1,fd);
-      buf=flags; storage->write(&buf,1,fd);
-      buf=lang; storage->write(&buf,1,fd);
-      buf=0x00; storage->write(&buf,1,fd);
-      buf=0x00; storage->write(&buf,1,fd);
-      storage->write(pagebuf,24*40,fd);
+      // page header (12)
+      memcpy(pagedata.pageheader, "VTXV5", 5);      // prefix (5)  "VTXV4" < 2.0.0
+      buf=0x01;      pagedata.pageheader[5]  = buf; // fixed 0x01 (1)
+      buf=mag;       pagedata.pageheader[6]  = buf; // mag (1)
+      buf=page.page; pagedata.pageheader[7]  = buf; // page (1)
+      buf=flags;     pagedata.pageheader[8]  = buf; // flags (1)
+      buf=lang;      pagedata.pageheader[9]  = buf; // lang (1)
+      buf=0x00;      pagedata.pageheader[10] = buf; // fixed 0x00 (1)
+      buf=0x00;      pagedata.pageheader[11] = buf; // fixed 0x00 (1)
+      storage->write(&pagedata, sizeof(TelePageData), fd);
       storage->close(fd);
    }
 }
@@ -272,16 +408,18 @@ void cTxtReceiver::DecodeTXT(uchar* TXT_buf)
    double stat_time_diff_last;
    double stat_time_diff_start;
 
-   switch (line) {
-   case 0: 
-      {
+   static char debugPrefix[16];
+
+   if (line == 0) {
       unsigned char b1, b2, b3, b4;
       int pgno, subno;
       b1 = unham16 (ptr);    
       // Page no, 10- and 1-digit
 
-      if (b1 == 0xff) break;
+      if (b1 == 0xff) return;
+
       SaveAndDeleteTxtPage();
+      snprintf(debugPrefix, sizeof(debugPrefix), "%s", ""); // clear debug status
 
       b2 = unham16 (ptr+2); // Sub-code 0..6 + C4
       b3 = unham16 (ptr+4); // Sub-code 8..13 + C5,C6
@@ -305,7 +443,7 @@ void cTxtReceiver::DecodeTXT(uchar* TXT_buf)
       subno = (b2 + b3 * 256) & 0x3f7f;         // Sub Page Number
 
       TxtPage = new cTelePage(PageID(ChannelID(), pgno, subno), flags, lang, mag, storage);
-      DEBUG_OT_NEPG("new cTelePage pgno=%d subno=%d\n", pgno, subno);
+      DEBUG_OT_NEPG("new cTelePage pgno=%03x subno=%02x flags=0x%02x lang=0x%02x\n", pgno, subno, flags, lang);
       stat_pagecount++;
       stat_pagecount_total++;
       statTxtReceiverPageCount++;
@@ -323,22 +461,34 @@ void cTxtReceiver::DecodeTXT(uchar* TXT_buf)
          stat_pagecount = 0;
          stat_time_last = stat_time_now;
       };
-      TxtPage->SetLine((int)line,(uchar *)ptr);
-      break;
-      }
-   case 1 ... 25: 
-      {
-      if (TxtPage) TxtPage->SetLine((int)line,(uchar *)ptr); 
-      break;
-      }
-   /*case 23: 
-      {
-      SaveAndDeleteTxtPage();
-      break;
-      }*/
-   default:
-      break;
-   }
+
+      if (m_debugmask & DEBUG_MASK_OT_TXTRCVD) {
+         if (m_debugpsub == 0) {
+            if (m_debugpage == TxtPage->page.page) {
+               // select debug for all sub-pages
+               snprintf(debugPrefix, sizeof(debugPrefix), "p=%03x*%02x", TxtPage->page.page, TxtPage->page.subPage);
+            } else if (m_debugline >= 0) {
+               // all pages, but specific line only
+               snprintf(debugPrefix, sizeof(debugPrefix), "p=%03x!%02x", TxtPage->page.page, TxtPage->page.subPage);
+            };
+         } else {
+            if ((m_debugpage == TxtPage->page.page) && (m_debugpsub == TxtPage->page.subPage)) {
+               if ((m_debugline < 0) || (m_debugline == line)) {
+                  // select debug only for matching sub-page
+                  snprintf(debugPrefix, sizeof(debugPrefix), "p=%03x-%02x", TxtPage->page.page, TxtPage->page.subPage);
+               };
+            };
+         };
+      };
+   };
+
+   if (TxtPage) {
+      if ((strlen(debugPrefix) > 0) && ((m_debugline < 0) || (m_debugline == line))) {
+         TxtPage->SetLine(line,(uchar *)ptr, debugPrefix);
+      } else {
+         TxtPage->SetLine(line,(uchar *)ptr, "");
+      };
+   };
 }
 
 // vim: ts=3 sw=3 et

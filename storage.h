@@ -1,5 +1,6 @@
 /*************************************************************** -*- c++ -*-
  *       Copyright (c) 2003,2004 by Marcel Wiesweg                         *
+ *       Copyright (c) 2021      by Peter Bieringer (extenions)            *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -14,7 +15,7 @@
 #include "rootdir.h"
 #include "pageid.h"
 
-#define TELETEXT_PAGESIZE 972
+#define TELETEXT_PAGESIZE sizeof(TelePageData)
 
 struct StorageHandle {
 public:
@@ -27,6 +28,16 @@ public:
    operator int() const { return handle; }
 private:
    int handle;
+};
+
+struct TelePageData {
+   unsigned char pageheader[12];     // 12 chars (extracted from 8 chars of line X/0)
+   unsigned char pagebuf[25*40];     // 25 lines with 40 chars X/0-24
+   unsigned char pagebuf_X25[40];    // 1 line with 40 chars (since 2.0.0 / VTX5)
+   unsigned char pagebuf_X26[16*40]; // max 16 lines with 40 chars (since 2.0.0 / VTX5)
+   unsigned char pagebuf_X27[16*40]; // max 16 lines with 40 chars (since 2.0.0 / VTX5)
+   unsigned char pagebuf_X28[16*40]; // max 16 lines with 40 chars (since 2.0.0 / VTX5)
+   unsigned char pagebuf_M29[16*40]; // max 16 lines with 40 chars (since 2.0.0 / VTX5)
 };
 
 enum StorageSystem { StorageSystemLegacy, StorageSystemPacked };

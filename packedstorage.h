@@ -26,8 +26,8 @@ protected:
         { return page==id.page && subPage==id.subPage; }
       void operator=(const PageID &id)
         { page=id.page; subPage=id.subPage; }
-      int page;
-      int subPage;
+      unsigned int page;
+      unsigned int subPage;
    };
    bool seekTo(PageID page, int fd, bool create);
    void registerFile(PageID page);

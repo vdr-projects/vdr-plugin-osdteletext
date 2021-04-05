@@ -1,4 +1,6 @@
 /*************************************************************** -*- c++ -*-
+ *       Copyright (c) 2005      by Udo Richter                            *
+ *       Copyright (c) 2021      by Peter Bieringer (extenions)            *
  *                                                                         *
  *   txtrender.h - Teletext display abstraction and teletext code          *
  *                 renderer                                                *
@@ -7,9 +9,6 @@
  *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
- *                                                                         *
- *   Changelog:                                                            *
- *     2005-03    initial version (c) Udo Richter                          *
  *                                                                         *
  ***************************************************************************/
 
@@ -227,7 +226,7 @@ class cRenderPage {
     
 protected:
     cTeletextChar Page[40][25];
-    
+
     int Flags;
     //   0x80  C4 - Erase page
     //   0x40  C5 - News flash
@@ -304,7 +303,7 @@ public:
     void RenderTeletextCode(unsigned char *PageCode);
     // Interprete teletext code referenced by PageCode
     // and draw the whole page content into this object
-    // PageCode must be a 40*24 bytes buffer
+    // PageCode must be a buffer containing TelePageData structure (see storage.h)
 };
 
 

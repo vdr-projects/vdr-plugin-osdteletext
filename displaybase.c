@@ -1,4 +1,6 @@
 /*************************************************************** -*- c++ -*-
+ *       Copyright (c) 2005      by Udo Richter                            *
+ *       Copyright (c) 2021      by Peter Bieringer (extenions)            *
  *                                                                         *
  *   displaybase.c - Base class for rendering a teletext cRenderPage to    *
  *                   an actual VDR OSD.                                    *
@@ -7,9 +9,6 @@
  *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
- *                                                                         *
- *   Changelog:                                                            *
- *     2005-03    initial version (c) Udo Richter                          *
  *                                                                         *
  ***************************************************************************/
 
@@ -261,7 +260,7 @@ tColor cDisplay::GetColorRGBAlternate(enumTeletextColor ttc, int Area) {
 void cDisplay::RenderTeletextCode(unsigned char *PageCode) {
     // Interprete teletext code referenced by PageCode
     // and draw the whole page content into OSD.
-    // PageCode must be a 40*24+12 bytes buffer
+    // PageCode must be a buffer containing TelePageData structure (see storage.h)
 
     HoldFlush();
 
@@ -277,6 +276,11 @@ void cDisplay::RenderTeletextCode(unsigned char *PageCode) {
         CleanDisplay();
     } else
         CleanDisplay();
+
+    if (memcmp(PageCode, "VTXV5", 5) != 0) {
+        esyslog("osdteletext: cDisplay::RenderTeletextCode called with PageCode which is not starting with 'VTXV5' (not supported)");
+        return;
+    };
 
     cRenderPage::RenderTeletextCode(PageCode+12);
 
