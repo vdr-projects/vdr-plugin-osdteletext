@@ -158,4 +158,4 @@ msgid "TxVoffset"
 msgstr ""
 
 msgid "BackTrans"
-msgstr "HinteTran"
+msgstr "HintGrTra"
