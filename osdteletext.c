@@ -32,7 +32,7 @@ using namespace std;
 
 #define NUMELEMENTS(x) (sizeof(x) / sizeof(x[0]))
 
-static const char *VERSION        = "1.9.9.dev.3";
+static const char *VERSION        = "1.9.9.dev.4";
 static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
 static const char *MAINMENUENTRY  = trNOOP("Teletext");
 
@@ -265,8 +265,32 @@ bool cPluginTeletextosd::Start(void)
    SETUP_MIN_MAX_CHECK(ttSetup.OSDframePix , OSDframePixMin , OSDframePixMax )
    SETUP_MIN_MAX_CHECK(ttSetup.txtVoffset  , txtVoffsetMin  , txtVoffsetMax  )
 
-   // read available fonts into structure and map index
+   // read available fonts into Vector
    cFont::GetAvailableFontNames(&ttSetup.txtFontNames, true);
+
+   cVector<bool> FontNamesDelete; // create Vector of bool for deletion flag
+
+   // run through available fonts and check for blacklisted ones and flag them
+   for (int i = 0; i < ttSetup.txtFontNames.Size(); i++) {
+      FontNamesDelete.Append(false); // default
+      if      (strcasestr(ttSetup.txtFontNames[i], "Italic" ) != NULL) FontNamesDelete[i] = true;
+      else if (strcasestr(ttSetup.txtFontNames[i], "Oblique") != NULL) FontNamesDelete[i] = true;
+      DEBUG_OT_FONT("available font[%d]='%s'%s", i, ttSetup.txtFontNames[i] , (FontNamesDelete[i] == true) ? " IGNORE" : "");
+   };
+
+   for (int i = ttSetup.txtFontNames.Size() - 1; i >= 0; i--) {
+      // delete marked entries starting from end of array
+      if (FontNamesDelete[i])
+         ttSetup.txtFontNames.Remove(i);
+   };
+   FontNamesDelete.Clear(); // no longer required
+
+   // display selectable fonts
+   for (int i = 0; i < ttSetup.txtFontNames.Size(); i++) {
+      DEBUG_OT_FONT("selectable font[%d]='%s'", i, ttSetup.txtFontNames[i]);
+   };
+
+   // find configured font and map into index value
    ttSetup.txtFontIndex = ttSetup.txtFontNames.Find(ttSetup.txtFontName);
    if (ttSetup.txtFontIndex < 0) {
        ttSetup.txtFontIndex = 0;
@@ -414,7 +438,7 @@ void cTeletextSetupPage::Store(void) {
    ttSetup.OSDleftPct=temp.OSDleftPct;
    ttSetup.OSDframePix=temp.OSDframePix;
    ttSetup.HideMainMenu=temp.HideMainMenu;
-   ttSetup.txtFontName=temp.txtFontNames[temp.txtFontIndex];
+   ttSetup.txtFontName=ttSetup.txtFontNames[temp.txtFontIndex];
    ttSetup.txtG0Block=temp.txtG0Block;
    ttSetup.txtG2Block=temp.txtG2Block;
    ttSetup.txtVoffset=temp.txtVoffset;
@@ -490,8 +514,7 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    temp.lineMode24=ttSetup.lineMode24;
    //temp.inactivityTimeout=ttSetup.inactivityTimeout;
 
-   cFont::GetAvailableFontNames(&temp.txtFontNames, true);
-   temp.txtFontIndex = temp.txtFontNames.Find(ttSetup.txtFontName);
+   temp.txtFontIndex = ttSetup.txtFontNames.Find(ttSetup.txtFontName);
    if (temp.txtFontIndex < 0) {
        temp.txtFontIndex = 0;
    }
@@ -509,7 +532,7 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    Add(new cMenuEditIntItem(tr("OSD height (%)"), &temp.OSDheightPct, OSDheightPctMin, OSDheightPctMax));
    Add(new cMenuEditIntItem(tr("OSD frame pixel"), &temp.OSDframePix, OSDframePixMin, OSDframePixMax));
    Add(new cMenuEditBoolItem(tr("Hide mainmenu entry"), &temp.HideMainMenu));
-   Add(new cMenuEditStraItem(tr("Text Font"), &temp.txtFontIndex, temp.txtFontNames.Size(), &temp.txtFontNames[0]));
+   Add(new cMenuEditStraItem(tr("Text Font"), &temp.txtFontIndex, ttSetup.txtFontNames.Size(), &ttSetup.txtFontNames[0]));
    Add(new cMenuEditStraItem(tr("G0 code block"), &temp.txtG0Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
    Add(new cMenuEditStraItem(tr("G2 code block"), &temp.txtG2Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
    Add(new cMenuEditIntItem(tr("Text Vertical Offset"), &temp.txtVoffset, txtVoffsetMin, txtVoffsetMax));
