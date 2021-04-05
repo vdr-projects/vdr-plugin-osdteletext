@@ -47,7 +47,7 @@ int Storage::cleanSubDir(const char *dir) {
       while ((txtfile = readdir(d)) != NULL) {
          int len=strlen(txtfile->d_name);
          //check that the file end with .vtx5 to avoid accidents and disasters
-         if (strcmp(txtfile->d_name+len-4, ".vtx5")==0) {
+         if (strcmp(txtfile->d_name+len-5, ".vtx5")==0) {
             snprintf(fullPath, PATH_MAX, "%s/%s", dir, txtfile->d_name);
             stat(fullPath, &txtfilestat);
             filesize=actualFileSize(txtfilestat.st_size);
