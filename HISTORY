@@ -1,28 +1,28 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
-2022-04-06:
+2021-04-06:
 - [pbiering] improve font scaling
 
-2022-04-04:
+2021-04-04:
 - [pbiering] add "Text Font" option to OSD config
 
-2022-04-03:
+2021-04-03:
 - [pbiering] add support for "G0 character with diacritical mark" by implementation related support of X/26
 - [pbiering] introduce new page cache storage format VTXV5 to cover X/25-28 and M/29 extension
 - [pbiering] fix not working selection of cache-system 'legacy'
 
-2022-03-28: version 1.1.1
+2021-03-28: version 1.1.1
 - [pbiering] fix missing implementation of graphics char 0x7f (filled rectangle)
 - [pbiering] implement 'Paused' toggle
 
-2022-03-27:
+2021-03-27:
 - [pbiering] add backgorund transparency to OSD config mode
 - [pbiering] remember background color when toggling through 'Half' mode
 
-2022-03-25:
+2021-03-25:
 - [pbiering] fix/enable toggle support for concealed chars and hint after page number if concealed chars exist, do not display concealed chars by default
 
-2022-03-25: version 1.1.0
+2021-03-25: version 1.1.0
 - [pbiering] fix related to boxed chars in case page is not boxed itself
 
 2021-03-24:
