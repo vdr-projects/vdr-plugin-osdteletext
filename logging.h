@@ -20,7 +20,9 @@ extern          int m_debugline;
 #define DEBUG_MASK_OT_DRPI	0x00004000	// DrawPageId
 #define DEBUG_MASK_OT_FOOT	0x00008000	// DrawFooter
 #define DEBUG_MASK_OT_FONT	0x00010000	// Font
+#define DEBUG_MASK_OT_AREA	0x00020000	// Area
 #define DEBUG_MASK_OT_DBFC	0x00040000	// DisplayBase Function Call
+#define DEBUG_MASK_OT_SCALER	0x00080000	// Scaler
 #define DEBUG_MASK_OT_BLINK	0x00100000	// Text Blink
 #define DEBUG_MASK_OT_DCHR	0x00200000	// DrawChar
 #define DEBUG_MASK_OT_BOXED	0x00400000	// BoxedOut
@@ -41,6 +43,8 @@ extern          int m_debugline;
 #define DEBUG_OT_DBFC	if (m_debugmask & DEBUG_MASK_OT_DBFC)   dsyslog_ot
 #define DEBUG_OT_NEPG   if (m_debugmask & DEBUG_MASK_OT_NEPG)   dsyslog_ot
 #define DEBUG_OT_COPG   if (m_debugmask & DEBUG_MASK_OT_COPG)   dsyslog_ot
+#define DEBUG_OT_AREA   if (m_debugmask & DEBUG_MASK_OT_AREA)   dsyslog_ot
+#define DEBUG_OT_SCALER if (m_debugmask & DEBUG_MASK_OT_SCALER) dsyslog_ot
 #define DEBUG_OT_BLINK  if (m_debugmask & DEBUG_MASK_OT_BLINK)  dsyslog_ot
 #define DEBUG_OT_DD     if (m_debugmask & DEBUG_MASK_OT_DD)     dsyslog_ot
 #define DEBUG_OT_KNONE  if (m_debugmask & DEBUG_MASK_OT_KNONE)  dsyslog_ot

@@ -148,7 +148,7 @@ void cDisplay::InitScaler() {
     fontWidth &= 0xfffe;
     fontHeight &= 0xfffe;
 
-    dsyslog("osdteletext: InitScaler width=%d height=%d fontWidth*2=%d fontHeight=%d lineMode24=%d Zoom=%d", outputWidth, outputHeight, fontWidth, fontHeight, ttSetup.lineMode24, Zoom);
+    DEBUG_OT_SCALER("osdteletext: InitScaler width=%d height=%d fontWidth*2=%d fontHeight=%d lineMode24=%d Zoom=%d", outputWidth, outputHeight, fontWidth, fontHeight, ttSetup.lineMode24, Zoom);
 
     int txtFontWidth = fontWidth;
     int txtFontHeight = fontHeight;
