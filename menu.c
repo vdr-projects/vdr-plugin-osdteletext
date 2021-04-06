@@ -867,7 +867,7 @@ void TeletextBrowser::UpdateFooter() {
 
 #define CONVERT_ACTION_TO_TEXT(text, mode) \
       if (mode < 100) { \
-         snprintf(text, sizeof(text), "%s", st_modes[mode]); \
+         snprintf(text, sizeof(text), "%s", st_modesFooter[mode]); \
       } else if (mode < 999) { \
          snprintf(text, sizeof(text), "->%03d", mode); \
       } else { \
