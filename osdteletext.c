@@ -32,7 +32,7 @@ using namespace std;
 
 #define NUMELEMENTS(x) (sizeof(x) / sizeof(x[0]))
 
-static const char *VERSION        = "1.9.9.dev.4";
+static const char *VERSION        = "1.9.9.dev.5";
 static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
 static const char *MAINMENUENTRY  = trNOOP("Teletext");
 
@@ -268,22 +268,17 @@ bool cPluginTeletextosd::Start(void)
    // read available fonts into Vector
    cFont::GetAvailableFontNames(&ttSetup.txtFontNames, true);
 
-   cVector<bool> FontNamesDelete; // create Vector of bool for deletion flag
-
-   // run through available fonts and check for blacklisted ones and flag them
-   for (int i = 0; i < ttSetup.txtFontNames.Size(); i++) {
-      FontNamesDelete.Append(false); // default
-      if      (strcasestr(ttSetup.txtFontNames[i], "Italic" ) != NULL) FontNamesDelete[i] = true;
-      else if (strcasestr(ttSetup.txtFontNames[i], "Oblique") != NULL) FontNamesDelete[i] = true;
-      DEBUG_OT_FONT("available font[%d]='%s'%s", i, ttSetup.txtFontNames[i] , (FontNamesDelete[i] == true) ? " IGNORE" : "");
-   };
-
-   for (int i = ttSetup.txtFontNames.Size() - 1; i >= 0; i--) {
-      // delete marked entries starting from end of array
-      if (FontNamesDelete[i])
+   // run through available fonts backwards and delete blacklisted ones
+   for (int i = ttSetup.txtFontNames.Size() -1;  i >= 0; i--) {
+      if (    (strcasestr(ttSetup.txtFontNames[i], "Italic" ) != NULL)
+           || (strcasestr(ttSetup.txtFontNames[i], "Oblique") != NULL)
+      ) {
+         DEBUG_OT_FONT("available font='%s' BLACKLISTED", ttSetup.txtFontNames[i]);
          ttSetup.txtFontNames.Remove(i);
+      } else {
+         DEBUG_OT_FONT("available font='%s' WHITELISTED", ttSetup.txtFontNames[i]);
+      };
    };
-   FontNamesDelete.Clear(); // no longer required
 
    // display selectable fonts
    for (int i = 0; i < ttSetup.txtFontNames.Size(); i++) {

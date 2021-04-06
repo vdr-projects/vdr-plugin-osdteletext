@@ -255,7 +255,7 @@ cTxtReceiver::cTxtReceiver(const cChannel* chan, bool storeTopText, Storage* sto
    TxtPage(0), storeTopText(storeTopText), buffer((188+60)*75), storage(storage)
    , channel(chan), statTxtReceiverPageCount(0)
 {
-   isyslog("osdteletext: cTxtReceiver started on channel Number=%d Name='%s' ID=%s storeTopText=%d\n", channel->Number(), channel->Name(), *ChannelID().ToString(), storeTopText);
+   isyslog("osdteletext: cTxtReceiver started on channel Number=%d Name='%s' ID=%s storeTopText=%s\n", channel->Number(), channel->Name(), *ChannelID().ToString(), (storeTopText == true) ? "yes" : "no");
    SetPids(NULL);
    AddPid(chan->Tpid());
    storage->prepareDirectory(ChannelID());

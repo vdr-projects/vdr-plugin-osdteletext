@@ -1,4 +1,6 @@
 /*************************************************************** -*- c++ -*-
+ *       Copyright (c) 2005      by Udo Richter                            *
+ *       Copyright (c) 2021      by Peter Bieringer (extenions)            *
  *                                                                         *
  *   display.c - Actual implementation of OSD display variants and         *
  *               Display:: namespace that encapsulates a single cDisplay.  *
@@ -8,9 +10,6 @@
  *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
- *   Changelog:                                                            *
- *     2005-03    initial version (c) Udo Richter                          *
- *                                                                         *
  ***************************************************************************/
 
 #include <strings.h>
@@ -19,6 +18,7 @@
 #include "setup.h"
 #include "display.h"
 #include "txtfont.h"
+#include "logging.h"
 
 // Static variables of Display:: namespace
 Display::Mode Display::mode=Display::Full;
@@ -126,7 +126,7 @@ void Display::SetMode(Display::Mode NewMode, tColor Background) {
         OSDbottomFrame = cOsd::OsdHeight() - OSDheight - OSDtopFrame;
     };
 
-    dsyslog("osdteletext: OSD area calculated by percent values: OL=%d OT=%d OW=%d OH=%d OwP=%d%% OhP=%d%% OlP=%d%% OtP=%d%% OfPx=%d lineMode24=%d => x0=%d y0=%d Ow=%d Oh=%d OlF=%d OrF=%d OtF=%d ObF=%d"
+    DEBUG_OT_AREA("osdteletext: OSD area calculated by percent values: OL=%d OT=%d OW=%d OH=%d OwP=%d%% OhP=%d%% OlP=%d%% OtP=%d%% OfPx=%d lineMode24=%d => x0=%d y0=%d Ow=%d Oh=%d OlF=%d OrF=%d OtF=%d ObF=%d"
         , cOsd::OsdLeft(), cOsd::OsdTop(), cOsd::OsdWidth(), cOsd::OsdHeight()
         , ttSetup.OSDwidthPct, ttSetup.OSDheightPct, ttSetup.OSDleftPct, ttSetup.OSDtopPct
         , ttSetup.OSDframePix
