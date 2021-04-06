@@ -236,7 +236,7 @@ cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height, int leftFram
     if (bpp == 32 && (osd->CanHandleAreas(Areas, sizeof(Areas) / sizeof(tArea)) != oeOk)) {
         bpp = 8;
         Areas[0].bpp = 8;
-        dsyslog("osdteletext: OSD is not providing TrueColor, fallback to bpp=%d", bpp);
+        DEBUG_OT_AREA("osdteletext: OSD is not providing TrueColor, fallback to bpp=%d", bpp);
     }
     if (osd->CanHandleAreas(Areas, sizeof(Areas) / sizeof(tArea)) != oeOk) {
         DELETENULL(osd);
@@ -303,7 +303,7 @@ void cDisplay32BPPHalf::InitOSD() {
     if (bpp == 32 && (osd->CanHandleAreas(Areas, sizeof(Areas) / sizeof(tArea)) != oeOk)) {
         bpp = 8;
         Areas[0].bpp = 8;
-        dsyslog("osdteletext: OSD is not providing TrueColor, fallback to bpp=%d", bpp);
+        DEBUG_OT_AREA("osdteletext: OSD is not providing TrueColor, fallback to bpp=%d", bpp);
     }
     if (osd->CanHandleAreas(Areas, sizeof(Areas) / sizeof(tArea)) != oeOk) {
         DELETENULL(osd);
