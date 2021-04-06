@@ -818,11 +818,7 @@ bool TeletextBrowser::DecodePage() {
       Display::HoldFlush();
       ShowPageNumber();
       char str[80];
-      snprintf(str,80, "%s %3x-%02x %s%s%s%s",tr("Page"),currentPage, currentSubPage,tr("not found")
-         , ((currentPage == 0x100) && (currentSubPage == 0)) ? " (" : ""
-         , ((currentPage == 0x100) && (currentSubPage == 0)) ? channelClass.Name() : ""
-         , ((currentPage == 0x100) && (currentSubPage == 0)) ? ")" : ""
-      );
+      snprintf(str,80, "%s %3x-%02x %s (%s)",tr("Page"),currentPage, currentSubPage,tr("not found"), channelClass.Name());
       Display::DrawMessage(str);
       Display::ReleaseFlush();
 
