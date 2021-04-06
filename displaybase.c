@@ -784,7 +784,7 @@ void cDisplay::DrawFooter(const char *textRed, const char *textGreen, const char
         case FooterYellowValue:
             DrawTextExtended( 0, 24, textRed   , 10, AlignmentCenter, ttcWhite, ttcRed    );
             DrawTextExtended(10, 24, textGreen , 10, AlignmentCenter, ttcBlack, ttcGreen  );
-            DrawTextExtended(20, 24, textYellow, 10, AlignmentCenter, ttcBlack, ttcMagenta);
+            DrawTextExtended(20, 24, textYellow, 10, AlignmentCenter, ttcWhite, ttcMagenta);
             DrawTextExtended(30, 24, textBlue  , 10, AlignmentCenter, ttcWhite, ttcBlue   );
             break;
 
