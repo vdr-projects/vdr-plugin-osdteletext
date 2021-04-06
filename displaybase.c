@@ -757,7 +757,7 @@ void cDisplay::DrawPageId(const char *text) {
         paused_last = true;
         c.SetBGColor(ttcBlack);
         c.SetFGColor(ttcRed);
-        c.SetChar('*');
+        c.SetChar('!');
         DEBUG_OT_DRPI("trigger SetChar for Paused hint ttfg=%x ttbg=%x", c.GetFGColor(), c.GetBGColor());
         SetChar(7, 0, c);
     } else if (paused_last == true) {
