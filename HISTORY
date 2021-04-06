@@ -1,6 +1,7 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
 2021-04-06:
+- [pbiering] stop updating clock and blink in case of page update was stopped
 - [pbiering] display sender name in case page is not found
 - [pbiering] blacklist Italic and Oblique fonts from being selectable (which causes anyhow issues on displaying because of kerning)
 - [pbiering] improve font scaling

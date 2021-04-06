@@ -202,14 +202,15 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
             }
             if (! selectingChannel && pageFound) {
                //updating clock
-               UpdateClock();
+               if (! Display::GetPaused())
+                  UpdateClock();
+
                //updating footer
                UpdateFooter();
+
                //trigger blink
-               bool Changed = Display::SetBlink(not(Display::GetBlink()));
-               if (Changed) {
-                   // currently nothing to do
-               };
+               if (! Display::GetPaused())
+                  Display::SetBlink(not(Display::GetBlink()));
             };
          }
          //check for activity timeout
