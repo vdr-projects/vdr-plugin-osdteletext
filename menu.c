@@ -198,7 +198,7 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
                needClearMessage=false;
                Display::ClearMessage();
             }
-            if (! selectingChannel) {
+            if (! selectingChannel && pageFound) {
                //updating clock
                UpdateClock();
                //updating footer
