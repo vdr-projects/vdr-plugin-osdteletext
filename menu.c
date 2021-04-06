@@ -185,24 +185,29 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
          DEBUG_OT_KNONE("section 'kNone' reached");
          //checking if page changed
          if ( pageFound && ttSetup.autoUpdatePage && cursorPos==0 && !selectingChannel && (PageCheckSum() != checkSum) ) {
+            DEBUG_OT_KNONE("section 'kNone' detected: 'page change'");
             if (! Display::GetPaused())
                ShowPage();
          //check if page was previously not found and is available now
          } else if (!pageFound && CheckFirstSubPage(0)) {
+            DEBUG_OT_KNONE("section 'kNone' detected: 'previous not found page is now available'");
             ShowPage();
          } else {
+            DEBUG_OT_KNONE("section 'kNone' default");
             if (needClearMessage) {
                needClearMessage=false;
                Display::ClearMessage();
             }
-            //updating clock
-            UpdateClock();
-            //updating footer
-            UpdateFooter();
-            //trigger blink
-            bool Changed = Display::SetBlink(not(Display::GetBlink()));
-            if (Changed) {
-                // currently nothing to do
+            if (! selectingChannel) {
+               //updating clock
+               UpdateClock();
+               //updating footer
+               UpdateFooter();
+               //trigger blink
+               bool Changed = Display::SetBlink(not(Display::GetBlink()));
+               if (Changed) {
+                   // currently nothing to do
+               };
             };
          }
          //check for activity timeout
