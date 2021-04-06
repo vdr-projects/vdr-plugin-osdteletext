@@ -68,7 +68,8 @@ protected:
    int inactivityTimeout;
    static int currentPage;
    static int currentSubPage;
-   static tChannelID channel;
+   static tChannelID channel; // TODO: rename to channelId
+   static cChannel channelClass;
    static int currentChannelNumber;
    static TeletextBrowser* self;
    Storage *storage;

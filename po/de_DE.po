@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 2.4.4\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-04 09:04+0200\n"
+"POT-Creation-Date: 2021-04-06 17:47+0200\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Peter Bieringer <pb@bieringer.de>\n"
 "Language-Team: German <vdr@linuxtv.org>\n"
@@ -50,7 +50,7 @@ msgid "Cyrillic"
 msgstr ""
 
 msgid "Reserved"
-msgstr ""
+msgstr "Reserviert"
 
 msgid "Greek"
 msgstr ""
@@ -134,10 +134,22 @@ msgid "Answer"
 msgstr "Antwort"
 
 msgid "Pause"
-msgstr ""
+msgstr "Pause"
 
 msgid "Jump to..."
 msgstr "Springe zu..."
+
+msgid "Half Page"
+msgstr "HalbeSeite"
+
+msgid "ChangeChan"
+msgstr "KanalWechs"
+
+msgid "SwitchBack"
+msgstr "Hintergrund"
+
+msgid "24LineMode"
+msgstr "24ZeilenMod"
 
 msgid "Left"
 msgstr "Links"
@@ -155,7 +167,7 @@ msgid "Frame"
 msgstr "Rahmen"
 
 msgid "TxVoffset"
-msgstr ""
+msgstr "TxVoffset"
 
 msgid "BackTrans"
 msgstr "HintGrTra"

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-04 10:25+0200\n"
+"POT-Creation-Date: 2021-04-06 17:47+0200\n"
 "PO-Revision-Date: 2009-01-10 19:32+0100\n"
 "Last-Translator: Nival Michaël\n"
 "Language-Team: French <vdr@linuxtv.org>\n"
@@ -141,6 +141,18 @@ msgstr ""
 
 msgid "Jump to..."
 msgstr "Aller à..."
+
+msgid "Half Page"
+msgstr ""
+
+msgid "ChangeChan"
+msgstr ""
+
+msgid "SwitchBack"
+msgstr ""
+
+msgid "24LineMode"
+msgstr ""
 
 msgid "Left"
 msgstr ""

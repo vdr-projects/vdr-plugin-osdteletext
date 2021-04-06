@@ -31,9 +31,9 @@
 #define BackTransMin       0
 #define BackTransMax     255
 
-//There are two places to be kept in sync with these enums:
-//TeletextBrowser::TranslateKey and 
-//the constants below (st_modes)
+// There are two places to be kept in sync with these enums:
+//  TeletextBrowser::TranslateKey and 
+//  the constants below: st_modes st_modesFooter
 enum eTeletextAction { Zoom, HalfPage, SwitchChannel,
                        DarkScreen, /*SuspendReceiving,*/ Config, LineMode24, ToggleConceal, TogglePause, LastAction }; //and 100-899 => jump to page
 
@@ -66,6 +66,21 @@ static const char *st_modes[] =
       //tr("Suspend receiving"),
       tr("Config"),
       tr("24-LineMode"),
+      tr("Answer"),
+      tr("Pause"),
+      tr("Jump to..."),
+};
+
+static const char *st_modesFooter[] =
+{
+      // 1:1 relation to *st_modes[] from above and maximum 10 chars used in line25 footer //
+      tr("Zoom"),
+      tr("Half Page"),
+      tr("ChangeChan"),
+      tr("SwitchBack"),
+      //tr("SuspendRecv"),
+      tr("Config"),
+      tr("24LineMode"),
       tr("Answer"),
       tr("Pause"),
       tr("Jump to..."),

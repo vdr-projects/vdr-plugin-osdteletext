@@ -41,6 +41,7 @@ IntMap channelPageMap;
 int TeletextBrowser::currentPage=0x100; //Believe it or not, the teletext numbers are somehow hexadecimal
 int TeletextBrowser::currentSubPage=0;
 tChannelID TeletextBrowser::channel;
+cChannel TeletextBrowser::channelClass;
 int TeletextBrowser::currentChannelNumber=0;
 TeletextBrowser* TeletextBrowser::self=0;
 
@@ -100,6 +101,7 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber) {
       return;
       
    channel=chid;
+   channelClass = *chan; // remember for later to display channel name
    
    //store page number of current channel
    IntMap::iterator it;
@@ -200,14 +202,15 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
             }
             if (! selectingChannel && pageFound) {
                //updating clock
-               UpdateClock();
+               if (! Display::GetPaused())
+                  UpdateClock();
+
                //updating footer
                UpdateFooter();
+
                //trigger blink
-               bool Changed = Display::SetBlink(not(Display::GetBlink()));
-               if (Changed) {
-                   // currently nothing to do
-               };
+               if (! Display::GetPaused())
+                  Display::SetBlink(not(Display::GetBlink()));
             };
          }
          //check for activity timeout
@@ -815,7 +818,11 @@ bool TeletextBrowser::DecodePage() {
       Display::HoldFlush();
       ShowPageNumber();
       char str[80];
-      snprintf(str,80, "%s %3x-%02x %s",tr("Page"),currentPage, currentSubPage,tr("not found"));
+      snprintf(str,80, "%s %3x-%02x %s%s%s%s",tr("Page"),currentPage, currentSubPage,tr("not found")
+         , ((currentPage == 0x100) && (currentSubPage == 0)) ? " (" : ""
+         , ((currentPage == 0x100) && (currentSubPage == 0)) ? channelClass.Name() : ""
+         , ((currentPage == 0x100) && (currentSubPage == 0)) ? ")" : ""
+      );
       Display::DrawMessage(str);
       Display::ReleaseFlush();
 
@@ -867,7 +874,7 @@ void TeletextBrowser::UpdateFooter() {
 
 #define CONVERT_ACTION_TO_TEXT(text, mode) \
       if (mode < 100) { \
-         snprintf(text, sizeof(text), "%s", st_modes[mode]); \
+         snprintf(text, sizeof(text), "%s", st_modesFooter[mode]); \
       } else if (mode < 999) { \
          snprintf(text, sizeof(text), "->%03d", mode); \
       } else { \
