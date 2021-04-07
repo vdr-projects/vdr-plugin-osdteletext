@@ -235,8 +235,8 @@ public:
     void DrawPageId(const char *text);
     // Draw Page ID string to OSD
 
-    void DrawMessage(const char *txt);
-    // Draw a framed, centered message box to OSD
+    void DrawMessage(const char *txt, const enumTeletextColor cFrame = ttcWhite, const enumTeletextColor cText = ttcWhite, const enumTeletextColor cBackground = ttcBlack);
+    // Draw a framed, centered message box to OSD with optional(default) color definition for frame(white), text(white), background(black)
 
     void ClearMessage();
     // Remove message box and redraw hidden content

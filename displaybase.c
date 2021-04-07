@@ -809,8 +809,16 @@ void cDisplay::DrawClock() {
     DrawText(32,0,text,8);
 }
 
-void cDisplay::DrawMessage(const char *txt) {
-    const int border=5;
+void cDisplay::DrawMessage(const char *txt, const enumTeletextColor cFrame, const enumTeletextColor cText, const enumTeletextColor cBackground) {
+    int border=4; // minimum
+    if (outputWidth > 720) {
+        // increase border
+        border = ((border * outputWidth) / 720) & 0xfffe; // always even number
+    };
+    if (outputWidth > 1280) {
+        // select larger font
+        MessageFont = cFont::GetFont(fontOsd);
+    };
 
     if (!osd) return;
 
@@ -825,23 +833,24 @@ void cDisplay::DrawMessage(const char *txt) {
 
     int w=MessageFont->Width(txt)+4*border;
     int h=MessageFont->Height(txt)+4*border;
-    int x=(outputWidth-w)/2;
-    int y=(outputHeight-h)/2;
+    if (w > outputWidth)  w = outputWidth;
+    if (h > outputHeight) h = outputHeight;
+    int x=(outputWidth -w)/2 + leftFrame;
+    int y=(outputHeight-h)/2 + topFrame;
 
     // Get local color mapping
-    tColor fg=GetColorRGB(ttcWhite,0);
-    tColor bg=GetColorRGB(ttcBlack,0);
-    if (fg==bg) bg=GetColorRGBAlternate(ttcBlack,0);
+    tColor fg=GetColorRGB(cText,0);
+    tColor bg=GetColorRGB(cBackground,0);
+    tColor fr=GetColorRGB(cFrame,0);
+    if (fg==bg) bg=GetColorRGBAlternate(cBackground,0);
 
-    // Draw framed box
-    osd->DrawRectangle(x         ,y         ,x+w-1       ,y+border-1  ,fg);
-    osd->DrawRectangle(x         ,y+h-border,x+w-1       ,y+h-1       ,fg);
-    osd->DrawRectangle(x         ,y         ,x+border-1  ,y+h-1       ,fg);
-    osd->DrawRectangle(x+w-border,y         ,x+w-1       ,y+h-1       ,fg);
-    osd->DrawRectangle(x+border  ,y+border  ,x+w-border-1,y+h-border-1,bg);
+    // Draw framed box (2 outer pixel always background)
+    osd->DrawRectangle(x         ,y         ,x+w-1       ,y+h-1       ,bg); // outer rectangle
+    osd->DrawRectangle(x+2       ,y+2       ,x+w-1-2     ,y+h-1-2     ,fr); // inner rectangle
+    osd->DrawRectangle(x+border  ,y+border  ,x+w-border-1,y+h-border-1,bg); // background for text
 
     // Draw text
-    osd->DrawText(x+2*border,y+2*border,txt, fg, bg, MessageFont);
+    osd->DrawText(x+2*border, y+2*border,txt, fg, bg, MessageFont, w - 4*border, h - 4*border);
 
     // Remember box
     MessageW=w;
@@ -849,7 +858,7 @@ void cDisplay::DrawMessage(const char *txt) {
     MessageX=x;
     MessageY=y;
 
-    DEBUG_OT_MSG("MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d", MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY);
+    DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OX=%d OY=%d OW=%d OH=%d", MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, outputWidth, outputHeight);
 
     // And flush all changes
     ReleaseFlush();
@@ -861,12 +870,12 @@ void cDisplay::ClearMessage() {
 
     // NEW, reverse calculation based on how DrawChar
     // map to character x/y
-    int x0 = (MessageX - OffsetX )         / (fontWidth  / 2);
-    int y0 = (MessageY-OffsetY)            / (fontHeight / 2);
-    int x1 = (MessageX+MessageW-1-OffsetX) / (fontWidth  / 2);
-    int y1 = (MessageY+MessageH-1-OffsetY) / (fontHeight / 2);
+    int x0 = (MessageX - OffsetX)          / (fontWidth  / 2) + leftFrame;
+    int y0 = (MessageY - OffsetY)          / (fontHeight / 2) + topFrame;
+    int x1 = (MessageX+MessageW-1-OffsetX) / (fontWidth  / 2) + leftFrame;
+    int y1 = (MessageY+MessageH-1-OffsetY) / (fontHeight / 2) + topFrame;
 
-    DEBUG_OT_MSG("MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d => x0=%d/y0=%d x1=%d/y1=%d", MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, x0, y0, x1, y1);
+    DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OX=%d OY=%d => x0=%d/y0=%d x1=%d/y1=%d", MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, x0, y0, x1, y1);
 
 #define TESTOORX(X) (X < 0 || X >= 40)
 #define TESTOORY(Y) (Y < 0 || Y >= 25)

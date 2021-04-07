@@ -1,5 +1,8 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
+2021-04-07:
+- [pbiering] draw bi-colored message frame, increase frame on high resolution, change font on high resolution
+
 2021-04-06:
 - [pbiering] stop updating clock and blink in case of page update was stopped
 - [pbiering] display sender name in case page is not found

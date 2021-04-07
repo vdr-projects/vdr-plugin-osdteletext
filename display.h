@@ -84,6 +84,12 @@ namespace Display {
         { if (display) display->DrawFooter(textRed, textGreen, textYellow, textBlue, flag); }
     inline void DrawMessage(const char *txt)
         { if (display) display->DrawMessage(txt); }
+    inline void DrawMessage(const char *txt, const enumTeletextColor cFrame)
+        { if (display) display->DrawMessage(txt, cFrame); }
+    inline void DrawMessage(const char *txt, const enumTeletextColor cFrame, const enumTeletextColor cText)
+        { if (display) display->DrawMessage(txt, cFrame, cText); }
+    inline void DrawMessage(const char *txt, const enumTeletextColor cFrame, const enumTeletextColor cText, const enumTeletextColor cBackground)
+        { if (display) display->DrawMessage(txt, cFrame, cText, cBackground); }
     inline void ClearMessage()
         { if (display) display->ClearMessage(); }
 }
