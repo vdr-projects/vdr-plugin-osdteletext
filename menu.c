@@ -820,6 +820,7 @@ bool TeletextBrowser::DecodePage() {
       char str[80];
       snprintf(str,80, "%s %3x-%02x %s (%s)",tr("Page"),currentPage, currentSubPage,tr("not found"), channelClass.Name());
       Display::DrawMessage(str);
+      UpdateFooter();
       Display::ReleaseFlush();
 
       return false;
