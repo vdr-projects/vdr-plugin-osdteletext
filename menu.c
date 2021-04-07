@@ -541,9 +541,14 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
          break;
 
       case TogglePause:
-         DEBUG_OT_KEYS("key action: 'TogglePause' paused=%d -> %d", Display::GetPaused(), not(Display::GetPaused()));
-         Display::SetPaused(not(Display::GetPaused())); // toggle paused status
-         ShowPage();
+         if (liveChannelNumber == currentChannelNumber) {
+            DEBUG_OT_KEYS("key action: 'TogglePause' paused=%d -> %d", Display::GetPaused(), not(Display::GetPaused()));
+            // toggle paused status only if live channel (otherwise useless)
+            Display::SetPaused(not(Display::GetPaused()));
+            ShowPage();
+         } else {
+            DEBUG_OT_KEYS("key action: 'TogglePause' useless, currently not a live channel on OSD");
+         };
          break;
 
       default:
@@ -786,14 +791,20 @@ void TeletextBrowser::ShowPage() {
 
 void TeletextBrowser::ShowPageNumber() {
    DEBUG_OT_DRPI("called with currentPage=%03x currentSubPage=%02x", currentPage, currentSubPage);
-   char str[8];
-   sprintf(str, "%3x-%02x", currentPage, currentSubPage);
+   char str[9];
+   snprintf(str, sizeof(str), "%3x-%02x %s", currentPage, currentSubPage
+      , (liveChannelNumber != currentChannelNumber) ? "c" : "" // cache mark
+   );
    if (cursorPos>0) {
       str[2]='*';
       if (cursorPos==1)
          str[1]='*';
    }
-   Display::DrawPageId(str);
+
+   if (liveChannelNumber != currentChannelNumber)
+      Display::DrawPageId(str, ttcCyan); // colored
+   else
+      Display::DrawPageId(str);
 }
 
 void TeletextBrowser::ShowAskForChannel() {
