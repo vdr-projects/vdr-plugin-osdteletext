@@ -31,7 +31,6 @@ cDisplay::cDisplay(int width, int height)
       osd(NULL),
       outputWidth(0), outputHeight(0),
       leftFrame(0), rightFrame(0), topFrame(0), bottomFrame(0),
-      OffsetX(0), OffsetY(0),
       MessageFont(cFont::GetFont(fontSml)), MessageX(0), MessageY(0),
       MessageW(0), MessageH(0),
       TXTFont(0), TXTDblWFont(0), TXTDblHFont(0), TXTDblHWFont(0), TXTHlfHFont(0)
@@ -124,15 +123,12 @@ void cDisplay::InitScaler() {
 
     int height=Height-6;
     // int width=Width-6; // EOL: no longer used
-    OffsetX=3;
-    OffsetY=3;
 
     switch (Zoom) {
         case Zoom_Upper:
             height=height*2;
             break;
         case Zoom_Lower:
-            OffsetY=OffsetY-height;
             height=height*2;
             break;
         default:;
@@ -845,9 +841,9 @@ void cDisplay::DrawMessage(const char *txt, const enumTeletextColor cFrame, cons
     if (fg==bg) bg=GetColorRGBAlternate(cBackground,0);
 
     // Draw framed box (2 outer pixel always background)
-    osd->DrawRectangle(x         ,y         ,x+w-1       ,y+h-1       ,bg); // outer rectangle
-    osd->DrawRectangle(x+2       ,y+2       ,x+w-1-2     ,y+h-1-2     ,fr); // inner rectangle
-    osd->DrawRectangle(x+border  ,y+border  ,x+w-border-1,y+h-border-1,bg); // background for text
+    osd->DrawRectangle(x           , y           , x+w-1         , y+h-1         , bg); // outer rectangle
+    osd->DrawRectangle(x+(border/2), y+(border/2), x+w-1-border/2, y+h-1-border/2, fr); // inner rectangle
+    osd->DrawRectangle(x+border    , y+border    , x+w-1-border  , y+h-1-border  , bg); // background for text
 
     // Draw text
     osd->DrawText(x+2*border, y+2*border,txt, fg, bg, MessageFont, w - 4*border, h - 4*border);
@@ -858,7 +854,7 @@ void cDisplay::DrawMessage(const char *txt, const enumTeletextColor cFrame, cons
     MessageX=x;
     MessageY=y;
 
-    DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OX=%d OY=%d OW=%d OH=%d", MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, outputWidth, outputHeight);
+    DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OW=%d OH=%d", MessageX, MessageY, MessageW, MessageH, outputWidth, outputHeight);
 
     // And flush all changes
     ReleaseFlush();
@@ -870,18 +866,18 @@ void cDisplay::ClearMessage() {
 
     // NEW, reverse calculation based on how DrawChar
     // map to character x/y
-    int x0 = (MessageX - OffsetX)          / (fontWidth  / 2) + leftFrame;
-    int y0 = (MessageY - OffsetY)          / (fontHeight / 2) + topFrame;
-    int x1 = (MessageX+MessageW-1-OffsetX) / (fontWidth  / 2) + leftFrame;
-    int y1 = (MessageY+MessageH-1-OffsetY) / (fontHeight / 2) + topFrame;
+    int x0 = (MessageX)            / (fontWidth  / 2) + leftFrame;
+    int y0 = (MessageY)            / (fontHeight / 2) + topFrame;
+    int x1 = (MessageX+MessageW-1) / (fontWidth  / 2) + leftFrame;
+    int y1 = (MessageY+MessageH-1) / (fontHeight / 2) + topFrame;
 
-    DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OX=%d OY=%d => x0=%d/y0=%d x1=%d/y1=%d", MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, x0, y0, x1, y1);
+    DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d => x0=%d/y0=%d x1=%d/y1=%d", MessageX, MessageY, MessageW, MessageH, x0, y0, x1, y1);
 
 #define TESTOORX(X) (X < 0 || X >= 40)
 #define TESTOORY(Y) (Y < 0 || Y >= 25)
     if ( TESTOORX(x0) || TESTOORX(x1) || TESTOORY(y0) || TESTOORY(y1) ) {
         // something out-of-range
-	    esyslog("osdteletext: %s out-of-range detected(crop) MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d => x0=%d%s y0=%d%s x1=%d%s y1=%d%s", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY,
+	    esyslog("osdteletext: %s out-of-range detected(crop) MessageX=%d MessageY=%d MessageW=%d MessageH=%d => x0=%d%s y0=%d%s x1=%d%s y1=%d%s", __FUNCTION__, MessageX, MessageY, MessageW, MessageH,
 		x0, TESTOORX(x0) ? "!" : "",
 		y0, TESTOORY(y0) ? "!" : "",
 		x1, TESTOORX(x1) ? "!" : "",
