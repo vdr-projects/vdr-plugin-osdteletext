@@ -28,7 +28,7 @@ public:
    TeletextBrowser(cTxtStatus *txtSt,Storage *s);
    ~TeletextBrowser();
    void Show(void);
-   static void ChannelSwitched(int ChannelNumber);
+   static void ChannelSwitched(int ChannelNumber, const bool live = false);
    virtual eOSState ProcessKey(eKeys Key);
 protected:
    enum Direction { DirectionForward, DirectionBackward };
@@ -71,6 +71,7 @@ protected:
    static tChannelID channel; // TODO: rename to channelId
    static cChannel channelClass;
    static int currentChannelNumber;
+   static int liveChannelNumber;
    static TeletextBrowser* self;
    Storage *storage;
 private:

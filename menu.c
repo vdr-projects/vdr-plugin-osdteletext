@@ -43,6 +43,7 @@ int TeletextBrowser::currentSubPage=0;
 tChannelID TeletextBrowser::channel;
 cChannel TeletextBrowser::channelClass;
 int TeletextBrowser::currentChannelNumber=0;
+int TeletextBrowser::liveChannelNumber=0;
 TeletextBrowser* TeletextBrowser::self=0;
 
 eTeletextActionConfig configMode = NotActive;
@@ -85,7 +86,7 @@ bool TeletextBrowser::CheckIsValidChannel(int number) {
 #endif
 }
 
-void TeletextBrowser::ChannelSwitched(int ChannelNumber) {
+void TeletextBrowser::ChannelSwitched(int ChannelNumber, const bool live) {
 #if defined(APIVERSNUM) && APIVERSNUM >= 20301
    LOCK_CHANNELS_READ;
    const cChannel *chan=Channels->GetByNumber(ChannelNumber);
@@ -102,6 +103,9 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber) {
       
    channel=chid;
    channelClass = *chan; // remember for later to display channel name
+
+   if (live)
+      liveChannelNumber= ChannelNumber; // remember active live channel
    
    //store page number of current channel
    IntMap::iterator it;
@@ -116,6 +120,17 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber) {
    if (it != channelPageMap.end()) { //found
       currentPage=(*it).second;
    }
+
+   char str[80];
+   if (liveChannelNumber != currentChannelNumber)
+      snprintf(str, sizeof(str), "%s %s: %s", tr("Switch to cached"), tr("Channel"), channelClass.Name());
+   else if (live)
+      snprintf(str, sizeof(str), "%s %s: %s", tr("Switch to live"), tr("Channel"), channelClass.Name());
+   else
+      snprintf(str, sizeof(str), "%s %s: %s", tr("Switch back to live"), tr("Channel"), channelClass.Name());
+
+   Display::DrawMessage(str, ttcBlue);
+   sleep(1);
    
    //on the one hand this must work in background mode, when the plugin is not active.
    //on the other hand, if active, the page should be shown.
@@ -171,9 +186,10 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
                   ChannelSwitched(selectingChannelNumber);
                else {
                   needClearMessage=true;
-                  Display::DrawMessage(trVDR("*** Invalid Channel ***"));
+                  Display::DrawMessage(trVDR("*** Invalid Channel ***"), ttcRed);
                }
             } else {
+               ChannelSwitched(liveChannelNumber);
                ShowPage();
             }
          } else {
@@ -454,9 +470,14 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
 
       case SwitchChannel:
          DEBUG_OT_KEYS("key action: 'SwitchChannel'");
-         selectingChannelNumber=0;
-         selectingChannel=true;
-         ShowAskForChannel();
+         if (!selectingChannel) {
+             selectingChannelNumber=0;
+             selectingChannel=true;
+             ShowAskForChannel();
+         } else {
+             selectingChannel=false;
+             Display::ClearMessage();
+         };
          break;
 
       /*case SuspendReceiving:
@@ -496,7 +517,7 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
          if (ttSetup.lineMode24) {
             // config mode is only supported in 25-line mode
             Display::ClearMessage();
-            Display::DrawMessage(tr("*** Config mode is not supported in 24-line mode ***"));
+            Display::DrawMessage(tr("*** Config mode is not supported in 24-line mode ***"), ttcRed);
             break;
          };
          switch(configMode) {
@@ -520,9 +541,14 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
          break;
 
       case TogglePause:
-         DEBUG_OT_KEYS("key action: 'TogglePause' paused=%d -> %d", Display::GetPaused(), not(Display::GetPaused()));
-         Display::SetPaused(not(Display::GetPaused())); // toggle paused status
-         ShowPage();
+         if (liveChannelNumber == currentChannelNumber) {
+            DEBUG_OT_KEYS("key action: 'TogglePause' paused=%d -> %d", Display::GetPaused(), not(Display::GetPaused()));
+            // toggle paused status only if live channel (otherwise useless)
+            Display::SetPaused(not(Display::GetPaused()));
+            ShowPage();
+         } else {
+            DEBUG_OT_KEYS("key action: 'TogglePause' useless, currently not a live channel on OSD");
+         };
          break;
 
       default:
@@ -765,20 +791,26 @@ void TeletextBrowser::ShowPage() {
 
 void TeletextBrowser::ShowPageNumber() {
    DEBUG_OT_DRPI("called with currentPage=%03x currentSubPage=%02x", currentPage, currentSubPage);
-   char str[8];
-   sprintf(str, "%3x-%02x", currentPage, currentSubPage);
+   char str[9];
+   snprintf(str, sizeof(str), "%3x-%02x %s", currentPage, currentSubPage
+      , (liveChannelNumber != currentChannelNumber) ? "c" : "" // cache mark
+   );
    if (cursorPos>0) {
       str[2]='*';
       if (cursorPos==1)
          str[1]='*';
    }
-   Display::DrawPageId(str);
+
+   if (liveChannelNumber != currentChannelNumber)
+      Display::DrawPageId(str, ttcCyan); // colored
+   else
+      Display::DrawPageId(str);
 }
 
 void TeletextBrowser::ShowAskForChannel() {
    if (selectingChannel) {
       cString str = cString::sprintf(selectingChannelNumber > 0 ? "%s%d" : "%s", tr("Channel (press OK): "), selectingChannelNumber);
-      Display::DrawMessage(str);
+      Display::DrawMessage(str, ttcBlue);
    }
 }
 
@@ -818,12 +850,12 @@ bool TeletextBrowser::DecodePage() {
       Display::HoldFlush();
       ShowPageNumber();
       char str[80];
-      snprintf(str,80, "%s %3x-%02x %s%s%s%s",tr("Page"),currentPage, currentSubPage,tr("not found")
-         , ((currentPage == 0x100) && (currentSubPage == 0)) ? " (" : ""
-         , ((currentPage == 0x100) && (currentSubPage == 0)) ? channelClass.Name() : ""
-         , ((currentPage == 0x100) && (currentSubPage == 0)) ? ")" : ""
+      snprintf(str, sizeof(str), "%s %3x-%02x %s %s (%s)",tr("Page"),currentPage, currentSubPage
+            , (liveChannelNumber != currentChannelNumber) ? tr("in cache") : ""
+            , tr("not found"), channelClass.Name()
       );
-      Display::DrawMessage(str);
+      Display::DrawMessage(str, ttcYellow);
+      UpdateFooter();
       Display::ReleaseFlush();
 
       return false;
@@ -876,7 +908,7 @@ void TeletextBrowser::UpdateFooter() {
       if (mode < 100) { \
          snprintf(text, sizeof(text), "%s", st_modesFooter[mode]); \
       } else if (mode < 999) { \
-         snprintf(text, sizeof(text), "->%03d", mode); \
+         snprintf(text, sizeof(text), "-> %03d", mode); \
       } else { \
          snprintf(text, sizeof(text), "ERROR"); \
       }; \

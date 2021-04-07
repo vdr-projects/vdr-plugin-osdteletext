@@ -246,7 +246,7 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber, bool Li
       cDevice::ActualDevice()->AttachReceiver(receiver);
    }
 
-   TeletextBrowser::ChannelSwitched(ChannelNumber);
+   TeletextBrowser::ChannelSwitched(ChannelNumber, true);
 }
 
 

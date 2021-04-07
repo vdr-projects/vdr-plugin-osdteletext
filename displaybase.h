@@ -217,7 +217,7 @@ public:
     // and draw the whole page content into OSD.
     // PageCode must be a 40*24+12 bytes buffer
 
-    void DrawText(int x, int y, const char *text, int len);
+    void DrawText(int x, int y, const char *text, int len, const enumTeletextColor cText = ttcWhite);
     // Draw some characters in teletext page.
     // Max len chars, fill up with spaces
 
@@ -232,11 +232,11 @@ public:
     void DrawClock();
     // Draw current time to OSD
 
-    void DrawPageId(const char *text);
-    // Draw Page ID string to OSD
+    void DrawPageId(const char *text, const enumTeletextColor cText = ttcWhite);
+    // Draw Page ID string to OSD with optional text color
 
-    void DrawMessage(const char *txt);
-    // Draw a framed, centered message box to OSD
+    void DrawMessage(const char *txt, const enumTeletextColor cFrame = ttcWhite, const enumTeletextColor cText = ttcWhite, const enumTeletextColor cBackground = ttcBlack);
+    // Draw a framed, centered message box to OSD with optional(default) color definition for frame(white), text(white), background(black)
 
     void ClearMessage();
     // Remove message box and redraw hidden content

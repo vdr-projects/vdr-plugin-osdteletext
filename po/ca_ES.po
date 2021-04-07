@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-06 17:47+0200\n"
+"POT-Creation-Date: 2021-04-07 08:43+0200\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Jordi Vilà <jvila@tinet.org>\n"
 "Language-Team: Catalan <vdr@linuxtv.org>\n"
@@ -17,6 +17,18 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+msgid "Switch to cached"
+msgstr ""
+
+msgid "Channel"
+msgstr ""
+
+msgid "Switch to live"
+msgstr ""
+
+msgid "Switch back to live"
+msgstr ""
 
 msgid "*** Config mode is not supported in 24-line mode ***"
 msgstr ""
@@ -26,6 +38,9 @@ msgstr "Canal (premi OK):"
 
 msgid "Page"
 msgstr "Pàgina"
+
+msgid "in cache"
+msgstr ""
 
 msgid "not found"
 msgstr "no trobada"

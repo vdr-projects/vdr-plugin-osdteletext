@@ -1,5 +1,9 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
+2021-04-07:
+- [pbiering] cached pages of non-live channel:  display page IDs in different color and a 'c' mark, do not trigger useless 'Pause'
+- [pbiering] draw bi-colored message frame, increase frame on high resolution, change font on high resolution
+
 2021-04-06:
 - [pbiering] stop updating clock and blink in case of page update was stopped
 - [pbiering] display sender name in case page is not found
