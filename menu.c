@@ -43,6 +43,7 @@ int TeletextBrowser::currentSubPage=0;
 tChannelID TeletextBrowser::channel;
 cChannel TeletextBrowser::channelClass;
 int TeletextBrowser::currentChannelNumber=0;
+int TeletextBrowser::liveChannelNumber=0;
 TeletextBrowser* TeletextBrowser::self=0;
 
 eTeletextActionConfig configMode = NotActive;
@@ -85,7 +86,7 @@ bool TeletextBrowser::CheckIsValidChannel(int number) {
 #endif
 }
 
-void TeletextBrowser::ChannelSwitched(int ChannelNumber) {
+void TeletextBrowser::ChannelSwitched(int ChannelNumber, const bool live) {
 #if defined(APIVERSNUM) && APIVERSNUM >= 20301
    LOCK_CHANNELS_READ;
    const cChannel *chan=Channels->GetByNumber(ChannelNumber);
@@ -102,6 +103,9 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber) {
       
    channel=chid;
    channelClass = *chan; // remember for later to display channel name
+
+   if (live)
+      liveChannelNumber= ChannelNumber; // remember active live channel
    
    //store page number of current channel
    IntMap::iterator it;
