@@ -542,7 +542,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
                 cache_outputHeight = outputHeight;
                 cache_OsdHeight    = cOsd::OsdHeight();
                 cache_Vshift       = (cache_txtVoffset * cache_outputHeight) / cache_OsdHeight;
-                dsyslog("osdteletext: DrawText vertical shift cache updated: txtVoffset=%d outputHeight=%d OsdHeight=%d => Vshift=%d", cache_txtVoffset, cache_outputHeight, cache_OsdHeight, cache_Vshift);
+                DEBUG_MASK_OT_DTXT("osdteletext: DrawText vertical shift cache updated: txtVoffset=%d outputHeight=%d OsdHeight=%d => Vshift=%d", cache_txtVoffset, cache_outputHeight, cache_OsdHeight, cache_Vshift);
             };
 
             if ((m_debugline >= 0) && (y == m_debugline)) {
