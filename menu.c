@@ -120,6 +120,17 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const bool live) {
    if (it != channelPageMap.end()) { //found
       currentPage=(*it).second;
    }
+
+   char str[80];
+   if (liveChannelNumber != currentChannelNumber)
+      snprintf(str, sizeof(str), "%s %s: %s", tr("Switch to cached"), tr("Channel"), channelClass.Name());
+   else if (live)
+      snprintf(str, sizeof(str), "%s %s: %s", tr("Switch to live"), tr("Channel"), channelClass.Name());
+   else
+      snprintf(str, sizeof(str), "%s %s: %s", tr("Switch back to live"), tr("Channel"), channelClass.Name());
+
+   Display::DrawMessage(str, ttcBlue);
+   sleep(1);
    
    //on the one hand this must work in background mode, when the plugin is not active.
    //on the other hand, if active, the page should be shown.
@@ -175,9 +186,10 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
                   ChannelSwitched(selectingChannelNumber);
                else {
                   needClearMessage=true;
-                  Display::DrawMessage(trVDR("*** Invalid Channel ***"));
+                  Display::DrawMessage(trVDR("*** Invalid Channel ***"), ttcRed);
                }
             } else {
+               ChannelSwitched(liveChannelNumber);
                ShowPage();
             }
          } else {
@@ -505,7 +517,7 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
          if (ttSetup.lineMode24) {
             // config mode is only supported in 25-line mode
             Display::ClearMessage();
-            Display::DrawMessage(tr("*** Config mode is not supported in 24-line mode ***"));
+            Display::DrawMessage(tr("*** Config mode is not supported in 24-line mode ***"), ttcRed);
             break;
          };
          switch(configMode) {
@@ -787,7 +799,7 @@ void TeletextBrowser::ShowPageNumber() {
 void TeletextBrowser::ShowAskForChannel() {
    if (selectingChannel) {
       cString str = cString::sprintf(selectingChannelNumber > 0 ? "%s%d" : "%s", tr("Channel (press OK): "), selectingChannelNumber);
-      Display::DrawMessage(str);
+      Display::DrawMessage(str, ttcBlue);
    }
 }
 
@@ -827,8 +839,11 @@ bool TeletextBrowser::DecodePage() {
       Display::HoldFlush();
       ShowPageNumber();
       char str[80];
-      snprintf(str,80, "%s %3x-%02x %s (%s)",tr("Page"),currentPage, currentSubPage,tr("not found"), channelClass.Name());
-      Display::DrawMessage(str);
+      snprintf(str, sizeof(str), "%s %3x-%02x %s %s (%s)",tr("Page"),currentPage, currentSubPage
+            , (liveChannelNumber != currentChannelNumber) ? tr("in cache") : ""
+            , tr("not found"), channelClass.Name()
+      );
+      Display::DrawMessage(str, ttcYellow);
       UpdateFooter();
       Display::ReleaseFlush();
 
