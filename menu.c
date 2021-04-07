@@ -454,9 +454,14 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
 
       case SwitchChannel:
          DEBUG_OT_KEYS("key action: 'SwitchChannel'");
-         selectingChannelNumber=0;
-         selectingChannel=true;
-         ShowAskForChannel();
+         if (!selectingChannel) {
+            selectingChannelNumber=0;
+            selectingChannel=true;
+            ShowAskForChannel();
+         } else {
+             selectingChannel=false;
+             Display::ClearMessage();
+         };
          break;
 
       /*case SuspendReceiving:
