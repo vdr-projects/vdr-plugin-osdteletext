@@ -309,7 +309,7 @@ void cDisplay::RenderTeletextCode(unsigned char *PageCode) {
 
 
 void cDisplay::DrawDisplay() {
-    DEBUG_OT_DD("called with Blinked=%d Concealed=%d", Blinked, Concealed);
+    DEBUG_OT_DD("called with Blinked=%d Concealed=%d Dirty=%s", Blinked, Concealed, (IsDirty() == true) ? "true" : "false");
     int x,y;
     int cnt=0;
 
