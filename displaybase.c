@@ -689,12 +689,12 @@ void cDisplay::DrawTextExtended(const int x, const int y, const char *text, cons
     Flush();
 };
 
-void cDisplay::DrawText(int x, int y, const char *text, int len) {
+void cDisplay::DrawText(int x, int y, const char *text, int len, const enumTeletextColor cText) {
     // Copy text to teletext page
     DEBUG_OT_DTXT("called with x=%d y=%d len=%d text='%s' strlen(text)=%ld", x, y, len, text, strlen(text));
 
     cTeletextChar c;
-    c.SetFGColor(ttcWhite);
+    c.SetFGColor(cText); // default ttcWhite
     c.SetBGColor(ttcBlack);
     c.SetCharset(CHARSET_LATIN_G0);
 
@@ -718,7 +718,7 @@ void cDisplay::DrawText(int x, int y, const char *text, int len) {
     Flush();
 }
 
-void cDisplay::DrawPageId(const char *text) {
+void cDisplay::DrawPageId(const char *text, const enumTeletextColor cText) {
     // Draw Page ID string to OSD
     static char text_last[9] = ""; // remember
     static bool paused_last = false;
@@ -737,7 +737,7 @@ void cDisplay::DrawPageId(const char *text) {
         return;
     };
 
-    DrawText(0,0,text,8);
+    DrawText(0,0,text,8, cText);
     strncpy(text_last, text, sizeof(text_last) - 1);
 
     if (HasConceal()) {
