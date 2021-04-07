@@ -455,9 +455,9 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
       case SwitchChannel:
          DEBUG_OT_KEYS("key action: 'SwitchChannel'");
          if (!selectingChannel) {
-            selectingChannelNumber=0;
-            selectingChannel=true;
-            ShowAskForChannel();
+             selectingChannelNumber=0;
+             selectingChannel=true;
+             ShowAskForChannel();
          } else {
              selectingChannel=false;
              Display::ClearMessage();
