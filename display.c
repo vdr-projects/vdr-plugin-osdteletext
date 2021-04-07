@@ -140,6 +140,7 @@ void Display::SetMode(Display::Mode NewMode, tColor Background) {
     switch (NewMode) {
       case Display::Full:
         // Need to re-initialize *display:
+        DEBUG_OT_DBFC("osdteletext: OSD 'full' Full->reinit display");
         Delete();
         // Try 32BPP display first:
         display=new cDisplay32BPP(x0,y0,OSDwidth,OSDheight,OSDleftFrame,OSDrightFrame,OSDtopFrame,OSDbottomFrame);
@@ -147,6 +148,7 @@ void Display::SetMode(Display::Mode NewMode, tColor Background) {
       case Display::HalfUpper:
         // Shortcut to switch from HalfUpper to HalfLower:
         if (mode==Display::HalfLower) {
+            DEBUG_OT_DBFC("osdteletext: OSD 'half' shortcut HalfUpper->HalfLower");
             // keep instance.
             ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Upper);
             ((cDisplay32BPPHalf*)display)->SetUpper(true);
@@ -154,6 +156,7 @@ void Display::SetMode(Display::Mode NewMode, tColor Background) {
             break;
         }
         // Need to re-initialize *display:
+        DEBUG_OT_DBFC("osdteletext: OSD 'half' HalfUpper->reinit display");
         Delete();
         display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,OSDleftFrame,OSDrightFrame,OSDtopFrame,OSDbottomFrame,true,false);
         ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Upper);
@@ -168,6 +171,7 @@ void Display::SetMode(Display::Mode NewMode, tColor Background) {
             break;
         }
         // Need to re-initialize *display:
+        DEBUG_OT_DBFC("osdteletext: OSD 'half' HalfUpperTop->reinit display");
         Delete();
         display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,OSDleftFrame,OSDrightFrame,OSDtopFrame,OSDbottomFrame,true,true);
         ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Upper);
@@ -175,6 +179,7 @@ void Display::SetMode(Display::Mode NewMode, tColor Background) {
       case Display::HalfLower:
         // Shortcut to switch from HalfUpper to HalfLower:
         if (mode==Display::HalfUpper) {
+            DEBUG_OT_DBFC("osdteletext: OSD 'half' shortcut HalfLower->HalfUpper");
             // keep instance.
             ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Lower);
             ((cDisplay32BPPHalf*)display)->SetUpper(false);
@@ -182,6 +187,7 @@ void Display::SetMode(Display::Mode NewMode, tColor Background) {
             break;
         }
         // Need to re-initialize *display:
+        DEBUG_OT_DBFC("osdteletext: OSD 'half' HalfLower->reinit display");
         Delete();
         display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,OSDleftFrame,OSDrightFrame,OSDtopFrame,OSDbottomFrame,false,false);
         ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Lower);
@@ -189,6 +195,7 @@ void Display::SetMode(Display::Mode NewMode, tColor Background) {
       case Display::HalfLowerTop:
         // Shortcut to switch from HalfUpperTop to HalfLowerTop:
         if (mode==Display::HalfUpperTop) {
+            DEBUG_OT_DBFC("osdteletext: OSD 'half' shortcut HalfUpperTop->HalfLowerTop");
             // keep instance.
             ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Lower);
             ((cDisplay32BPPHalf*)display)->SetUpper(false);
@@ -196,6 +203,7 @@ void Display::SetMode(Display::Mode NewMode, tColor Background) {
             break;
         }
         // Need to re-initialize *display:
+        DEBUG_OT_DBFC("osdteletext: OSD 'half' HalfLowerTop->reinit display");
         Delete();
         display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,OSDleftFrame,OSDrightFrame,OSDtopFrame,OSDbottomFrame,false,true);
         ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Lower);
