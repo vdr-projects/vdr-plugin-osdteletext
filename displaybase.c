@@ -118,22 +118,6 @@ void cDisplay::InitScaler() {
     // Set up the scaling factors. Also do zoom mode by
     // scaling differently.
 
-    // outputScaleX = (double)outputWidth/480.0; // EOL: no longer used
-    // outputScaleY = (double)outputHeight / (((ttSetup.lineMode24 == true) ? 24 : 25) * 10.0); // EOL: no longer used
-
-    int height=Height-6;
-    // int width=Width-6; // EOL: no longer used
-
-    switch (Zoom) {
-        case Zoom_Upper:
-            height=height*2;
-            break;
-        case Zoom_Lower:
-            height=height*2;
-            break;
-        default:;
-    }
-
     fontWidth = (outputWidth * 2 / 40) & 0xfffe;
     if (Zoom == Zoom_Off) {
         fontHeight = (outputHeight * 2 / ((ttSetup.lineMode24 == true) ? 24 : 25)) & 0xfffe;
