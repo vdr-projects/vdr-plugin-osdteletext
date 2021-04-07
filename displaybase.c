@@ -311,7 +311,6 @@ void cDisplay::RenderTeletextCode(unsigned char *PageCode) {
 void cDisplay::DrawDisplay() {
     DEBUG_OT_DD("called with Blinked=%d Concealed=%d Dirty=%s", Blinked, Concealed, (IsDirty() == true) ? "true" : "false");
     int x,y;
-    int cnt=0;
 
     if (!IsDirty()) return; // nothing to do
 
@@ -319,7 +318,6 @@ void cDisplay::DrawDisplay() {
         for (x=0;x<40;x++) {
             if (IsDirty(x,y)) {
                 // Need to draw char to osd
-                cnt++;
                 cTeletextChar c=Page[x][y];
                 c.SetDirty(false);
                 if ((Blinked && c.GetBlink()) || (Concealed && c.GetConceal())) {
