@@ -227,8 +227,6 @@ void cDisplay::SetZoom(enumZoom zoom) {
     // Re-initialize scaler to let zoom take effect
     InitScaler();
 
-    // Clear screen - mainly clear border
-    CleanDisplay();
     Dirty=true;
     DirtyAll=true;
 
