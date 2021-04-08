@@ -292,13 +292,14 @@ void cDisplay::RenderTeletextCode(unsigned char *PageCode) {
     DEBUG_OT_RENCLN("called with Boxed=%s Flags=0x%02x", BOOLTOTEXT(Boxed), Flags);
 
     if (!Boxed && (Flags&0x60)!=0) {
+        DEBUG_OT_RENCLN("Toggle Boxed: false->true");
         Boxed=true;
         CleanDisplay();
     } else if (Boxed && (Flags&0x60)==0) {
+        DEBUG_OT_RENCLN("Toggle Boxed: true->false");
         Boxed=false;
         CleanDisplay();
-    } else
-        CleanDisplay();
+    }
 
     if (memcmp(PageCode, "VTXV5", 5) != 0) {
         esyslog("osdteletext: cDisplay::RenderTeletextCode called with PageCode which is not starting with 'VTXV5' (not supported)");
