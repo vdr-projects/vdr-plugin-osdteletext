@@ -290,7 +290,7 @@ void cDisplay::RenderTeletextCode(unsigned char *PageCode) {
 
     cRenderPage::ReadTeletextHeader(PageCode);
 
-    DEBUG_OT_DBFC("called");
+    DEBUG_OT_RENCLN("called");
 
     if (!Boxed && (Flags&0x60)!=0) {
         Boxed=true;
@@ -841,7 +841,7 @@ void cDisplay::DrawMessage(const char *txt, const enumTeletextColor cFrame, cons
     MessageX=x;
     MessageY=y;
 
-    DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OW=%d OH=%d", MessageX, MessageY, MessageW, MessageH, outputWidth, outputHeight);
+    DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OW=%d OH=%d text='%s'", MessageX, MessageY, MessageW, MessageH, outputWidth, outputHeight, txt);
 
     // And flush all changes
     ReleaseFlush();
