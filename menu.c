@@ -194,6 +194,7 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
                else {
                   needClearMessage=true;
                   Display::DrawMessage(trVDR("*** Invalid Channel ***"), ttcRed);
+                  sleep(1);
                }
             } else {
                ChannelSwitched(liveChannelNumber);
@@ -525,6 +526,7 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
             // config mode is only supported in 25-line mode
             Display::ClearMessage();
             Display::DrawMessage(tr("*** Config mode is not supported in 24-line mode ***"), ttcRed);
+            sleep(1);
             break;
          };
          switch(configMode) {
