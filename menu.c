@@ -416,6 +416,7 @@ bool TeletextBrowser::ExecuteActionConfig(eTeletextActionConfig e, int delta) {
          DEBUG_OT_KEYS("key action: 'Config->BackTrans' BackTransVal=%d BackTransMin=%d BackTransMax=%d delta=%d", BackTransVal, BackTransMin, BackTransMax, delta * 8);
          COND_ADJ_VALUE(BackTransVal, BackTransMin, BackTransMax, delta * 8);
          ttSetup.configuredClrBackground = ((uint32_t) BackTransVal) << 24;
+         clrBackground = ttSetup.configuredClrBackground;
          break;
 
       default:
