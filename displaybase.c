@@ -880,6 +880,9 @@ void cDisplay::ClearMessage() {
 	if TESTOORY(y0) y0 = 25 - 1;
 	if TESTOORY(y1) y1 = 25 - 1;
     }
+
+    HoldFlush();
+
     // DEBUG_OT_MSG("call MakeDirty with area x0=%d/y0=%d <-> x1=%d/y1=%d", x0, y0, x1, y1);
     for (int x=x0;x<=x1;x++) {
         for (int y=y0;y<=y1;y++) {
@@ -890,7 +893,7 @@ void cDisplay::ClearMessage() {
     MessageW=0;
     MessageH=0;
 
-    Flush();
+    ReleaseFlush();
 }
 
 // vim: ts=4 sw=4 et
