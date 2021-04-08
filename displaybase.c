@@ -290,7 +290,7 @@ void cDisplay::RenderTeletextCode(unsigned char *PageCode) {
 
     cRenderPage::ReadTeletextHeader(PageCode);
 
-    DEBUG_OT_RENCLN("called");
+    DEBUG_OT_RENCLN("called with Boxed=%s Flags=0x%02x", BOOLTOTEXT(Boxed), Flags);
 
     if (!Boxed && (Flags&0x60)!=0) {
         Boxed=true;
@@ -314,7 +314,7 @@ void cDisplay::RenderTeletextCode(unsigned char *PageCode) {
 
 
 void cDisplay::DrawDisplay() {
-    DEBUG_OT_DD("called with Blinked=%d Concealed=%d Dirty=%s", Blinked, Concealed, (IsDirty() == true) ? "true" : "false");
+    DEBUG_OT_DD("called with Blinked=%d Concealed=%d Dirty=%s DirtyAll=%s IsDirty()=%s", Blinked, Concealed, BOOLTOTEXT(Dirty), BOOLTOTEXT(DirtyAll), BOOLTOTEXT(IsDirty()));
     int x,y;
 
     if (!IsDirty()) return; // nothing to do
