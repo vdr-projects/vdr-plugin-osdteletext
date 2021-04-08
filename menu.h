@@ -21,8 +21,6 @@
 #include "txtrecv.h"
 #include "setup.h"
 
-extern int Stretch;
-
 class TeletextBrowser : public cOsdObject {
 public:
    TeletextBrowser(cTxtStatus *txtSt,Storage *s);

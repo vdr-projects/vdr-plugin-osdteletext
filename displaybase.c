@@ -28,10 +28,10 @@ cDisplay::cDisplay(int width, int height)
     : Zoom(Zoom_Off), Concealed(true), Blinked(false), FlushLock(0),
       Boxed(false), Width(width), Height(height), Background(clrGray50),
       Paused(false),
+      PageIdDisplayedEver(false),
       osd(NULL),
       outputWidth(0), outputHeight(0),
       leftFrame(0), rightFrame(0), topFrame(0), bottomFrame(0),
-      OffsetX(0), OffsetY(0),
       MessageFont(cFont::GetFont(fontSml)), MessageX(0), MessageY(0),
       MessageW(0), MessageH(0),
       TXTFont(0), TXTDblWFont(0), TXTDblHFont(0), TXTDblHWFont(0), TXTHlfHFont(0)
@@ -118,25 +118,6 @@ std::string cDisplay::GetFontFootprint(const char *name) {
 void cDisplay::InitScaler() {
     // Set up the scaling factors. Also do zoom mode by
     // scaling differently.
-
-    // outputScaleX = (double)outputWidth/480.0; // EOL: no longer used
-    // outputScaleY = (double)outputHeight / (((ttSetup.lineMode24 == true) ? 24 : 25) * 10.0); // EOL: no longer used
-
-    int height=Height-6;
-    // int width=Width-6; // EOL: no longer used
-    OffsetX=3;
-    OffsetY=3;
-
-    switch (Zoom) {
-        case Zoom_Upper:
-            height=height*2;
-            break;
-        case Zoom_Lower:
-            OffsetY=OffsetY-height;
-            height=height*2;
-            break;
-        default:;
-    }
 
     fontWidth = (outputWidth * 2 / 40) & 0xfffe;
     if (Zoom == Zoom_Off) {
@@ -246,8 +227,6 @@ void cDisplay::SetZoom(enumZoom zoom) {
     // Re-initialize scaler to let zoom take effect
     InitScaler();
 
-    // Clear screen - mainly clear border
-    // CleanDisplay(); // called later after SetBackgroundColor
     Dirty=true;
     DirtyAll=true;
 
@@ -262,14 +241,19 @@ void cDisplay::SetBackgroundColor(tColor c) {
 }
 
 void cDisplay::CleanDisplay() {
-    enumTeletextColor bgc=(Boxed)?(ttcTransparent):(ttcBlack);
+    tColor bgc;
+
     if (!osd) return;
 
-    DEBUG_OT_DBFC("called: outputWidth=%d outputHeight=%d boxed=%d color=0x%08x bgc=%d", outputWidth, outputHeight, Boxed, GetColorRGB(bgc,0), bgc);
-    if (m_debugmask & DEBUG_MASK_OT_ACT_OSD_BACK_RED)
-        osd->DrawRectangle(0, 0, outputWidth - 1 + leftFrame + rightFrame, outputHeight - 1 + topFrame + bottomFrame, GetColorRGB(ttcRed,0));
+    if (Boxed)
+        bgc = GetColorRGB(ttcTransparent,0);
+    else if (m_debugmask & DEBUG_MASK_OT_ACT_OSD_BACK_RED)
+        bgc = GetColorRGB(ttcRed,0);
     else
-        osd->DrawRectangle(0, 0, outputWidth - 1 + leftFrame + rightFrame, outputHeight - 1 + topFrame + bottomFrame, GetColorRGB(bgc,0));
+        bgc = Background;
+
+    DEBUG_OT_RENCLN("called: outputWidth=%d outputHeight=%d boxed=%s color=0x%08x", outputWidth, outputHeight, BOOLTOTEXT(Boxed), bgc);
+    osd->DrawRectangle(0, 0, outputWidth - 1 + leftFrame + rightFrame, outputHeight - 1 + topFrame + bottomFrame, bgc);
 
     // repaint all
     Dirty=true;
@@ -305,16 +289,17 @@ void cDisplay::RenderTeletextCode(unsigned char *PageCode) {
 
     cRenderPage::ReadTeletextHeader(PageCode);
 
-    DEBUG_OT_DBFC("called");
+    DEBUG_OT_RENCLN("called with Boxed=%s Flags=0x%02x", BOOLTOTEXT(Boxed), Flags);
 
     if (!Boxed && (Flags&0x60)!=0) {
+        DEBUG_OT_RENCLN("Toggle Boxed: false->true");
         Boxed=true;
         CleanDisplay();
     } else if (Boxed && (Flags&0x60)==0) {
+        DEBUG_OT_RENCLN("Toggle Boxed: true->false");
         Boxed=false;
         CleanDisplay();
-    } else
-        CleanDisplay();
+    }
 
     if (memcmp(PageCode, "VTXV5", 5) != 0) {
         esyslog("osdteletext: cDisplay::RenderTeletextCode called with PageCode which is not starting with 'VTXV5' (not supported)");
@@ -329,9 +314,8 @@ void cDisplay::RenderTeletextCode(unsigned char *PageCode) {
 
 
 void cDisplay::DrawDisplay() {
-    DEBUG_OT_DD("called with Blinked=%d Concealed=%d", Blinked, Concealed);
+    DEBUG_OT_DD("called with Blinked=%d Concealed=%d Dirty=%s DirtyAll=%s IsDirty()=%s", Blinked, Concealed, BOOLTOTEXT(Dirty), BOOLTOTEXT(DirtyAll), BOOLTOTEXT(IsDirty()));
     int x,y;
-    int cnt=0;
 
     if (!IsDirty()) return; // nothing to do
 
@@ -339,7 +323,6 @@ void cDisplay::DrawDisplay() {
         for (x=0;x<40;x++) {
             if (IsDirty(x,y)) {
                 // Need to draw char to osd
-                cnt++;
                 cTeletextChar c=Page[x][y];
                 c.SetDirty(false);
                 if ((Blinked && c.GetBlink()) || (Concealed && c.GetConceal())) {
@@ -546,7 +529,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
                 cache_outputHeight = outputHeight;
                 cache_OsdHeight    = cOsd::OsdHeight();
                 cache_Vshift       = (cache_txtVoffset * cache_outputHeight) / cache_OsdHeight;
-                dsyslog("osdteletext: DrawText vertical shift cache updated: txtVoffset=%d outputHeight=%d OsdHeight=%d => Vshift=%d", cache_txtVoffset, cache_outputHeight, cache_OsdHeight, cache_Vshift);
+                DEBUG_OT_DTXT("osdteletext: DrawText vertical shift cache updated: txtVoffset=%d outputHeight=%d OsdHeight=%d => Vshift=%d", cache_txtVoffset, cache_outputHeight, cache_OsdHeight, cache_Vshift);
             };
 
             if ((m_debugline >= 0) && (y == m_debugline)) {
@@ -726,7 +709,7 @@ void cDisplay::DrawPageId(const char *text, const enumTeletextColor cText) {
 
     DEBUG_OT_DRPI("called with text='%s' text_last='%s' Boxed=%d HasConceal=%d GetConceal=%d", text, text_last, Boxed, HasConceal(), GetConceal());
 
-    if (! GetPaused() && Boxed && (strcmp(text, text_last) == 0)) {
+    if (! GetPaused() && Boxed && PageIdDisplayedEver && (strcmp(text, text_last) == 0)) {
         // don't draw PageId a 2nd time on boxed pages
         for (int i = 0; i < 8; i++) {
             c.SetFGColor(ttcTransparent);
@@ -739,6 +722,7 @@ void cDisplay::DrawPageId(const char *text, const enumTeletextColor cText) {
 
     DrawText(0,0,text,8, cText);
     strncpy(text_last, text, sizeof(text_last) - 1);
+    PageIdDisplayedEver = true;
 
     if (HasConceal()) {
         c.SetBGColor(ttcBlack);
@@ -845,9 +829,9 @@ void cDisplay::DrawMessage(const char *txt, const enumTeletextColor cFrame, cons
     if (fg==bg) bg=GetColorRGBAlternate(cBackground,0);
 
     // Draw framed box (2 outer pixel always background)
-    osd->DrawRectangle(x         ,y         ,x+w-1       ,y+h-1       ,bg); // outer rectangle
-    osd->DrawRectangle(x+2       ,y+2       ,x+w-1-2     ,y+h-1-2     ,fr); // inner rectangle
-    osd->DrawRectangle(x+border  ,y+border  ,x+w-border-1,y+h-border-1,bg); // background for text
+    osd->DrawRectangle(x           , y           , x+w-1         , y+h-1         , bg); // outer rectangle
+    osd->DrawRectangle(x+(border/2), y+(border/2), x+w-1-border/2, y+h-1-border/2, fr); // inner rectangle
+    osd->DrawRectangle(x+border    , y+border    , x+w-1-border  , y+h-1-border  , bg); // background for text
 
     // Draw text
     osd->DrawText(x+2*border, y+2*border,txt, fg, bg, MessageFont, w - 4*border, h - 4*border);
@@ -858,7 +842,7 @@ void cDisplay::DrawMessage(const char *txt, const enumTeletextColor cFrame, cons
     MessageX=x;
     MessageY=y;
 
-    DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OX=%d OY=%d OW=%d OH=%d", MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, outputWidth, outputHeight);
+    DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OW=%d OH=%d text='%s'", MessageX, MessageY, MessageW, MessageH, outputWidth, outputHeight, txt);
 
     // And flush all changes
     ReleaseFlush();
@@ -870,18 +854,18 @@ void cDisplay::ClearMessage() {
 
     // NEW, reverse calculation based on how DrawChar
     // map to character x/y
-    int x0 = (MessageX - OffsetX)          / (fontWidth  / 2) + leftFrame;
-    int y0 = (MessageY - OffsetY)          / (fontHeight / 2) + topFrame;
-    int x1 = (MessageX+MessageW-1-OffsetX) / (fontWidth  / 2) + leftFrame;
-    int y1 = (MessageY+MessageH-1-OffsetY) / (fontHeight / 2) + topFrame;
+    int x0 = (MessageX                - leftFrame) / (fontWidth  / 2);
+    int y0 = (MessageY                - topFrame ) / (fontHeight / 2);
+    int x1 = (MessageX + MessageW - 1 - leftFrame) / (fontWidth  / 2);
+    int y1 = (MessageY + MessageH - 1 - topFrame ) / (fontHeight / 2);
 
-    DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OX=%d OY=%d => x0=%d/y0=%d x1=%d/y1=%d", MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY, x0, y0, x1, y1);
+    DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d => x0=%d/y0=%d x1=%d/y1=%d", MessageX, MessageY, MessageW, MessageH, x0, y0, x1, y1);
 
 #define TESTOORX(X) (X < 0 || X >= 40)
 #define TESTOORY(Y) (Y < 0 || Y >= 25)
     if ( TESTOORX(x0) || TESTOORX(x1) || TESTOORY(y0) || TESTOORY(y1) ) {
         // something out-of-range
-	    esyslog("osdteletext: %s out-of-range detected(crop) MessageX=%d MessageY=%d MessageW=%d MessageH=%d OffsetX=%d OffsetY=%d => x0=%d%s y0=%d%s x1=%d%s y1=%d%s", __FUNCTION__, MessageX, MessageY, MessageW, MessageH, OffsetX, OffsetY,
+	    esyslog("osdteletext: %s out-of-range detected(crop) MessageX=%d MessageY=%d MessageW=%d MessageH=%d => x0=%d%s y0=%d%s x1=%d%s y1=%d%s", __FUNCTION__, MessageX, MessageY, MessageW, MessageH,
 		x0, TESTOORX(x0) ? "!" : "",
 		y0, TESTOORY(y0) ? "!" : "",
 		x1, TESTOORX(x1) ? "!" : "",
@@ -897,6 +881,9 @@ void cDisplay::ClearMessage() {
 	if TESTOORY(y0) y0 = 25 - 1;
 	if TESTOORY(y1) y1 = 25 - 1;
     }
+
+    HoldFlush();
+
     // DEBUG_OT_MSG("call MakeDirty with area x0=%d/y0=%d <-> x1=%d/y1=%d", x0, y0, x1, y1);
     for (int x=x0;x<=x1;x++) {
         for (int y=y0;y<=y1;y++) {
@@ -907,7 +894,7 @@ void cDisplay::ClearMessage() {
     MessageW=0;
     MessageH=0;
 
-    Flush();
+    ReleaseFlush();
 }
 
 // vim: ts=4 sw=4 et

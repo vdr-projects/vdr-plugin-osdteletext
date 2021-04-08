@@ -9,6 +9,8 @@ extern unsigned int m_debugpage;
 extern unsigned int m_debugpsub;
 extern          int m_debugline;
 
+#define BOOLTOTEXT(var)	 ((var == true) ? "true" : "false")
+
 #define DEBUG_MASK_OT		0x00000001	// general
 #define DEBUG_MASK_OT_CACHE	0x00000002	// Caching System
 #define DEBUG_MASK_OT_KNONE	0x00000010	// Knone action
@@ -28,6 +30,7 @@ extern          int m_debugline;
 #define DEBUG_MASK_OT_BOXED	0x00400000	// BoxedOut
 #define DEBUG_MASK_OT_DTXT 	0x00800000	// DrawText
 #define DEBUG_MASK_OT_TXTRDT	0x01000000	// Text Rendering triplet
+#define DEBUG_MASK_OT_RENCLN	0x02000000	// Render/Clean
 #define DEBUG_MASK_OT_TXTRCVD	0x04000000	// Text Receiver dump to stdout (particular page only, see code)
 #define DEBUG_MASK_OT_TXTRD	0x08000000	// Text Rendering dump to stdout
 
@@ -57,6 +60,7 @@ extern          int m_debugline;
 #define DEBUG_OT_DTXT   if (m_debugmask & DEBUG_MASK_OT_DTXT )  dsyslog_ot
 #define DEBUG_OT_CACHE  if (m_debugmask & DEBUG_MASK_OT_CACHE)  dsyslog_ot
 #define DEBUG_OT_TXTRDT if (m_debugmask & DEBUG_MASK_OT_TXTRDT) dsyslog_ot
+#define DEBUG_OT_RENCLN if (m_debugmask & DEBUG_MASK_OT_RENCLN) dsyslog_ot
 #define DEBUG_OT_TXTRCVD if (m_debugmask & DEBUG_MASK_OT_TXTRCVD) dsyslog_ot
 #define DEBUG_OT_TXTRD  if (m_debugmask & DEBUG_MASK_OT_TXTRD) dsyslog_ot
 

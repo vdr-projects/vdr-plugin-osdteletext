@@ -32,7 +32,7 @@ using namespace std;
 
 #define NUMELEMENTS(x) (sizeof(x) / sizeof(x[0]))
 
-static const char *VERSION        = "1.9.9.dev.7";
+static const char *VERSION        = "1.9.9.dev.8";
 static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
 static const char *MAINMENUENTRY  = trNOOP("Teletext");
 
@@ -363,7 +363,6 @@ bool cPluginTeletextosd::SetupParse(const char *Name, const char *Value)
 {
   initTexts();
   // Parse your own setup parameters and store their values.
-  //Stretch=true;
   if (!strcasecmp(Name, "configuredClrBackground")) ttSetup.configuredClrBackground=( ((unsigned int)atoi(Value)) << 24);
   else if (!strcasecmp(Name, "showClock")) ttSetup.showClock=atoi(Value);
      //currently not used

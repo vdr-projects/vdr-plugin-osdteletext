@@ -33,7 +33,6 @@
 
 using namespace std;
    
-int Stretch = true;
 typedef map<int,int> IntMap;
 IntMap channelPageMap;
 
@@ -45,6 +44,8 @@ cChannel TeletextBrowser::channelClass;
 int TeletextBrowser::currentChannelNumber=0;
 int TeletextBrowser::liveChannelNumber=0;
 TeletextBrowser* TeletextBrowser::self=0;
+tColor clrBackground;
+bool clrBackgroundInit = false;
 
 eTeletextActionConfig configMode = NotActive;
 
@@ -55,7 +56,13 @@ TeletextBrowser::TeletextBrowser(cTxtStatus *txtSt,Storage *s)
     previousSubPage(currentSubPage), pageBeforeNumberInput(currentPage),
     lastActivity(time(NULL)), inactivityTimeout(-1), storage(s)
 {
+   if (!clrBackgroundInit) {
+      clrBackground = (tColor) ttSetup.configuredClrBackground; // default
+      clrBackgroundInit = true;
+   };
+
    self=this;
+
    //if (txtStatus)
     //  txtStatus->ForceReceiving(true);
 }
@@ -73,7 +80,7 @@ TeletextBrowser::~TeletextBrowser() {
 }
 
 void TeletextBrowser::Show(void) {
-    Display::SetMode(Display::mode);
+    Display::SetMode(Display::mode, clrBackground);
     ShowPage();
 }
 
@@ -149,8 +156,8 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
 
    if (Key != kNone)
       lastActivity = time(NULL);
-   
-   DEBUG_OT_KEYS("called with Key=%d", Key);
+
+   if (Key != kNone) DEBUG_OT_KEYS("called with Key=%d", Key);
 
    switch (Key) {
       case k1: SetNumber(1);break;
@@ -341,8 +348,10 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
       modeR = Display::mode; // remember mode
       if (ttSetup.configuredClrBackground != bgcSetup) {
          bgcR = ttSetup.configuredClrBackground; // color was changed during config
+         DEBUG_OT_KEYS("osdteletext: recreate display with remembered mode=%d zoom=%d and setup configured bgc=%08x", modeR, zoomR, bgcR);
       } else {
          bgcR = Display::GetBackgroundColor(); // remember color
+         DEBUG_OT_KEYS("osdteletext: recreate display with remembered mode=%d zoom=%d bgc=%08x", modeR, zoomR, bgcR);
       };
       Display::Delete();
       Display::SetMode(modeR, bgcR); // new with remembered mode and backgroud color
@@ -418,7 +427,6 @@ bool TeletextBrowser::ExecuteActionConfig(eTeletextActionConfig e, int delta) {
 void TeletextBrowser::ExecuteAction(eTeletextAction e) {
    cDisplay::enumZoom zoomR;
    Display::Mode modeR;
-   tColor bgcR;
 
    switch (e) {
       case Zoom:
@@ -442,7 +450,7 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
          break;
 
       case HalfPage:
-         DEBUG_OT_KEYS("key action: 'Half Page' Display::mode=%d", Display::mode);
+         DEBUG_OT_KEYS("key action: 'Half Page' Display::mode=%d clrBackground=%08x", Display::mode, clrBackground);
          if (selectingChannel) {
              selectingChannel=false;
              Display::ClearMessage();
@@ -450,19 +458,19 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
                   
          switch (Display::mode) {
             case Display::HalfUpper:
-               Display::SetMode(Display::HalfLower, Display::GetBackgroundColor());
+               Display::SetMode(Display::HalfLower, clrBackground);
                break;
             case Display::HalfLower:
-               Display::SetMode(Display::HalfUpperTop, Display::GetBackgroundColor());
+               Display::SetMode(Display::HalfUpperTop, clrBackground);
                break;
             case Display::HalfUpperTop:
-               Display::SetMode(Display::HalfLowerTop, Display::GetBackgroundColor());
+               Display::SetMode(Display::HalfLowerTop, clrBackground);
                break;
             case Display::HalfLowerTop:
-               Display::SetMode(Display::Full, Display::GetBackgroundColor());
+               Display::SetMode(Display::Full, clrBackground);
                break;
             case Display::Full:
-               Display::SetMode(Display::HalfUpper, Display::GetBackgroundColor());
+               Display::SetMode(Display::HalfUpper, clrBackground);
                break;
             }
             ShowPage();
@@ -505,9 +513,8 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
          };
          zoomR = Display::GetZoom(); // remember zoom
          modeR = Display::mode; // remember mode
-         bgcR = Display::GetBackgroundColor(); // remember color
          Display::Delete();
-         Display::SetMode(modeR, bgcR); // new with remembered mode and background color
+         Display::SetMode(modeR, clrBackground); // new with remembered mode and background color
          Display::SetZoom(zoomR); // apply remembered zoom
          ShowPage();
          break;
@@ -580,20 +587,22 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
 void TeletextBrowser::ChangeBackground()
 {
    tColor clrConfig = (tColor)ttSetup.configuredClrBackground;
-   tColor clrCurrent = Display::GetBackgroundColor();
+   tColor clrCurrent = clrBackground;
 
    if (clrCurrent == clrConfig)
       if (clrConfig == clrTransparent)
-         Display::SetBackgroundColor(clrBlack);
+         clrBackground = clrBlack;
       else
-         Display::SetBackgroundColor(clrTransparent);
+         clrBackground = clrTransparent;
    else if (clrCurrent == clrBlack)
       if (clrConfig == clrBlack)
-         Display::SetBackgroundColor(clrTransparent);
+         clrBackground = clrTransparent;
       else
-         Display::SetBackgroundColor(clrConfig);
+         clrBackground = clrConfig;
    else // clrCurrent == clrTransparent
-      Display::SetBackgroundColor(clrBlack);
+      clrBackground = clrBlack;
+
+   Display::SetBackgroundColor(clrBackground);
 }
 
 eTeletextAction TeletextBrowser::TranslateKey(eKeys Key) {

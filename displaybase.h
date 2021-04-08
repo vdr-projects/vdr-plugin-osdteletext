@@ -63,6 +63,9 @@ protected:
     bool Paused;
     // Paused internal state
 
+    bool PageIdDisplayedEver;
+    // Flag whether the PageId was ever displayed so far
+
     cOsd *osd;
     // The osd object. If creation fails, may be NULL
 
@@ -72,9 +75,6 @@ protected:
 
     int leftFrame, rightFrame, topFrame, bottomFrame;
     // frame border
-
-    int OffsetX,OffsetY;
-    // Virtual coordinate system, see InitScaler
 
     const cFont *MessageFont;
     int MessageX,MessageY,MessageW,MessageH;
@@ -140,8 +140,6 @@ protected:
 
     // ScaleX,ScaleY represent the (virtual) width and height of a
     // physical OSD pixel.
-    // OffsetX,OffsetY default to 3,3 to represent the border offset,
-    // but may be used differently.
 
 public:
     bool GetBlink() { return Blinked; }
@@ -247,7 +245,6 @@ private:
 };
 
 
-
 inline void cDisplay::cBox::SetToCharacter(int x, int y) {
     // Virtual box area of a character
     XMin=(x*12)<<16;
@@ -255,28 +252,5 @@ inline void cDisplay::cBox::SetToCharacter(int x, int y) {
     XMax=XMin+(12<<16)-1;
     YMax=YMin+(10<<16)-1;
 }
-
-/*
-inline void cDisplay::cVirtualCoordinate::VirtualToPixel(cDisplay *Display, int x, int y) {
-    // Map virtual coordinate to OSD pixel
-    OsdX=x/Display->ScaleX+Display->OffsetX;
-    OsdY=y/Display->ScaleY+Display->OffsetY;
-
-    // map OSD pixel back to virtual coordinate, use center of pixel
-    VirtX=(OsdX-Display->OffsetX)*Display->ScaleX+Display->ScaleX/2;
-    VirtY=(OsdY-Display->OffsetY)*Display->ScaleY+Display->ScaleY/2;
-}
-
-inline void cDisplay::cVirtualCoordinate::IncPixelX(cDisplay *Display) {
-    // Move one OSD pixel
-    OsdX++;
-    VirtX+=Display->ScaleX;
-}
-inline void cDisplay::cVirtualCoordinate::IncPixelY(cDisplay *Display) {
-    // Move one OSD pixel
-    OsdY++;
-    VirtY+=Display->ScaleY;
-}
-*/
 
 #endif
