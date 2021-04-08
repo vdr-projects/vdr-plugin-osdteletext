@@ -365,6 +365,7 @@ void cDisplay32BPPHalf::InitOSD() {
     InitScaler();
 
     // In case we switched on the fly, do a full redraw
+    CleanDisplay();
     Dirty=true;
     DirtyAll=true;
     Flush();
