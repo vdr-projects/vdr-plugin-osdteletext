@@ -149,8 +149,8 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
 
    if (Key != kNone)
       lastActivity = time(NULL);
-   
-   DEBUG_OT_KEYS("called with Key=%d", Key);
+
+   if (Key != kNone) DEBUG_OT_KEYS("called with Key=%d", Key);
 
    switch (Key) {
       case k1: SetNumber(1);break;
@@ -341,8 +341,10 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
       modeR = Display::mode; // remember mode
       if (ttSetup.configuredClrBackground != bgcSetup) {
          bgcR = ttSetup.configuredClrBackground; // color was changed during config
+         DEBUG_OT_KEYS("osdteletext: recreate display with remembered mode=%d zoom=%d and setup configured bgc=%08x", modeR, zoomR, bgcR);
       } else {
          bgcR = Display::GetBackgroundColor(); // remember color
+         DEBUG_OT_KEYS("osdteletext: recreate display with remembered mode=%d zoom=%d bgc=%08x", modeR, zoomR, bgcR);
       };
       Display::Delete();
       Display::SetMode(modeR, bgcR); // new with remembered mode and backgroud color
