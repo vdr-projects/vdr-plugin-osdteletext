@@ -36,7 +36,6 @@ using namespace std;
 int Stretch = true;
 typedef map<int,int> IntMap;
 IntMap channelPageMap;
-tColor clrBackground = (tColor) ttSetup.configuredClrBackground; // default
 
 //static variables
 int TeletextBrowser::currentPage=0x100; //Believe it or not, the teletext numbers are somehow hexadecimal
@@ -46,6 +45,8 @@ cChannel TeletextBrowser::channelClass;
 int TeletextBrowser::currentChannelNumber=0;
 int TeletextBrowser::liveChannelNumber=0;
 TeletextBrowser* TeletextBrowser::self=0;
+tColor clrBackground;
+bool clrBackgroundInit = false;
 
 eTeletextActionConfig configMode = NotActive;
 
@@ -56,8 +57,12 @@ TeletextBrowser::TeletextBrowser(cTxtStatus *txtSt,Storage *s)
     previousSubPage(currentSubPage), pageBeforeNumberInput(currentPage),
     lastActivity(time(NULL)), inactivityTimeout(-1), storage(s)
 {
+   if (!clrBackgroundInit) {
+      clrBackground = (tColor) ttSetup.configuredClrBackground; // default
+      clrBackgroundInit = true;
+   };
+
    self=this;
-   clrBackground = (tColor) ttSetup.configuredClrBackground; // default
 
    //if (txtStatus)
     //  txtStatus->ForceReceiving(true);
