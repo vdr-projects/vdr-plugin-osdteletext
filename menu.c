@@ -859,7 +859,8 @@ bool TeletextBrowser::DecodePage() {
       Display::HoldFlush();
       ShowPageNumber();
       char str[80];
-      snprintf(str, sizeof(str), "%s %3x-%02x %s %s (%s)",tr("Page"),currentPage, currentSubPage
+      snprintf(str, sizeof(str), "%s %3x-%02x%s%s %s (%s)",tr("Page"),currentPage, currentSubPage
+            , (liveChannelNumber != currentChannelNumber) ? " " : ""
             , (liveChannelNumber != currentChannelNumber) ? tr("in cache") : ""
             , tr("not found"), channelClass.Name()
       );
