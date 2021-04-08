@@ -363,7 +363,6 @@ bool cPluginTeletextosd::SetupParse(const char *Name, const char *Value)
 {
   initTexts();
   // Parse your own setup parameters and store their values.
-  //Stretch=true;
   if (!strcasecmp(Name, "configuredClrBackground")) ttSetup.configuredClrBackground=( ((unsigned int)atoi(Value)) << 24);
   else if (!strcasecmp(Name, "showClock")) ttSetup.showClock=atoi(Value);
      //currently not used

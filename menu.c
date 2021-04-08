@@ -33,7 +33,6 @@
 
 using namespace std;
    
-int Stretch = true;
 typedef map<int,int> IntMap;
 IntMap channelPageMap;
 
