@@ -126,9 +126,9 @@ public:
     cDisplay32BPPHalf(int x0, int y0, int width, int height, int leftFrame, int rightFrame, int topFrame, int bottomFrame, bool upper, bool top, tColor clrBackground);
     bool GetUpper() { return Upper; }
     void SetUpper(bool upper)
-        { if (Upper!=upper) { Upper=upper; InitOSD(); } }
+        { if (Upper!=upper) { Upper=upper; } }
     void SetTop(bool top)
-        { if (Top!=top) { Top=top; InitOSD(); } }
+        { if (Top!=top) { Top=top; } }
 protected:
     void InitOSD();
 };
