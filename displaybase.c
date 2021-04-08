@@ -28,6 +28,7 @@ cDisplay::cDisplay(int width, int height)
     : Zoom(Zoom_Off), Concealed(true), Blinked(false), FlushLock(0),
       Boxed(false), Width(width), Height(height), Background(clrGray50),
       Paused(false),
+      PageIdDisplayedEver(false),
       osd(NULL),
       outputWidth(0), outputHeight(0),
       leftFrame(0), rightFrame(0), topFrame(0), bottomFrame(0),
@@ -709,7 +710,7 @@ void cDisplay::DrawPageId(const char *text, const enumTeletextColor cText) {
 
     DEBUG_OT_DRPI("called with text='%s' text_last='%s' Boxed=%d HasConceal=%d GetConceal=%d", text, text_last, Boxed, HasConceal(), GetConceal());
 
-    if (! GetPaused() && Boxed && (strcmp(text, text_last) == 0)) {
+    if (! GetPaused() && Boxed && PageIdDisplayedEver && (strcmp(text, text_last) == 0)) {
         // don't draw PageId a 2nd time on boxed pages
         for (int i = 0; i < 8; i++) {
             c.SetFGColor(ttcTransparent);
@@ -722,6 +723,7 @@ void cDisplay::DrawPageId(const char *text, const enumTeletextColor cText) {
 
     DrawText(0,0,text,8, cText);
     strncpy(text_last, text, sizeof(text_last) - 1);
+    PageIdDisplayedEver = true;
 
     if (HasConceal()) {
         c.SetBGColor(ttcBlack);

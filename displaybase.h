@@ -63,6 +63,9 @@ protected:
     bool Paused;
     // Paused internal state
 
+    bool PageIdDisplayedEver;
+    // Flag whether the PageId was ever displayed so far
+
     cOsd *osd;
     // The osd object. If creation fails, may be NULL
 
