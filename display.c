@@ -25,7 +25,7 @@ Display::Mode Display::mode=Display::Full;
 cDisplay *Display::display=NULL;
 
 
-void Display::SetMode(Display::Mode NewMode, tColor Background) {
+void Display::SetMode(Display::Mode NewMode, tColor clrBackground) {
     // Background is optional and default predefined in display.h
     int hChars = 40;
     int vLines = (ttSetup.lineMode24 == true) ? 24 : 25;
@@ -143,7 +143,7 @@ void Display::SetMode(Display::Mode NewMode, tColor Background) {
         DEBUG_OT_DBFC("osdteletext: OSD 'full' Full->reinit display");
         Delete();
         // Try 32BPP display first:
-        display=new cDisplay32BPP(x0,y0,OSDwidth,OSDheight,OSDleftFrame,OSDrightFrame,OSDtopFrame,OSDbottomFrame);
+        display=new cDisplay32BPP(x0,y0,OSDwidth,OSDheight,OSDleftFrame,OSDrightFrame,OSDtopFrame,OSDbottomFrame,clrBackground);
         break;
       case Display::HalfUpper:
         // Shortcut to switch from HalfUpper to HalfLower:
@@ -158,7 +158,7 @@ void Display::SetMode(Display::Mode NewMode, tColor Background) {
         // Need to re-initialize *display:
         DEBUG_OT_DBFC("osdteletext: OSD 'half' HalfUpper->reinit display");
         Delete();
-        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,OSDleftFrame,OSDrightFrame,OSDtopFrame,OSDbottomFrame,true,false);
+        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,OSDleftFrame,OSDrightFrame,OSDtopFrame,OSDbottomFrame,true,false,clrBackground);
         ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Upper);
         break;
       case Display::HalfUpperTop:
@@ -173,7 +173,7 @@ void Display::SetMode(Display::Mode NewMode, tColor Background) {
         // Need to re-initialize *display:
         DEBUG_OT_DBFC("osdteletext: OSD 'half' HalfUpperTop->reinit display");
         Delete();
-        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,OSDleftFrame,OSDrightFrame,OSDtopFrame,OSDbottomFrame,true,true);
+        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,OSDleftFrame,OSDrightFrame,OSDtopFrame,OSDbottomFrame,true,true,clrBackground);
         ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Upper);
         break;
       case Display::HalfLower:
@@ -189,7 +189,7 @@ void Display::SetMode(Display::Mode NewMode, tColor Background) {
         // Need to re-initialize *display:
         DEBUG_OT_DBFC("osdteletext: OSD 'half' HalfLower->reinit display");
         Delete();
-        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,OSDleftFrame,OSDrightFrame,OSDtopFrame,OSDbottomFrame,false,false);
+        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,OSDleftFrame,OSDrightFrame,OSDtopFrame,OSDbottomFrame,false,false,clrBackground);
         ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Lower);
         break;
       case Display::HalfLowerTop:
@@ -205,15 +205,13 @@ void Display::SetMode(Display::Mode NewMode, tColor Background) {
         // Need to re-initialize *display:
         DEBUG_OT_DBFC("osdteletext: OSD 'half' HalfLowerTop->reinit display");
         Delete();
-        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,OSDleftFrame,OSDrightFrame,OSDtopFrame,OSDbottomFrame,false,true);
+        display=new cDisplay32BPPHalf(x0,y0,OSDwidth,OSDheight,OSDleftFrame,OSDrightFrame,OSDtopFrame,OSDbottomFrame,false,true,clrBackground);
         ((cDisplay32BPPHalf*)display)->SetZoom(cDisplay::Zoom_Lower);
         break;
     }
     mode=NewMode;
     // If display is invalid, clean up immediately:
     if (!display->Valid()) Delete();
-    // Pass through OSD black transparency
-    SetBackgroundColor(Background);
 }
 
 void Display::ShowUpperHalf() {
@@ -225,12 +223,14 @@ void Display::ShowUpperHalf() {
 }
 
 
-cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height, int leftFrame, int rightFrame, int topFrame, int bottomFrame)
+cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height, int leftFrame, int rightFrame, int topFrame, int bottomFrame, tColor clrBackground)
     : cDisplay(width,height) {
     // 32BPP display for True Color OSD providers
 
     osd = cOsdProvider::NewOsd(x0, y0);
     if (!osd) return;
+
+    Background = clrBackground;
 
     width=(width+1)&~1;
     // Width has to end on byte boundary, so round up
@@ -268,18 +268,20 @@ cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height, int leftFram
 
     InitScaler();
 
-    // CleanDisplay(); // called later after SetBackgroundColor
+    CleanDisplay();
     Dirty=true;
     DirtyAll=true;
 }
 
 
-cDisplay32BPPHalf::cDisplay32BPPHalf(int x0, int y0, int width, int height, int leftFrame, int rightFrame, int topFrame, int bottomFrame, bool upper, bool top)
+cDisplay32BPPHalf::cDisplay32BPPHalf(int x0, int y0, int width, int height, int leftFrame, int rightFrame, int topFrame, int bottomFrame, bool upper, bool top, tColor clrBackground)
     : cDisplay(width,height), leftFrame(leftFrame)
       , rightFrame(rightFrame), topFrame(topFrame), bottomFrame(bottomFrame)
       , Upper(upper), Top(top), OsdX0(x0), OsdY0(y0)
 {
     osd=NULL;
+
+    Background = clrBackground;
 
     // Redirect all real init work to method
     InitOSD();

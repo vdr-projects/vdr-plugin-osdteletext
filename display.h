@@ -33,7 +33,7 @@ namespace Display {
     extern cDisplay *display;
 
     // Access to display mode:
-    void SetMode(Display::Mode mode, tColor Background = (tColor)ttSetup.configuredClrBackground);
+    void SetMode(Display::Mode mode, tColor clrBackground = (tColor)ttSetup.configuredClrBackground);
     inline void Delete()
         { if (display) { DELETENULL(display); } }
 
@@ -102,7 +102,7 @@ class cDisplay32BPP : public cDisplay {
     // No need for color mapping
     // Uses cPixmap instead of cBitmap
 public:
-    cDisplay32BPP(int x0, int y0, int width, int height, int leftFrame, int rightFrame, int topFrame, int bottomFrame);
+    cDisplay32BPP(int x0, int y0, int width, int height, int leftFrame, int rightFrame, int topFrame, int bottomFrame, tColor clrBackground);
 };
 
 
@@ -123,7 +123,7 @@ class cDisplay32BPPHalf : public cDisplay {
     // Needed to re-initialize osd
 
 public:
-    cDisplay32BPPHalf(int x0, int y0, int width, int height, int leftFrame, int rightFrame, int topFrame, int bottomFrame, bool upper, bool top);
+    cDisplay32BPPHalf(int x0, int y0, int width, int height, int leftFrame, int rightFrame, int topFrame, int bottomFrame, bool upper, bool top, tColor clrBackground);
     bool GetUpper() { return Upper; }
     void SetUpper(bool upper)
         { if (Upper!=upper) { Upper=upper; InitOSD(); } }

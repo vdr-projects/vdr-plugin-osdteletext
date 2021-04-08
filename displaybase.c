@@ -227,7 +227,7 @@ void cDisplay::SetZoom(enumZoom zoom) {
     InitScaler();
 
     // Clear screen - mainly clear border
-    // CleanDisplay(); // called later after SetBackgroundColor
+    CleanDisplay();
     Dirty=true;
     DirtyAll=true;
 
@@ -242,14 +242,19 @@ void cDisplay::SetBackgroundColor(tColor c) {
 }
 
 void cDisplay::CleanDisplay() {
-    enumTeletextColor bgc=(Boxed)?(ttcTransparent):(ttcBlack);
+    tColor bgc;
+
     if (!osd) return;
 
-    DEBUG_OT_DBFC("called: outputWidth=%d outputHeight=%d boxed=%d color=0x%08x bgc=%d", outputWidth, outputHeight, Boxed, GetColorRGB(bgc,0), bgc);
-    if (m_debugmask & DEBUG_MASK_OT_ACT_OSD_BACK_RED)
-        osd->DrawRectangle(0, 0, outputWidth - 1 + leftFrame + rightFrame, outputHeight - 1 + topFrame + bottomFrame, GetColorRGB(ttcRed,0));
+    if (Boxed)
+        bgc = GetColorRGB(ttcTransparent,0);
+    else if (m_debugmask & DEBUG_MASK_OT_ACT_OSD_BACK_RED)
+        bgc = GetColorRGB(ttcRed,0);
     else
-        osd->DrawRectangle(0, 0, outputWidth - 1 + leftFrame + rightFrame, outputHeight - 1 + topFrame + bottomFrame, GetColorRGB(bgc,0));
+        bgc = Background;
+
+    DEBUG_OT_RENCLN("called: outputWidth=%d outputHeight=%d boxed=%s color=0x%08x", outputWidth, outputHeight, BOOLTOTEXT(Boxed), bgc);
+    osd->DrawRectangle(0, 0, outputWidth - 1 + leftFrame + rightFrame, outputHeight - 1 + topFrame + bottomFrame, bgc);
 
     // repaint all
     Dirty=true;
