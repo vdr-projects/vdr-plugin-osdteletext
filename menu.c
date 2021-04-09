@@ -129,6 +129,7 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const bool live) {
    }
 
    char str[80];
+   Display::ClearPage();
    if (liveChannelNumber != currentChannelNumber)
       snprintf(str, sizeof(str), "%s %s: %s", tr("Switch to cached"), tr("Channel"), channelClass.Name());
    else if (live)
