@@ -94,6 +94,8 @@ namespace Display {
         { if (display) display->DrawMessage(txt, cFrame, cText, cBackground); }
     inline void ClearMessage()
         { if (display) display->ClearMessage(); }
+    inline void ClearPage()
+        { if (display) display->ClearPage(); }
 }
 
 

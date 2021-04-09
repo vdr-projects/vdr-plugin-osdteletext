@@ -701,6 +701,23 @@ void cDisplay::DrawText(int x, int y, const char *text, int len, const enumTelet
     Flush();
 }
 
+
+void cDisplay::ClearPage(void) {
+    // Clear Teletext Page on OSD
+    cTeletextChar c;
+    c.SetFGColor(ttcTransparent); // no char
+    c.SetBGColor(ttcBlack); // pass selected background
+    c.SetChar(' ');
+
+    // reset 40x24 area with space
+    for (int y = 0; y < 24; y++)
+        for (int x = 0; x < 40; x++)
+            SetChar(x, y, c);
+
+    return;
+};
+
+
 void cDisplay::DrawPageId(const char *text, const enumTeletextColor cText) {
     // Draw Page ID string to OSD
     static char text_last[9] = ""; // remember
