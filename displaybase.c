@@ -277,6 +277,7 @@ tColor cDisplay::GetColorRGB(enumTeletextColor ttc, int Area) {
 }
 
 tColor cDisplay::GetColorRGBAlternate(enumTeletextColor ttc, int Area) {
+    // TODO implement ??
     return GetColorRGB(ttc,Area);
 }
 
