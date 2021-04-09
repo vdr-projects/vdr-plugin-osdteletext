@@ -812,7 +812,7 @@ void cDisplay::DrawClock() {
 }
 
 void cDisplay::DrawMessage(const char *txt, const enumTeletextColor cFrame, const enumTeletextColor cText, const enumTeletextColor cBackground) {
-    int border=4; // minimum
+    int border=6; // minimum
     if (outputWidth > 720) {
         // increase border
         border = ((border * outputWidth) / 720) & 0xfffe; // always even number
