@@ -57,47 +57,12 @@ enum eTeletextActionValueType {
    None,
 };
 
-static const char *st_modes[] =
-{
-      tr("Zoom"),
-      tr("Half page"),
-      tr("Change channel"),
-      tr("Switch background"),
-      //tr("Suspend receiving"),
-      tr("Config"),
-      tr("24-LineMode"),
-      tr("Answer"),
-      tr("Pause"),
-      tr("Jump to..."),
-};
 
-static const char *st_modesFooter[] =
-{
-      // 1:1 relation to *st_modes[] from above and maximum 10 chars used in line25 footer //
-      tr("Zoom"),
-      tr("Half Page"),
-      tr("ChangeChan"),
-      tr("SwitchBack"),
-      //tr("SuspendRecv"),
-      tr("Config"),
-      tr("24LineMode"),
-      tr("Answer"),
-      tr("Pause"),
-      tr("Jump to..."),
-};
+// values stored in setup.c:
+extern const char *st_modes[];
+extern const char *st_modesFooter[];
+extern const char *config_modes[];
 
-static const char *config_modes[] =
-{
-   // maximum 9 chars, 10th is -/+
-   tr("Left"),
-   tr("Top"),
-   tr("Width"),
-   tr("Height"),
-   tr("Frame"),
-   tr("Text Font"),
-   tr("TxVoffset"),
-   tr("BackTrans"),
-};
 
 enum ActionKeys {
    // keep in sync: static const ActionKeyName st_actionKeyNames in osdteletext.c
