@@ -277,6 +277,7 @@ tColor cDisplay::GetColorRGB(enumTeletextColor ttc, int Area) {
 }
 
 tColor cDisplay::GetColorRGBAlternate(enumTeletextColor ttc, int Area) {
+    // TODO implement ??
     return GetColorRGB(ttc,Area);
 }
 
@@ -701,6 +702,23 @@ void cDisplay::DrawText(int x, int y, const char *text, int len, const enumTelet
     Flush();
 }
 
+
+void cDisplay::ClearPage(void) {
+    // Clear Teletext Page on OSD
+    cTeletextChar c;
+    c.SetFGColor(ttcTransparent); // no char
+    c.SetBGColor(ttcBlack); // pass selected background
+    c.SetChar(' ');
+
+    // reset 40x24 area with space
+    for (int y = 0; y < 24; y++)
+        for (int x = 0; x < 40; x++)
+            SetChar(x, y, c);
+
+    return;
+};
+
+
 void cDisplay::DrawPageId(const char *text, const enumTeletextColor cText) {
     // Draw Page ID string to OSD
     static char text_last[9] = ""; // remember
@@ -794,7 +812,7 @@ void cDisplay::DrawClock() {
 }
 
 void cDisplay::DrawMessage(const char *txt, const enumTeletextColor cFrame, const enumTeletextColor cText, const enumTeletextColor cBackground) {
-    int border=4; // minimum
+    int border=6; // minimum
     if (outputWidth > 720) {
         // increase border
         border = ((border * outputWidth) / 720) & 0xfffe; // always even number

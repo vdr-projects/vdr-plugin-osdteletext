@@ -239,6 +239,9 @@ public:
     void ClearMessage();
     // Remove message box and redraw hidden content
 
+    void ClearPage(void);
+    // Clear Teletext Page on OSD
+
 private:
     cFont *GetFont(const char *name, int index, int height, int width);
     std::string GetFontFootprint(const char *name);

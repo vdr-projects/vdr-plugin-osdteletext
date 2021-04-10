@@ -52,7 +52,7 @@ DEFINES += -DPLUGIN_NAME_I18N='"$(PLUGIN)"'
 
 ### The object files (add further files here):
 
-OBJS = $(PLUGIN).o menu.o txtfont.o txtrecv.o txtrender.o displaybase.o display.o storage.o legacystorage.o packedstorage.o rootdir.o
+OBJS = $(PLUGIN).o menu.o txtfont.o txtrecv.o txtrender.o displaybase.o display.o storage.o legacystorage.o packedstorage.o rootdir.o setup.o
 
 ### The main target:
 

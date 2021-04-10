@@ -129,6 +129,7 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const bool live) {
    }
 
    char str[80];
+   Display::ClearPage();
    if (liveChannelNumber != currentChannelNumber)
       snprintf(str, sizeof(str), "%s %s: %s", tr("Switch to cached"), tr("Channel"), channelClass.Name());
    else if (live)
@@ -194,6 +195,7 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
                else {
                   needClearMessage=true;
                   Display::DrawMessage(trVDR("*** Invalid Channel ***"), ttcRed);
+                  sleep(1);
                }
             } else {
                ChannelSwitched(liveChannelNumber);
@@ -415,6 +417,7 @@ bool TeletextBrowser::ExecuteActionConfig(eTeletextActionConfig e, int delta) {
          DEBUG_OT_KEYS("key action: 'Config->BackTrans' BackTransVal=%d BackTransMin=%d BackTransMax=%d delta=%d", BackTransVal, BackTransMin, BackTransMax, delta * 8);
          COND_ADJ_VALUE(BackTransVal, BackTransMin, BackTransMax, delta * 8);
          ttSetup.configuredClrBackground = ((uint32_t) BackTransVal) << 24;
+         clrBackground = ttSetup.configuredClrBackground;
          break;
 
       default:
@@ -524,7 +527,8 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
          if (ttSetup.lineMode24) {
             // config mode is only supported in 25-line mode
             Display::ClearMessage();
-            Display::DrawMessage(tr("*** Config mode is not supported in 24-line mode ***"), ttcRed);
+            Display::DrawMessage(tr("*** Config mode is not supported in 24-line mode ***"), ttcYellow);
+            sleep(1);
             break;
          };
          switch(configMode) {
