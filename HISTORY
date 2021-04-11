@@ -1,5 +1,8 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
+2021-04-11: version 2.0.0
+- [pbiering] additional fixes found during regression tests related to translations and others
+
 2021-04-09:
 - [pbiering] clear teletext page on channel switch
 
