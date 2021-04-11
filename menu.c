@@ -920,7 +920,7 @@ void TeletextBrowser::UpdateFooter() {
 
 #define CONVERT_ACTION_TO_TEXT(text, mode) \
       if (mode < 100) { \
-         snprintf(text, sizeof(text), "%s", st_modesFooter[mode]); \
+         snprintf(text, sizeof(text), "%s", tr(st_modesFooter[mode])); \
       } else if (mode < 999) { \
          snprintf(text, sizeof(text), "-> %03d", mode); \
       } else { \
@@ -940,13 +940,13 @@ void TeletextBrowser::UpdateFooter() {
          case Frame:
          case Voffset:
          case BackTrans:
-            snprintf(textRed   , sizeof(textRed)   , "%s-", config_modes[configMode]); // <mode>-
-            snprintf(textGreen , sizeof(textGreen) , "%s+", config_modes[configMode]); // <mode>+
+            snprintf(textRed   , sizeof(textRed)   , "%s-", tr(config_modes[configMode])); // <mode>-
+            snprintf(textGreen , sizeof(textGreen) , "%s+", tr(config_modes[configMode])); // <mode>+
             flag = FooterYellowValue;
             break;
 
          case Font:
-            snprintf(textRed   , sizeof(textRed)   , "%s" , config_modes[configMode]); // <mode>
+            snprintf(textRed   , sizeof(textRed)   , "%s" , tr(config_modes[configMode])); // <mode>
             DEBUG_OT_FOOT("ttSetup.txtFontIndex=%d ttSetup.txtFontNames[%d]='%s'", ttSetup.txtFontIndex, ttSetup.txtFontIndex, ttSetup.txtFontNames[ttSetup.txtFontIndex]);
             snprintf(textGreen, sizeof(textGreen)  , "%s", ttSetup.txtFontNames[ttSetup.txtFontIndex]); // FontName
             flag = FooterGreenYellowValue;
@@ -1027,7 +1027,7 @@ void TeletextBrowser::UpdateFooter() {
             break;
       };
 
-      snprintf(textBlue  , sizeof(textBlue)  , "%s", st_modes[Config]); // option itself
+      snprintf(textBlue  , sizeof(textBlue)  , "%s", tr(st_modes[Config])); // option itself
    };
 
    DEBUG_OT_FOOT("textRed='%s' textGreen='%s' text Yellow='%s' textBlue='%s' flag=%d", textRed, textGreen, textYellow, textBlue, flag);
