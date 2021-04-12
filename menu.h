@@ -21,12 +21,18 @@
 #include "txtrecv.h"
 #include "setup.h"
 
+enum eChannelSwitchInfo {
+   ChannelIsLive,
+   ChannelIsNotLive,
+   ChannelHasNoTeletext
+};
+
 class TeletextBrowser : public cOsdObject {
 public:
    TeletextBrowser(cTxtStatus *txtSt,Storage *s);
    ~TeletextBrowser();
    void Show(void);
-   static void ChannelSwitched(int ChannelNumber, const bool live = false);
+   static void ChannelSwitched(int ChannelNumber, const eChannelSwitchInfo info);
    virtual eOSState ProcessKey(eKeys Key);
 protected:
    enum Direction { DirectionForward, DirectionBackward };
@@ -53,6 +59,7 @@ protected:
    eTeletextAction TranslateKey(eKeys Key);
    bool pageFound;
    bool selectingChannel;
+   static bool ChannelHasTeletext;
    bool needClearMessage;
    int selectingChannelNumber;
    int checkSum;
@@ -79,3 +86,4 @@ private:
 
 #endif
 
+// vim: ts=3 sw=3 et

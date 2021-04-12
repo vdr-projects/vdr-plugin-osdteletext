@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-07 08:43+0200\n"
+"POT-Creation-Date: 2021-04-12 21:59+0200\n"
 "PO-Revision-Date: 2009-01-10 19:32+0100\n"
 "Last-Translator: Nival Michaël\n"
 "Language-Team: French <vdr@linuxtv.org>\n"
@@ -19,16 +19,31 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Switch to cached"
+msgid "Switch to"
 msgstr ""
 
 msgid "Channel"
 msgstr ""
 
+msgid "no"
+msgstr ""
+
+msgid "Teletext"
+msgstr "Teletexte"
+
 msgid "Switch to live"
 msgstr ""
 
+msgid "Switch to cached"
+msgstr ""
+
 msgid "Switch back to live"
+msgstr ""
+
+msgid "Channel Tuning Successful"
+msgstr ""
+
+msgid "Channel Tuning Not Successful"
 msgstr ""
 
 msgid "*** Config mode is not supported in 24-line mode ***"
@@ -48,9 +63,6 @@ msgstr "pas trouvé"
 
 msgid "Displays teletext on the OSD"
 msgstr "Affiche le télétexte sur l'OSD"
-
-msgid "Teletext"
-msgstr "Teletexte"
 
 msgid "Latin 1"
 msgstr ""

@@ -232,20 +232,22 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber, bool Li
 #endif
    if (newChannel == NULL) return;
 
-   DEBUG_OT_TXTRCVC("passed failsafe checks with DVB=%d for channel Number=%d Name='%s' ID=%s LiveView=%s (NonLiveChannelNumber=%d)\n", cDevice::ActualDevice()->CardIndex(), newChannel->Number(), newChannel->Name(), *newChannel->GetChannelID().ToString(), BOOLTOTEXT(LiveView), NonLiveChannelNumber);
+   DEBUG_OT_TXTRCVC("passed failsafe checks with DVB CardIndex=%d DeviceNumber=%d for channel Number=%d Name='%s' ID=%s LiveView=%s (NonLiveChannelNumber=%d)\n", Device->CardIndex(), Device->DeviceNumber(), newChannel->Number(), newChannel->Name(), *newChannel->GetChannelID().ToString(), BOOLTOTEXT(LiveView), NonLiveChannelNumber);
 
    if (!LiveView) {
       if ((NonLiveChannelNumber > 0) && (NonLiveChannelNumber == ChannelNumber)) {
          // don't ignore non-live-channel-switching in case of NonLiveChannelNumber was hit
-         DEBUG_OT_TXTRCVC("to current non-live channel switch detected on DVB=%d for channel Number=%d Name='%s' ID=%s\n", cDevice::ActualDevice()->CardIndex(), newChannel->Number(), newChannel->Name(), *newChannel->GetChannelID().ToString());
+         DEBUG_OT_TXTRCVC("to current non-live channel switch detected on DVB=%d for channel Number=%d Name='%s' ID=%s\n", Device->CardIndex(), newChannel->Number(), newChannel->Name(), *newChannel->GetChannelID().ToString());
       } else {
-         // ignore non-live-channel-switching
+         // ignore other non-live-channel-switching
+         DEBUG_OT_TXTRCVC("ignore not matching non-live channel switch on DVB=%d for channel Number=%d Name='%s' ID=%s\n", Device->CardIndex(), newChannel->Number(), newChannel->Name(), *newChannel->GetChannelID().ToString());
+         return;
       };
    } else {
       // ignore non-live-channel-switching
       if (ChannelNumber != cDevice::CurrentChannel()) return;
 
-      DEBUG_OT_TXTRCVC("live channel switch detected on DVB=%d for channel Number=%d Name='%s' ID=%s\n", cDevice::ActualDevice()->CardIndex(), newChannel->Number(), newChannel->Name(), *newChannel->GetChannelID().ToString());
+      DEBUG_OT_TXTRCVC("live channel switch detected on DVB=%d for channel Number=%d Name='%s' ID=%s\n", Device->CardIndex(), newChannel->Number(), newChannel->Name(), *newChannel->GetChannelID().ToString());
    };
 
    // channel was changed
@@ -256,22 +258,25 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber, bool Li
    int TPid = newChannel->Tpid();
 
    if (TPid) {
-      receiver = new cTxtReceiver(newChannel, storeTopText, storage);
-      cDevice::ActualDevice()->AttachReceiver(receiver);
-      dsyslog("osdteletext: triggered by VDR channel switch: attach receiver to DVB %d for channel Number=%d Name='%s' ID=%s LiveView=%s\n", cDevice::ActualDevice()->CardIndex(), newChannel->Number(), newChannel->Name(), *newChannel->GetChannelID().ToString(), BOOLTOTEXT(LiveView));
-      TeletextBrowser::ChannelSwitched(ChannelNumber, true);
+      cDevice *device = cDevice::GetDevice(Device->DeviceNumber());
+      receiver = new cTxtReceiver(device, newChannel, storeTopText, storage);
+      //cDevice::ActualDevice()->AttachReceiver(receiver);
+      device->AttachReceiver(receiver);
+      DEBUG_OT_TXTRCVC("osdteletext: triggered by VDR channel switch: attach receiver to DVB=%d for channel Number=%d Name='%s' ID=%s LiveView=%s\n", Device->CardIndex(), newChannel->Number(), newChannel->Name(), *newChannel->GetChannelID().ToString(), BOOLTOTEXT(LiveView));
+      TeletextBrowser::ChannelSwitched(ChannelNumber, ChannelIsLive);
    } else {
-      TeletextBrowser::ChannelSwitched(ChannelNumber, true);
+      TeletextBrowser::ChannelSwitched(ChannelNumber, ChannelHasNoTeletext);
    }
 }
 
 
-cTxtReceiver::cTxtReceiver(const cChannel* chan, bool storeTopText, Storage* storage)
+cTxtReceiver::cTxtReceiver(cDevice *device, const cChannel* chan, bool storeTopText, Storage* storage)
  : cReceiver(chan, -1), cThread("osdteletext-receiver", true),
    TxtPage(0), storeTopText(storeTopText), buffer((188+60)*75), storage(storage)
+   , device(device)
    , channel(chan), statTxtReceiverPageCount(0)
 {
-   isyslog("osdteletext: cTxtReceiver started on channel Number=%d Name='%s' ID=%s storeTopText=%s\n", channel->Number(), channel->Name(), *ChannelID().ToString(), (storeTopText == true) ? "yes" : "no");
+   isyslog("osdteletext: cTxtReceiver started on DVB CardIndex=%d DeviceNumber=%d channel Number=%d Name='%s' ID=%s storeTopText=%s\n", device->CardIndex(), device->DeviceNumber(), channel->Number(), channel->Name(), *ChannelID().ToString(), (storeTopText == true) ? "yes" : "no");
    SetPids(NULL);
    AddPid(chan->Tpid());
    storage->prepareDirectory(ChannelID());
@@ -279,6 +284,8 @@ cTxtReceiver::cTxtReceiver(const cChannel* chan, bool storeTopText, Storage* sto
 
    // 10 ms timeout on getting TS frames
    buffer.SetTimeouts(0, 10);
+
+   //device->AttachReceiver(this); // attach ourself
 }
 
 
@@ -293,7 +300,7 @@ cTxtReceiver::~cTxtReceiver()
    time_t statTxtReceiverTimeStop;
    time(&statTxtReceiverTimeStop);
    double time_diff = difftime(statTxtReceiverTimeStop, statTxtReceiverTimeStart);
-   isyslog("osdteletext: cTxtReceiver stopped after %.0lf sec: cTelePage received on channel Number=%d Name='%s' ID=%s: %ld (%.3lf/sec)\n", time_diff, channel->Number(), channel->Name(), *ChannelID().ToString(), statTxtReceiverPageCount, statTxtReceiverPageCount / time_diff);
+   isyslog("osdteletext: cTxtReceiver stopped after %.0lf sec: cTelePage received on DVB (CardIndex=%d DeviceNumber=%d) channel Number=%d Name='%s' ID=%s: %ld (%.3lf/sec)\n", time_diff, device->CardIndex(), device->DeviceNumber(), channel->Number(), channel->Name(), *ChannelID().ToString(), statTxtReceiverPageCount, statTxtReceiverPageCount / time_diff);
 }
 
 void cTxtReceiver::Stop()

@@ -43,6 +43,7 @@ tChannelID TeletextBrowser::channel;
 cChannel TeletextBrowser::channelClass;
 int TeletextBrowser::currentChannelNumber=0;
 int TeletextBrowser::liveChannelNumber=0;
+bool TeletextBrowser::ChannelHasTeletext = false;
 TeletextBrowser* TeletextBrowser::self=0;
 tColor clrBackground;
 bool clrBackgroundInit = false;
@@ -93,7 +94,8 @@ bool TeletextBrowser::CheckIsValidChannel(int number) {
 #endif
 }
 
-void TeletextBrowser::ChannelSwitched(int ChannelNumber, const bool live) {
+void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelSwitchInfo info) {
+   DEBUG_OT_TXTRCVC("called with ChannelNumber=%d info=%d", ChannelNumber, info);
 #if defined(APIVERSNUM) && APIVERSNUM >= 20301
    LOCK_CHANNELS_READ;
    const cChannel *chan=Channels->GetByNumber(ChannelNumber);
@@ -111,7 +113,7 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const bool live) {
    channel=chid;
    channelClass = *chan; // remember for later to display channel name
 
-   if (live)
+   if (info == ChannelIsLive)
       liveChannelNumber= ChannelNumber; // remember active live channel
    
    //store page number of current channel
@@ -134,14 +136,26 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const bool live) {
    if (self) {
       char str[80];
       Display::ClearPage();
-      if (liveChannelNumber != currentChannelNumber)
-         snprintf(str, sizeof(str), "%s %s: %s", tr("Switch to cached"), tr("Channel"), channelClass.Name());
-      else if (live)
-         snprintf(str, sizeof(str), "%s %s: %s", tr("Switch to live"), tr("Channel"), channelClass.Name());
-      else
-         snprintf(str, sizeof(str), "%s %s: %s", tr("Switch back to live"), tr("Channel"), channelClass.Name());
+      enumTeletextColor color = ttcBlue;
 
-      Display::DrawMessage(str, ttcBlue);
+      ChannelHasTeletext = true; // assumed default
+
+      if (info == ChannelHasNoTeletext) {
+         snprintf(str, sizeof(str), "%s %s: %s (%s %s)", tr("Switch to"), tr("Channel"), channelClass.Name(), tr("no"), tr("Teletext"));
+         color = ttcRed;
+         ChannelHasTeletext = false;
+      }
+      else if (info == ChannelIsLive) {
+         snprintf(str, sizeof(str), "%s %s: %s", tr("Switch to live"), tr("Channel"), channelClass.Name());
+      }
+      else if (liveChannelNumber != currentChannelNumber) {
+         snprintf(str, sizeof(str), "%s %s: %s", tr("Switch to cached"), tr("Channel"), channelClass.Name());
+      }
+      else {
+         snprintf(str, sizeof(str), "%s %s: %s", tr("Switch back to live"), tr("Channel"), channelClass.Name());
+      };
+
+      Display::DrawMessage(str, color);
       sleep(1);
 
       self->ShowPage();
@@ -191,8 +205,25 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
             Display::ClearMessage();
             if (selectingChannelNumber>0) {
                if (CheckIsValidChannel(selectingChannelNumber)) {
-                  ChannelSwitched(selectingChannelNumber);
+                  //ChannelSwitched(selectingChannelNumber, ChannelIsNotLive);
                   txtStatus->SetNonLiveChannelNumber(selectingChannelNumber); // notify receiver thread about a non-live channel
+                  // switch to new channel
+#if defined(APIVERSNUM) && APIVERSNUM >= 20301
+   LOCK_CHANNELS_READ;
+   const cChannel* newChannel = Channels->GetByNumber(selectingChannelNumber);
+#else
+   const cChannel* newChannel = Channels.GetByNumber(selectingChannelNumber);
+#endif
+                  cDevice *device = cDevice::GetDeviceForTransponder(newChannel, TRANSFERPRIORITY - 1);
+                  if (device != NULL) {
+                     needClearMessage=true;
+                     if (device->SwitchChannel(newChannel, false)) {
+                        Display::DrawMessage(tr("Channel Tuning Successful"), ttcGreen);
+                     } else {
+                        Display::DrawMessage(tr("Channel Tuning Not Successful"), ttcRed);
+                     };
+                     sleep(1);
+                  };
                }
                else {
                   needClearMessage=true;
@@ -200,7 +231,6 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
                   sleep(1);
                }
             } else {
-               ChannelSwitched(liveChannelNumber);
                txtStatus->SetNonLiveChannelNumber(0); // notify receiver thread about clearing non-live channel
                ShowPage();
             }
@@ -864,14 +894,20 @@ bool TeletextBrowser::DecodePage() {
       currentSubPage--;
 
       Display::HoldFlush();
-      ShowPageNumber();
       char str[80];
-      snprintf(str, sizeof(str), "%s %3x-%02x%s%s %s (%s)",tr("Page"),currentPage, currentSubPage
+      enumTeletextColor color = ttcYellow;
+      if (ChannelHasTeletext == false) {
+         snprintf(str, sizeof(str), "%s %s: %s (%s %s)", tr("Switch to"), tr("Channel"), channelClass.Name(), tr("no"), tr("Teletext"));
+         color = ttcRed;
+      } else {
+         ShowPageNumber();
+         snprintf(str, sizeof(str), "%s %3x-%02x%s%s %s (%s)",tr("Page"),currentPage, currentSubPage
             , (liveChannelNumber != currentChannelNumber) ? " " : ""
             , (liveChannelNumber != currentChannelNumber) ? tr("in cache") : ""
             , tr("not found"), channelClass.Name()
-      );
-      Display::DrawMessage(str, ttcYellow);
+         );
+      };
+      Display::DrawMessage(str, color);
       UpdateFooter();
       Display::ReleaseFlush();
 
