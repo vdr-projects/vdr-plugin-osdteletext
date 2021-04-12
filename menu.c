@@ -128,22 +128,22 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const bool live) {
       currentPage=(*it).second;
    }
 
-   char str[80];
-   Display::ClearPage();
-   if (liveChannelNumber != currentChannelNumber)
-      snprintf(str, sizeof(str), "%s %s: %s", tr("Switch to cached"), tr("Channel"), channelClass.Name());
-   else if (live)
-      snprintf(str, sizeof(str), "%s %s: %s", tr("Switch to live"), tr("Channel"), channelClass.Name());
-   else
-      snprintf(str, sizeof(str), "%s %s: %s", tr("Switch back to live"), tr("Channel"), channelClass.Name());
-
-   Display::DrawMessage(str, ttcBlue);
-   sleep(1);
-   
    //on the one hand this must work in background mode, when the plugin is not active.
    //on the other hand, if active, the page should be shown.
    //so this self-Pointer.
    if (self) {
+      char str[80];
+      Display::ClearPage();
+      if (liveChannelNumber != currentChannelNumber)
+         snprintf(str, sizeof(str), "%s %s: %s", tr("Switch to cached"), tr("Channel"), channelClass.Name());
+      else if (live)
+         snprintf(str, sizeof(str), "%s %s: %s", tr("Switch to live"), tr("Channel"), channelClass.Name());
+      else
+         snprintf(str, sizeof(str), "%s %s: %s", tr("Switch back to live"), tr("Channel"), channelClass.Name());
+
+      Display::DrawMessage(str, ttcBlue);
+      sleep(1);
+
       self->ShowPage();
    }
 }
@@ -922,9 +922,9 @@ void TeletextBrowser::UpdateFooter() {
       DEBUG_OT_FOOT("AkRed=%d AkGreen=%d AkYellow=%d AkBlue=%d", AkRed, AkGreen, AkYellow, AkBlue);
 
 #define CONVERT_ACTION_TO_TEXT(text, mode) \
-      if (mode < 100) { \
-         snprintf(text, sizeof(text), "%s", st_modesFooter[mode]); \
-      } else if (mode < 999) { \
+      if ((int) mode < 100) { \
+         snprintf(text, sizeof(text), "%s", tr(st_modesFooter[mode])); \
+      } else if ((int) mode < 999) { \
          snprintf(text, sizeof(text), "-> %03d", mode); \
       } else { \
          snprintf(text, sizeof(text), "ERROR"); \
@@ -943,13 +943,13 @@ void TeletextBrowser::UpdateFooter() {
          case Frame:
          case Voffset:
          case BackTrans:
-            snprintf(textRed   , sizeof(textRed)   , "%s-", config_modes[configMode]); // <mode>-
-            snprintf(textGreen , sizeof(textGreen) , "%s+", config_modes[configMode]); // <mode>+
+            snprintf(textRed   , sizeof(textRed)   , "%s-", tr(config_modes[configMode])); // <mode>-
+            snprintf(textGreen , sizeof(textGreen) , "%s+", tr(config_modes[configMode])); // <mode>+
             flag = FooterYellowValue;
             break;
 
          case Font:
-            snprintf(textRed   , sizeof(textRed)   , "%s" , config_modes[configMode]); // <mode>
+            snprintf(textRed   , sizeof(textRed)   , "%s" , tr(config_modes[configMode])); // <mode>
             DEBUG_OT_FOOT("ttSetup.txtFontIndex=%d ttSetup.txtFontNames[%d]='%s'", ttSetup.txtFontIndex, ttSetup.txtFontIndex, ttSetup.txtFontNames[ttSetup.txtFontIndex]);
             snprintf(textGreen, sizeof(textGreen)  , "%s", ttSetup.txtFontNames[ttSetup.txtFontIndex]); // FontName
             flag = FooterGreenYellowValue;
@@ -1030,7 +1030,7 @@ void TeletextBrowser::UpdateFooter() {
             break;
       };
 
-      snprintf(textBlue  , sizeof(textBlue)  , "%s", st_modes[Config]); // option itself
+      snprintf(textBlue  , sizeof(textBlue)  , "%s", tr(st_modes[Config])); // option itself
    };
 
    DEBUG_OT_FOOT("textRed='%s' textGreen='%s' text Yellow='%s' textBlue='%s' flag=%d", textRed, textGreen, textYellow, textBlue, flag);

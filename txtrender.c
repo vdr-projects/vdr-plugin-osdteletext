@@ -562,7 +562,7 @@ void cRenderPage::RenderTeletextCode(unsigned char *PageCode) {
         if (PageCode_X26[row*40] == 0) {
             // row empty
             continue;
-        } else if (PageCode_X26[row*40] & 0x80 != 0x80) {
+        } else if ((PageCode_X26[row*40] & 0x80) != 0x80) {
             DEBUG_OT_TXTRDT("invalid X/26 row (DesignationCode flag not valid)");
             continue;
         };
@@ -623,7 +623,7 @@ void cRenderPage::RenderTeletextCode(unsigned char *PageCode) {
                     DEBUG_OT_TXTRDT("X/26 triplet found: row=%d triplet=%d TerminationMarker: %s\n", row, triplet, info);
                 };
             } else if (((mode & 0x10) == 0x10) && (addr >= 0) && (addr <= 39)) {
-                // 0x1x =  0b1xxxx
+                // 0x1x = 0b1xxxx
                 // G0 Characters Including Diacritical Marks
 
                 if (y == -1) {
@@ -634,16 +634,19 @@ void cRenderPage::RenderTeletextCode(unsigned char *PageCode) {
 
                 x = addr;
                 cTeletextChar c = GetChar(x, y);
-                if (mode == 0x1000) {
+                if (mode == 0x10) {
+                    // 0x10 = 0b10000
                     info = "G0 character without diacritical mark";
-                    // No diacritical mark exists for mode description value 10000. An unmodified G0 character is then displayed unless the 7 bits of the data field have the value 0101010 (2/A) when the symbol "@" shall be displayed.
+                    // No diacritical mark exists for mode description value 0b10000. An unmodified G0 character is then displayed unless the 7 bits of the data field have the value 0b0101010 (2/A) when the symbol "@" shall be displayed.
                     if (data == 0x2a) {
                         // set char to '@'
+                        c.SetCharset(CHARSET_LATIN_G0);
                         c.SetChar(0x80);
                     } else {
+                        c.SetCharset(CHARSET_LATIN_G0);
                         c.SetChar(data);
                     };
-                    DEBUG_OT_TXTRDT("X/26 triplet found: row=%d triplet=%d: %s\n", row, triplet, info);
+                    DEBUG_OT_TXTRDT("X/26 triplet found: row=%d triplet=%d: %s (data=0x%02x)\n", row, triplet, info, data);
                     found = 1;
                 } else {
                     info = "G0 character with diacritical mark";

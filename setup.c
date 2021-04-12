@@ -13,44 +13,44 @@
 
 const char *st_modes[] =
 {
-      tr("Zoom"),
-      tr("Half page"),
-      tr("Change channel"),
-      tr("Switch background"),
-      //tr("Suspend receiving"),
-      tr("Config"),
-      tr("24-LineMode"),
-      tr("Answer"),
-      tr("Pause"),
-      tr("Jump to..."),
+      trNOOP("Zoom"),
+      trNOOP("Half page"),
+      trNOOP("Change channel"),
+      trNOOP("Switch background"),
+      //trNOOP("Suspend receiving"),
+      trNOOP("Config"),
+      trNOOP("24-LineMode"),
+      trNOOP("Answer"),
+      trNOOP("Pause"),
+      trNOOP("Jump to..."),
 };
 
 const char *st_modesFooter[] =
 {
       // 1:1 relation to *st_modes[] from above and maximum 10 chars used in line25 footer //
-      tr("Zoom"),
-      tr("Half Page"),
-      tr("ChangeChan"),
-      tr("SwitchBack"),
-      //tr("SuspendRecv"),
-      tr("Config"),
-      tr("24LineMode"),
-      tr("Answer"),
-      tr("Pause"),
-      tr("Jump to..."),
+      trNOOP("Zoom"),
+      trNOOP("Half Page"),
+      trNOOP("ChangeChan"),
+      trNOOP("SwitchBack"),
+      //trNOOP("SuspendRecv"),
+      trNOOP("Config"),
+      trNOOP("24LineMode"),
+      trNOOP("Answer"),
+      trNOOP("Pause"),
+      trNOOP("Jump to..."),
 };
 
 const char *config_modes[] =
 {
    // maximum 9 chars, 10th is -/+
-   tr("Left"),
-   tr("Top"),
-   tr("Width"),
-   tr("Height"),
-   tr("Frame"),
-   tr("Text Font"),
-   tr("TxVoffset"),
-   tr("BackTrans"),
+   trNOOP("Left"),
+   trNOOP("Top"),
+   trNOOP("Width"),
+   trNOOP("Height"),
+   trNOOP("Frame"),
+   trNOOP("Text Font"),
+   trNOOP("TxVoffset"),
+   trNOOP("BackTrans"),
 };
 
 // vim: ts=3 sw=3 et
