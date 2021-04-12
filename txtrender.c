@@ -623,7 +623,7 @@ void cRenderPage::RenderTeletextCode(unsigned char *PageCode) {
                     DEBUG_OT_TXTRDT("X/26 triplet found: row=%d triplet=%d TerminationMarker: %s\n", row, triplet, info);
                 };
             } else if (((mode & 0x10) == 0x10) && (addr >= 0) && (addr <= 39)) {
-                // 0x1x =  0b1xxxx
+                // 0x1x = 0b1xxxx
                 // G0 Characters Including Diacritical Marks
 
                 if (y == -1) {
