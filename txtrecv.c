@@ -232,11 +232,20 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber, bool Li
 #endif
    if (newChannel == NULL) return;
 
-   if (!LiveView && (NonLiveChannelNumber > 0) && (NonLiveChannelNumber == ChannelNumber)) {
-      // don't ignore non-live-channel-switching in case of NonLiveChannelNumber was hit
+   DEBUG_OT_TXTRCVC("passed failsafe checks with DVB=%d for channel Number=%d Name='%s' ID=%s LiveView=%s (NonLiveChannelNumber=%d)\n", cDevice::ActualDevice()->CardIndex(), newChannel->Number(), newChannel->Name(), *newChannel->GetChannelID().ToString(), BOOLTOTEXT(LiveView), NonLiveChannelNumber);
+
+   if (!LiveView) {
+      if ((NonLiveChannelNumber > 0) && (NonLiveChannelNumber == ChannelNumber)) {
+         // don't ignore non-live-channel-switching in case of NonLiveChannelNumber was hit
+         DEBUG_OT_TXTRCVC("to current non-live channel switch detected on DVB=%d for channel Number=%d Name='%s' ID=%s\n", cDevice::ActualDevice()->CardIndex(), newChannel->Number(), newChannel->Name(), *newChannel->GetChannelID().ToString());
+      } else {
+         // ignore non-live-channel-switching
+      };
    } else {
       // ignore non-live-channel-switching
-      if (!LiveView || ChannelNumber != cDevice::CurrentChannel()) return;
+      if (ChannelNumber != cDevice::CurrentChannel()) return;
+
+      DEBUG_OT_TXTRCVC("live channel switch detected on DVB=%d for channel Number=%d Name='%s' ID=%s\n", cDevice::ActualDevice()->CardIndex(), newChannel->Number(), newChannel->Name(), *newChannel->GetChannelID().ToString());
    };
 
    // channel was changed
@@ -250,9 +259,10 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber, bool Li
       receiver = new cTxtReceiver(newChannel, storeTopText, storage);
       cDevice::ActualDevice()->AttachReceiver(receiver);
       dsyslog("osdteletext: triggered by VDR channel switch: attach receiver to DVB %d for channel Number=%d Name='%s' ID=%s LiveView=%s\n", cDevice::ActualDevice()->CardIndex(), newChannel->Number(), newChannel->Name(), *newChannel->GetChannelID().ToString(), BOOLTOTEXT(LiveView));
+      TeletextBrowser::ChannelSwitched(ChannelNumber, true);
+   } else {
+      TeletextBrowser::ChannelSwitched(ChannelNumber, true);
    }
-
-   TeletextBrowser::ChannelSwitched(ChannelNumber, true);
 }
 
 
