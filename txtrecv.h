@@ -79,10 +79,13 @@ private:
    cTxtReceiver *receiver;
    bool storeTopText;
    Storage* storage;
+   int NonLiveChannelNumber;
+//   cDevice *Device;
 protected:
    virtual void ChannelSwitch(const cDevice *Device, int ChannelNumber, bool LiveView);
 public:
    cTxtStatus(bool storeTopText, Storage* storage);
+   void SetNonLiveChannelNumber(const int ChannelNumber) { NonLiveChannelNumber = ChannelNumber; return; };
    ~cTxtStatus();
 };
 

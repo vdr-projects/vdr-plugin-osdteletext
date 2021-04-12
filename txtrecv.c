@@ -203,6 +203,7 @@ bool cTelePage::IsTopTextPage()
 
 cTxtStatus::cTxtStatus(bool storeTopText, Storage* storage)
    : receiver(NULL), storeTopText(storeTopText), storage(storage)
+     , NonLiveChannelNumber(0)
 {
 }
 
@@ -225,25 +226,30 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber, bool Li
    // be the case, but defensive coding rules!)
 #if defined(APIVERSNUM) && APIVERSNUM >= 20301
    LOCK_CHANNELS_READ;
-   const cChannel* newLiveChannel = Channels->GetByNumber(ChannelNumber);
+   const cChannel* newChannel = Channels->GetByNumber(ChannelNumber);
 #else
-   const cChannel* newLiveChannel = Channels.GetByNumber(ChannelNumber);
+   const cChannel* newChannel = Channels.GetByNumber(ChannelNumber);
 #endif
-   if (newLiveChannel == NULL) return;
+   if (newChannel == NULL) return;
 
-   // ignore non-live-channel-switching
-   if (!LiveView || ChannelNumber != cDevice::CurrentChannel()) return;
+   if (!LiveView && (NonLiveChannelNumber > 0) && (NonLiveChannelNumber == ChannelNumber)) {
+      // don't ignore non-live-channel-switching in case of NonLiveChannelNumber was hit
+   } else {
+      // ignore non-live-channel-switching
+      if (!LiveView || ChannelNumber != cDevice::CurrentChannel()) return;
+   };
 
-   // live channel was changed
-   // now re-attach the receiver to the new live channel
+   // channel was changed
+   // now re-attach the receiver to the new channel
 
    DELETENULL(receiver);
 
-   int TPid = newLiveChannel->Tpid();
+   int TPid = newChannel->Tpid();
 
    if (TPid) {
-      receiver = new cTxtReceiver(newLiveChannel, storeTopText, storage);
+      receiver = new cTxtReceiver(newChannel, storeTopText, storage);
       cDevice::ActualDevice()->AttachReceiver(receiver);
+      dsyslog("osdteletext: triggered by VDR channel switch: attach receiver to DVB %d for channel Number=%d Name='%s' ID=%s LiveView=%s\n", cDevice::ActualDevice()->CardIndex(), newChannel->Number(), newChannel->Name(), *newChannel->GetChannelID().ToString(), BOOLTOTEXT(LiveView));
    }
 
    TeletextBrowser::ChannelSwitched(ChannelNumber, true);

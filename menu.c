@@ -105,7 +105,7 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const bool live) {
       return;
       
    tChannelID chid=chan->GetChannelID();
-   if (chid==channel || chid==tChannelID::InvalidID)
+   if (chid==tChannelID::InvalidID)
       return;
       
    channel=chid;
@@ -190,8 +190,10 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
             selectingChannel=false;
             Display::ClearMessage();
             if (selectingChannelNumber>0) {
-               if (CheckIsValidChannel(selectingChannelNumber))
+               if (CheckIsValidChannel(selectingChannelNumber)) {
                   ChannelSwitched(selectingChannelNumber);
+                  txtStatus->SetNonLiveChannelNumber(selectingChannelNumber); // notify receiver thread about a non-live channel
+               }
                else {
                   needClearMessage=true;
                   Display::DrawMessage(trVDR("*** Invalid Channel ***"), ttcRed);
@@ -199,6 +201,7 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
                }
             } else {
                ChannelSwitched(liveChannelNumber);
+               txtStatus->SetNonLiveChannelNumber(0); // notify receiver thread about clearing non-live channel
                ShowPage();
             }
          } else {
