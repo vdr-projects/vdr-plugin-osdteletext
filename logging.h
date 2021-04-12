@@ -13,7 +13,7 @@ extern          int m_debugline;
 
 #define DEBUG_MASK_OT		0x00000001	// general
 #define DEBUG_MASK_OT_CACHE	0x00000002	// Caching System
-#define DEBUG_MASK_OT_TXTRCVC	0x00000003	// Text Receiver channel related
+#define DEBUG_MASK_OT_TXTRCVC	0x00000004	// Text Receiver channel related
 #define DEBUG_MASK_OT_KNONE	0x00000010	// Knone action
 #define DEBUG_MASK_OT_KEYS	0x00000020	// Keys action
 #define DEBUG_MASK_OT_NEPG	0x00000100	// new cTelePage
