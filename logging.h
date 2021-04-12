@@ -13,6 +13,7 @@ extern          int m_debugline;
 
 #define DEBUG_MASK_OT		0x00000001	// general
 #define DEBUG_MASK_OT_CACHE	0x00000002	// Caching System
+#define DEBUG_MASK_OT_TXTRCVC	0x00000003	// Text Receiver channel related
 #define DEBUG_MASK_OT_KNONE	0x00000010	// Knone action
 #define DEBUG_MASK_OT_KEYS	0x00000020	// Keys action
 #define DEBUG_MASK_OT_NEPG	0x00000100	// new cTelePage
@@ -61,6 +62,7 @@ extern          int m_debugline;
 #define DEBUG_OT_CACHE  if (m_debugmask & DEBUG_MASK_OT_CACHE)  dsyslog_ot
 #define DEBUG_OT_TXTRDT if (m_debugmask & DEBUG_MASK_OT_TXTRDT) dsyslog_ot
 #define DEBUG_OT_RENCLN if (m_debugmask & DEBUG_MASK_OT_RENCLN) dsyslog_ot
+#define DEBUG_OT_TXTRCVC if (m_debugmask & DEBUG_MASK_OT_TXTRCVC) dsyslog_ot
 #define DEBUG_OT_TXTRCVD if (m_debugmask & DEBUG_MASK_OT_TXTRCVD) dsyslog_ot
 #define DEBUG_OT_TXTRD  if (m_debugmask & DEBUG_MASK_OT_TXTRD) dsyslog_ot
 
