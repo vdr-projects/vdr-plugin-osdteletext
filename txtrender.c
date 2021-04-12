@@ -562,7 +562,7 @@ void cRenderPage::RenderTeletextCode(unsigned char *PageCode) {
         if (PageCode_X26[row*40] == 0) {
             // row empty
             continue;
-        } else if (PageCode_X26[row*40] & 0x80 != 0x80) {
+        } else if ((PageCode_X26[row*40] & 0x80) != 0x80) {
             DEBUG_OT_TXTRDT("invalid X/26 row (DesignationCode flag not valid)");
             continue;
         };
