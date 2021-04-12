@@ -12,6 +12,12 @@ PLUGIN = osdteletext
 
 VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN).c | awk '{ print $$6 }' | sed -e 's/[";]//g')
 
+### switch compiler
+ifeq ($(CLANG), 1)
+    CC="clang"
+    CXX="clang++"
+endif
+
 ### The directory environment:
 
 # Use package data if installed...otherwise assume we're under the VDR source directory:
@@ -26,6 +32,28 @@ TMPDIR ?= /tmp
 
 export CFLAGS   = $(call PKGCFG,cflags)
 export CXXFLAGS = $(call PKGCFG,cxxflags)
+
+ifeq ($(CLANG), 1)
+    $(info ORG CFLAGS=$(CFLAGS))
+    $(info ORG CXXFLAGS=$(CXXFLAGS))
+    # remove not supported options (at least Fedora 33)
+    CFLAGS_PKGCFG   = $(call PKGCFG,cflags)
+    CXXFLAGS_PKGCFG = $(call PKGCFG,cxxflags)
+    CFLAGS_1 = $(subst -ffat-lto-objects,,$(CFLAGS_PKGCFG))
+    CXXFLAGS_1 = $(subst -ffat-lto-objects,,$(CXXFLAGS_PKGCFG))
+    CFLAGS_2 = $(subst -flto=auto,,$(CFLAGS_1))
+    CXXFLAGS_2 = $(subst -flto=auto,,$(CXXFLAGS_1))
+    CFLAGS_3 = $(subst -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1,,$(CFLAGS_2))
+    CXXFLAGS_3 = $(subst -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1,,$(CXXFLAGS_2))
+    CFLAGS_4 = $(subst -specs=/usr/lib/rpm/redhat/redhat-hardened-ld,,$(CFLAGS_3))
+    CXXFLAGS_4 = $(subst -specs=/usr/lib/rpm/redhat/redhat-hardened-ld,,$(CXXFLAGS_3))
+    CFLAGS_5 = $(subst -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1,,$(CFLAGS_4))
+    CXXFLAGS_5 = $(subst -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1,,$(CXXFLAGS_4))
+    export CFLAGS   = $(CFLAGS_5)
+    export CXXFLAGS = $(CXXFLAGS_5)
+    $(info MOD CFLAGS=$(CFLAGS))
+    $(info MOD CXXFLAGS=$(CXXFLAGS))
+endif
 
 ### The version number of VDR's plugin API:
 
