@@ -59,7 +59,6 @@ enum eTeletextActionValueType {
 
 
 // values stored in setup.c:
-extern const char *st_modes[];
 extern const char *st_modesFooter[];
 extern const char *config_modes[];
 
