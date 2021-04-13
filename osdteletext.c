@@ -32,7 +32,7 @@ using namespace std;
 
 #define NUMELEMENTS(x) (sizeof(x) / sizeof(x[0]))
 
-static const char *VERSION        = "2.0.0";
+static const char *VERSION        = "2.0.1";
 static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
 static const char *MAINMENUENTRY  = trNOOP("Teletext");
 
@@ -115,6 +115,7 @@ protected:
 
 cPluginTeletextosd::cPluginTeletextosd(void)
   : txtStatus(0), startReceiver(true), storage(NULL), maxStorage(-1)
+    , storageSystem(Storage::StorageSystemPacked)
 {
   // Initialize any member variables here.
   // DON'T DO ANYTHING ELSE THAT MAY HAVE SIDE EFFECTS, REQUIRE GLOBAL

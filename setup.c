@@ -13,16 +13,16 @@
 
 const char *st_modes[] =
 {
-      trNOOP("Zoom"),
-      trNOOP("Half page"),
-      trNOOP("Change channel"),
-      trNOOP("Switch background"),
-      //trNOOP("Suspend receiving"),
-      trNOOP("Config"),
-      trNOOP("24-LineMode"),
-      trNOOP("Answer"),
-      trNOOP("Pause"),
-      trNOOP("Jump to..."),
+      tr("Zoom"),
+      tr("Half page"),
+      tr("Change channel"),
+      tr("Switch background"),
+      //tr("Suspend receiving"),
+      tr("Config"),
+      tr("24-LineMode"),
+      tr("Answer"),
+      tr("Pause"),
+      tr("Jump to..."),
 };
 
 const char *st_modesFooter[] =

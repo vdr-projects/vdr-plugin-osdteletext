@@ -128,22 +128,22 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const bool live) {
       currentPage=(*it).second;
    }
 
-   char str[80];
-   Display::ClearPage();
-   if (liveChannelNumber != currentChannelNumber)
-      snprintf(str, sizeof(str), "%s %s: %s", tr("Switch to cached"), tr("Channel"), channelClass.Name());
-   else if (live)
-      snprintf(str, sizeof(str), "%s %s: %s", tr("Switch to live"), tr("Channel"), channelClass.Name());
-   else
-      snprintf(str, sizeof(str), "%s %s: %s", tr("Switch back to live"), tr("Channel"), channelClass.Name());
-
-   Display::DrawMessage(str, ttcBlue);
-   sleep(1);
-   
    //on the one hand this must work in background mode, when the plugin is not active.
    //on the other hand, if active, the page should be shown.
    //so this self-Pointer.
    if (self) {
+      char str[80];
+      Display::ClearPage();
+      if (liveChannelNumber != currentChannelNumber)
+         snprintf(str, sizeof(str), "%s %s: %s", tr("Switch to cached"), tr("Channel"), channelClass.Name());
+      else if (live)
+         snprintf(str, sizeof(str), "%s %s: %s", tr("Switch to live"), tr("Channel"), channelClass.Name());
+      else
+         snprintf(str, sizeof(str), "%s %s: %s", tr("Switch back to live"), tr("Channel"), channelClass.Name());
+
+      Display::DrawMessage(str, ttcBlue);
+      sleep(1);
+
       self->ShowPage();
    }
 }
@@ -919,9 +919,9 @@ void TeletextBrowser::UpdateFooter() {
       DEBUG_OT_FOOT("AkRed=%d AkGreen=%d AkYellow=%d AkBlue=%d", AkRed, AkGreen, AkYellow, AkBlue);
 
 #define CONVERT_ACTION_TO_TEXT(text, mode) \
-      if (mode < 100) { \
+      if ((int) mode < 100) { \
          snprintf(text, sizeof(text), "%s", tr(st_modesFooter[mode])); \
-      } else if (mode < 999) { \
+      } else if ((int) mode < 999) { \
          snprintf(text, sizeof(text), "-> %03d", mode); \
       } else { \
          snprintf(text, sizeof(text), "ERROR"); \
