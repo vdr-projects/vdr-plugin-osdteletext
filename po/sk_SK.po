@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: osdteletext-0.9.0\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-12 21:59+0200\n"
+"POT-Creation-Date: 2021-04-13 07:53+0200\n"
 "PO-Revision-Date: 2011-02-15 21:11+0100\n"
 "Last-Translator: Milan Hrala <hrala.milan@gmail.com>\n"
 "Language-Team: Slovak <hrala.milan@gmail.com>\n"
@@ -28,19 +28,25 @@ msgstr ""
 msgid "Teletext"
 msgstr "Teletext"
 
-msgid "Switch to live"
-msgstr ""
-
-msgid "Switch to cached"
+msgid "live"
 msgstr ""
 
 msgid "Switch back to live"
 msgstr ""
 
-msgid "Channel Tuning Successful"
+msgid "tuned"
+msgstr ""
+
+msgid "Switch back to"
+msgstr ""
+
+msgid "cached"
 msgstr ""
 
 msgid "Channel Tuning Not Successful"
+msgstr ""
+
+msgid "No Free Tuner Found - Use Cache Only"
 msgstr ""
 
 msgid "*** Config mode is not supported in 24-line mode ***"

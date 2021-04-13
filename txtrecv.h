@@ -57,7 +57,8 @@ private:
    bool storeTopText;
    cRingTxtFrames buffer;
    Storage *storage;
-   cDevice *device;
+   const cDevice *device;
+   const bool live;
    const cChannel* channel;
    long int statTxtReceiverPageCount;
    time_t statTxtReceiverTimeStart;
@@ -70,7 +71,7 @@ protected:
 #endif
    virtual void Action();
 public:
-   cTxtReceiver(cDevice *dev, const cChannel* chan, bool storeTopText, Storage* storage);
+   cTxtReceiver(const cDevice *dev, const bool live, const cChannel* chan, bool storeTopText, Storage* storage);
    virtual ~cTxtReceiver();
    virtual void Stop();
 };

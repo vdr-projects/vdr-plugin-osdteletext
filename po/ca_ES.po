@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-12 21:59+0200\n"
+"POT-Creation-Date: 2021-04-13 07:53+0200\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Jordi Vilà <jvila@tinet.org>\n"
 "Language-Team: Catalan <vdr@linuxtv.org>\n"
@@ -30,19 +30,25 @@ msgstr ""
 msgid "Teletext"
 msgstr "Teletext"
 
-msgid "Switch to live"
-msgstr ""
-
-msgid "Switch to cached"
+msgid "live"
 msgstr ""
 
 msgid "Switch back to live"
 msgstr ""
 
-msgid "Channel Tuning Successful"
+msgid "tuned"
+msgstr ""
+
+msgid "Switch back to"
+msgstr ""
+
+msgid "cached"
 msgstr ""
 
 msgid "Channel Tuning Not Successful"
+msgstr ""
+
+msgid "No Free Tuner Found - Use Cache Only"
 msgstr ""
 
 msgid "*** Config mode is not supported in 24-line mode ***"

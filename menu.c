@@ -43,7 +43,7 @@ tChannelID TeletextBrowser::channel;
 cChannel TeletextBrowser::channelClass;
 int TeletextBrowser::currentChannelNumber=0;
 int TeletextBrowser::liveChannelNumber=0;
-bool TeletextBrowser::ChannelHasTeletext = false;
+eChannelInfo TeletextBrowser::ChannelInfo;
 TeletextBrowser* TeletextBrowser::self=0;
 tColor clrBackground;
 bool clrBackgroundInit = false;
@@ -94,7 +94,7 @@ bool TeletextBrowser::CheckIsValidChannel(int number) {
 #endif
 }
 
-void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelSwitchInfo info) {
+void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelInfo info) {
    DEBUG_OT_TXTRCVC("called with ChannelNumber=%d info=%d", ChannelNumber, info);
 #if defined(APIVERSNUM) && APIVERSNUM >= 20301
    LOCK_CHANNELS_READ;
@@ -138,21 +138,35 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelSwitchInf
       Display::ClearPage();
       enumTeletextColor color = ttcBlue;
 
-      ChannelHasTeletext = true; // assumed default
+      ChannelInfo = info; // store info
 
       if (info == ChannelHasNoTeletext) {
          snprintf(str, sizeof(str), "%s %s: %s (%s %s)", tr("Switch to"), tr("Channel"), channelClass.Name(), tr("no"), tr("Teletext"));
          color = ttcRed;
-         ChannelHasTeletext = false;
       }
       else if (info == ChannelIsLive) {
-         snprintf(str, sizeof(str), "%s %s: %s", tr("Switch to live"), tr("Channel"), channelClass.Name());
+         snprintf(str, sizeof(str), "%s %s %s: %s", tr("Switch to"), tr("live"), tr("Channel"), channelClass.Name());
+      }
+      else if (info == ChannelIsTuned) {
+         if (liveChannelNumber == currentChannelNumber) {
+            snprintf(str, sizeof(str), "%s %s: %s", tr("Switch back to live"), tr("Channel"), channelClass.Name());
+            ChannelInfo = ChannelIsLive;
+         } else {
+            snprintf(str, sizeof(str), "%s %s %s: %s", tr("Switch to"), tr("tuned"), tr("Channel"), channelClass.Name());
+            color = ttcMagenta;
+         };
+      }
+      else if (info == ChannelIsCached) {
+         // received trigger that TUNED channel has no longer a receiver
+         snprintf(str, sizeof(str), "%s %s %s: %s", tr("Switch back to"), tr("cached"), tr("Channel"), channelClass.Name());
+         color = ttcCyan;
       }
       else if (liveChannelNumber != currentChannelNumber) {
-         snprintf(str, sizeof(str), "%s %s: %s", tr("Switch to cached"), tr("Channel"), channelClass.Name());
+         snprintf(str, sizeof(str), "%s %s %s: %s", tr("Switch to"), tr("cached"), tr("Channel"), channelClass.Name());
+         color = ttcCyan;
       }
       else {
-         snprintf(str, sizeof(str), "%s %s: %s", tr("Switch back to live"), tr("Channel"), channelClass.Name());
+         snprintf(str, sizeof(str), "%s %s %s: %s", tr("Switch back to"), tr("live"), tr("Channel"), channelClass.Name());
       };
 
       Display::DrawMessage(str, color);
@@ -161,6 +175,37 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelSwitchInf
       self->ShowPage();
    }
 }
+
+
+bool TeletextBrowser::TriggerChannelSwitch(const int channelNumber) {
+   bool result = false;
+
+   // switch to new channel
+#if defined(APIVERSNUM) && APIVERSNUM >= 20301
+   LOCK_CHANNELS_READ;
+   const cChannel* newChannel = Channels->GetByNumber(channelNumber);
+#else
+   const cChannel* newChannel = Channels.GetByNumber(channelNumber);
+#endif
+   if (!newChannel) return false;
+
+   cDevice *device = cDevice::GetDeviceForTransponder(newChannel, TRANSFERPRIORITY - 1);
+   if (device != NULL) {
+      needClearMessage=true;
+      if (device->SwitchChannel(newChannel, (channelNumber == liveChannelNumber) ? true : false)) {
+         // Display::DrawMessage(tr("Channel Tuning Successful"), ttcGreen);
+         result = true;
+      } else {
+         Display::DrawMessage(tr("Channel Tuning Not Successful"), ttcRed);
+      };
+   } else {
+      Display::DrawMessage(tr("No Free Tuner Found - Use Cache Only"), ttcYellow);
+      ChannelInfo = ChannelIsCached;
+   };
+
+   sleep(1);
+   return (result);
+};
 
 
 eOSState TeletextBrowser::ProcessKey(eKeys Key) {
@@ -205,25 +250,9 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
             Display::ClearMessage();
             if (selectingChannelNumber>0) {
                if (CheckIsValidChannel(selectingChannelNumber)) {
-                  //ChannelSwitched(selectingChannelNumber, ChannelIsNotLive);
-                  txtStatus->SetNonLiveChannelNumber(selectingChannelNumber); // notify receiver thread about a non-live channel
-                  // switch to new channel
-#if defined(APIVERSNUM) && APIVERSNUM >= 20301
-   LOCK_CHANNELS_READ;
-   const cChannel* newChannel = Channels->GetByNumber(selectingChannelNumber);
-#else
-   const cChannel* newChannel = Channels.GetByNumber(selectingChannelNumber);
-#endif
-                  cDevice *device = cDevice::GetDeviceForTransponder(newChannel, TRANSFERPRIORITY - 1);
-                  if (device != NULL) {
-                     needClearMessage=true;
-                     if (device->SwitchChannel(newChannel, false)) {
-                        Display::DrawMessage(tr("Channel Tuning Successful"), ttcGreen);
-                     } else {
-                        Display::DrawMessage(tr("Channel Tuning Not Successful"), ttcRed);
-                     };
-                     sleep(1);
-                  };
+                  DEBUG_OT_KEYS("trigger switch to channel %d", selectingChannelNumber);
+                  txtStatus->SetNonLiveChannelNumber(selectingChannelNumber); // preload next channel switch with a non-live channel (-> TUNED)
+                  TriggerChannelSwitch(selectingChannelNumber);
                }
                else {
                   needClearMessage=true;
@@ -231,7 +260,9 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
                   sleep(1);
                }
             } else {
-               txtStatus->SetNonLiveChannelNumber(0); // notify receiver thread about clearing non-live channel
+               txtStatus->SetNonLiveChannelNumber(0); // clear non-live channel for next channel switch
+               DEBUG_OT_KEYS("trigger switch to channel %d", liveChannelNumber);
+               TriggerChannelSwitch(liveChannelNumber);
                ShowPage();
             }
          } else {
@@ -585,13 +616,13 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
          break;
 
       case TogglePause:
-         if (liveChannelNumber == currentChannelNumber) {
+         if ((ChannelInfo == ChannelIsLive) || (ChannelInfo == ChannelIsTuned)) {
             DEBUG_OT_KEYS("key action: 'TogglePause' paused=%d -> %d", Display::GetPaused(), not(Display::GetPaused()));
-            // toggle paused status only if live channel (otherwise useless)
+            // toggle paused status only if LIVE or TUNED channel (otherwise useless)
             Display::SetPaused(not(Display::GetPaused()));
             ShowPage();
          } else {
-            DEBUG_OT_KEYS("key action: 'TogglePause' useless, currently not a live channel on OSD");
+            DEBUG_OT_KEYS("key action: 'TogglePause' useless, currently not a LIVE or TUNED channel on OSD");
          };
          break;
 
@@ -838,17 +869,21 @@ void TeletextBrowser::ShowPage() {
 void TeletextBrowser::ShowPageNumber() {
    DEBUG_OT_DRPI("called with currentPage=%03x currentSubPage=%02x", currentPage, currentSubPage);
    char str[9];
-   snprintf(str, sizeof(str), "%3x-%02x %s", currentPage, currentSubPage
-      , (liveChannelNumber != currentChannelNumber) ? "c" : "" // cache mark
-   );
+   snprintf(str, sizeof(str), "%3x-%02x  ", currentPage, currentSubPage);
    if (cursorPos>0) {
       str[2]='*';
       if (cursorPos==1)
          str[1]='*';
    }
 
-   if (liveChannelNumber != currentChannelNumber)
+   if (ChannelInfo == ChannelIsTuned) {
+      str[7]='t';
+      Display::DrawPageId(str, ttcMagenta); // colored
+   } 
+   else if (liveChannelNumber != currentChannelNumber) {
+      str[7]='c';
       Display::DrawPageId(str, ttcCyan); // colored
+   }
    else
       Display::DrawPageId(str);
 }
@@ -896,16 +931,25 @@ bool TeletextBrowser::DecodePage() {
       Display::HoldFlush();
       char str[80];
       enumTeletextColor color = ttcYellow;
-      if (ChannelHasTeletext == false) {
+      if (ChannelInfo == ChannelHasNoTeletext) {
          snprintf(str, sizeof(str), "%s %s: %s (%s %s)", tr("Switch to"), tr("Channel"), channelClass.Name(), tr("no"), tr("Teletext"));
          color = ttcRed;
       } else {
          ShowPageNumber();
-         snprintf(str, sizeof(str), "%s %3x-%02x%s%s %s (%s)",tr("Page"),currentPage, currentSubPage
-            , (liveChannelNumber != currentChannelNumber) ? " " : ""
-            , (liveChannelNumber != currentChannelNumber) ? tr("in cache") : ""
-            , tr("not found"), channelClass.Name()
+         snprintf(str, sizeof(str), "%s %3x-%02x%s%s %s%s%s%s: %s",tr("Page"),currentPage, currentSubPage
+            , (ChannelInfo == ChannelIsCached) ? " " : ""
+            , (ChannelInfo == ChannelIsCached) ? tr("in cache") : ""
+            , tr("not found")
+            , ((ChannelInfo == ChannelIsTuned) || (ChannelInfo == ChannelIsLive)) ? " (" : ""
+            , ((ChannelInfo == ChannelIsTuned) || (ChannelInfo == ChannelIsLive)) ? "please wait" : ""
+            , ((ChannelInfo == ChannelIsTuned) || (ChannelInfo == ChannelIsLive)) ? ")" : ""
+            , channelClass.Name()
          );
+         if (ChannelInfo == ChannelIsTuned) {
+            color = ttcMagenta;
+         } else if (ChannelInfo == ChannelIsCached) {
+            color = ttcRed;
+         };
       };
       Display::DrawMessage(str, color);
       UpdateFooter();
