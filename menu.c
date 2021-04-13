@@ -156,9 +156,14 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelInfo info
             color = ttcMagenta;
          };
       }
-      else if (info == ChannelIsCached) {
+      else if (info == ChannelWasTuned) {
          // received trigger that TUNED channel has no longer a receiver
          snprintf(str, sizeof(str), "%s %s %s: %s", tr("Switch back to"), tr("cached"), tr("Channel"), channelClass.Name());
+         color = ttcCyan;
+         ChannelInfo = ChannelIsCached; // new status
+      }
+      else if (info == ChannelIsCached) {
+         snprintf(str, sizeof(str), "%s %s %s: %s", tr("Switch to"), tr("cached"), tr("Channel"), channelClass.Name());
          color = ttcCyan;
       }
       else if (liveChannelNumber != currentChannelNumber) {
@@ -200,7 +205,7 @@ bool TeletextBrowser::TriggerChannelSwitch(const int channelNumber) {
       };
    } else {
       Display::DrawMessage(tr("No Free Tuner Found - Use Cache Only"), ttcYellow);
-      ChannelInfo = ChannelIsCached;
+      ChannelSwitched(channelNumber, ChannelIsCached);
    };
 
    sleep(1);
@@ -250,9 +255,15 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
             Display::ClearMessage();
             if (selectingChannelNumber>0) {
                if (CheckIsValidChannel(selectingChannelNumber)) {
-                  DEBUG_OT_KEYS("trigger switch to channel %d", selectingChannelNumber);
-                  txtStatus->SetNonLiveChannelNumber(selectingChannelNumber); // preload next channel switch with a non-live channel (-> TUNED)
-                  TriggerChannelSwitch(selectingChannelNumber);
+                  if (selectingChannelNumber != liveChannelNumber) {
+                     DEBUG_OT_KEYS("trigger switch to channel %d", selectingChannelNumber);
+                     txtStatus->SetNonLiveChannelNumber(selectingChannelNumber); // preload next channel switch with a non-live channel (-> TUNED)
+                     TriggerChannelSwitch(selectingChannelNumber);
+                  } else {
+                     // nothing todo
+                     DEBUG_OT_KEYS("no need to trigger switch to channel %d because currently running as live channel", selectingChannelNumber);
+                     ChannelSwitched(liveChannelNumber, ChannelIsLive);
+                  };
                }
                else {
                   needClearMessage=true;
@@ -260,10 +271,15 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
                   sleep(1);
                }
             } else {
-               txtStatus->SetNonLiveChannelNumber(0); // clear non-live channel for next channel switch
-               DEBUG_OT_KEYS("trigger switch to channel %d", liveChannelNumber);
-               TriggerChannelSwitch(liveChannelNumber);
-               ShowPage();
+               if (selectingChannelNumber != liveChannelNumber) {
+                  txtStatus->SetNonLiveChannelNumber(0); // clear non-live channel for next channel switch
+                  DEBUG_OT_KEYS("trigger switch to channel %d", liveChannelNumber);
+                  TriggerChannelSwitch(liveChannelNumber);
+                  selectingChannelNumber = liveChannelNumber;
+               } else {
+                  // nothing todo
+                  DEBUG_OT_KEYS("no need to trigger switch to channel because unchanged");
+               };
             }
          } else {
             ExecuteAction(TranslateKey(Key));

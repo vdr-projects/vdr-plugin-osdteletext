@@ -25,6 +25,7 @@ enum eChannelInfo {
    ChannelIsLive,
    ChannelIsTuned,
    ChannelIsCached,
+   ChannelWasTuned,
    ChannelHasNoTeletext
 };
 

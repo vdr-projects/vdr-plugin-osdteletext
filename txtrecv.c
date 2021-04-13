@@ -311,7 +311,7 @@ cTxtReceiver::~cTxtReceiver()
 
    if (!live)
       // tuned channel
-      TeletextBrowser::ChannelSwitched(channel->Number(), ChannelIsCached); // trigger TeletextBrowser that channel is switched to cached
+      TeletextBrowser::ChannelSwitched(channel->Number(), ChannelWasTuned); // trigger TeletextBrowser that channel is no longer tuned
 }
 
 void cTxtReceiver::Stop()
