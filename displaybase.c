@@ -761,14 +761,14 @@ void cDisplay::DrawPageId(const char *text, const enumTeletextColor cText) {
         c.SetFGColor(ttcRed);
         c.SetChar('!');
         DEBUG_OT_DRPI("trigger SetChar for Paused hint ttfg=%x ttbg=%x", c.GetFGColor(), c.GetBGColor());
-        SetChar(7, 0, c);
+        SetChar(3, 0, c);
     } else if (paused_last == true) {
         paused_last = false;
         c.SetBGColor(ttcBlack);
         c.SetFGColor(ttcGreen);
         c.SetChar('>');
         DEBUG_OT_DRPI("trigger SetChar for Paused finished hint ttfg=%x ttbg=%x", c.GetFGColor(), c.GetBGColor());
-        SetChar(7, 0, c);
+        SetChar(3, 0, c);
     };
 }
 
