@@ -1,9 +1,13 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
+2021-04-11: version 2.0.2
+- [pbiering] fixes/cleanup translations of key assignment setup menu
+
 2021-04-11: version 2.0.1
 - [pbiering] fix warnings reported by clang
 - [pbiering] display channel switch message only in case OSD is active
 - [pbiering] fix G0 character without diacritical mark
+- [pbiering] bring storage system "packed" back to default
 
 2021-04-11: version 2.0.0
 - [pbiering] additional fixes found during regression tests related to translations and others

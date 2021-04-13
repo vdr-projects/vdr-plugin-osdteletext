@@ -11,23 +11,10 @@
 
 #include "setup.h"
 
-const char *st_modes[] =
-{
-      trNOOP("Zoom"),
-      trNOOP("Half page"),
-      trNOOP("Change channel"),
-      trNOOP("Switch background"),
-      //trNOOP("Suspend receiving"),
-      trNOOP("Config"),
-      trNOOP("24-LineMode"),
-      trNOOP("Answer"),
-      trNOOP("Pause"),
-      trNOOP("Jump to..."),
-};
-
 const char *st_modesFooter[] =
 {
-      // 1:1 relation to *st_modes[] from above and maximum 10 chars used in line25 footer //
+      // 1:1 relation between st_modes[] in osdteletext.c + eTeletextAction in setup.h + st_modesFooter in setup.c
+      // maximum 10 chars used in line25 footer //
       trNOOP("Zoom"),
       trNOOP("Half Page"),
       trNOOP("ChangeChan"),

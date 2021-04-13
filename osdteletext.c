@@ -32,7 +32,7 @@ using namespace std;
 
 #define NUMELEMENTS(x) (sizeof(x) / sizeof(x[0]))
 
-static const char *VERSION        = "2.0.9.alpha.1";
+static const char *VERSION        = "2.0.9.alpha.2";
 static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
 static const char *MAINMENUENTRY  = trNOOP("Teletext");
 
@@ -333,6 +333,21 @@ void cPluginTeletextosd::initTexts() {
    };
 
    cTeletextSetupPage::actionKeyNames = st_actionKeyNames;
+
+   static const char *st_modes[] =
+   {
+      // 1:1 relation between st_modes[] in osdteletext.c + eTeletextAction in setup.h + st_modesFooter in setup.c
+      tr("Zoom"),
+      tr("Half page"),
+      tr("Change channel"),
+      tr("Switch background"),
+      //tr("Suspend receiving"),
+      tr("Config"),
+      tr("24-LineMode"),
+      tr("Answer"),
+      tr("Pause"),
+      tr("Jump to..."),
+   };
 
    cTeletextSetupPage::modes = st_modes;
 }
