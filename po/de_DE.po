@@ -23,31 +23,31 @@ msgid "Channel"
 msgstr "Kanal"
 
 msgid "no"
-msgstr ""
+msgstr "kein"
 
 msgid "Teletext"
 msgstr "Videotext"
 
 msgid "live"
-msgstr ""
+msgstr "aktuellem"
 
 msgid "Switch back to live"
 msgstr "Wechsle zurück zu laufendem"
 
 msgid "tuned"
-msgstr ""
+msgstr "eingestellt"
 
 msgid "Switch back to"
-msgstr ""
+msgstr "Schalte zurück zu"
 
 msgid "cached"
-msgstr ""
+msgstr "gespeicherten"
 
 msgid "Channel Tuning Not Successful"
-msgstr ""
+msgstr "Kanal nicht erfolgreich eingestellt"
 
 msgid "No Free Tuner Found - Use Cache Only"
-msgstr ""
+msgstr "Keinen freien Tuner gefunden - benutze nur gespeicherte Seiten"
 
 msgid "*** Config mode is not supported in 24-line mode ***"
 msgstr "*** Konfig-Modus ist im 24-Zeilen-Modus nicht unterstützt ***"
@@ -204,9 +204,3 @@ msgstr "TxVoffset"
 
 msgid "BackTrans"
 msgstr "HintGrTra"
-
-#~ msgid "Switch to live"
-#~ msgstr "Wechsle zu laufendem"
-
-#~ msgid "Switch to cached"
-#~ msgstr "Wechsle zu gespeicherten"
