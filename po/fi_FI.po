@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-13 07:53+0200\n"
+"POT-Creation-Date: 2021-04-13 21:52+0200\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Rolf Ahrenberg <rahrenbe@cc.hut.fi>\n"
 "Language-Team: Finnish <vdr@linuxtv.org>\n"
@@ -64,8 +64,38 @@ msgstr ""
 msgid "not found"
 msgstr "ei löydy"
 
+msgid "please wait"
+msgstr ""
+
 msgid "Displays teletext on the OSD"
 msgstr "Teksti-TV (OSD)"
+
+msgid "Zoom"
+msgstr "Suurenna"
+
+msgid "Half page"
+msgstr "Puolikas sivu"
+
+msgid "Change channel"
+msgstr "Vaihda kanavaa"
+
+msgid "Switch background"
+msgstr "Vaihda tausta"
+
+msgid "Config"
+msgstr ""
+
+msgid "24-LineMode"
+msgstr ""
+
+msgid "Answer"
+msgstr ""
+
+msgid "Pause"
+msgstr ""
+
+msgid "Jump to..."
+msgstr "Siirry sivulle..."
 
 msgid "Latin 1"
 msgstr "Latin 1"
@@ -144,33 +174,6 @@ msgstr "Näppäintoiminnot"
 
 msgid "  Page number"
 msgstr "  Sivunumero"
-
-msgid "Zoom"
-msgstr "Suurenna"
-
-msgid "Half page"
-msgstr "Puolikas sivu"
-
-msgid "Change channel"
-msgstr "Vaihda kanavaa"
-
-msgid "Switch background"
-msgstr "Vaihda tausta"
-
-msgid "Config"
-msgstr ""
-
-msgid "24-LineMode"
-msgstr ""
-
-msgid "Answer"
-msgstr ""
-
-msgid "Pause"
-msgstr ""
-
-msgid "Jump to..."
-msgstr "Siirry sivulle..."
 
 msgid "Half Page"
 msgstr ""

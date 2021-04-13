@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 2.4.4\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-13 07:53+0200\n"
+"POT-Creation-Date: 2021-04-13 21:52+0200\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Peter Bieringer <pb@bieringer.de>\n"
 "Language-Team: German <vdr@linuxtv.org>\n"
@@ -64,8 +64,38 @@ msgstr "im Speicher"
 msgid "not found"
 msgstr "nicht gefunden"
 
+msgid "please wait"
+msgstr "bitte warten"
+
 msgid "Displays teletext on the OSD"
 msgstr "Zeigt den Videotext auf dem OSD an"
+
+msgid "Zoom"
+msgstr "Vergrößern"
+
+msgid "Half page"
+msgstr "Halbe Seite"
+
+msgid "Change channel"
+msgstr "Kanal wechseln"
+
+msgid "Switch background"
+msgstr "Hintergrund ändern"
+
+msgid "Config"
+msgstr "Konfiguration"
+
+msgid "24-LineMode"
+msgstr "24-ZeilenModus"
+
+msgid "Answer"
+msgstr "Antwort"
+
+msgid "Pause"
+msgstr "Pause"
+
+msgid "Jump to..."
+msgstr "Springe zu..."
 
 msgid "Latin 1"
 msgstr ""
@@ -144,33 +174,6 @@ msgstr "Tastenzuweisung"
 
 msgid "  Page number"
 msgstr "  Seitenzahl"
-
-msgid "Zoom"
-msgstr "Vergrößern"
-
-msgid "Half page"
-msgstr "Halbe Seite"
-
-msgid "Change channel"
-msgstr "Kanal wechseln"
-
-msgid "Switch background"
-msgstr "Hintergrund ändern"
-
-msgid "Config"
-msgstr "Konfiguration"
-
-msgid "24-LineMode"
-msgstr "24-ZeilenModus"
-
-msgid "Answer"
-msgstr "Antwort"
-
-msgid "Pause"
-msgstr "Pause"
-
-msgid "Jump to..."
-msgstr "Springe zu..."
 
 msgid "Half Page"
 msgstr "HalbeSeite"

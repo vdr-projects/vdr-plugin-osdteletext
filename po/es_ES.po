@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-13 07:53+0200\n"
+"POT-Creation-Date: 2021-04-13 21:52+0200\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Ruben Nunez Francisco <ruben.nunez@tang-it.com>\n"
 "Language-Team: Spanish <vdr@linuxtv.org>\n"
@@ -64,8 +64,38 @@ msgstr ""
 msgid "not found"
 msgstr "no encontrada"
 
+msgid "please wait"
+msgstr ""
+
 msgid "Displays teletext on the OSD"
 msgstr "Visualiza el teletexto en el OSD"
+
+msgid "Zoom"
+msgstr "Zoom"
+
+msgid "Half page"
+msgstr "Media página"
+
+msgid "Change channel"
+msgstr "Cambio cadena"
+
+msgid "Switch background"
+msgstr "Cambia el fondo"
+
+msgid "Config"
+msgstr ""
+
+msgid "24-LineMode"
+msgstr ""
+
+msgid "Answer"
+msgstr ""
+
+msgid "Pause"
+msgstr ""
+
+msgid "Jump to..."
+msgstr "Salta a..."
 
 msgid "Latin 1"
 msgstr ""
@@ -144,33 +174,6 @@ msgstr ""
 
 msgid "  Page number"
 msgstr "  Número de página"
-
-msgid "Zoom"
-msgstr "Zoom"
-
-msgid "Half page"
-msgstr "Media página"
-
-msgid "Change channel"
-msgstr "Cambio cadena"
-
-msgid "Switch background"
-msgstr "Cambia el fondo"
-
-msgid "Config"
-msgstr ""
-
-msgid "24-LineMode"
-msgstr ""
-
-msgid "Answer"
-msgstr ""
-
-msgid "Pause"
-msgstr ""
-
-msgid "Jump to..."
-msgstr "Salta a..."
 
 msgid "Half Page"
 msgstr ""

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-13 07:53+0200\n"
+"POT-Creation-Date: 2021-04-13 21:52+0200\n"
 "PO-Revision-Date: 2009-05-25 20:33+0200\n"
 "Last-Translator: Yarema P. aka Knedlyk <yupadmin@gmail.com>\n"
 "Language-Team: Ukrainian <vdr@linuxtv.org>\n"
@@ -64,8 +64,38 @@ msgstr ""
 msgid "not found"
 msgstr "не знайдена"
 
+msgid "please wait"
+msgstr ""
+
 msgid "Displays teletext on the OSD"
 msgstr "Показувати телетекст в меню"
+
+msgid "Zoom"
+msgstr "Збільшити"
+
+msgid "Half page"
+msgstr "Пів сторінки"
+
+msgid "Change channel"
+msgstr "Змінити канал"
+
+msgid "Switch background"
+msgstr "Переключити фон"
+
+msgid "Config"
+msgstr ""
+
+msgid "24-LineMode"
+msgstr ""
+
+msgid "Answer"
+msgstr ""
+
+msgid "Pause"
+msgstr ""
+
+msgid "Jump to..."
+msgstr "Перейти до..."
 
 msgid "Latin 1"
 msgstr ""
@@ -144,33 +174,6 @@ msgstr "Призначення клавіш"
 
 msgid "  Page number"
 msgstr "  Номер сторінки"
-
-msgid "Zoom"
-msgstr "Збільшити"
-
-msgid "Half page"
-msgstr "Пів сторінки"
-
-msgid "Change channel"
-msgstr "Змінити канал"
-
-msgid "Switch background"
-msgstr "Переключити фон"
-
-msgid "Config"
-msgstr ""
-
-msgid "24-LineMode"
-msgstr ""
-
-msgid "Answer"
-msgstr ""
-
-msgid "Pause"
-msgstr ""
-
-msgid "Jump to..."
-msgstr "Перейти до..."
 
 msgid "Half Page"
 msgstr ""

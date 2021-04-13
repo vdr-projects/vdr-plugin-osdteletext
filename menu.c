@@ -957,7 +957,7 @@ bool TeletextBrowser::DecodePage() {
             , (ChannelInfo == ChannelIsCached) ? tr("in cache") : ""
             , tr("not found")
             , ((ChannelInfo == ChannelIsTuned) || (ChannelInfo == ChannelIsLive)) ? " (" : ""
-            , ((ChannelInfo == ChannelIsTuned) || (ChannelInfo == ChannelIsLive)) ? "please wait" : ""
+            , ((ChannelInfo == ChannelIsTuned) || (ChannelInfo == ChannelIsLive)) ? tr("please wait") : ""
             , ((ChannelInfo == ChannelIsTuned) || (ChannelInfo == ChannelIsLive)) ? ")" : ""
             , channelClass.Name()
          );

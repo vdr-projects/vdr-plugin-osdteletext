@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: osdteletext-0.9.0\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-13 07:53+0200\n"
+"POT-Creation-Date: 2021-04-13 21:52+0200\n"
 "PO-Revision-Date: 2011-02-15 21:11+0100\n"
 "Last-Translator: Milan Hrala <hrala.milan@gmail.com>\n"
 "Language-Team: Slovak <hrala.milan@gmail.com>\n"
@@ -64,8 +64,38 @@ msgstr ""
 msgid "not found"
 msgstr "nenájdená"
 
+msgid "please wait"
+msgstr ""
+
 msgid "Displays teletext on the OSD"
 msgstr "Zobrazí teletext na OSD"
+
+msgid "Zoom"
+msgstr "Zväčšenie"
+
+msgid "Half page"
+msgstr "Polovica strany"
+
+msgid "Change channel"
+msgstr "Zmena kanálu"
+
+msgid "Switch background"
+msgstr "Prepnúť na pozadí"
+
+msgid "Config"
+msgstr ""
+
+msgid "24-LineMode"
+msgstr ""
+
+msgid "Answer"
+msgstr ""
+
+msgid "Pause"
+msgstr ""
+
+msgid "Jump to..."
+msgstr "Skoč na..."
 
 msgid "Latin 1"
 msgstr ""
@@ -144,33 +174,6 @@ msgstr "Klávesové skratky"
 
 msgid "  Page number"
 msgstr "  Číslo strany"
-
-msgid "Zoom"
-msgstr "Zväčšenie"
-
-msgid "Half page"
-msgstr "Polovica strany"
-
-msgid "Change channel"
-msgstr "Zmena kanálu"
-
-msgid "Switch background"
-msgstr "Prepnúť na pozadí"
-
-msgid "Config"
-msgstr ""
-
-msgid "24-LineMode"
-msgstr ""
-
-msgid "Answer"
-msgstr ""
-
-msgid "Pause"
-msgstr ""
-
-msgid "Jump to..."
-msgstr "Skoč na..."
 
 msgid "Half Page"
 msgstr ""
