@@ -1,5 +1,8 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
+2021-04-11: version 2.0.2
+- [pbiering] fixes/cleanup translations of key assignment setup menu
+
 2021-04-11: version 2.0.1
 - [pbiering] fix warnings reported by clang
 - [pbiering] display channel switch message only in case OSD is active
