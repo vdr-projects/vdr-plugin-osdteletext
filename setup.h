@@ -33,7 +33,7 @@
 
 // There are two places to be kept in sync with these enums:
 //  TeletextBrowser::TranslateKey and 
-//  the constants below: st_modes st_modesFooter
+// 1:1 relation between st_modes[] in osdteletext.c + eTeletextAction in setup.h + st_modesFooter in setup.c
 enum eTeletextAction { Zoom, HalfPage, SwitchChannel,
                        DarkScreen, /*SuspendReceiving,*/ Config, LineMode24, ToggleConceal, TogglePause, LastAction }; //and 100-899 => jump to page
 
