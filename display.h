@@ -84,14 +84,27 @@ namespace Display {
         { if (display) display->DrawPageId(text, cText); }
     inline void DrawFooter(const char *textRed, const char *textGreen, const char* textYellow, const char *textBlue, const FooterFlags flag)
         { if (display) display->DrawFooter(textRed, textGreen, textYellow, textBlue, flag); }
+
     inline void DrawMessage(const char *txt)
-        { if (display) display->DrawMessage(txt); }
+        { if (display) display->DrawMessage(txt, NULL); }
+    inline void DrawMessage(const char *txt, const char *txt2)
+        { if (display) display->DrawMessage(txt, txt2); }
+
     inline void DrawMessage(const char *txt, const enumTeletextColor cFrame)
-        { if (display) display->DrawMessage(txt, cFrame); }
+        { if (display) display->DrawMessage(txt, NULL, cFrame); }
+    inline void DrawMessage(const char *txt, const char *txt2,  const enumTeletextColor cFrame)
+        { if (display) display->DrawMessage(txt, txt2, cFrame); }
+
     inline void DrawMessage(const char *txt, const enumTeletextColor cFrame, const enumTeletextColor cText)
-        { if (display) display->DrawMessage(txt, cFrame, cText); }
+        { if (display) display->DrawMessage(txt, NULL, cFrame, cText); }
+    inline void DrawMessage(const char *txt, const char *txt2, const enumTeletextColor cFrame, const enumTeletextColor cText)
+        { if (display) display->DrawMessage(txt, txt2, cFrame, cText); }
+
     inline void DrawMessage(const char *txt, const enumTeletextColor cFrame, const enumTeletextColor cText, const enumTeletextColor cBackground)
-        { if (display) display->DrawMessage(txt, cFrame, cText, cBackground); }
+        { if (display) display->DrawMessage(txt, NULL, cFrame, cText, cBackground); }
+    inline void DrawMessage(const char *txt, const char *txt2, const enumTeletextColor cFrame, const enumTeletextColor cText, const enumTeletextColor cBackground)
+        { if (display) display->DrawMessage(txt, txt2, cFrame, cText, cBackground); }
+
     inline void ClearMessage()
         { if (display) display->ClearMessage(); }
     inline void ClearPage()

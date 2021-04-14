@@ -811,7 +811,7 @@ void cDisplay::DrawClock() {
     DrawText(32,0,text,8);
 }
 
-void cDisplay::DrawMessage(const char *txt, const enumTeletextColor cFrame, const enumTeletextColor cText, const enumTeletextColor cBackground) {
+void cDisplay::DrawMessage(const char *txt1, const char *txt2, const enumTeletextColor cFrame, const enumTeletextColor cText, const enumTeletextColor cBackground) {
     int border=6; // minimum
     if (outputWidth > 720) {
         // increase border
@@ -833,12 +833,46 @@ void cDisplay::DrawMessage(const char *txt, const enumTeletextColor cFrame, cons
     if (IsDirty()) DrawDisplay();
     // Make sure all characters are out, so we can draw on top
 
-    int w=MessageFont->Width(txt)+4*border;
-    int h=MessageFont->Height(txt)+4*border;
+    // text w/h
+    int w1 = MessageFont->Width(txt1);
+    int h1 = MessageFont->Height(txt1);
+    int w2 = 0;
+    int h2 = 0;
+
+    // box w/h
+    int w = w1;
+    int h = h1;
+
+    // text offset
+    int o1 = 0;
+    int o2 = 0;
+
+    if (txt2 != NULL) {
+        // 2nd line active
+        h2 = MessageFont->Height(txt2);
+        w2 = MessageFont->Width(txt2);
+
+        h += h2 + border / 2; // increase height
+
+        if (w2 > w1) {
+            // 2nd line is longer
+            w = w2;
+            o1 = (w2 - w1) / 2;
+        } else if (w2 < w1) {
+            // 1st line is longer
+            o2 = (w1 - w2) / 2;
+        };
+    }
+
+    w += 4 * border;
+    h += 4 * border;
+
+    // limit to maximum
     if (w > outputWidth)  w = outputWidth;
     if (h > outputHeight) h = outputHeight;
-    int x=(outputWidth -w)/2 + leftFrame;
-    int y=(outputHeight-h)/2 + topFrame;
+
+    int x = (outputWidth -w)/2 + leftFrame;
+    int y = (outputHeight-h)/2 + topFrame;
 
     // Get local color mapping
     tColor fg=GetColorRGB(cText,0);
@@ -851,16 +885,21 @@ void cDisplay::DrawMessage(const char *txt, const enumTeletextColor cFrame, cons
     osd->DrawRectangle(x+(border/2), y+(border/2), x+w-1-border/2, y+h-1-border/2, fr); // inner rectangle
     osd->DrawRectangle(x+border    , y+border    , x+w-1-border  , y+h-1-border  , bg); // background for text
 
-    // Draw text
-    osd->DrawText(x+2*border, y+2*border,txt, fg, bg, MessageFont, w - 4*border, h - 4*border);
-
     // Remember box
-    MessageW=w;
-    MessageH=h;
-    MessageX=x;
-    MessageY=y;
+    MessageW = w;
+    MessageH = h;
+    MessageX = x;
+    MessageY = y;
 
-    DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OW=%d OH=%d text='%s'", MessageX, MessageY, MessageW, MessageH, outputWidth, outputHeight, txt);
+    // Draw text
+    if (txt2 == NULL) {
+        osd->DrawText(x + 2 * border + o1, y + 2 * border, txt1, fg, bg, MessageFont, w1, h1);
+        DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OW=%d OH=%d txt='%s'", MessageX, MessageY, MessageW, MessageH, outputWidth, outputHeight, txt1);
+    } else {
+        osd->DrawText(x + 2 * border + o1, y + 2 * border                  , txt1, fg, bg, MessageFont, w1, h1);
+        osd->DrawText(x + 2 * border + o2, y + 2 * border + h1 + border / 2, txt2, fg, bg, MessageFont, w2, h2);
+        DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OW=%d OH=%d txt1='%s' txt2='%s'", MessageX, MessageY, MessageW, MessageH, outputWidth, outputHeight, txt1, txt2);
+    };
 
     // And flush all changes
     ReleaseFlush();
