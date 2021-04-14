@@ -1027,7 +1027,7 @@ void TeletextBrowser::UpdateFooter() {
             break;
       };
 
-      snprintf(textBlue  , sizeof(textBlue)  , "%s", tr(st_modes[Config])); // option itself
+      snprintf(textBlue  , sizeof(textBlue)  , "%s", tr(st_modesFooter[Config])); // option itself
    };
 
    DEBUG_OT_FOOT("textRed='%s' textGreen='%s' text Yellow='%s' textBlue='%s' flag=%d", textRed, textGreen, textYellow, textBlue, flag);
