@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-07 08:43+0200\n"
+"POT-Creation-Date: 2021-04-14 08:04+0200\n"
 "PO-Revision-Date: 2009-05-25 20:33+0200\n"
 "Last-Translator: Yarema P. aka Knedlyk <yupadmin@gmail.com>\n"
 "Language-Team: Ukrainian <vdr@linuxtv.org>\n"
@@ -16,16 +16,37 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Switch to cached"
+msgid "Switch to"
 msgstr ""
 
 msgid "Channel"
 msgstr ""
 
-msgid "Switch to live"
+msgid "without"
+msgstr ""
+
+msgid "Teletext"
+msgstr "Телетекст"
+
+msgid "live"
 msgstr ""
 
 msgid "Switch back to live"
+msgstr ""
+
+msgid "tuned"
+msgstr ""
+
+msgid "Switch back to"
+msgstr ""
+
+msgid "cached"
+msgstr ""
+
+msgid "Channel Tuning Not Successful"
+msgstr ""
+
+msgid "No Free Tuner Found - Use Cache Only"
 msgstr ""
 
 msgid "*** Config mode is not supported in 24-line mode ***"
@@ -43,11 +64,38 @@ msgstr ""
 msgid "not found"
 msgstr "не знайдена"
 
+msgid "please wait"
+msgstr ""
+
 msgid "Displays teletext on the OSD"
 msgstr "Показувати телетекст в меню"
 
-msgid "Teletext"
-msgstr "Телетекст"
+msgid "Zoom"
+msgstr "Збільшити"
+
+msgid "Half page"
+msgstr "Пів сторінки"
+
+msgid "Change channel"
+msgstr "Змінити канал"
+
+msgid "Switch background"
+msgstr "Переключити фон"
+
+msgid "Config"
+msgstr ""
+
+msgid "24-LineMode"
+msgstr ""
+
+msgid "Answer"
+msgstr ""
+
+msgid "Pause"
+msgstr ""
+
+msgid "Jump to..."
+msgstr "Перейти до..."
 
 msgid "Latin 1"
 msgstr ""
@@ -126,33 +174,6 @@ msgstr "Призначення клавіш"
 
 msgid "  Page number"
 msgstr "  Номер сторінки"
-
-msgid "Zoom"
-msgstr "Збільшити"
-
-msgid "Half page"
-msgstr "Пів сторінки"
-
-msgid "Change channel"
-msgstr "Змінити канал"
-
-msgid "Switch background"
-msgstr "Переключити фон"
-
-msgid "Config"
-msgstr ""
-
-msgid "24-LineMode"
-msgstr ""
-
-msgid "Answer"
-msgstr ""
-
-msgid "Pause"
-msgstr ""
-
-msgid "Jump to..."
-msgstr "Перейти до..."
 
 msgid "Half Page"
 msgstr ""

@@ -1,5 +1,9 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
+2021-04-14: version 2.1.0
+- [pbiering] ChannelSwitch now supports receiving other channels from same transponder or even other transponder (aka "tuned" mode)
+- [pbiering] various cosmetic fixes
+
 2021-04-11: version 2.0.2
 - [pbiering] fixes/cleanup translations of key assignment setup menu
 

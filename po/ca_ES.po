@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-07 08:43+0200\n"
+"POT-Creation-Date: 2021-04-14 08:04+0200\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Jordi Vilà <jvila@tinet.org>\n"
 "Language-Team: Catalan <vdr@linuxtv.org>\n"
@@ -18,16 +18,37 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Switch to cached"
+msgid "Switch to"
 msgstr ""
 
 msgid "Channel"
 msgstr ""
 
-msgid "Switch to live"
+msgid "without"
+msgstr ""
+
+msgid "Teletext"
+msgstr "Teletext"
+
+msgid "live"
 msgstr ""
 
 msgid "Switch back to live"
+msgstr ""
+
+msgid "tuned"
+msgstr ""
+
+msgid "Switch back to"
+msgstr ""
+
+msgid "cached"
+msgstr ""
+
+msgid "Channel Tuning Not Successful"
+msgstr ""
+
+msgid "No Free Tuner Found - Use Cache Only"
 msgstr ""
 
 msgid "*** Config mode is not supported in 24-line mode ***"
@@ -45,11 +66,38 @@ msgstr ""
 msgid "not found"
 msgstr "no trobada"
 
+msgid "please wait"
+msgstr ""
+
 msgid "Displays teletext on the OSD"
 msgstr "Visualitza el teletext en l'OSD"
 
-msgid "Teletext"
-msgstr "Teletext"
+msgid "Zoom"
+msgstr "Zoom"
+
+msgid "Half page"
+msgstr "Mitja pàgina"
+
+msgid "Change channel"
+msgstr "Canvi cadena"
+
+msgid "Switch background"
+msgstr "Canvia el fons"
+
+msgid "Config"
+msgstr ""
+
+msgid "24-LineMode"
+msgstr ""
+
+msgid "Answer"
+msgstr ""
+
+msgid "Pause"
+msgstr ""
+
+msgid "Jump to..."
+msgstr "Salta a..."
 
 msgid "Latin 1"
 msgstr ""
@@ -128,33 +176,6 @@ msgstr ""
 
 msgid "  Page number"
 msgstr "  Nombre de pàgina"
-
-msgid "Zoom"
-msgstr "Zoom"
-
-msgid "Half page"
-msgstr "Mitja pàgina"
-
-msgid "Change channel"
-msgstr "Canvi cadena"
-
-msgid "Switch background"
-msgstr "Canvia el fons"
-
-msgid "Config"
-msgstr ""
-
-msgid "24-LineMode"
-msgstr ""
-
-msgid "Answer"
-msgstr ""
-
-msgid "Pause"
-msgstr ""
-
-msgid "Jump to..."
-msgstr "Salta a..."
 
 msgid "Half Page"
 msgstr ""

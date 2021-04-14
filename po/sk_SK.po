@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: osdteletext-0.9.0\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-07 08:43+0200\n"
+"POT-Creation-Date: 2021-04-14 08:04+0200\n"
 "PO-Revision-Date: 2011-02-15 21:11+0100\n"
 "Last-Translator: Milan Hrala <hrala.milan@gmail.com>\n"
 "Language-Team: Slovak <hrala.milan@gmail.com>\n"
@@ -16,16 +16,37 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Switch to cached"
+msgid "Switch to"
 msgstr ""
 
 msgid "Channel"
 msgstr ""
 
-msgid "Switch to live"
+msgid "without"
+msgstr ""
+
+msgid "Teletext"
+msgstr "Teletext"
+
+msgid "live"
 msgstr ""
 
 msgid "Switch back to live"
+msgstr ""
+
+msgid "tuned"
+msgstr ""
+
+msgid "Switch back to"
+msgstr ""
+
+msgid "cached"
+msgstr ""
+
+msgid "Channel Tuning Not Successful"
+msgstr ""
+
+msgid "No Free Tuner Found - Use Cache Only"
 msgstr ""
 
 msgid "*** Config mode is not supported in 24-line mode ***"
@@ -43,11 +64,38 @@ msgstr ""
 msgid "not found"
 msgstr "nenájdená"
 
+msgid "please wait"
+msgstr ""
+
 msgid "Displays teletext on the OSD"
 msgstr "Zobrazí teletext na OSD"
 
-msgid "Teletext"
-msgstr "Teletext"
+msgid "Zoom"
+msgstr "Zväčšenie"
+
+msgid "Half page"
+msgstr "Polovica strany"
+
+msgid "Change channel"
+msgstr "Zmena kanálu"
+
+msgid "Switch background"
+msgstr "Prepnúť na pozadí"
+
+msgid "Config"
+msgstr ""
+
+msgid "24-LineMode"
+msgstr ""
+
+msgid "Answer"
+msgstr ""
+
+msgid "Pause"
+msgstr ""
+
+msgid "Jump to..."
+msgstr "Skoč na..."
 
 msgid "Latin 1"
 msgstr ""
@@ -126,33 +174,6 @@ msgstr "Klávesové skratky"
 
 msgid "  Page number"
 msgstr "  Číslo strany"
-
-msgid "Zoom"
-msgstr "Zväčšenie"
-
-msgid "Half page"
-msgstr "Polovica strany"
-
-msgid "Change channel"
-msgstr "Zmena kanálu"
-
-msgid "Switch background"
-msgstr "Prepnúť na pozadí"
-
-msgid "Config"
-msgstr ""
-
-msgid "24-LineMode"
-msgstr ""
-
-msgid "Answer"
-msgstr ""
-
-msgid "Pause"
-msgstr ""
-
-msgid "Jump to..."
-msgstr "Skoč na..."
 
 msgid "Half Page"
 msgstr ""

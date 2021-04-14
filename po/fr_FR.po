@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-07 08:43+0200\n"
+"POT-Creation-Date: 2021-04-14 08:04+0200\n"
 "PO-Revision-Date: 2009-01-10 19:32+0100\n"
 "Last-Translator: Nival Michaël\n"
 "Language-Team: French <vdr@linuxtv.org>\n"
@@ -19,16 +19,37 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Switch to cached"
+msgid "Switch to"
 msgstr ""
 
 msgid "Channel"
 msgstr ""
 
-msgid "Switch to live"
+msgid "without"
+msgstr ""
+
+msgid "Teletext"
+msgstr "Teletexte"
+
+msgid "live"
 msgstr ""
 
 msgid "Switch back to live"
+msgstr ""
+
+msgid "tuned"
+msgstr ""
+
+msgid "Switch back to"
+msgstr ""
+
+msgid "cached"
+msgstr ""
+
+msgid "Channel Tuning Not Successful"
+msgstr ""
+
+msgid "No Free Tuner Found - Use Cache Only"
 msgstr ""
 
 msgid "*** Config mode is not supported in 24-line mode ***"
@@ -46,11 +67,38 @@ msgstr ""
 msgid "not found"
 msgstr "pas trouvé"
 
+msgid "please wait"
+msgstr ""
+
 msgid "Displays teletext on the OSD"
 msgstr "Affiche le télétexte sur l'OSD"
 
-msgid "Teletext"
-msgstr "Teletexte"
+msgid "Zoom"
+msgstr "Zoom"
+
+msgid "Half page"
+msgstr "Demi-Page"
+
+msgid "Change channel"
+msgstr "Changer la chaîne"
+
+msgid "Switch background"
+msgstr "Change le fond d'écran"
+
+msgid "Config"
+msgstr ""
+
+msgid "24-LineMode"
+msgstr ""
+
+msgid "Answer"
+msgstr ""
+
+msgid "Pause"
+msgstr ""
+
+msgid "Jump to..."
+msgstr "Aller à..."
 
 msgid "Latin 1"
 msgstr ""
@@ -129,33 +177,6 @@ msgstr "Attribution des touches"
 
 msgid "  Page number"
 msgstr "  Nombre de pages"
-
-msgid "Zoom"
-msgstr "Zoom"
-
-msgid "Half page"
-msgstr "Demi-Page"
-
-msgid "Change channel"
-msgstr "Changer la chaîne"
-
-msgid "Switch background"
-msgstr "Change le fond d'écran"
-
-msgid "Config"
-msgstr ""
-
-msgid "24-LineMode"
-msgstr ""
-
-msgid "Answer"
-msgstr ""
-
-msgid "Pause"
-msgstr ""
-
-msgid "Jump to..."
-msgstr "Aller à..."
 
 msgid "Half Page"
 msgstr ""
