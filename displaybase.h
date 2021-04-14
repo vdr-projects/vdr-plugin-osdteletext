@@ -230,8 +230,8 @@ public:
     void DrawClock();
     // Draw current time to OSD
 
-    void DrawPageId(const char *text, const enumTeletextColor cText = ttcWhite);
-    // Draw Page ID string to OSD with optional text color
+    void DrawPageId(const char *text, const enumTeletextColor cText = ttcWhite, const bool boxed_always = false);
+    // Draw Page ID string to OSD with optional text color and optional always in boxed mode
 
     void DrawMessage(const char *txt1, const char *txt2 = NULL, const enumTeletextColor cFrame = ttcWhite, const enumTeletextColor cText = ttcWhite, const enumTeletextColor cBackground = ttcBlack);
     // Draw a framed, centered message box to OSD with optional(default) color definition for frame(white), text(white), background(black) and a 2nd line

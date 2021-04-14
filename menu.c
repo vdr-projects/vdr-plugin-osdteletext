@@ -896,11 +896,11 @@ void TeletextBrowser::ShowPageNumber() {
 
    if (ChannelInfo == ChannelIsTuned) {
       str[7]='t';
-      Display::DrawPageId(str, ttcMagenta); // colored
+      Display::DrawPageId(str, ttcMagenta, true); // colored
    }
    else if (liveChannelNumber != currentChannelNumber) {
       str[7]='c';
-      Display::DrawPageId(str, ttcCyan); // colored
+      Display::DrawPageId(str, ttcCyan, true); // colored
    }
    else
       Display::DrawPageId(str);

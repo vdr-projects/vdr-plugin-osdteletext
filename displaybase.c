@@ -719,15 +719,15 @@ void cDisplay::ClearPage(void) {
 };
 
 
-void cDisplay::DrawPageId(const char *text, const enumTeletextColor cText) {
+void cDisplay::DrawPageId(const char *text, const enumTeletextColor cText, const bool boxed_always) {
     // Draw Page ID string to OSD
     static char text_last[9] = ""; // remember
     static bool paused_last = false;
     cTeletextChar c;
 
-    DEBUG_OT_DRPI("called with text='%s' text_last='%s' Boxed=%d HasConceal=%d GetConceal=%d", text, text_last, Boxed, HasConceal(), GetConceal());
+    DEBUG_OT_DRPI("called with text='%s' text_last='%s' Boxed=%d HasConceal=%d GetConceal=%d boxed_always=%s", text, text_last, Boxed, HasConceal(), GetConceal(), BOOLTOTEXT(boxed_always));
 
-    if (! GetPaused() && Boxed && PageIdDisplayedEver && (strcmp(text, text_last) == 0)) {
+    if ((! GetPaused()) && (! boxed_always) && Boxed && PageIdDisplayedEver && (strcmp(text, text_last) == 0)) {
         // don't draw PageId a 2nd time on boxed pages
         for (int i = 0; i < 8; i++) {
             c.SetFGColor(ttcTransparent);
