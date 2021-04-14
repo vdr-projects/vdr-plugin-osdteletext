@@ -949,7 +949,7 @@ bool TeletextBrowser::DecodePage() {
       Display::HoldFlush();
       char str[80];
       char str2[80];
-      snprintf(str2, sizeof(str2), "%d:  %s", channelClass.Number(), channelClass.Name());
+      snprintf(str2, sizeof(str2), "%d: %s", channelClass.Number(), channelClass.Name());
       enumTeletextColor color = ttcYellow;
       if (ChannelInfo == ChannelHasNoTeletext) {
          snprintf(str, sizeof(str), "%s %s (%s %s)", tr("Switch to"), tr("Channel"), tr("without"), tr("Teletext"));
