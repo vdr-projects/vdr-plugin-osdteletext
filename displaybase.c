@@ -738,6 +738,15 @@ void cDisplay::DrawPageId(const char *text, const enumTeletextColor cText, const
         return;
     };
 
+    if (boxed_always) {
+        for (int x = 8; x < 40; x++) {
+            // de-boxing of 1st line in case OSD is not matching live channel
+            c = GetChar(x, 0);
+            c.SetBoxedOut(false);
+            SetChar(x, 0, c);
+        };
+    };
+
     DrawText(0,0,text,8, cText);
     strncpy(text_last, text, sizeof(text_last) - 1);
     PageIdDisplayedEver = true;
