@@ -35,7 +35,7 @@ msgid "Switch back to live"
 msgstr "Wechsle zurück zu laufendem"
 
 msgid "tuned"
-msgstr "eingestellt"
+msgstr "eingestelltem"
 
 msgid "Switch back to"
 msgstr "Schalte zurück zu"
