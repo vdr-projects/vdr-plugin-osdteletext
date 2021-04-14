@@ -135,46 +135,48 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelInfo info
    //so this self-Pointer.
    if (self) {
       char str[80];
+      char str2[80];
       Display::ClearPage();
       enumTeletextColor color = ttcBlue;
+      snprintf(str2, sizeof(str2), "%d: %s", channelClass.Number(), channelClass.Name());
 
       ChannelInfo = info; // store info
 
       if (info == ChannelHasNoTeletext) {
-         snprintf(str, sizeof(str), "%s %s: %s (%s %s)", tr("Switch to"), tr("Channel"), channelClass.Name(), tr("no"), tr("Teletext"));
+         snprintf(str, sizeof(str), "%s %s (%s %s)", tr("Switch to"), tr("Channel"), tr("without"), tr("Teletext"));
          color = ttcRed;
       }
       else if (info == ChannelIsLive) {
-         snprintf(str, sizeof(str), "%s %s %s: %s", tr("Switch to"), tr("live"), tr("Channel"), channelClass.Name());
+         snprintf(str, sizeof(str), "%s %s %s", tr("Switch to"), tr("live"), tr("Channel"));
       }
       else if (info == ChannelIsTuned) {
          if (liveChannelNumber == currentChannelNumber) {
-            snprintf(str, sizeof(str), "%s %s: %s", tr("Switch back to live"), tr("Channel"), channelClass.Name());
+            snprintf(str, sizeof(str), "%s %s", tr("Switch back to live"), tr("Channel"));
             ChannelInfo = ChannelIsLive;
          } else {
-            snprintf(str, sizeof(str), "%s %s %s: %s", tr("Switch to"), tr("tuned"), tr("Channel"), channelClass.Name());
+            snprintf(str, sizeof(str), "%s %s %s", tr("Switch to"), tr("tuned"), tr("Channel"));
             color = ttcMagenta;
          };
       }
       else if (info == ChannelWasTuned) {
          // received trigger that TUNED channel has no longer a receiver
-         snprintf(str, sizeof(str), "%s %s %s: %s", tr("Switch back to"), tr("cached"), tr("Channel"), channelClass.Name());
+         snprintf(str, sizeof(str), "%s %s %s", tr("Switch back to"), tr("cached"), tr("Channel"));
          color = ttcCyan;
          ChannelInfo = ChannelIsCached; // new status
       }
       else if (info == ChannelIsCached) {
-         snprintf(str, sizeof(str), "%s %s %s: %s", tr("Switch to"), tr("cached"), tr("Channel"), channelClass.Name());
+         snprintf(str, sizeof(str), "%s %s %s", tr("Switch to"), tr("cached"), tr("Channel"));
          color = ttcCyan;
       }
       else if (liveChannelNumber != currentChannelNumber) {
-         snprintf(str, sizeof(str), "%s %s %s: %s", tr("Switch to"), tr("cached"), tr("Channel"), channelClass.Name());
+         snprintf(str, sizeof(str), "%s %s %s", tr("Switch to"), tr("cached"), tr("Channel"));
          color = ttcCyan;
       }
       else {
-         snprintf(str, sizeof(str), "%s %s %s: %s", tr("Switch back to"), tr("live"), tr("Channel"), channelClass.Name());
+         snprintf(str, sizeof(str), "%s %s %s", tr("Switch back to"), tr("live"), tr("Channel"));
       };
 
-      Display::DrawMessage(str, color);
+      Display::DrawMessage(str, str2, color);
       sleep(1);
 
       self->ShowPage();
@@ -946,20 +948,21 @@ bool TeletextBrowser::DecodePage() {
 
       Display::HoldFlush();
       char str[80];
+      char str2[80];
+      snprintf(str2, sizeof(str2), "%d:  %s", channelClass.Number(), channelClass.Name());
       enumTeletextColor color = ttcYellow;
       if (ChannelInfo == ChannelHasNoTeletext) {
-         snprintf(str, sizeof(str), "%s %s: %s (%s %s)", tr("Switch to"), tr("Channel"), channelClass.Name(), tr("no"), tr("Teletext"));
+         snprintf(str, sizeof(str), "%s %s (%s %s)", tr("Switch to"), tr("Channel"), tr("without"), tr("Teletext"));
          color = ttcRed;
       } else {
          ShowPageNumber();
-         snprintf(str, sizeof(str), "%s %3x-%02x%s%s %s%s%s%s: %s",tr("Page"),currentPage, currentSubPage
+         snprintf(str, sizeof(str), "%s %3x-%02x%s%s %s%s%s%s",tr("Page"),currentPage, currentSubPage
             , (ChannelInfo == ChannelIsCached) ? " " : ""
             , (ChannelInfo == ChannelIsCached) ? tr("in cache") : ""
             , tr("not found")
             , ((ChannelInfo == ChannelIsTuned) || (ChannelInfo == ChannelIsLive)) ? " (" : ""
             , ((ChannelInfo == ChannelIsTuned) || (ChannelInfo == ChannelIsLive)) ? tr("please wait") : ""
             , ((ChannelInfo == ChannelIsTuned) || (ChannelInfo == ChannelIsLive)) ? ")" : ""
-            , channelClass.Name()
          );
          if (ChannelInfo == ChannelIsTuned) {
             color = ttcMagenta;
@@ -967,7 +970,7 @@ bool TeletextBrowser::DecodePage() {
             color = ttcRed;
          };
       };
-      Display::DrawMessage(str, color);
+      Display::DrawMessage(str, str2, color);
       UpdateFooter();
       Display::ReleaseFlush();
 
