@@ -269,8 +269,10 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
                }
                else {
                   needClearMessage=true;
-                  Display::DrawMessage(trVDR("*** Invalid Channel ***"), ttcRed);
-                  sleep(1);
+                  delayClearMessage = 3;
+                  char str[9];
+                  snprintf(str, sizeof(str), "%d", selectingChannelNumber);
+                  Display::DrawMessage(trVDR("*** Invalid Channel ***"), str, ttcRed);
                }
             } else {
                if (selectingChannelNumber != liveChannelNumber) {
