@@ -43,6 +43,7 @@ tChannelID TeletextBrowser::channel;
 cChannel TeletextBrowser::channelClass;
 int TeletextBrowser::currentChannelNumber=0;
 int TeletextBrowser::liveChannelNumber=0;
+bool TeletextBrowser::switchChannelInProgress = false;
 eChannelInfo TeletextBrowser::ChannelInfo;
 TeletextBrowser* TeletextBrowser::self=0;
 tColor clrBackground;
@@ -52,6 +53,7 @@ eTeletextActionConfig configMode = NotActive;
 
 TeletextBrowser::TeletextBrowser(cTxtStatus *txtSt,Storage *s)
   : cursorPos(0), pageFound(true), selectingChannel(false),
+    delayClearMessage(0),
     needClearMessage(false), selectingChannelNumber(-1), txtStatus(txtSt),
     suspendedReceiving(false), previousPage(currentPage),
     previousSubPage(currentSubPage), pageBeforeNumberInput(currentPage),
@@ -95,7 +97,9 @@ bool TeletextBrowser::CheckIsValidChannel(int number) {
 }
 
 void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelInfo info) {
-   DEBUG_OT_TXTRCVC("called with ChannelNumber=%d info=%d", ChannelNumber, info);
+   static eChannelInfo infoLast = ChannelIsLive;
+   static int ChannelNumberLast = 0;
+   DEBUG_OT_TXTRCVC("called with ChNu=%d ChNuLa=%d liChNu=%d info=%d infoLa=%d switchChannelInProgress=%s", ChannelNumber, ChannelNumberLast, liveChannelNumber, info, infoLast, BOOLTOTEXT(switchChannelInProgress));
 #if defined(APIVERSNUM) && APIVERSNUM >= 20301
    LOCK_CHANNELS_READ;
    const cChannel *chan=Channels->GetByNumber(ChannelNumber);
@@ -115,6 +119,8 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelInfo info
 
    if (info == ChannelIsLive)
       liveChannelNumber= ChannelNumber; // remember active live channel
+
+   ChannelInfo = info; // store info
    
    //store page number of current channel
    IntMap::iterator it;
@@ -134,20 +140,24 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelInfo info
    //on the other hand, if active, the page should be shown.
    //so this self-Pointer.
    if (self) {
-      char str[80];
-      char str2[80];
+      char str[80] = "";
+      char str2[80] = "";
       Display::ClearPage();
       enumTeletextColor color = ttcBlue;
       snprintf(str2, sizeof(str2), "%d: %s", channelClass.Number(), channelClass.Name());
 
-      ChannelInfo = info; // store info
+      self->delayClearMessage = 1; // default
 
       if (info == ChannelHasNoTeletext) {
          snprintf(str, sizeof(str), "%s %s (%s %s)", tr("Switch to"), tr("Channel"), tr("without"), tr("Teletext"));
          color = ttcRed;
       }
       else if (info == ChannelIsLive) {
-         snprintf(str, sizeof(str), "%s %s %s", tr("Switch to"), tr("live"), tr("Channel"));
+         if (infoLast == ChannelIsLive) {
+            // don't display message during zapping
+         } else {
+            snprintf(str, sizeof(str), "%s %s %s", tr("Switch to"), tr("live"), tr("Channel"));
+         };
       }
       else if (info == ChannelIsTuned) {
          if (liveChannelNumber == currentChannelNumber) {
@@ -160,26 +170,36 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelInfo info
       }
       else if (info == ChannelWasTuned) {
          // received trigger that TUNED channel has no longer a receiver
-         snprintf(str, sizeof(str), "%s %s %s", tr("Switch back to"), tr("cached"), tr("Channel"));
-         color = ttcCyan;
+         if (! switchChannelInProgress) {
+            // but no channel switch action in progress -> display message
+            snprintf(str, sizeof(str), "%s %s %s", tr("Switch back to"), tr("cached"), tr("Channel"));
+            color = ttcCyan;
+         } else {
+            // suppress a message which will be shortly overwritten anyhow by starting receiver on new channel
+         };
          ChannelInfo = ChannelIsCached; // new status
       }
       else if (info == ChannelIsCached) {
          snprintf(str, sizeof(str), "%s %s %s", tr("Switch to"), tr("cached"), tr("Channel"));
          color = ttcCyan;
       }
-      else if (liveChannelNumber != currentChannelNumber) {
-         snprintf(str, sizeof(str), "%s %s %s", tr("Switch to"), tr("cached"), tr("Channel"));
-         color = ttcCyan;
-      }
       else {
-         snprintf(str, sizeof(str), "%s %s %s", tr("Switch back to"), tr("live"), tr("Channel"));
+         // all cases catched
       };
 
-      Display::DrawMessage(str, str2, color);
-      sleep(1);
+      // store for acting related on next call
+      infoLast = info;
+      ChannelNumberLast = ChannelNumber;
+
+      // clear status
+      switchChannelInProgress = false;
 
       self->ShowPage();
+
+      if (strlen(str) > 0) {
+         self->needClearMessage=true;
+         Display::DrawMessage(str, str2, color);
+      };
    }
 }
 
@@ -198,19 +218,23 @@ bool TeletextBrowser::TriggerChannelSwitch(const int channelNumber) {
 
    cDevice *device = cDevice::GetDeviceForTransponder(newChannel, TRANSFERPRIORITY - 1);
    if (device != NULL) {
-      needClearMessage=true;
+      needClearMessage = true;
+      switchChannelInProgress = true;
       if (device->SwitchChannel(newChannel, (channelNumber == liveChannelNumber) ? true : false)) {
          // Display::DrawMessage(tr("Channel Tuning Successful"), ttcGreen);
          result = true;
       } else {
+         needClearMessage = true;
+         delayClearMessage = 5;
          Display::DrawMessage(tr("Channel Tuning Not Successful"), ttcRed);
       };
    } else {
+      needClearMessage = true;
+      delayClearMessage = 2;
       Display::DrawMessage(tr("No Free Tuner Found - Use Cache Only"), ttcYellow);
       ChannelSwitched(channelNumber, ChannelIsCached);
    };
 
-   sleep(1);
    return (result);
 };
 
@@ -293,22 +317,30 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
       case kBack: return osEnd; 
 
       case kNone: //approx. every second
-         DEBUG_OT_KNONE("section 'kNone' reached");
+         DEBUG_OT_KNONE("section 'kNone' reached with GetPaused=%s needClearMessage=%s delayClearMessage=%d", BOOLTOTEXT(Display::GetPaused()), BOOLTOTEXT(needClearMessage), delayClearMessage);
          //checking if page changed
-         if ( pageFound && ttSetup.autoUpdatePage && cursorPos==0 && !selectingChannel && (PageCheckSum() != checkSum) ) {
+         if ((delayClearMessage == 0) && ! Display::GetPaused() && pageFound && ttSetup.autoUpdatePage && cursorPos==0 && !selectingChannel && (PageCheckSum() != checkSum) ) {
             DEBUG_OT_KNONE("section 'kNone' detected: 'page change'");
-            if (! Display::GetPaused())
-               ShowPage();
+            ShowPage();
          //check if page was previously not found and is available now
-         } else if (!pageFound && CheckFirstSubPage(0)) {
+         } else if ((delayClearMessage == 0) && !pageFound && CheckFirstSubPage(0)) {
             DEBUG_OT_KNONE("section 'kNone' detected: 'previous not found page is now available'");
             ShowPage();
          } else {
             DEBUG_OT_KNONE("section 'kNone' default");
             if (needClearMessage) {
-               needClearMessage=false;
-               Display::ClearMessage();
-            }
+               if (delayClearMessage > 0) {
+                  delayClearMessage--;
+               } else {
+                  needClearMessage=false;
+                  Display::ClearMessage();
+                  if (!pageFound)
+                     // (re-)display "not found" information
+                     ShowPage();
+               };
+            } else {
+               delayClearMessage = 0; // reset
+            };
             if (! selectingChannel && pageFound) {
                //updating clock
                if (! Display::GetPaused())
@@ -610,9 +642,9 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
          DEBUG_OT_KEYS("key action: 'Config' lineMode24=%d configMode=%d", ttSetup.lineMode24, configMode);
          if (ttSetup.lineMode24) {
             // config mode is only supported in 25-line mode
-            Display::ClearMessage();
+            needClearMessage=true;
+            delayClearMessage = 3;
             Display::DrawMessage(tr("*** Config mode is not supported in 24-line mode ***"), ttcYellow);
-            sleep(1);
             break;
          };
          switch(configMode) {
@@ -972,6 +1004,7 @@ bool TeletextBrowser::DecodePage() {
             color = ttcRed;
          };
       };
+      needClearMessage = false;
       Display::DrawMessage(str, str2, color);
       UpdateFooter();
       Display::ReleaseFlush();
