@@ -26,7 +26,7 @@ enum eChannelInfo {
    ChannelIsTuned,
    ChannelIsCached,
    ChannelWasTuned,
-   ChannelHasNoTeletext,
+   ChannelHasNoTeletext
 };
 
 class TeletextBrowser : public cOsdObject {
