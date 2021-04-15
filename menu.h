@@ -63,6 +63,7 @@ protected:
    bool pageFound;
    bool selectingChannel;
    static eChannelInfo ChannelInfo;
+   int delayClearMessage;
    bool needClearMessage;
    int selectingChannelNumber;
    int checkSum;
@@ -80,6 +81,7 @@ protected:
    static cChannel channelClass;
    static int currentChannelNumber;
    static int liveChannelNumber;
+   static bool switchChannelInProgress;
    static TeletextBrowser* self;
    Storage *storage;
 private:
