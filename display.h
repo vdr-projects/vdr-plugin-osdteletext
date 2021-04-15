@@ -83,8 +83,8 @@ namespace Display {
         { if (display) display->DrawPageId(text); }
     inline void DrawPageId(const char *text, const enumTeletextColor cText)
         { if (display) display->DrawPageId(text, cText); }
-    inline void DrawPageId(const char *text, const enumTeletextColor cText, const bool boxed_always)
-        { if (display) display->DrawPageId(text, cText, boxed_always); }
+    inline void DrawPageId(const char *text, const enumTeletextColor cText, const bool AlwaysOnBoxed)
+        { if (display) display->DrawPageId(text, cText, AlwaysOnBoxed); }
 
     inline void DrawFooter(const char *textRed, const char *textGreen, const char* textYellow, const char *textBlue, const FooterFlags flag)
         { if (display) display->DrawFooter(textRed, textGreen, textYellow, textBlue, flag); }

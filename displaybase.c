@@ -719,15 +719,17 @@ void cDisplay::ClearPage(void) {
 };
 
 
-void cDisplay::DrawPageId(const char *text, const enumTeletextColor cText, const bool boxed_always) {
+void cDisplay::DrawPageId(const char *text, const enumTeletextColor cText, const bool AlwaysOnBoxed) {
     // Draw Page ID string to OSD
+    // In case of "Boxed" page: only until 1st page update unless "AlwaysOnBoxed" is set
+    // "AlwaysOnBoxed" also unhides the 1st line completly
     static char text_last[9] = ""; // remember
     static bool paused_last = false;
     cTeletextChar c;
 
-    DEBUG_OT_DRPI("called with text='%s' text_last='%s' Boxed=%d HasConceal=%d GetConceal=%d boxed_always=%s", text, text_last, Boxed, HasConceal(), GetConceal(), BOOLTOTEXT(boxed_always));
+    DEBUG_OT_DRPI("called with text='%s' text_last='%s' Boxed=%d HasConceal=%d GetConceal=%d AlwaysOnBoxed=%s", text, text_last, Boxed, HasConceal(), GetConceal(), BOOLTOTEXT(AlwaysOnBoxed));
 
-    if ((! GetPaused()) && (! boxed_always) && Boxed && PageIdDisplayedEver && (strcmp(text, text_last) == 0)) {
+    if ((! GetPaused()) && Boxed && (! AlwaysOnBoxed) && PageIdDisplayedEver && (strcmp(text, text_last) == 0)) {
         // don't draw PageId a 2nd time on boxed pages
         for (int i = 0; i < 8; i++) {
             c.SetFGColor(ttcTransparent);
@@ -738,7 +740,7 @@ void cDisplay::DrawPageId(const char *text, const enumTeletextColor cText, const
         return;
     };
 
-    if (boxed_always) {
+    if (Boxed && AlwaysOnBoxed) {
         for (int x = 8; x < 40; x++) {
             // de-boxing of 1st line in case OSD is not matching live channel
             c = GetChar(x, 0);
