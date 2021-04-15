@@ -1,6 +1,9 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
-2021-04-14: version 2.1.0
+2021-04-15:
+- [pbiering] finally catch and handle proper switching from tuned to live channel by outside trigger (e.g. RCU)
+
+2021-04-14:
 - [pbiering] replace all sleeps related to messages with a delay method, review/catch cases when a channel switch message should be displayed
 - [pbiering] include channel number in 'invalid channel' message
 - [pbiering] ChannelSwitch now supports receiving other channels from same transponder or even other transponder (aka "tuned" mode)

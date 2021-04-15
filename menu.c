@@ -168,6 +168,11 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelInfo info
             color = ttcMagenta;
          };
       }
+      else if (info == ChannelWasTunedNewChannelIsLive) {
+         // received trigger that TUNED channel has no longer a receiver but new would be a LIVE channel
+         // suppress a message which will be shortly overwritten anyhow by starting receiver on new channel
+         ChannelInfo = ChannelIsCached; // new status
+      }
       else if (info == ChannelWasTuned) {
          // received trigger that TUNED channel has no longer a receiver
          if (! switchChannelInProgress) {
@@ -187,13 +192,6 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelInfo info
          // all cases catched
       };
 
-      // store for acting related on next call
-      infoLast = info;
-      ChannelNumberLast = ChannelNumber;
-
-      // clear status
-      switchChannelInProgress = false;
-
       self->ShowPage();
 
       if (strlen(str) > 0) {
@@ -201,6 +199,13 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelInfo info
          Display::DrawMessage(str, str2, color);
       };
    }
+
+   // store for acting related on next call
+   infoLast = info;
+   ChannelNumberLast = ChannelNumber;
+
+   // clear status
+   switchChannelInProgress = false;
 }
 
 
