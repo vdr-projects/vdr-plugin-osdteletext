@@ -187,13 +187,6 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelInfo info
          // all cases catched
       };
 
-      // store for acting related on next call
-      infoLast = info;
-      ChannelNumberLast = ChannelNumber;
-
-      // clear status
-      switchChannelInProgress = false;
-
       self->ShowPage();
 
       if (strlen(str) > 0) {
@@ -201,6 +194,13 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelInfo info
          Display::DrawMessage(str, str2, color);
       };
    }
+
+   // store for acting related on next call
+   infoLast = info;
+   ChannelNumberLast = ChannelNumber;
+
+   // clear status
+   switchChannelInProgress = false;
 }
 
 
