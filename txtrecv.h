@@ -59,6 +59,7 @@ private:
    Storage *storage;
    const cDevice *device;
    const bool live;
+   bool flagStopByLiveChannelSwitch;
    const cChannel* channel;
    long int statTxtReceiverPageCount;
    time_t statTxtReceiverTimeStart;
@@ -74,6 +75,7 @@ public:
    cTxtReceiver(const cDevice *dev, const bool live, const cChannel* chan, bool storeTopText, Storage* storage);
    virtual ~cTxtReceiver();
    virtual void Stop();
+   void SetFlagStopByLiveChannelSwitch(bool flag) { flagStopByLiveChannelSwitch = flag; };
 };
 
 class cTxtStatus : public cStatus {

@@ -168,6 +168,11 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelInfo info
             color = ttcMagenta;
          };
       }
+      else if (info == ChannelWasTunedNewChannelIsLive) {
+         // received trigger that TUNED channel has no longer a receiver but new would be a LIVE channel
+         // suppress a message which will be shortly overwritten anyhow by starting receiver on new channel
+         ChannelInfo = ChannelIsCached; // new status
+      }
       else if (info == ChannelWasTuned) {
          // received trigger that TUNED channel has no longer a receiver
          if (! switchChannelInProgress) {
