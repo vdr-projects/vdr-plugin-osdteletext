@@ -318,7 +318,7 @@ void cPluginTeletextosd::Stop(void)
 void cPluginTeletextosd::initTexts() {
    if (cTeletextSetupPage::actionKeyNames)
       return;
-   //TODO: rewrite this in the xy[0].cd="fg"; form
+
    static const ActionKeyName st_actionKeyNames[] =
    {
       { "Action_kRed",      trVDR("Key$Red") },
