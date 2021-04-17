@@ -83,7 +83,7 @@ msgid "Switch background"
 msgstr "Hintergrund ändern"
 
 msgid "Config"
-msgstr "Konfiguration"
+msgstr "Konfig"
 
 msgid "24-LineMode"
 msgstr "24-ZeilenModus"
