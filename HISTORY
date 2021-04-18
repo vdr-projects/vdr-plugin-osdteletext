@@ -1,5 +1,9 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
+2021-04-18:
+- [pbiering] implement optional OSD Hotkey level feature (max. 9 levels with limiter)
+- [pbiering] rework dynamic menu creation related to 'jump to' to fix 'not working on last config entry' issue
+
 2021-04-15:
 - [pbiering] finally catch and handle proper switching from tuned to live channel by outside trigger (e.g. RCU)
 
