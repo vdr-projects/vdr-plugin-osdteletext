@@ -49,10 +49,13 @@ TeletextBrowser* TeletextBrowser::self=0;
 tColor clrBackground;
 bool clrBackgroundInit = false;
 
+extern int maxHotkeyLevel;
+
 eTeletextActionConfig configMode = NotActive;
 
 TeletextBrowser::TeletextBrowser(cTxtStatus *txtSt,Storage *s)
   : cursorPos(0), pageFound(true), selectingChannel(false),
+    hotkeyLevel(0),
     delayClearMessage(0),
     needClearMessage(false), selectingChannelNumber(-1), txtStatus(txtSt),
     suspendedReceiving(false), previousPage(currentPage),
@@ -666,6 +669,56 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
          ShowPage();
          break;
 
+      case HotkeyLevelPlus:
+      case HotkeyLevelMinus:
+         if (ttSetup.lineMode24) {
+            // HotkeyLevel switch mode is only supported in 25-line mode
+            // otherwise one can get lost and has to enter plugin setup menu to disable 24-line mode there
+            needClearMessage=true;
+            delayClearMessage = 3;
+            Display::DrawMessage(tr("Hotkey level change is not supported in 24-line mode"), ttcYellow);
+            break;
+         };
+
+         if (maxHotkeyLevel <= 1) {
+            // HotkeyLevel disabled by command line option limit to 1 or default
+            needClearMessage=true;
+            delayClearMessage = 3;
+            Display::DrawMessage(tr("Hotkey levels are disabled"), ttcRed);
+            break;
+         };
+
+         if (ttSetup.hotkeyLevelMax <= 2) {
+            // HotkeyLevel not active by setup limit to 1
+            needClearMessage=true;
+            delayClearMessage = 3;
+            Display::DrawMessage(tr("Hotkey levels are not active"), ttcYellow);
+            break;
+         };
+
+         switch(e) {
+            case HotkeyLevelPlus:
+               DEBUG_OT_KEYS("key action: 'HotkeyLevel'/'HotkeyLevelPlus' current hotkeyLevel=%d ttSetup.hotkeyLevelMax=%d", hotkeyLevel, ttSetup.hotkeyLevelMax);
+               hotkeyLevel++;
+               if (hotkeyLevel == ttSetup.hotkeyLevelMax)
+                  hotkeyLevel = 0; // rollover to minimum
+               ShowPage();
+               break;
+
+            case HotkeyLevelMinus:
+               DEBUG_OT_KEYS("key action: 'HotkeyLevelMinus' current hotkeyLevel=%d ttSetup.hotkeyLevelMax=%d", hotkeyLevel, ttSetup.hotkeyLevelMax);
+               hotkeyLevel--;
+               if (hotkeyLevel < 0)
+                  hotkeyLevel = ttSetup.hotkeyLevelMax - 1; // rollover to maximum
+               break;
+
+            default:
+               // will not reached but avoids compiler warning
+               break;
+         };
+         ShowPage();
+         break;
+
       case ToggleConceal:
          DEBUG_OT_KEYS("key action: 'ToggleConceal' Concealed=%d -> %d", Display::GetConceal(), not(Display::GetConceal()));
          Display::SetConceal(not(Display::GetConceal()));
@@ -732,10 +785,10 @@ void TeletextBrowser::ChangeBackground()
 
 eTeletextAction TeletextBrowser::TranslateKey(eKeys Key) {
    switch(Key) {
-      case kRed:     return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyRed];
-      case kGreen:   return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyGreen];
-      case kYellow:  return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyYellow];
-      case kBlue:    return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyBlue];
+      case kRed:     return (eTeletextAction)ttSetup.mapHotkeyToAction[ActionHotkeyRed]   [hotkeyLevel];
+      case kGreen:   return (eTeletextAction)ttSetup.mapHotkeyToAction[ActionHotkeyGreen] [hotkeyLevel];
+      case kYellow:  return (eTeletextAction)ttSetup.mapHotkeyToAction[ActionHotkeyYellow][hotkeyLevel];
+      case kBlue:    return (eTeletextAction)ttSetup.mapHotkeyToAction[ActionHotkeyBlue]  [hotkeyLevel];
       case kPlay:    return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyPlay];
       //case kPause:   return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyPause]; // not passed into plugin somehow
       case kOk:      return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyOk];
@@ -1061,7 +1114,9 @@ void TeletextBrowser::UpdateFooter() {
       DEBUG_OT_FOOT("AkRed=%d AkGreen=%d AkYellow=%d AkBlue=%d", AkRed, AkGreen, AkYellow, AkBlue);
 
 #define CONVERT_ACTION_TO_TEXT(text, mode) \
-      if ((int) mode < 100) { \
+      if ((mode == HotkeyLevelPlus) || (mode == HotkeyLevelMinus)) { \
+         snprintf(text, sizeof(text), "%s %d", tr(st_modesFooter[mode]), (int) hotkeyLevel + 1); \
+      } else if ((int) mode < 100) { \
          snprintf(text, sizeof(text), "%s", tr(st_modesFooter[mode])); \
       } else if ((int) mode < 999) { \
          snprintf(text, sizeof(text), "-> %03d", mode); \
@@ -1185,6 +1240,7 @@ TeletextSetup::TeletextSetup()
     //OSDHeight+width default values given in Start()
     OSDheightPct(100), OSDwidthPct(100),
     OSDtopPct(0), OSDleftPct(0),
+    hotkeyLevelMax(1),
     //use the value set for VDR's min user inactivity.
     //Initially this value could be changed via the plugin's setup, but I removed that
     //because there is no advantage, but a possible problem when VDR's value is change
@@ -1199,14 +1255,71 @@ TeletextSetup::TeletextSetup()
    //init key bindings
    for (int i=0; i < LastActionKey; i++)
       mapKeyToAction[i]=(eTeletextAction)0;
-   mapKeyToAction[ActionKeyRed]=DarkScreen;
-   mapKeyToAction[ActionKeyGreen]=(eTeletextAction)100;
-   mapKeyToAction[ActionKeyYellow]=HalfPage;
-   mapKeyToAction[ActionKeyBlue]=Zoom;
+
    mapKeyToAction[ActionKeyStop]=Config;
    mapKeyToAction[ActionKeyFastRew]=LineMode24;
    mapKeyToAction[ActionKeyFastFwd]=ToggleConceal;
    mapKeyToAction[ActionKeyOk]=TogglePause;
+
+   // init Hotkey bindings
+   for (int i=0; i < LastActionHotkey; i++)
+      for (int l = 0; l < HOTKEY_LEVEL_MAX_LIMIT; l++)
+         mapHotkeyToAction[i][l]=(eTeletextAction)0;
+
+   int l = 0;
+   // hot key mapping for level 1 (default)
+   if (l < HOTKEY_LEVEL_MAX_LIMIT) {
+      mapHotkeyToAction[ActionHotkeyRed]   [l] = DarkScreen;
+      mapHotkeyToAction[ActionHotkeyGreen] [l] = (eTeletextAction) 100; // page 100
+      mapHotkeyToAction[ActionHotkeyYellow][l] = HalfPage;
+      mapHotkeyToAction[ActionHotkeyBlue]  [l] = Zoom;
+   };
+
+   // hot key mapping for level 2
+   l++;
+   if (l < HOTKEY_LEVEL_MAX_LIMIT) {
+      mapHotkeyToAction[ActionHotkeyRed]   [l] = SwitchChannel;
+      mapHotkeyToAction[ActionHotkeyGreen] [l] = ToggleConceal;
+      mapHotkeyToAction[ActionHotkeyYellow][l] = TogglePause;
+      mapHotkeyToAction[ActionHotkeyBlue]  [l] = HotkeyLevelPlus;
+   };
+
+   // hot key mapping for level 3
+   l++;
+   if (l < HOTKEY_LEVEL_MAX_LIMIT) {
+      mapHotkeyToAction[ActionHotkeyRed]   [l] = LineMode24;
+      mapHotkeyToAction[ActionHotkeyGreen] [l] = (eTeletextAction) 150; // page 150 ARD Subtitle
+      mapHotkeyToAction[ActionHotkeyYellow][l] = (eTeletextAction) 777; // page 777 3sat Subtitle
+      mapHotkeyToAction[ActionHotkeyBlue]  [l] = HotkeyLevelPlus;
+   };
+
+   // hot key mapping for level 4
+   l++;
+   if (l < HOTKEY_LEVEL_MAX_LIMIT) {
+      mapHotkeyToAction[ActionHotkeyRed]   [l] = HotkeyLevelMinus;
+      mapHotkeyToAction[ActionHotkeyGreen] [l] = (eTeletextAction) 200; // page 200
+      mapHotkeyToAction[ActionHotkeyYellow][l] = (eTeletextAction) 300; // page 300
+      mapHotkeyToAction[ActionHotkeyBlue]  [l] = HotkeyLevelPlus;
+   };
+
+   // hot key mapping for level 5
+   l++;
+   if (l < HOTKEY_LEVEL_MAX_LIMIT) {
+      mapHotkeyToAction[ActionHotkeyRed]   [l] = (eTeletextAction) 898; // page 898 3sat Test#1
+      mapHotkeyToAction[ActionHotkeyGreen] [l] = (eTeletextAction) 199; // page 199 ARD/ZDF Test
+      mapHotkeyToAction[ActionHotkeyYellow][l] = (eTeletextAction) 886; // page 886 ORF2 Test
+      mapHotkeyToAction[ActionHotkeyBlue]  [l] = HotkeyLevelPlus;
+   };
+
+   // default for other levels
+   l++;
+   while (l < HOTKEY_LEVEL_MAX_LIMIT) {
+      mapHotkeyToAction[ActionHotkeyRed]   [l] = (eTeletextAction) 100 + l; // page 100 + l
+      mapHotkeyToAction[ActionHotkeyGreen] [l] = (eTeletextAction) 200 + l; // page 200 + l
+      mapHotkeyToAction[ActionHotkeyYellow][l] = (eTeletextAction) 300 + l; // page 300 + l
+      mapHotkeyToAction[ActionHotkeyBlue]  [l] = HotkeyLevelPlus;
+      l++;
+   }
 }
 
 // vim: ts=3 sw=3 et

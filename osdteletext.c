@@ -32,7 +32,7 @@ using namespace std;
 
 #define NUMELEMENTS(x) (sizeof(x) / sizeof(x[0]))
 
-static const char *VERSION        = "2.1.0.reg.2";
+static const char *VERSION        = "2.2.0.alpha.1";
 static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
 static const char *MAINMENUENTRY  = trNOOP("Teletext");
 
@@ -72,9 +72,9 @@ class cTeletextSetupPage;
 class ActionEdit {
    public:
       void Init(cTeletextSetupPage*, int, cMenuEditIntItem  *, cMenuEditStraItem *);
+      void Init(cTeletextSetupPage*, int, int, bool, cMenuEditIntItem  *, cMenuEditStraItem *);
       cMenuEditStraItem *action;
       cMenuEditIntItem  *number;
-      bool visible;
    };
 
 struct ActionKeyName {
@@ -86,21 +86,31 @@ class cTeletextSetupPage : public cMenuSetupPage {
 friend class ActionEdit;
 private:
    TeletextSetup temp;
+   int hotkeyLevel;
    int tempPageNumber[LastActionKey];
+   int tempPageNumberHotkey[LastActionHotkey][HOTKEY_LEVEL_MAX_LIMIT];
    int tempConfiguredClrBackground; //must be a signed int
+   cOsdItem *menuSectionKeysItem;
+   cOsdItem *hotkeyLevelMaxItem;
+   cOsdItem *hotkeyLevelItem;
 protected:
    virtual void Store(void);
    ActionEdit ActionEdits[LastActionKey];
+   ActionEdit ActionEditsHotkey[LastActionHotkey][HOTKEY_LEVEL_MAX_LIMIT];
+   void SetupRefreshKeys(void);
+   void SetupRefreshHotkeys(void);
    virtual eOSState ProcessKey(eKeys Key);
 public:
    cTeletextSetupPage(void);
    static const ActionKeyName *actionKeyNames;
+   static const ActionKeyName *actionHotkeyNames;
    static const char **modes;
    //~cTeletextSetupPage(void);
    //void SetItemVisible(cOsdItem *Item, bool visible, bool callDisplay=false);
 };
 
 const ActionKeyName *cTeletextSetupPage::actionKeyNames = 0;
+const ActionKeyName *cTeletextSetupPage::actionHotkeyNames = 0;
 const char **cTeletextSetupPage::modes = 0;
 
 /*class MenuEditActionItem : public cMenuEditStraItem {
@@ -193,7 +203,7 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
                        if ((n >= 1) && (n <= HOTKEY_LEVEL_MAX_LIMIT)) {
                           maxHotkeyLevel = n;
                        } else {
-                          esyslog("osdteletext: maximum menu-level value out-of-range (skip): %s", optarg);
+                          esyslog("osdteletext: maximum key-level value out-of-range 1..%d (skip): %s", HOTKEY_LEVEL_MAX_LIMIT, optarg);
                        };
                     }
                     break;
@@ -321,6 +331,7 @@ void cPluginTeletextosd::Stop(void)
    SetupStore("OSDtopPct", ttSetup.OSDtopPct);
    SetupStore("OSDleftPct", ttSetup.OSDleftPct);
    SetupStore("OSDframePix", ttSetup.OSDframePix);
+   SetupStore("hotkeyLevelMax", ttSetup.hotkeyLevelMax);
    SetupStore("txtFontName", ttSetup.txtFontName);
    SetupStore("txtVoffset", ttSetup.txtVoffset);
    SetupStore("lineMode24", ttSetup.lineMode24);
@@ -339,10 +350,6 @@ void cPluginTeletextosd::initTexts() {
 
    static const ActionKeyName st_actionKeyNames[] =
    {
-      { "Action_kRed",      trVDR("Key$Red") },
-      { "Action_kGreen",    trVDR("Key$Green") },
-      { "Action_kYellow",   trVDR("Key$Yellow") },
-      { "Action_kBlue",     trVDR("Key$Blue") },
       { "Action_kPlay",     trVDR("Key$Play") },
       { "Action_kStop",     trVDR("Key$Stop") },
       { "Action_kFastFwd",  trVDR("Key$FastFwd") },
@@ -351,6 +358,18 @@ void cPluginTeletextosd::initTexts() {
    };
 
    cTeletextSetupPage::actionKeyNames = st_actionKeyNames;
+
+
+   static const ActionKeyName st_actionHotkeyNames[] =
+   {
+      { "Action_kRed",      trVDR("Key$Red") },
+      { "Action_kGreen",    trVDR("Key$Green") },
+      { "Action_kYellow",   trVDR("Key$Yellow") },
+      { "Action_kBlue",     trVDR("Key$Blue") },
+   };
+
+   cTeletextSetupPage::actionHotkeyNames = st_actionHotkeyNames;
+
 
    static const char *st_modes[] =
    {
@@ -364,6 +383,8 @@ void cPluginTeletextosd::initTexts() {
       tr("24-LineMode"),
       tr("Answer"),
       tr("Pause"),
+      tr("Hotkey Level+"),
+      tr("Hotkey Level-"),
       tr("Jump to...") // has to stay always as the last one
    };
 
@@ -424,6 +445,16 @@ bool cPluginTeletextosd::SetupParse(const char *Name, const char *Value)
   else if (!strcasecmp(Name, "OSDhcentPct")) { DSYSLOG_IGNORE_OPTION } // 1.0.0 - 1.0.4
   else if (!strcasecmp(Name, "OSDvcentPct")) { DSYSLOG_IGNORE_OPTION } // 1.0.0 - 1.0.4
   else if (!strcasecmp(Name, "OSDframePct")) { DSYSLOG_IGNORE_OPTION } // > 1.0.6 && < 1.0.7
+  else if (!strcasecmp(Name, "hotkeyLevelMax")) {
+     ttSetup.hotkeyLevelMax = atoi(Value);
+     if (ttSetup.hotkeyLevelMax > maxHotkeyLevel) {
+        // limit by command line option maximum
+        ttSetup.hotkeyLevelMax = maxHotkeyLevel;
+     } else if (ttSetup.hotkeyLevelMax < 1) {
+        // minimum is 1
+        ttSetup.hotkeyLevelMax = 1;
+     };
+  }
   else {
      for (int i=0;i<LastActionKey;i++) {
         if (!strcasecmp(Name, cTeletextSetupPage::actionKeyNames[i].internalName)) {
@@ -432,10 +463,46 @@ bool cPluginTeletextosd::SetupParse(const char *Name, const char *Value)
         }
      }
 
+     // parse setup related to Hotkey with levels
+     for (int i = 0; i < LastActionHotkey; i++) {
+        if (! strcasecmp(Name, cTeletextSetupPage::actionHotkeyNames[i].internalName)) {
+           // backwards compatibility
+           DEBUG_OT_SETUP("Hotkey (menu level ==1) config found: %s (Name=%s)\n", cTeletextSetupPage::actionHotkeyNames[i].internalName, Name);
+           // level 0 has no suffix for compatibility reason
+           ttSetup.mapHotkeyToAction[i][0]=(eTeletextAction)atoi(Value);
+           return true;
+        };
+
+        if (! strncasecmp(Name, cTeletextSetupPage::actionHotkeyNames[i].internalName, strlen(cTeletextSetupPage::actionHotkeyNames[i].internalName))) {;
+           if ((strlen(Name) - 1) != strlen(cTeletextSetupPage::actionHotkeyNames[i].internalName)) {
+              // invalid option, only 1 digit is supported
+              return false;
+           }
+
+           // extract level suffix
+           int l = atoi(Name+strlen(cTeletextSetupPage::actionHotkeyNames[i].internalName)) - 1; // last char digit
+           if ((l < 0) || (l >= HOTKEY_LEVEL_MAX_LIMIT)) {
+              // ignore out-of-range suffix
+              esyslog("osdteletext: ignore out-of-range menu level related option in setup.conf: osdteletext.%s (detected level=%d)", Name, l);
+              return false;
+           };
+
+           DEBUG_OT_SETUP("Hotkey (menu level > 1) config found: %s%d (Name=%s)\n", cTeletextSetupPage::actionHotkeyNames[i].internalName, l, Name);
+           ttSetup.mapHotkeyToAction[i][l] = (eTeletextAction)atoi(Value);
+           if (ttSetup.mapHotkeyToAction[i][l] > LastAction)
+              // failsafe mapping
+              ttSetup.mapHotkeyToAction[i][l] = (eTeletextAction) 100;
+           return true;
+        } else {
+           // DEBUG_OT_SETUP("Hotkey (menu level > 1) config NOT found: %s* (Name=%s)\n", cTeletextSetupPage::actionHotkeyNames[i].internalName, Name);
+        }
+     }
+
      return false;
   }
   return true;
 }
+
 
 void cTeletextSetupPage::Store(void) {
    //copy table
@@ -445,6 +512,17 @@ void cTeletextSetupPage::Store(void) {
       else //one of the other modes selected
          ttSetup.mapKeyToAction[i]=temp.mapKeyToAction[i];
    }
+
+   // copy Hotkey table
+   for (int l = 0; l < HOTKEY_LEVEL_MAX_LIMIT; l++) {
+      for (int i = 0;i < LastActionHotkey; i++) {
+         if (temp.mapHotkeyToAction[i][l] >= LastAction) //jump to page selected
+            ttSetup.mapHotkeyToAction[i][l] = (eTeletextAction)tempPageNumberHotkey[i][l];
+         else //one of the other modes selected
+            ttSetup.mapHotkeyToAction[i][l] = temp.mapHotkeyToAction[i][l];
+      }
+   }
+
    ttSetup.configuredClrBackground=( ((unsigned int)tempConfiguredClrBackground) << 24);
    ttSetup.showClock=temp.showClock;
    ttSetup.suspendReceiving=temp.suspendReceiving;
@@ -454,6 +532,7 @@ void cTeletextSetupPage::Store(void) {
    ttSetup.OSDtopPct=temp.OSDtopPct;
    ttSetup.OSDleftPct=temp.OSDleftPct;
    ttSetup.OSDframePix=temp.OSDframePix;
+   ttSetup.hotkeyLevelMax=temp.hotkeyLevelMax;
    ttSetup.HideMainMenu=temp.HideMainMenu;
    ttSetup.txtFontName=ttSetup.txtFontNames[temp.txtFontIndex];
    ttSetup.txtG0Block=temp.txtG0Block;
@@ -466,6 +545,22 @@ void cTeletextSetupPage::Store(void) {
    for (int i=0;i<LastActionKey;i++) {
       SetupStore(actionKeyNames[i].internalName, ttSetup.mapKeyToAction[i]);
    }
+
+   // store Hotkey table (maximum given by command line: maxHotkeyLevel)
+   char str[40];
+   for (int l = 0; l < maxHotkeyLevel; l++) {
+      for (int i = 0; i < LastActionHotkey;i++) {
+         if (l == 0) {
+            // store Hotkey hotkeyLevel 1 in legacy format (backwards compatibility)
+            SetupStore(actionHotkeyNames[i].internalName, ttSetup.mapHotkeyToAction[i][l]);
+         } else {
+            // store Hotkey hotkeyLevel > 1 with hotkeyLevel suffix (1 digit)
+            snprintf(str, sizeof(str), "%s%d", actionHotkeyNames[i].internalName, l + 1);
+            SetupStore(str, ttSetup.mapHotkeyToAction[i][l]);
+         };
+      };
+   }
+
    SetupStore("configuredClrBackground", (int)(ttSetup.configuredClrBackground >> 24));
    SetupStore("showClock", ttSetup.showClock);
       //currently not used
@@ -476,6 +571,7 @@ void cTeletextSetupPage::Store(void) {
    SetupStore("OSDtopPct", ttSetup.OSDtopPct);
    SetupStore("OSDleftPct", ttSetup.OSDleftPct);
    SetupStore("OSDframePix", ttSetup.OSDframePix);
+   SetupStore("hotkeyLevelMax", ttSetup.hotkeyLevelMax);
    SetupStore("HideMainMenu", ttSetup.HideMainMenu);
    SetupStore("txtFontName", ttSetup.txtFontName);
    SetupStore("txtG0Block", ttSetup.txtG0Block);
@@ -485,7 +581,6 @@ void cTeletextSetupPage::Store(void) {
    SetupStore("lineMode24", ttSetup.lineMode24);
    //SetupStore("inactivityTimeout", ttSetup.inactivityTimeout);
 }
-
 
 cTeletextSetupPage::cTeletextSetupPage(void) {
    cString buf;
@@ -503,6 +598,9 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    temp.txtBlock[9]  = tr("Reserved");
    temp.txtBlock[10] = tr("Hebrew");
 
+   hotkeyLevel = 1;
+   temp.hotkeyLevelMax = ttSetup.hotkeyLevelMax;
+
    //init tables
    for (int i=0;i<LastActionKey;i++) {
       if (ttSetup.mapKeyToAction[i] >= LastAction) {//jump to page selected
@@ -513,6 +611,20 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
          tempPageNumber[i]=100;
       }
    }
+
+   // init Hotkey tables
+   for (int l = 0; l < HOTKEY_LEVEL_MAX_LIMIT; l++) {
+      for (int i = 0; i < LastActionHotkey; i++) {
+         if (ttSetup.mapHotkeyToAction[i][l] >= LastAction) {//jump to page selected
+            temp.mapHotkeyToAction[i][l] = LastAction; //to display the last string
+            tempPageNumberHotkey[i][l] = ttSetup.mapHotkeyToAction[i][l];
+         } else { //one of the other modes selected
+            temp.mapHotkeyToAction[i][l] = ttSetup.mapHotkeyToAction[i][l];
+            tempPageNumberHotkey[i][l] = 100;
+         }
+      }
+   }
+
    tempConfiguredClrBackground=(ttSetup.configuredClrBackground >> 24);
    temp.showClock=ttSetup.showClock;
    temp.suspendReceiving=ttSetup.suspendReceiving;
@@ -522,6 +634,7 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    temp.OSDtopPct=ttSetup.OSDtopPct;
    temp.OSDleftPct=ttSetup.OSDleftPct;
    temp.OSDframePix=ttSetup.OSDframePix;
+   temp.hotkeyLevelMax=ttSetup.hotkeyLevelMax;
    temp.HideMainMenu=ttSetup.HideMainMenu;
    temp.txtFontName=ttSetup.txtFontName;
    temp.txtG0Block=ttSetup.txtG0Block;
@@ -559,15 +672,109 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    //Using same string as VDR's setup menu
    //Add(new cMenuEditIntItem(tr("Setup.Miscellaneous$Min. user inactivity (min)"), &temp.inactivityTimeout));
 
-   buf = cString::sprintf("%s:", tr("Key bindings"));
+   // Hotkey bindings
+   if (maxHotkeyLevel > 1)
+      buf = cString::sprintf("%s %s (%s %s %d/%d):", tr("Key bindings"), tr("Hotkey"), tr("max"), tr("Levels"), maxHotkeyLevel, HOTKEY_LEVEL_MAX_LIMIT);
+   else
+      buf = cString::sprintf("%s Hotkey:", tr("Key bindings"));
    item = new cOsdItem(*buf);
    item->SetSelectable(false);
    Add(item);
+
+   if (maxHotkeyLevel > 1) {
+      // maximum given by command line option: maxHotkeyLevel
+      cString buf2 = cString::sprintf("OSD Hotkey %s %s", tr("Levels"), tr("visible"));
+      hotkeyLevelMaxItem = new cMenuEditIntItem(buf2, &temp.hotkeyLevelMax, 1, maxHotkeyLevel);
+      Add(hotkeyLevelMaxItem);
+
+      cString buf3 = cString::sprintf("OSD Hotkey %s %s", tr("Level"), tr("Config"));
+      hotkeyLevelItem = new cMenuEditIntItem(buf3, &hotkeyLevel, 1, temp.hotkeyLevelMax);
+      Add(hotkeyLevelItem);
+   } else {
+      // hide option but remember for hook later the section entry from above
+      hotkeyLevelItem = item;
+   };
+
+   for (int l = 0; l < maxHotkeyLevel; l++) {
+      for (int i = 0; i < LastActionHotkey; i++) {
+         ActionEditsHotkey[i][l].Init(this, i, l
+            , (l == (hotkeyLevel - 1))
+            , new cMenuEditIntItem(tr("  Page number"), &tempPageNumberHotkey[i][l], 100, 899)
+            , new cMenuEditStraItem(actionHotkeyNames[i].userName, (int*)&temp.mapHotkeyToAction[i][l], LastAction+1, modes)
+         );
+      };
+   }
+
+   // Standard Key bindings
+   buf = cString::sprintf("%s:", tr("Key bindings"));
+   menuSectionKeysItem = new cOsdItem(*buf);
+   menuSectionKeysItem->SetSelectable(false);
+   Add(menuSectionKeysItem);
 
    for (int i=0;i<LastActionKey;i++) {
       ActionEdits[i].Init(this, i, new cMenuEditIntItem(tr("  Page number"), &tempPageNumber[i], 100, 899),
          new cMenuEditStraItem(actionKeyNames[i].userName, (int*)&temp.mapKeyToAction[i], LastAction+1, modes) );
    }
+}
+
+void cTeletextSetupPage::SetupRefreshKeys(void) {
+   // recreate key setup without sophisticated and issue causing dynamic Insert+Add (e.g. last line 'Jump to' is not working)
+
+   // delete all key entry if existing
+   for (int i = 0; i < LastActionKey; i++) {
+      if (cList<cOsdItem>::Contains(ActionEdits[i].action))
+         cList<cOsdItem>::Del(ActionEdits[i].action, false);
+      if (cList<cOsdItem>::Contains(ActionEdits[i].number))
+         cList<cOsdItem>::Del(ActionEdits[i].number, false);
+   };
+
+   // add selected ones
+   cOsdItem *hook = menuSectionKeysItem;
+   for (int i = 0; i < LastActionKey; i++) {
+      DEBUG_OT_KEYS("key assigment menu i=%d action=%d (main)", i, temp.mapKeyToAction[i]);
+      Add(ActionEdits[i].action, false, hook);
+      hook = ActionEdits[i].action;
+
+      if (temp.mapKeyToAction[i] == LastAction) {
+         // insert number if selected
+         DEBUG_OT_KEYS("key assigment menu i=%d action=%d pagenumber=%d", i, temp.mapKeyToAction[i], tempPageNumber[i]);
+         Add(ActionEdits[i].number, false, hook);
+         hook = ActionEdits[i].number;
+      };
+   };
+}
+
+void cTeletextSetupPage::SetupRefreshHotkeys(void) {
+   // recreate hot key setup without sophisticated and issue causing dynamic Insert+Add (e.g. last line 'Jump to' is not working)
+
+   // Hotkey assignment
+   int l = hotkeyLevel - 1;
+
+   // delete all hot key entry if existing
+   for (int l = 0; l < HOTKEY_LEVEL_MAX_LIMIT; l++) {
+      for (int i = 0; i < LastActionHotkey; i++) {
+         if (cList<cOsdItem>::Contains(ActionEditsHotkey[i][l].action))
+            cList<cOsdItem>::Del(ActionEditsHotkey[i][l].action, false);
+         if (cList<cOsdItem>::Contains(ActionEditsHotkey[i][l].number))
+            cList<cOsdItem>::Del(ActionEditsHotkey[i][l].number, false);
+      };
+   };
+
+   // add selected ones
+   cOsdItem *hook = hotkeyLevelItem;
+   for (int i = 0; i < LastActionHotkey; i++) {
+      DEBUG_OT_KEYS("hot key assigment menu i=%d hotkeyLevel=%d action=%d (main)", i, hotkeyLevel, temp.mapHotkeyToAction[i][l]);
+      Add(ActionEditsHotkey[i][l].action, false, hook);
+      hook = ActionEditsHotkey[i][l].action;
+
+      if (temp.mapHotkeyToAction[i][l] == LastAction) {
+         // insert number if selected
+         DEBUG_OT_KEYS("hot key assigment menu i=%d hotkeyLevel=%d action=%d pagenumber=%d", i, hotkeyLevel, temp.mapHotkeyToAction[i][l], tempPageNumberHotkey[i][l]);
+         Add(ActionEditsHotkey[i][l].number, false, hook);
+         hook = ActionEditsHotkey[i][l].number;
+      };
+   };
+
 }
 
 eOSState cTeletextSetupPage::ProcessKey(eKeys Key) {
@@ -576,31 +783,51 @@ eOSState cTeletextSetupPage::ProcessKey(eKeys Key) {
    if (Key != kRight && Key!=kLeft)
       return state;
    cOsdItem *item = Get(Current());
+
+   if (item == hotkeyLevelMaxItem) {
+      // change of OSD menu level max
+      DEBUG_OT_KEYS("hotkeyLevelMaxItem changed hotkeyLevelMax=%d (hotkeyLevel=%d)", temp.hotkeyLevelMax, hotkeyLevel);
+
+      if (hotkeyLevel > temp.hotkeyLevelMax) {
+         hotkeyLevel = temp.hotkeyLevelMax;
+         // recreate Hotkey with reduced hotkeyLevel (e.g. switch from >max to max
+         SetupRefreshHotkeys();
+      };
+
+      // replace entry with new maximum
+      cList<cOsdItem>::Del(hotkeyLevelItem);
+      hotkeyLevelItem = new cMenuEditIntItem(tr("OSD Hotkey Level"), &hotkeyLevel, 1, temp.hotkeyLevelMax);
+      Add(hotkeyLevelItem, false, hotkeyLevelMaxItem);
+
+      Display();
+      return state;
+   };
+
+   if (item == hotkeyLevelItem) {
+      // change between menu levels
+      DEBUG_OT_KEYS("hotkeyLevelItem changed OSDhotkeyLevel=%d", hotkeyLevel);
+      SetupRefreshHotkeys();
+      Display();
+      return state;
+   };
+
+   // Standard Key change handling for 'Jump to'
    for (int i=0;i<LastActionKey;i++) {
       if (ActionEdits[i].action==item) { //we have a key left/right and one of our items as current
-         //eOSState state = item->ProcessKey(Key);
-         //if (state != osUnknown) { //really should not return osUnknown I think
-            if (temp.mapKeyToAction[i] == LastAction && !ActionEdits[i].visible) {
-               //need to make it visible
-               if (i+1<LastActionKey)
-                  //does not work for i==LastAction-1
-                  Ins( ActionEdits[i].number, false, ActionEdits[i+1].action);
-               else
-                  Add( ActionEdits[i].number, false );
-
-               ActionEdits[i].visible=true;
-               Display();
-            } else if (temp.mapKeyToAction[i] != LastAction && ActionEdits[i].visible) {
-               //need to hide it
-               cList<cOsdItem>::Del(ActionEdits[i].number, false);
-               ActionEdits[i].visible=false;
-               Display();
-            }
-            break;
-            //return state;
-         //}
-     }
+         SetupRefreshKeys();
+         Display();
+      }
    }
+
+   // Hotkey change handling for 'Jump to'
+   int l = hotkeyLevel - 1;
+   for (int i=0; i < LastActionHotkey; i++) {
+      DEBUG_OT_KEYS("hot key assigment menu i=%d hotkeyLevel=%d action=%d (pagenumber)", i, hotkeyLevel, temp.mapHotkeyToAction[i][l]);
+      if (ActionEditsHotkey[i][l].action == item) { //we have a key left/right and one of our items as current
+         SetupRefreshHotkeys();
+         Display();
+      };
+   };
 
    return state;
    //return cMenuSetupPage::ProcessKey(Key);
@@ -613,12 +840,18 @@ void ActionEdit::Init(cTeletextSetupPage* s, int num, cMenuEditIntItem  *p, cMen
    s->Add(action);
    if (s->temp.mapKeyToAction[num] == LastAction) {
       s->Add(number);
-      visible=true;
-   } else
-      visible=false;
+   };
 }
 
-
+void ActionEdit::Init(cTeletextSetupPage* s, int num, int level, bool active, cMenuEditIntItem  *p, cMenuEditStraItem * a) {
+   action=a;
+   number=p;
+   if (!active) return;
+   s->Add(action);
+   if (s->temp.mapHotkeyToAction[num][level] == LastAction) {
+      s->Add(number);
+   };
+}
 
 
 VDRPLUGINCREATOR(cPluginTeletextosd); // Don't touch this!
