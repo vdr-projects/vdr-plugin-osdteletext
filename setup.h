@@ -34,8 +34,18 @@
 // There are two places to be kept in sync with these enums:
 //  TeletextBrowser::TranslateKey and 
 // 1:1 relation between st_modes[] in osdteletext.c + eTeletextAction in setup.h + st_modesFooter in setup.c
-enum eTeletextAction { Zoom, HalfPage, SwitchChannel,
-                       DarkScreen, /*SuspendReceiving,*/ Config, LineMode24, ToggleConceal, TogglePause, LastAction }; //and 100-899 => jump to page
+enum eTeletextAction {
+   Zoom,
+   HalfPage,
+   SwitchChannel,
+   DarkScreen,
+   /*SuspendReceiving,*/
+   Config,
+   LineMode24,
+   ToggleConceal,
+   TogglePause,
+   LastAction // has to stay always as the last one (special flag for 'jump to pages')
+}; //and 100-899 => jump to page
 
 enum eTeletextActionConfig {
    Left,
