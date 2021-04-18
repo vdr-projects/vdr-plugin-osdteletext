@@ -39,6 +39,13 @@ Tasten:
       Hintergrund wechseln: Ändert die im Setup einstellbare Hintergrundfarbe sofort zu Schwarz
                             und nach erneutem Aufruf wieder zurück.
 
+      Konfiguration: Aktiviere den OSD Konfigurations-Modus, aktuell unterstützt
+                      Links,Oben +/-
+                      Breite,Höhe +/-
+                      Rahmen +/-
+                      Text Vertikaer Offset +/-
+                      Hintergrund Transparenz +/-
+
    Wie man Tasten Aktionen zuordnet:
    Im Einstellungsmenü des Plugins kann jeder Taste eine Aktion zugeordnet werden.
    Dabei ist nichts vorgeschrieben - keine Aktion muss irgendeiner Taste zugewiesen werden,
