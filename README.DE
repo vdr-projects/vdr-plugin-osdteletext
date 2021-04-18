@@ -46,6 +46,16 @@ Tasten:
                       Text Vertikaer Offset +/-
                       Hintergrund Transparenz +/-
 
+      24-Zeilen-Modus: Verstecke Button Zeile (Zeile 25)
+
+      Antwort     :  Zeige versteckte Zeichen (Umschalter)
+                      OSD zeigt ein gelbes '?' im Fall daß die Seite versteckte Zeichen enthält
+                      OSD zeigt ein grünes '!' während versteckte Zeichen angezeigt werden
+
+      Pause       :  Stoppt Aktualisierung der Seite (Umschalter)
+                      OSD zeigt rotes '!' während die Aktualisierug pausiert
+                      OSD zeigt green '>' nachdem die Pause deaktiviert wurde (bis zur nächsten Aktualisierung der Seite)
+
    Wie man Tasten Aktionen zuordnet:
    Im Einstellungsmenü des Plugins kann jeder Taste eine Aktion zugeordnet werden.
    Dabei ist nichts vorgeschrieben - keine Aktion muss irgendeiner Taste zugewiesen werden,
