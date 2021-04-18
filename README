@@ -76,7 +76,7 @@ Keys:
                      Text Vertical Offset +/-
                      Background Transparency +/-
 
-     24-Line-Mode:  Hide button line (line 25)
+     24-Line-Mode:  Hide hot key line (line 25)
 
      Answer      :  Display concealed chars (toggle)
                      OSD will display yellow '?' in case page contains concealed chars

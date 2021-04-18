@@ -46,7 +46,7 @@ Tasten:
                       Text Vertikaer Offset +/-
                       Hintergrund Transparenz +/-
 
-      24-Zeilen-Modus: Verstecke Button Zeile (Zeile 25)
+      24-Zeilen-Modus: Verstecke Hot Key Zeile (Zeile 25)
 
       Antwort     :  Zeige versteckte Zeichen (Umschalter)
                       OSD zeigt ein gelbes '?' im Fall daß die Seite versteckte Zeichen enthält
