@@ -66,6 +66,7 @@ protected:
    bool pageFound;
    bool selectingChannel;
    static eChannelInfo ChannelInfo;
+   int hotkeyLevel;
    int delayClearMessage;
    bool needClearMessage;
    int selectingChannelNumber;

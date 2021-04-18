@@ -48,6 +48,8 @@ enum eTeletextAction {
    LineMode24,
    ToggleConceal,
    TogglePause,
+   HotkeyLevelPlus,
+   HotkeyLevelMinus,
    LastAction // has to stay always as the last one (special flag for 'jump to pages')
 }; //and 100-899 => jump to page
 
@@ -76,13 +78,8 @@ enum eTeletextActionValueType {
 extern const char *st_modesFooter[];
 extern const char *config_modes[];
 
-
 enum ActionKeys {
    // keep in sync: static const ActionKeyName st_actionKeyNames in osdteletext.c
-   ActionKeyRed,
-   ActionKeyGreen,
-   ActionKeyYellow,
-   ActionKeyBlue,
    ActionKeyPlay,
    ActionKeyStop,
    ActionKeyFastFwd,
@@ -90,6 +87,16 @@ enum ActionKeys {
    ActionKeyOk,
 
    LastActionKey
+};
+
+enum ActionHotkeys {
+   // keep in sync: static const ActionKeyName st_actionHotkeyNames in osdteletext.c
+   ActionHotkeyRed,
+   ActionHotkeyGreen,
+   ActionHotkeyYellow,
+   ActionHotkeyBlue,
+
+   LastActionHotkey
 };
 
 enum FooterFlags {
@@ -103,6 +110,7 @@ class TeletextSetup {
 public:
    TeletextSetup();
    int mapKeyToAction[(int) ActionKeys::LastActionKey]; // see enum ActionKeys
+   int mapHotkeyToAction[(int) ActionHotkeys::LastActionHotkey][HOTKEY_LEVEL_MAX_LIMIT]; // see enum ActionHotkeys and HotkeyLevelMax
    unsigned int configuredClrBackground;
    int showClock;
    int suspendReceiving;
@@ -112,6 +120,7 @@ public:
    int OSDtopPct;
    int OSDleftPct;
    int OSDframePix;
+   int hotkeyLevelMax;
    int inactivityTimeout;
    int HideMainMenu;
    cString txtFontName;
