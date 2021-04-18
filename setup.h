@@ -15,6 +15,10 @@
 
 #include <vdr/config.h>
 
+// max for setup
+#define MENU_LEVEL_HOTKEYS_MAX_LIMIT  9  // maximum supported by SetupStore parser: 9, required minimum: 1
+#define MENU_LEVEL_HOTKEYS_MAX_LIMIT_STRING "9"   // as string to be displayed in online help
+
 // min/max for setup
 #define OSDleftPctMin      0
 #define OSDleftPctMax     90
