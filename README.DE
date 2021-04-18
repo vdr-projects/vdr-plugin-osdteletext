@@ -18,6 +18,7 @@ Tasten:
 
    Verfügbare Tasten: Blau, Rot, Gelb, Grün, Stop, Schneller Vorlauf, Schn. Rücklauf, OK
    Aktionen:          "Vergrößern", "Halbe Seite", "Kanal wechseln",
+                      "Hotkey Ebene+", "Hotkey Ebene-"
                       "Hintergrund wechseln", "Springe zu..." einer bestimmten Seite
 
    Beschreibung der Aktionen:
@@ -56,6 +57,13 @@ Tasten:
                       OSD zeigt rotes '!' während die Aktualisierug pausiert
                       OSD zeigt green '>' nachdem die Pause deaktiviert wurde (bis zur nächsten Aktualisierung der Seite)
 
+     ** falls eingeschaltet/aktiv **
+     Hotkey Ebene+  :  Wechsle zur nächsten Hotkey Ebene (incl. Rollover)
+     Hotkey Ebene-  :  Wechsle zur vorherigen Hotkey Ebene (incl. Rollover)
+        Empfohlene Zuweisung:
+           FastFwd: Hotkey Ebene+
+           FastRwd: Hotkey Ebene-
+
    Wie man Tasten Aktionen zuordnet:
    Im Einstellungsmenü des Plugins kann jeder Taste eine Aktion zugeordnet werden.
    Dabei ist nichts vorgeschrieben - keine Aktion muss irgendeiner Taste zugewiesen werden,
@@ -86,6 +94,9 @@ Andere Optionen:
                der Benutzer solange keine Taste betätigt hat. Das kann durch setzen des Wertes auf 0
                verhindert werden. Dann wird jedoch auch das automatische Abschalten von VDR effektiv 
                außer Kraft gesetzt, solange das Plugin geöffnet ist.
+
+   Hotkey (Farb-)Tasten einrichten:    siehe oben, optional mit multi-Ebenen-Unterstützung
+
    Tasten einrichten:    siehe oben
 
 Kommandozeilen-Optionen:
@@ -105,6 +116,9 @@ Kommandozeilen-Optionen:
                                   Voreinstellung ist "packed" für ein System, das
                                   in eine Datei mehrere Seiten speichert.
      -t        --toptext          Speichere TopText Seiten (nich anzeigbar)
+     -k        --key-levels=NUM   Maximale Anzahl von Hot Key Ebenen für Auswahl und Speicherung
+                                   Standard: 1 (deaktiviert diese Erweiterung)
+                                   Maximum: 9 Ebenen
      -P|--debugpage <int|hexint>  Spezifiziere Seite für Debugging (int: intern automatisch konvertiert nach hex)
      -S|--debugpsub <int|hexint>  Spezifiziere Unterseite für Debugging (int: intern automatisch konvertiert nach hex)
      -L|--debugline <int>         Spezifiziere Zeile für Debugging
