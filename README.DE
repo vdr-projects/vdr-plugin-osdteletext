@@ -88,6 +88,10 @@ Kommandozeilen-Optionen:
                                   Voreinstellung ist "packed" für ein System, das
                                   in eine Datei mehrere Seiten speichert.
      -t        --toptext          Speichere TopText Seiten (nich anzeigbar)
+     -P|--debugpage <int|hexint>  Spezifiziere Seite für Debugging (int: intern automatisch konvertiert nach hex)
+     -S|--debugpsub <int|hexint>  Spezifiziere Unterseite für Debugging (int: intern automatisch konvertiert nach hex)
+     -L|--debugline <int>         Spezifiziere Zeile für Debugging
+     -D|--debugmask <int|hexint>  Aktiviere Debug-Maske (siehe logging.h für Details)
 
 Farben:
   Auf allen Ausgabegeräten, die nicht in der Farbtiefe des OSD beschränkt sind,
