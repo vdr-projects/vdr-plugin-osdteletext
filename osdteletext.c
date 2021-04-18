@@ -39,7 +39,7 @@ static const char *MAINMENUENTRY  = trNOOP("Teletext");
 unsigned int m_debugmask = 0;
 unsigned int m_debugpage = 0;
 unsigned int m_debugpsub = 0;
-int maxMenuLevelHotKeys = 1;
+int maxHotkeyLevel = 1;
 int m_debugline = -1;
 
 class cPluginTeletextosd : public cPlugin {
@@ -143,6 +143,9 @@ const char *cPluginTeletextosd::CommandLineHelp(void)
          "                                Default is \"packed\" for the \n"
          "                                 one-file-for-a-few-pages system.\n"
          "  -t,       --toptext          Store top text pages at cache. (unviewable pages)\n"
+         "  -k        --key-levels=NUM   Maximum amount of HotKey levels selectable and stored\n"
+         "                                default: 1 (which deactivate this feature)\n"
+         "                                maximum: " HOTKEY_LEVEL_MAX_LIMIT_STRING " levels\n"
          "  -P|--debugpage <int|hexint>  Specify page to debug (int: autoconvert internally to hex)\n"
          "  -S|--debugpsub <int|hexint>  Specify sub-page to debug (int: autoconvert internally to hex)\n"
          "  -L|--debugline <int>         Specify line of page to debug\n"
@@ -157,7 +160,7 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
        { "max-cache",    required_argument,       NULL, 'n' },
        { "cache-system", required_argument,       NULL, 's' },
        { "toptext",      no_argument,             NULL, 't' },
-       { "menu-levels",  required_argument,       NULL, 'm' },
+       { "hotkey-levels",required_argument,       NULL, 'k' },
        { "debugmask",    required_argument,       NULL, 'D' },
        { "debugpage",    required_argument,       NULL, 'P' },
        { "debugpsub",    required_argument,       NULL, 'S' },
@@ -166,7 +169,7 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
        };
 
    int c;
-   while ((c = getopt_long(argc, argv, "m:s:d:n:tD:", long_options, NULL)) != -1) {
+   while ((c = getopt_long(argc, argv, "k:s:d:n:tD:", long_options, NULL)) != -1) {
         switch (c) {
           case 's':
                     if (!optarg)
@@ -187,8 +190,8 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
                     break;
           case 'm': if (isnumber(optarg)) {
                        int n = atoi(optarg);
-                       if ((n >= 1) && (n <= MENU_LEVEL_HOTKEYS_MAX_LIMIT)) {
-                          maxMenuLevelHotKeys = n;
+                       if ((n >= 1) && (n <= HOTKEY_LEVEL_MAX_LIMIT)) {
+                          maxHotkeyLevel = n;
                        } else {
                           esyslog("osdteletext: maximum menu-level value out-of-range (skip): %s", optarg);
                        };
@@ -302,8 +305,8 @@ bool cPluginTeletextosd::Start(void)
        ttSetup.txtFontIndex = 0;
    }
 
-   if (maxMenuLevelHotKeys > 1)
-      isyslog("osdteletext: OSD menu HotKey multi-level feature enabled with maximum of levels: %d", maxMenuLevelHotKeys);
+   if (maxHotkeyLevel > 1)
+      isyslog("osdteletext: OSD menu HotKey multi-level feature enabled with maximum of levels: %d", maxHotkeyLevel);
    else
       isyslog("osdteletext: OSD menu HotKey multi-level feature not activated");
 
