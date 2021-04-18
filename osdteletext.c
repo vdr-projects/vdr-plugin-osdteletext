@@ -410,20 +410,9 @@ bool cPluginTeletextosd::SetupParse(const char *Name, const char *Value)
      for (int i=0;i<LastActionKey;i++) {
         if (!strcasecmp(Name, cTeletextSetupPage::actionKeyNames[i].internalName)) {
            ttSetup.mapKeyToAction[i]=(eTeletextAction)atoi(Value);
-
-           //for migration to 0.4
-           if (ttSetup.mapKeyToAction[i]<100 && ttSetup.mapKeyToAction[i]>=LastAction)
-              ttSetup.mapKeyToAction[i]=LastAction-1;
-
            return true;
         }
      }
-
-     //for migration to 0.4
-     char act[8];
-     strncpy(act, Name, 7);
-     if (!strcasecmp(act, "Action_"))
-        return true;
 
      return false;
   }
