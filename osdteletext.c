@@ -553,7 +553,7 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
 }
 
 eOSState cTeletextSetupPage::ProcessKey(eKeys Key) {
-   DEBUG_OT_KEYS("called with Key=%d", Key);
+   if (Key != kNone) DEBUG_OT_KEYS("called with Key=%d", Key);
    eOSState state = cMenuSetupPage::ProcessKey(Key);
    if (Key != kRight && Key!=kLeft)
       return state;
