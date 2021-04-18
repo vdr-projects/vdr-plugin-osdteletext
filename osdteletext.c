@@ -188,7 +188,7 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
                     break;
           case 't': storeTopText=true;
                     break;
-          case 'm': if (isnumber(optarg)) {
+          case 'k': if (isnumber(optarg)) {
                        int n = atoi(optarg);
                        if ((n >= 1) && (n <= HOTKEY_LEVEL_MAX_LIMIT)) {
                           maxHotkeyLevel = n;
