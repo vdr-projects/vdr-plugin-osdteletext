@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 2.4.4\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-15 09:03+0200\n"
+"POT-Creation-Date: 2021-04-18 18:23+0200\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Peter Bieringer <pb@bieringer.de>\n"
 "Language-Team: German <vdr@linuxtv.org>\n"
@@ -52,6 +52,15 @@ msgstr "Keinen freien Tuner gefunden - benutze nur gespeicherte Seiten"
 msgid "*** Config mode is not supported in 24-line mode ***"
 msgstr "*** Konfig-Modus ist im 24-Zeilen-Modus nicht unterstützt ***"
 
+msgid "Hotkey level change is not supported in 24-line mode"
+msgstr "Hotkey Ebenen-Änderung ist im 24-Zeilen-Modus nicht unterstützt"
+
+msgid "Hotkey levels are disabled"
+msgstr "Hotkey Ebenen sind deaktiviert"
+
+msgid "Hotkey levels are not active"
+msgstr "Hotkey Ebenen sind nicht aktiv"
+
 msgid "Channel (press OK): "
 msgstr "Sender (OK drücken): "
 
@@ -93,6 +102,12 @@ msgstr "Antwort"
 
 msgid "Pause"
 msgstr "Pause"
+
+msgid "Hotkey Level+"
+msgstr "Hotkey Ebene+"
+
+msgid "Hotkey Level-"
+msgstr "Hotkey Ebene-"
 
 msgid "Jump to..."
 msgstr "Springe zu..."
@@ -172,8 +187,26 @@ msgstr "24-Zeilen Modus"
 msgid "Key bindings"
 msgstr "Tastenzuweisung"
 
+msgid "Hotkey"
+msgstr "Hotkey"
+
+msgid "max"
+msgstr "max"
+
+msgid "Levels"
+msgstr "Ebenen"
+
+msgid "visible"
+msgstr "sichtbar"
+
+msgid "Level"
+msgstr "Ebene"
+
 msgid "  Page number"
 msgstr "  Seitenzahl"
+
+msgid "OSD Hotkey Level"
+msgstr "OSD Hotkey Ebene"
 
 msgid "Half Page"
 msgstr "HalbeSeite"
@@ -186,6 +219,12 @@ msgstr "Hintergrund"
 
 msgid "24LineMode"
 msgstr "24ZeilenMod"
+
+msgid "HkLevel+"
+msgstr "HkEbene+"
+
+msgid "HkLevel-"
+msgstr "HKEbene-"
 
 msgid "Left"
 msgstr "Links"
