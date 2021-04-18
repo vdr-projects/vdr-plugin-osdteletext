@@ -83,7 +83,7 @@ Keys:
                      OSD will display green  '!' while concealed chars are displayed
 
      Pause       :  Stop updating page (toggle)
-                     OSD will display red   '*' while paused
+                     OSD will display red   '!' while paused
                      OSD will display green '>' after release (until next page update)
 
    How to configure the key bindings:
