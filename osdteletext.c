@@ -143,7 +143,7 @@ const char *cPluginTeletextosd::CommandLineHelp(void)
          "                                Default is \"packed\" for the \n"
          "                                 one-file-for-a-few-pages system.\n"
          "  -t,       --toptext          Store top text pages at cache. (unviewable pages)\n"
-         "  -k        --key-levels=NUM   Maximum amount of HotKey levels selectable and stored\n"
+         "  -k        --key-levels=NUM   Maximum amount of Hotkey levels selectable and stored\n"
          "                                default: 1 (which deactivate this feature)\n"
          "                                maximum: " HOTKEY_LEVEL_MAX_LIMIT_STRING " levels\n"
          "  -P|--debugpage <int|hexint>  Specify page to debug (int: autoconvert internally to hex)\n"
@@ -306,9 +306,9 @@ bool cPluginTeletextosd::Start(void)
    }
 
    if (maxHotkeyLevel > 1)
-      isyslog("osdteletext: OSD menu HotKey multi-level feature enabled with maximum of levels: %d", maxHotkeyLevel);
+      isyslog("osdteletext: OSD menu Hotkey multi-level feature enabled with maximum of levels: %d", maxHotkeyLevel);
    else
-      isyslog("osdteletext: OSD menu HotKey multi-level feature not activated");
+      isyslog("osdteletext: OSD menu Hotkey multi-level feature not activated");
 
    return true;
 }
