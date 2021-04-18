@@ -346,7 +346,7 @@ void cPluginTeletextosd::initTexts() {
       tr("24-LineMode"),
       tr("Answer"),
       tr("Pause"),
-      tr("Jump to..."),
+      tr("Jump to...") // has to stay always as the last one
    };
 
    cTeletextSetupPage::modes = st_modes;
