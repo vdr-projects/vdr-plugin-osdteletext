@@ -24,7 +24,7 @@ const char *st_modesFooter[] =
       trNOOP("24LineMode"),
       trNOOP("Answer"),
       trNOOP("Pause"),
-      trNOOP("Jump to..."),
+      trNOOP("Jump to...") // has to stay always the last one
 };
 
 const char *config_modes[] =
