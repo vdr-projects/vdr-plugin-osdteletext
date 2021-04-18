@@ -150,7 +150,7 @@ const char *cPluginTeletextosd::CommandLineHelp(void)
          "  -P|--debugpage <int|hexint>  Specify page to debug (int: autoconvert internally to hex)\n"
          "  -S|--debugpsub <int|hexint>  Specify sub-page to debug (int: autoconvert internally to hex)\n"
          "  -L|--debugline <int>         Specify line of page to debug\n"
-         "  -D|--debugmask <int|hexint>  Enable debugmask\n";
+         "  -D|--debugmask <int|hexint>  Enable debugmask (see logging.h for details)\n";
 }
 
 bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])

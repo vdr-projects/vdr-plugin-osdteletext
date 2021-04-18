@@ -148,8 +148,11 @@ Command line options:
                                   one-file-for-a-few-pages system.
      -t        --toptext          Store top text pages at cache.
                                   (unviewable pages)
-     -D        --debugmask <MASK> Debug mask <int> or 0x<hexint>
-                                  see logging.h for details
+     -P|--debugpage <int|hexint>  Specify page to debug (int: autoconvert internally to hex)
+     -S|--debugpsub <int|hexint>  Specify sub-page to debug (int: autoconvert internally to hex)
+     -L|--debugline <int>         Specify line of page to debug
+     -D|--debugmask <int|hexint>  Enable debugmask (see logging.h for details)
+
 
 Colors:
   On all sorts of output devices which are not limited as to color depth
