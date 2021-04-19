@@ -16,20 +16,26 @@ Tasten:
    Man kann z.B. einstellen, das die man mit der Taste Rot auf die Seite 100 springt.
    Bei dieser Einstellung wäre die Aktion "Springe zu 100" der Taste Rot zugeordnet.
 
-   Verfügbare Tasten: Blau, Rot, Gelb, Grün, Play, Stop, Schneller Vorlauf, Schn. Rücklauf
+   Verfügbare Tasten: Blau, Rot, Gelb, Grün, Stop, Schneller Vorlauf, Schn. Rücklauf, OK
    Aktionen:          "Vergrößern", "Halbe Seite", "Kanal wechseln",
                       "Hintergrund wechseln", "Springe zu..." einer bestimmten Seite
 
    Beschreibung der Aktionen:
       Vergrößern:    Obere / untere Hälfte vergrößern / zurück zur ganzen Seite
+
       Halbe Seite:   OSD-Fenster nur noch in unterer Hälfte des Bildschirms zeigen
                      und obere / untere Hälfte anzeigen bzw. zurück
+
       Kanal wechseln:Seiten eines anderen Senders als des gerade eingestellten anzeigen.
-                     Dabei wird keine Frequenz gewechselt oder mit VDR ein anderer Kanal eingestellt.
-                     Damit Seiten verfügbar sind, muss irgendwann vorher der gewählte 
-                     Kanal eingestellt gewesen sein. Bei Aufruf der Aktion wird nach der Kanalnummer 
+                     Falls der Sender auf dem selben Transponder oder mittels eines freien
+                     Tuners verfügbar ist, wird der Empfänger umgeschaltet. Andernfalls sind
+                     nur Seiten verfügbar, die vorher gespeichert wurden, als der Kanal
+                     ausgewählt wurde.  Bei Aufruf der Aktion wird nach der Kanalnummer
                      gefragt. Die Nummer mit den Zifferntasten eingeben und OK drücken.
+                     Falls keine Nummer eingegeben wurde, wird zum Live-Kanal gewechselt.
+
       Springe zu...: Springt zu der entsprechenden Seite
+
       Hintergrund wechseln: Ändert die im Setup einstellbare Hintergrundfarbe sofort zu Schwarz
                             und nach erneutem Aufruf wieder zurück.
 

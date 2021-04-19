@@ -719,15 +719,17 @@ void cDisplay::ClearPage(void) {
 };
 
 
-void cDisplay::DrawPageId(const char *text, const enumTeletextColor cText) {
+void cDisplay::DrawPageId(const char *text, const enumTeletextColor cText, const bool boxedAlwaysOn) {
     // Draw Page ID string to OSD
+    // In case of "Boxed" page: only until 1st page update unless "boxedAlwaysOn" is set
+    // "boxedAlwaysOn" also unhides the 1st line completly
     static char text_last[9] = ""; // remember
     static bool paused_last = false;
     cTeletextChar c;
 
-    DEBUG_OT_DRPI("called with text='%s' text_last='%s' Boxed=%d HasConceal=%d GetConceal=%d", text, text_last, Boxed, HasConceal(), GetConceal());
+    DEBUG_OT_DRPI("called with text='%s' text_last='%s' Boxed=%d HasConceal=%d GetConceal=%d boxedAlwaysOn=%s", text, text_last, Boxed, HasConceal(), GetConceal(), BOOLTOTEXT(boxedAlwaysOn));
 
-    if (! GetPaused() && Boxed && PageIdDisplayedEver && (strcmp(text, text_last) == 0)) {
+    if ((! GetPaused()) && Boxed && (! boxedAlwaysOn) && PageIdDisplayedEver && (strcmp(text, text_last) == 0)) {
         // don't draw PageId a 2nd time on boxed pages
         for (int i = 0; i < 8; i++) {
             c.SetFGColor(ttcTransparent);
@@ -736,6 +738,15 @@ void cDisplay::DrawPageId(const char *text, const enumTeletextColor cText) {
             SetChar(i,0,c);
         };
         return;
+    };
+
+    if (Boxed && boxedAlwaysOn) {
+        for (int x = 8; x < 40; x++) {
+            // de-boxing of 1st line in case OSD is not matching live channel
+            c = GetChar(x, 0);
+            c.SetBoxedOut(false);
+            SetChar(x, 0, c);
+        };
     };
 
     DrawText(0,0,text,8, cText);
@@ -761,14 +772,14 @@ void cDisplay::DrawPageId(const char *text, const enumTeletextColor cText) {
         c.SetFGColor(ttcRed);
         c.SetChar('!');
         DEBUG_OT_DRPI("trigger SetChar for Paused hint ttfg=%x ttbg=%x", c.GetFGColor(), c.GetBGColor());
-        SetChar(7, 0, c);
+        SetChar(3, 0, c);
     } else if (paused_last == true) {
         paused_last = false;
         c.SetBGColor(ttcBlack);
         c.SetFGColor(ttcGreen);
         c.SetChar('>');
         DEBUG_OT_DRPI("trigger SetChar for Paused finished hint ttfg=%x ttbg=%x", c.GetFGColor(), c.GetBGColor());
-        SetChar(7, 0, c);
+        SetChar(3, 0, c);
     };
 }
 
@@ -811,7 +822,7 @@ void cDisplay::DrawClock() {
     DrawText(32,0,text,8);
 }
 
-void cDisplay::DrawMessage(const char *txt, const enumTeletextColor cFrame, const enumTeletextColor cText, const enumTeletextColor cBackground) {
+void cDisplay::DrawMessage(const char *txt1, const char *txt2, const enumTeletextColor cFrame, const enumTeletextColor cText, const enumTeletextColor cBackground) {
     int border=6; // minimum
     if (outputWidth > 720) {
         // increase border
@@ -833,12 +844,46 @@ void cDisplay::DrawMessage(const char *txt, const enumTeletextColor cFrame, cons
     if (IsDirty()) DrawDisplay();
     // Make sure all characters are out, so we can draw on top
 
-    int w=MessageFont->Width(txt)+4*border;
-    int h=MessageFont->Height(txt)+4*border;
+    // text w/h
+    int w1 = MessageFont->Width(txt1);
+    int h1 = MessageFont->Height(txt1);
+    int w2 = 0;
+    int h2 = 0;
+
+    // box w/h
+    int w = w1;
+    int h = h1;
+
+    // text offset
+    int o1 = 0;
+    int o2 = 0;
+
+    if (txt2 != NULL) {
+        // 2nd line active
+        h2 = MessageFont->Height(txt2);
+        w2 = MessageFont->Width(txt2);
+
+        h += h2 + border / 2; // increase height
+
+        if (w2 > w1) {
+            // 2nd line is longer
+            w = w2;
+            o1 = (w2 - w1) / 2;
+        } else if (w2 < w1) {
+            // 1st line is longer
+            o2 = (w1 - w2) / 2;
+        };
+    }
+
+    w += 4 * border;
+    h += 4 * border;
+
+    // limit to maximum
     if (w > outputWidth)  w = outputWidth;
     if (h > outputHeight) h = outputHeight;
-    int x=(outputWidth -w)/2 + leftFrame;
-    int y=(outputHeight-h)/2 + topFrame;
+
+    int x = (outputWidth -w)/2 + leftFrame;
+    int y = (outputHeight-h)/2 + topFrame;
 
     // Get local color mapping
     tColor fg=GetColorRGB(cText,0);
@@ -851,16 +896,21 @@ void cDisplay::DrawMessage(const char *txt, const enumTeletextColor cFrame, cons
     osd->DrawRectangle(x+(border/2), y+(border/2), x+w-1-border/2, y+h-1-border/2, fr); // inner rectangle
     osd->DrawRectangle(x+border    , y+border    , x+w-1-border  , y+h-1-border  , bg); // background for text
 
-    // Draw text
-    osd->DrawText(x+2*border, y+2*border,txt, fg, bg, MessageFont, w - 4*border, h - 4*border);
-
     // Remember box
-    MessageW=w;
-    MessageH=h;
-    MessageX=x;
-    MessageY=y;
+    MessageW = w;
+    MessageH = h;
+    MessageX = x;
+    MessageY = y;
 
-    DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OW=%d OH=%d text='%s'", MessageX, MessageY, MessageW, MessageH, outputWidth, outputHeight, txt);
+    // Draw text
+    if (txt2 == NULL) {
+        osd->DrawText(x + 2 * border + o1, y + 2 * border, txt1, fg, bg, MessageFont, w1, h1);
+        DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OW=%d OH=%d txt='%s'", MessageX, MessageY, MessageW, MessageH, outputWidth, outputHeight, txt1);
+    } else {
+        osd->DrawText(x + 2 * border + o1, y + 2 * border                  , txt1, fg, bg, MessageFont, w1, h1);
+        osd->DrawText(x + 2 * border + o2, y + 2 * border + h1 + border / 2, txt2, fg, bg, MessageFont, w2, h2);
+        DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OW=%d OH=%d txt1='%s' txt2='%s'", MessageX, MessageY, MessageW, MessageH, outputWidth, outputHeight, txt1, txt2);
+    };
 
     // And flush all changes
     ReleaseFlush();

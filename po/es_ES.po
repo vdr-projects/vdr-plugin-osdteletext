@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-07 08:43+0200\n"
+"POT-Creation-Date: 2021-04-19 07:48+0200\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Ruben Nunez Francisco <ruben.nunez@tang-it.com>\n"
 "Language-Team: Spanish <vdr@linuxtv.org>\n"
@@ -16,16 +16,43 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Switch to cached"
+msgid "Switch to"
 msgstr ""
 
 msgid "Channel"
 msgstr ""
 
-msgid "Switch to live"
+msgid "without"
+msgstr ""
+
+msgid "Teletext"
+msgstr "Teletexto"
+
+msgid "live"
 msgstr ""
 
 msgid "Switch back to live"
+msgstr ""
+
+msgid "Tuner available"
+msgstr ""
+
+msgid "display current pages"
+msgstr ""
+
+msgid "Tuner busy"
+msgstr ""
+
+msgid "display cached pages"
+msgstr ""
+
+msgid "cached"
+msgstr ""
+
+msgid "Channel Tuning Not Successful"
+msgstr ""
+
+msgid "No Free Tuner Found - Use Cache Only"
 msgstr ""
 
 msgid "*** Config mode is not supported in 24-line mode ***"
@@ -43,11 +70,38 @@ msgstr ""
 msgid "not found"
 msgstr "no encontrada"
 
+msgid "please wait"
+msgstr ""
+
 msgid "Displays teletext on the OSD"
 msgstr "Visualiza el teletexto en el OSD"
 
-msgid "Teletext"
-msgstr "Teletexto"
+msgid "Zoom"
+msgstr "Zoom"
+
+msgid "Half page"
+msgstr "Media página"
+
+msgid "Change channel"
+msgstr "Cambio cadena"
+
+msgid "Switch background"
+msgstr "Cambia el fondo"
+
+msgid "Config"
+msgstr ""
+
+msgid "24-LineMode"
+msgstr ""
+
+msgid "Answer"
+msgstr ""
+
+msgid "Pause"
+msgstr ""
+
+msgid "Jump to..."
+msgstr "Salta a..."
 
 msgid "Latin 1"
 msgstr ""
@@ -126,33 +180,6 @@ msgstr ""
 
 msgid "  Page number"
 msgstr "  Número de página"
-
-msgid "Zoom"
-msgstr "Zoom"
-
-msgid "Half page"
-msgstr "Media página"
-
-msgid "Change channel"
-msgstr "Cambio cadena"
-
-msgid "Switch background"
-msgstr "Cambia el fondo"
-
-msgid "Config"
-msgstr ""
-
-msgid "24-LineMode"
-msgstr ""
-
-msgid "Answer"
-msgstr ""
-
-msgid "Pause"
-msgstr ""
-
-msgid "Jump to..."
-msgstr "Salta a..."
 
 msgid "Half Page"
 msgstr ""

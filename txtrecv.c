@@ -203,6 +203,7 @@ bool cTelePage::IsTopTextPage()
 
 cTxtStatus::cTxtStatus(bool storeTopText, Storage* storage)
    : receiver(NULL), storeTopText(storeTopText), storage(storage)
+     , NonLiveChannelNumber(0)
 {
 }
 
@@ -213,49 +214,101 @@ cTxtStatus::~cTxtStatus()
 
 void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber, bool LiveView)
 {
-   // Disconnect receiver if channel is 0, will reconnect to new
-   // receiver after channel change.
-   if (LiveView && ChannelNumber == 0)
-      DELETENULL(receiver);
-
    // ignore if channel is 0
-   if (ChannelNumber == 0) return;
+   if (ChannelNumber == 0) {
+      DEBUG_OT_TXTRCVC("IGNORE channel=0 switch on DVB %d for channel %d LiveView=%s\n", Device->DeviceNumber(), ChannelNumber, BOOLTOTEXT(LiveView));
+      return;
+   };
 
    // ignore if channel is invalid (highly unlikely, this will ever
    // be the case, but defensive coding rules!)
 #if defined(APIVERSNUM) && APIVERSNUM >= 20301
    LOCK_CHANNELS_READ;
-   const cChannel* newLiveChannel = Channels->GetByNumber(ChannelNumber);
+   const cChannel* newChannel = Channels->GetByNumber(ChannelNumber);
 #else
-   const cChannel* newLiveChannel = Channels.GetByNumber(ChannelNumber);
+   const cChannel* newChannel = Channels.GetByNumber(ChannelNumber);
 #endif
-   if (newLiveChannel == NULL) return;
+   if (newChannel == NULL) {
+      DEBUG_OT_TXTRCVC("IGNORE invalid channel on DVB %d for channel %d LiveView=%s\n", Device->DeviceNumber(), ChannelNumber, BOOLTOTEXT(LiveView));
+      return;
+   };
 
-   // ignore non-live-channel-switching
-   if (!LiveView || ChannelNumber != cDevice::CurrentChannel()) return;
+   if (!LiveView) {
+      if ((NonLiveChannelNumber > 0) && (NonLiveChannelNumber == ChannelNumber)) {
+         // don't ignore non-live-channel-switching in case of NonLiveChannelNumber was hit
+         DEBUG_OT_TXTRCVC("PASSED selected NON-LIVE channel switch detected on DVB %d for channel %d '%s'\n", Device->DeviceNumber(), newChannel->Number(), newChannel->Name());
+      } else if (
+            (NonLiveChannelNumber > 0) // currently on tuned channel
+         && (NonLiveChannelNumber != ChannelNumber) // channel is not matching
+         && (receiver) // receiver is active
+      ) {
+         if (receiver->device->DeviceNumber() == Device->DeviceNumber()) { // device matching
+            // don't ignore non-live-channel-switching in case of Device was hit
+            DEBUG_OT_TXTRCVC("STOPRC not matching NON-LIVE channel switch detected on DVB %d (currently used by receiver) for channel %d '%s'\n", Device->DeviceNumber(), newChannel->Number(), newChannel->Name());
+            DELETENULL(receiver);
+            return;
+         } else {
+            DEBUG_OT_TXTRCVC("IGNORE not matching NON-LIVE channel switch on DVB %d (not used by receiver) for channel %d '%s'\n", Device->DeviceNumber(), newChannel->Number(), newChannel->Name());
+         };
+      } else {
+         // ignore other non-live-channel-switching
+         DEBUG_OT_TXTRCVC("IGNORE not matching NON-LIVE channel switch on DVB %d for channel %d '%s'\n", Device->DeviceNumber(), newChannel->Number(), newChannel->Name());
+         return;
+      };
+   } else {
+      // ignore non-live-channel-switching
+      if (ChannelNumber != cDevice::CurrentChannel()) {
+         DEBUG_OT_TXTRCVC("IGNORE not current device LIVE channel switch on DVB %d for channel %d '%s'\n", Device->DeviceNumber(), newChannel->Number(), newChannel->Name());
+         return;
+      };
 
-   // live channel was changed
-   // now re-attach the receiver to the new live channel
+      // process live channel switch
+      DEBUG_OT_TXTRCVC("PASSED LIVE channel switch detected on DVB %d for channel %d '%s'\n", Device->DeviceNumber(), newChannel->Number(), newChannel->Name());
+   };
 
+   // now re-attach the receiver to the new channel
+   int TPid = newChannel->Tpid();
+
+   if (LiveView && TPid && receiver) {
+      // tell still running receiver thread that it will be deleted and new channel is live
+      // will be used during deleting the receiver to signal that status via TeletextBrowser::ChannelSwitched
+      receiver->SetFlagStopByLiveChannelSwitch(true);
+   };
+
+   // channel was changed, delete the running receiver
    DELETENULL(receiver);
 
-   int TPid = newLiveChannel->Tpid();
-
    if (TPid) {
-      receiver = new cTxtReceiver(newLiveChannel, storeTopText, storage);
-      cDevice::ActualDevice()->AttachReceiver(receiver);
+      if (LiveView) {
+         // attach to actual device
+         receiver = new cTxtReceiver(cDevice::ActualDevice(), LiveView, newChannel, storeTopText, storage);
+         cDevice::ActualDevice()->AttachReceiver(receiver);
+         DEBUG_OT_TXTRCVC("ATTACH receiver to DVB %d for LIVE channel %d '%s'\n", cDevice::ActualDevice()->DeviceNumber(), newChannel->Number(), newChannel->Name());
+         TeletextBrowser::ChannelSwitched(ChannelNumber, ChannelIsLive);
+         NonLiveChannelNumber = 0; // clear non-live channel number
+      } else {
+         cDevice *device = cDevice::GetDevice(Device->DeviceNumber());
+         receiver = new cTxtReceiver(device, LiveView, newChannel, storeTopText, storage);
+         device->AttachReceiver(receiver);
+         DEBUG_OT_TXTRCVC("ATTACH receiver to DVB %d for TUNED channel %d '%s'\n", Device->DeviceNumber(), newChannel->Number(), newChannel->Name());
+         TeletextBrowser::ChannelSwitched(ChannelNumber, ChannelIsTuned);
+      };
+   } else {
+      DEBUG_OT_TXTRCVC("NOOP  do not attach receiver (MISSING teletext) on DVB %d for channel %d '%s'\n", Device->DeviceNumber(), newChannel->Number(), newChannel->Name());
+      TeletextBrowser::ChannelSwitched(ChannelNumber, ChannelHasNoTeletext);
    }
-
-   TeletextBrowser::ChannelSwitched(ChannelNumber, true);
 }
 
 
-cTxtReceiver::cTxtReceiver(const cChannel* chan, bool storeTopText, Storage* storage)
+cTxtReceiver::cTxtReceiver(const cDevice *dev, const bool live, const cChannel* chan, bool storeTopText, Storage* storage)
  : cReceiver(chan, -1), cThread("osdteletext-receiver", true),
    TxtPage(0), storeTopText(storeTopText), buffer((188+60)*75), storage(storage)
+   , device(dev)
+   , live(live)
+   , flagStopByLiveChannelSwitch(false)
    , channel(chan), statTxtReceiverPageCount(0)
 {
-   isyslog("osdteletext: cTxtReceiver started on channel Number=%d Name='%s' ID=%s storeTopText=%s\n", channel->Number(), channel->Name(), *ChannelID().ToString(), (storeTopText == true) ? "yes" : "no");
+   isyslog("osdteletext: cTxtReceiver started on DVB %d for channel %d '%s' ID=%s storeTopText=%s LiveView=%s\n", device->DeviceNumber(), channel->Number(), channel->Name(), *ChannelID().ToString(), BOOLTOTEXT(storeTopText), BOOLTOTEXT(live));
    SetPids(NULL);
    AddPid(chan->Tpid());
    storage->prepareDirectory(ChannelID());
@@ -277,7 +330,16 @@ cTxtReceiver::~cTxtReceiver()
    time_t statTxtReceiverTimeStop;
    time(&statTxtReceiverTimeStop);
    double time_diff = difftime(statTxtReceiverTimeStop, statTxtReceiverTimeStart);
-   isyslog("osdteletext: cTxtReceiver stopped after %.0lf sec: cTelePage received on channel Number=%d Name='%s' ID=%s: %ld (%.3lf/sec)\n", time_diff, channel->Number(), channel->Name(), *ChannelID().ToString(), statTxtReceiverPageCount, statTxtReceiverPageCount / time_diff);
+   isyslog("osdteletext: cTxtReceiver stopped after %.0lf sec: cTelePage received on DVB %d for channel %d '%s' ID=%s: %ld (%.3lf/sec)\n", time_diff, device->DeviceNumber(), channel->Number(), channel->Name(), *ChannelID().ToString(), statTxtReceiverPageCount, statTxtReceiverPageCount / time_diff);
+
+   if (!live) {
+      // tuned channel
+      if (flagStopByLiveChannelSwitch == false) {
+         TeletextBrowser::ChannelSwitched(channel->Number(), ChannelWasTuned); // trigger TeletextBrowser that channel is no longer tuned
+      } else {
+         TeletextBrowser::ChannelSwitched(channel->Number(), ChannelWasTunedNewChannelIsLive); // trigger TeletextBrowser that channel is no longer tuned but new channel is live
+      };
+   };
 }
 
 void cTxtReceiver::Stop()
@@ -451,7 +513,10 @@ void cTxtReceiver::DecodeTXT(uchar* TXT_buf)
       stat_time_diff_last = difftime(stat_time_now, stat_time_last);
       if (stat_time_diff_last >= 10) { // every 10 seconds
          stat_time_diff_start = difftime(stat_time_now, stat_time_start);
-         DEBUG_OT_COPG("received cTelePages %d in %.0lf sec (total: %ld in %.0lf sec -> %.3lf/sec)\n"
+         DEBUG_OT_COPG("received on DVB %d channel %d '%s' cTelePages: %d in %.0lf sec (total: %ld in %.0lf sec -> %.3lf/sec)\n"
+            , device->DeviceNumber()
+            , channel->Number()
+            , channel->Name()
             , stat_pagecount
             , stat_time_diff_last
             , stat_pagecount_total

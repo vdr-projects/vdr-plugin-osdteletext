@@ -57,6 +57,11 @@ private:
    bool storeTopText;
    cRingTxtFrames buffer;
    Storage *storage;
+public:
+   const cDevice *device;
+private:
+   const bool live;
+   bool flagStopByLiveChannelSwitch;
    const cChannel* channel;
    long int statTxtReceiverPageCount;
    time_t statTxtReceiverTimeStart;
@@ -69,9 +74,10 @@ protected:
 #endif
    virtual void Action();
 public:
-   cTxtReceiver(const cChannel* chan, bool storeTopText, Storage* storage);
+   cTxtReceiver(const cDevice *dev, const bool live, const cChannel* chan, bool storeTopText, Storage* storage);
    virtual ~cTxtReceiver();
    virtual void Stop();
+   void SetFlagStopByLiveChannelSwitch(bool flag) { flagStopByLiveChannelSwitch = flag; };
 };
 
 class cTxtStatus : public cStatus {
@@ -79,10 +85,12 @@ private:
    cTxtReceiver *receiver;
    bool storeTopText;
    Storage* storage;
+   int NonLiveChannelNumber;
 protected:
    virtual void ChannelSwitch(const cDevice *Device, int ChannelNumber, bool LiveView);
 public:
    cTxtStatus(bool storeTopText, Storage* storage);
+   void SetNonLiveChannelNumber(const int ChannelNumber) { NonLiveChannelNumber = ChannelNumber; return; };
    ~cTxtStatus();
 };
 

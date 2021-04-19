@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 2.4.4\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-07 08:43+0200\n"
+"POT-Creation-Date: 2021-04-19 07:20+0200\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Peter Bieringer <pb@bieringer.de>\n"
 "Language-Team: German <vdr@linuxtv.org>\n"
@@ -16,17 +16,44 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Switch to cached"
-msgstr "Wechsle zu gespeicherten"
+msgid "Switch to"
+msgstr "Wechsle zu"
 
 msgid "Channel"
 msgstr "Kanal"
 
-msgid "Switch to live"
-msgstr "Wechsle zu laufendem"
+msgid "without"
+msgstr "ohne"
+
+msgid "Teletext"
+msgstr "Videotext"
+
+msgid "live"
+msgstr "aktuellem"
 
 msgid "Switch back to live"
 msgstr "Wechsle zurück zu laufendem"
+
+msgid "Tuner available"
+msgstr "Tuner frei"
+
+msgid "display current pages"
+msgstr "zeige aktuelle Seiten an"
+
+msgid "Tuner busy"
+msgstr "Tuner belegt"
+
+msgid "display cached pages"
+msgstr "zeige gespeicherte Seiten an"
+
+msgid "cached"
+msgstr "gespeicherten"
+
+msgid "Channel Tuning Not Successful"
+msgstr "Kanal nicht erfolgreich eingestellt"
+
+msgid "No Free Tuner Found - Use Cache Only"
+msgstr "Keinen freien Tuner gefunden - benutze nur gespeicherte Seiten"
 
 msgid "*** Config mode is not supported in 24-line mode ***"
 msgstr "*** Konfig-Modus ist im 24-Zeilen-Modus nicht unterstützt ***"
@@ -43,11 +70,38 @@ msgstr "im Speicher"
 msgid "not found"
 msgstr "nicht gefunden"
 
+msgid "please wait"
+msgstr "bitte warten"
+
 msgid "Displays teletext on the OSD"
 msgstr "Zeigt den Videotext auf dem OSD an"
 
-msgid "Teletext"
-msgstr "Videotext"
+msgid "Zoom"
+msgstr "Vergrößern"
+
+msgid "Half page"
+msgstr "Halbe Seite"
+
+msgid "Change channel"
+msgstr "Kanal wechseln"
+
+msgid "Switch background"
+msgstr "Hintergrund ändern"
+
+msgid "Config"
+msgstr "Konfiguration"
+
+msgid "24-LineMode"
+msgstr "24-ZeilenModus"
+
+msgid "Answer"
+msgstr "Antwort"
+
+msgid "Pause"
+msgstr "Pause"
+
+msgid "Jump to..."
+msgstr "Springe zu..."
 
 msgid "Latin 1"
 msgstr ""
@@ -126,33 +180,6 @@ msgstr "Tastenzuweisung"
 
 msgid "  Page number"
 msgstr "  Seitenzahl"
-
-msgid "Zoom"
-msgstr "Vergrößern"
-
-msgid "Half page"
-msgstr "Halbe Seite"
-
-msgid "Change channel"
-msgstr "Kanal wechseln"
-
-msgid "Switch background"
-msgstr "Hintergrund ändern"
-
-msgid "Config"
-msgstr "Konfiguration"
-
-msgid "24-LineMode"
-msgstr "24-ZeilenModus"
-
-msgid "Answer"
-msgstr "Antwort"
-
-msgid "Pause"
-msgstr "Pause"
-
-msgid "Jump to..."
-msgstr "Springe zu..."
 
 msgid "Half Page"
 msgstr "HalbeSeite"

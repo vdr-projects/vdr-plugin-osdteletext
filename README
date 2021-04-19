@@ -54,12 +54,15 @@ Keys:
                     display upper half/lower half/back to full size
 
      Switch channel:Show pages of a channel different from the one currently
-                    tuned to. This does _not_ include any tuning or channel
-                    switching with vdr's core. You must have tuned to the
-                    channel chosen some time before so that the pages have
-                    been stored on disk. When you press the key associated
+                    tuned to. In case a channel is on same transponder or
+                    an additional free tuner is availabe it will change the
+                    receiver ("tuned" mode). If not, it stays in "chached"
+                    mode and only display pages which were received during
+                    tuning to selected channel in the past and pages are stored
+                    on disk already. When you press the key associated
                     with that action, you are asked for the channel number.
                     Press OK after you entered it with the number keys.
+                    Without providing a channel, OK switches back to live channel
 
      Jump to...:    Jumps to the page you configure.
 
