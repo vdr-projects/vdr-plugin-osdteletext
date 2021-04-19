@@ -698,11 +698,10 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
 
          switch(e) {
             case HotkeyLevelPlus:
-               DEBUG_OT_KEYS("key action: 'HotkeyLevel'/'HotkeyLevelPlus' current hotkeyLevel=%d ttSetup.hotkeyLevelMax=%d", hotkeyLevel, ttSetup.hotkeyLevelMax);
+               DEBUG_OT_KEYS("key action: 'HotkeyLevelPlus' current hotkeyLevel=%d ttSetup.hotkeyLevelMax=%d", hotkeyLevel, ttSetup.hotkeyLevelMax);
                hotkeyLevel++;
                if (hotkeyLevel == ttSetup.hotkeyLevelMax)
                   hotkeyLevel = 0; // rollover to minimum
-               ShowPage();
                break;
 
             case HotkeyLevelMinus:
