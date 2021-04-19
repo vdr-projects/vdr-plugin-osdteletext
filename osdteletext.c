@@ -805,7 +805,7 @@ eOSState cTeletextSetupPage::ProcessKey(eKeys Key) {
 
    if (item == hotkeyLevelItem) {
       // change between menu levels
-      DEBUG_OT_KEYS("hotkeyLevelItem changed OSDhotkeyLevel=%d", hotkeyLevel);
+      DEBUG_OT_KEYS("hotkeyLevelItem changed hotkeyLevel=%d", hotkeyLevel);
       SetupRefreshHotkeys();
       Display();
       return state;
