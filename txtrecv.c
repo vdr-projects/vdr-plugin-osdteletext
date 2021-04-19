@@ -240,12 +240,16 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber, bool Li
       } else if (
             (NonLiveChannelNumber > 0) // currently on tuned channel
          && (NonLiveChannelNumber != ChannelNumber) // channel is not matching
-         && (receiver->device->DeviceNumber() == Device->DeviceNumber()) // device matching
+         && (receiver) // receiver is active
       ) {
-         // don't ignore non-live-channel-switching in case of Device was hit
-         DEBUG_OT_TXTRCVC("STOPRC not matching NON-LIVE channel switch detected on DVB %d for channel %d '%s'\n", Device->DeviceNumber(), newChannel->Number(), newChannel->Name());
-         DELETENULL(receiver);
-         return;
+         if (receiver->device->DeviceNumber() == Device->DeviceNumber()) { // device matching
+            // don't ignore non-live-channel-switching in case of Device was hit
+            DEBUG_OT_TXTRCVC("STOPRC not matching NON-LIVE channel switch detected on DVB %d (currently used by receiver) for channel %d '%s'\n", Device->DeviceNumber(), newChannel->Number(), newChannel->Name());
+            DELETENULL(receiver);
+            return;
+         } else {
+            DEBUG_OT_TXTRCVC("IGNORE not matching NON-LIVE channel switch on DVB %d (not used by receiver) for channel %d '%s'\n", Device->DeviceNumber(), newChannel->Number(), newChannel->Name());
+         };
       } else {
          // ignore other non-live-channel-switching
          DEBUG_OT_TXTRCVC("IGNORE not matching NON-LIVE channel switch on DVB %d for channel %d '%s'\n", Device->DeviceNumber(), newChannel->Number(), newChannel->Name());
