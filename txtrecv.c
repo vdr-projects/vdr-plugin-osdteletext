@@ -249,6 +249,7 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber, bool Li
             return;
          } else {
             DEBUG_OT_TXTRCVC("IGNORE not matching NON-LIVE channel switch on DVB %d (not used by receiver) for channel %d '%s'\n", Device->DeviceNumber(), newChannel->Number(), newChannel->Name());
+            return;
          };
       } else {
          // ignore other non-live-channel-switching
