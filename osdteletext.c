@@ -352,8 +352,8 @@ void cPluginTeletextosd::initTexts() {
    {
       { "Action_kPlay",     trVDR("Key$Play") },
       { "Action_kStop",     trVDR("Key$Stop") },
-      { "Action_kFastFwd",  trVDR("Key$FastFwd") },
       { "Action_kFastRew",  trVDR("Key$FastRew") },
+      { "Action_kFastFwd",  trVDR("Key$FastFwd") },
       { "Action_kOk",       trVDR("Key$Ok") },
    };
 

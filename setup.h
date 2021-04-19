@@ -82,8 +82,8 @@ enum ActionKeys {
    // keep in sync: static const ActionKeyName st_actionKeyNames in osdteletext.c
    ActionKeyPlay,
    ActionKeyStop,
-   ActionKeyFastFwd,
    ActionKeyFastRew,
+   ActionKeyFastFwd,
    ActionKeyOk,
 
    LastActionKey
