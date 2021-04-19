@@ -1,5 +1,8 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
+2021-04-19: version 2.1.0
+- [pbiering] catch case where in tuned mode channel switch is triggered on selected device and switch into cached mode
+
 2021-04-15:
 - [pbiering] finally catch and handle proper switching from tuned to live channel by outside trigger (e.g. RCU)
 
