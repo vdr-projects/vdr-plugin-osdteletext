@@ -164,7 +164,7 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelInfo info
             snprintf(str, sizeof(str), "%s %s", tr("Switch back to live"), tr("Channel"));
             ChannelInfo = ChannelIsLive;
          } else {
-            snprintf(str, sizeof(str), "%s %s %s", tr("Switch to"), tr("tuned"), tr("Channel"));
+            snprintf(str, sizeof(str), "%s - %s", tr("Tuner available"), tr("display current pages"));
             color = ttcMagenta;
          };
       }
@@ -177,7 +177,7 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelInfo info
          // received trigger that TUNED channel has no longer a receiver
          if (! switchChannelInProgress) {
             // but no channel switch action in progress -> display message
-            snprintf(str, sizeof(str), "%s %s %s", tr("Switch back to"), tr("cached"), tr("Channel"));
+            snprintf(str, sizeof(str), "%s - %s", tr("Tuner busy"), tr("display cached pages"));
             color = ttcCyan;
          } else {
             // suppress a message which will be shortly overwritten anyhow by starting receiver on new channel
