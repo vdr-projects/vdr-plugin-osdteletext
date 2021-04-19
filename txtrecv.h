@@ -57,7 +57,9 @@ private:
    bool storeTopText;
    cRingTxtFrames buffer;
    Storage *storage;
+public:
    const cDevice *device;
+private:
    const bool live;
    bool flagStopByLiveChannelSwitch;
    const cChannel* channel;
