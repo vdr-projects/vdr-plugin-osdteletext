@@ -390,7 +390,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
     const cFont *font = TXTFont; // FIXED: -Wmaybe-uninitialized
     int charset = c.GetCharset();
     int fontType = 0;
-    int w = fontWidth / 2;
+    int w = fontWidth  / 2;
     int h = fontHeight / 2;
     if (c.GetDblWidth() != dblw_Normal) {
         fontType |= 1;
@@ -460,7 +460,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
 
     if ((m_debugmask & DEBUG_MASK_OT_ACT_LIMIT_LINES) && (y > 8)) return;
 
-    int vx = x * fontWidth / 2;
+    int vx = x * fontWidth  / 2;
     int vy = y * fontHeight / 2;
 
     bool drawChar = true;
