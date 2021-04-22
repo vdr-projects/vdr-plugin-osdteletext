@@ -133,7 +133,7 @@ void cDisplay::InitScaler() {
 
     int txtFontWidth = fontWidth;
     int txtFontHeight = fontHeight;
-    const char *txtFontName = ttSetup.txtFontName;
+    const char *txtFontName = TTSETUPPRESET_FONTNAME(Font);
     std::string footprint = GetFontFootprint(txtFontName);
     if (footprint.compare(TXTFontFootprint) == 0) {
         // cached
