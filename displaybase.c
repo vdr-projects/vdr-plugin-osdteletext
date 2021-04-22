@@ -534,7 +534,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
             };
 
             if ((m_debugline >= 0) && (y == m_debugline)) {
-                DEBUG_OT_DCHR("y=%2d x=%2d vy=%4d vx=%4d w=%d h=%d cache_Vshift=%d ttfg=%d ttbg=%d BoxedOut=%d text charset=0x%04x char='%s'", y, x, vy, vx, w, h, cache_Vshift, ttfg, ttbg, c.GetBoxedOut(), charset, buf);
+                DEBUG_OT_DCHR("y=%2d x=%2d vy=%4d vx=%4d w=%d h=%d cache_Vshift=%d ttfg=%d fg=0x%08x ttbg=%d bg=0x%08x BoxedOut=%d text charset=0x%04x char='%s'", y, x, vy, vx, w, h, cache_Vshift, ttfg, fg, ttbg, bg, c.GetBoxedOut(), charset, buf);
             };
 
             charBm.DrawText(0, cache_Vshift, buf, fg, 0, font, 0, 0);
