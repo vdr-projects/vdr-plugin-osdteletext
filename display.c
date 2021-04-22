@@ -43,31 +43,31 @@ void Display::SetMode(Display::Mode NewMode, tColor clrBackground) {
     if (display!=NULL && NewMode==mode) return; // No change, nothing to do
 
     // calculate from percentage and OSD maximum
-    OSDwidth = (cOsd::OsdWidth() * ttSetup.OSDwidthPct) / 100;
-    OSDheight = (cOsd::OsdHeight() * ttSetup.OSDheightPct) / 100;
+    OSDwidth = (cOsd::OsdWidth()   * TTSETUPPRESET(Width) ) / 100;
+    OSDheight = (cOsd::OsdHeight() * TTSETUPPRESET(Height)) / 100;
 
     // align with hChars/vLines
     if ((OSDwidth  % hChars) > 0) OSDwidth  = (OSDwidth  / hChars) * hChars;
     if ((OSDheight % vLines) > 0) OSDheight = (OSDheight / vLines) * vLines;
 
-    if (ttSetup.OSDwidthPct < 100) {
-        if (ttSetup.OSDleftPct > 0) {
+    if (TTSETUPPRESET(Width) < 100) {
+        if (TTSETUPPRESET(Left) > 0) {
             // check offset not exceeding maximum possible
-            if (ttSetup.OSDwidthPct + ttSetup.OSDleftPct > 100) {
+            if (TTSETUPPRESET(Width) + TTSETUPPRESET(Left) > 100) {
                 // shift to maximum
                 x0 += cOsd::OsdWidth() - OSDwidth;
             } else {
                 // add configured offset
-                x0 += (cOsd::OsdWidth() * ttSetup.OSDleftPct) / 100;
+                x0 += (cOsd::OsdWidth() * TTSETUPPRESET(Left)) / 100;
 
                 // add 50% of alignment offset to center proper
-                x0 += ((cOsd::OsdWidth() * ttSetup.OSDwidthPct) / 100 - OSDwidth) / 2;
+                x0 += ((cOsd::OsdWidth() * TTSETUPPRESET(Width)) / 100 - OSDwidth) / 2;
             };
         };
 
-        if (ttSetup.OSDframePix > 0) {
-            OSDleftFrame = ttSetup.OSDframePix;
-            OSDrightFrame = ttSetup.OSDframePix;
+        if (TTSETUPPRESET(Frame) > 0) {
+            OSDleftFrame  = TTSETUPPRESET(Frame);
+            OSDrightFrame = TTSETUPPRESET(Frame);
 
             x0 -= OSDleftFrame;
             if (x0 < 0) {
@@ -88,24 +88,24 @@ void Display::SetMode(Display::Mode NewMode, tColor clrBackground) {
         OSDrightFrame = cOsd::OsdWidth() - OSDwidth - OSDleftFrame;
     };
 
-    if (ttSetup.OSDheightPct < 100) {
-        if (ttSetup.OSDtopPct > 0) {
+    if (TTSETUPPRESET(Height) < 100) {
+        if (TTSETUPPRESET(Top) > 0) {
             // check offset not exceeding maximum possible
-            if (ttSetup.OSDheightPct + ttSetup.OSDtopPct > 100) {
+            if (TTSETUPPRESET(Height) + TTSETUPPRESET(Top) > 100) {
                 // shift to maximum
                 y0 += cOsd::OsdHeight() - OSDheight;
             } else {
                 // add configured offset
-                y0 += cOsd::OsdHeight() * ttSetup.OSDtopPct / 100;
+                y0 += cOsd::OsdHeight() * TTSETUPPRESET(Height) / 100;
 
                 // add 50% of alignment offset to center proper
-                y0 += ((cOsd::OsdHeight() * ttSetup.OSDheightPct) / 100 - OSDheight) / 2;
+                y0 += ((cOsd::OsdHeight() * TTSETUPPRESET(Height)) / 100 - OSDheight) / 2;
             };
         };
 
-        if (ttSetup.OSDframePix > 0) {
-            OSDtopFrame = ttSetup.OSDframePix;
-            OSDbottomFrame = ttSetup.OSDframePix;
+        if (TTSETUPPRESET(Frame) > 0) {
+            OSDtopFrame    = TTSETUPPRESET(Frame);
+            OSDbottomFrame = TTSETUPPRESET(Frame);
 
             y0 -= OSDtopFrame;
             if (y0 < 0) {
@@ -128,8 +128,8 @@ void Display::SetMode(Display::Mode NewMode, tColor clrBackground) {
 
     DEBUG_OT_AREA("osdteletext: OSD area calculated by percent values: OL=%d OT=%d OW=%d OH=%d OwP=%d%% OhP=%d%% OlP=%d%% OtP=%d%% OfPx=%d lineMode24=%d => x0=%d y0=%d Ow=%d Oh=%d OlF=%d OrF=%d OtF=%d ObF=%d"
         , cOsd::OsdLeft(), cOsd::OsdTop(), cOsd::OsdWidth(), cOsd::OsdHeight()
-        , ttSetup.OSDwidthPct, ttSetup.OSDheightPct, ttSetup.OSDleftPct, ttSetup.OSDtopPct
-        , ttSetup.OSDframePix
+        , TTSETUPPRESET(Width), TTSETUPPRESET(Height), TTSETUPPRESET(Left), TTSETUPPRESET(Top)
+        , TTSETUPPRESET(Frame)
         , ttSetup.lineMode24
         , x0, y0
         , OSDwidth, OSDheight
@@ -261,9 +261,10 @@ cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height, int leftFram
     setTopFrame(topFrame);
     setBottomFrame(bottomFrame);
 
-    isyslog("osdteletext: OSD area successful requested with x0=%d y0=%d width=%d height=%d bpp=%d lF=%d rF=%d tF=%d bF=%d"
+    isyslog("osdteletext: OSD area successful requested with x0=%d y0=%d width=%d height=%d bpp=%d lF=%d rF=%d tF=%d bF=%d bg=0x%08x"
         , x0, y0, width, height, bpp
         , leftFrame, rightFrame, topFrame, bottomFrame
+        , clrBackground
     );
 
     InitScaler();
