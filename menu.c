@@ -51,7 +51,7 @@ bool clrBackgroundInit = false;
 
 extern int maxHotkeyLevel;
 
-eTeletextActionConfig configMode = NotActive;
+eTeletextActionConfig configMode = LastActionConfig;
 
 TeletextBrowser::TeletextBrowser(cTxtStatus *txtSt,Storage *s)
   : cursorPos(0), pageFound(true), selectingChannel(false),
@@ -426,27 +426,27 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
          break; 
          
       case kRed: 
-         if (configMode != NotActive) { // catch config mode
+         if (configMode != LastActionConfig) { // catch config mode
             changedConfig = ExecuteActionConfig(configMode, -1); // decrement
             break;
          };
          // continue below
 
       case kGreen: 
-         if (configMode != NotActive) { // catch config mode
+         if (configMode != LastActionConfig) { // catch config mode
             changedConfig = ExecuteActionConfig(configMode, +1); // increment
             break;
          };
          // continue below
 
       case kYellow:
-         if (configMode != NotActive) { // key is inactive in config mode (displaying value)
+         if (configMode != LastActionConfig) { // key is inactive in config mode (displaying value)
             break;
          };
          // continue below
 
       case kBlue:
-         if (configMode != NotActive) { // catch config mode
+         if (configMode != LastActionConfig) { // catch config mode
             ExecuteAction(Config);
             break;
          };
@@ -656,7 +656,7 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
             break;
          };
          switch(configMode) {
-            case NotActive : configMode = Left     ; break; // start config mode
+            case LastActionConfig : configMode = Left     ; break; // start config mode
             case Left      : configMode = Top      ; break;
             case Top       : configMode = Width    ; break;
             case Width     : configMode = Height   ; break;
@@ -1105,7 +1105,7 @@ void TeletextBrowser::UpdateFooter() {
    FooterFlags flag = FooterNormal; // default
    eTeletextActionValueType valueType = None;
 
-   if (configMode == NotActive) {
+   if (configMode == LastActionConfig) {
       eTeletextAction AkRed    = TranslateKey(kRed);
       eTeletextAction AkGreen  = TranslateKey(kGreen);
       eTeletextAction AkYellow = TranslateKey(kYellow);

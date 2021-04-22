@@ -62,7 +62,7 @@ enum eTeletextActionConfig {
    Font,
    Voffset,
    BackTrans,
-   NotActive, // has to stay always the last one
+   LastActionConfig, // has to stay always the last one
 };
 
 enum eTeletextActionValueType {
