@@ -96,7 +96,7 @@ void Display::SetMode(Display::Mode NewMode, tColor clrBackground) {
                 y0 += cOsd::OsdHeight() - OSDheight;
             } else {
                 // add configured offset
-                y0 += cOsd::OsdHeight() * TTSETUPPRESET(Height) / 100;
+                y0 += (cOsd::OsdHeight() * TTSETUPPRESET(Top)) / 100;
 
                 // add 50% of alignment offset to center proper
                 y0 += ((cOsd::OsdHeight() * TTSETUPPRESET(Height)) / 100 - OSDheight) / 2;
