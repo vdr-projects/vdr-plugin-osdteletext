@@ -520,13 +520,13 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
 //            charBm.DrawText(0, 0, buf, fg, bg, font);
             if (
                  (cache_valid == 0) || (
-                 (cache_txtVoffset   != ttSetup.txtVoffset)
+                 (cache_txtVoffset   != TTSETUPPRESET(Voffset))
               || (cache_outputHeight != outputHeight      )
               || (cache_OsdHeight    != cOsd::OsdHeight() )
               )
             ) {
                 cache_valid = 1;
-                cache_txtVoffset   = ttSetup.txtVoffset;
+                cache_txtVoffset   = TTSETUPPRESET(Voffset);
                 cache_outputHeight = outputHeight;
                 cache_OsdHeight    = cOsd::OsdHeight();
                 cache_Vshift       = (cache_txtVoffset * cache_outputHeight) / cache_OsdHeight;
