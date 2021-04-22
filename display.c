@@ -53,7 +53,7 @@ void Display::SetMode(Display::Mode NewMode, tColor clrBackground) {
     if (TTSETUPPRESET(Width) < 100) {
         if (TTSETUPPRESET(Left) > 0) {
             // check offset not exceeding maximum possible
-            if (TTSETUPPRESET(Width) + TTSETUPPRESET(Left) > 100) {
+            if ((TTSETUPPRESET(Width) + TTSETUPPRESET(Left)) > 100) {
                 // shift to maximum
                 x0 += cOsd::OsdWidth() - OSDwidth;
             } else {
@@ -91,7 +91,7 @@ void Display::SetMode(Display::Mode NewMode, tColor clrBackground) {
     if (TTSETUPPRESET(Height) < 100) {
         if (TTSETUPPRESET(Top) > 0) {
             // check offset not exceeding maximum possible
-            if (TTSETUPPRESET(Height) + TTSETUPPRESET(Top) > 100) {
+            if ((TTSETUPPRESET(Height) + TTSETUPPRESET(Top)) > 100) {
                 // shift to maximum
                 y0 += cOsd::OsdHeight() - OSDheight;
             } else {
