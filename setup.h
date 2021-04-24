@@ -16,11 +16,11 @@
 #include <vdr/config.h>
 
 // max for setup
-#define HOTKEY_LEVEL_MAX_LIMIT  9  // maximum supported by SetupStore parser: 9, required minimum: 1
-#define HOTKEY_LEVEL_MAX_LIMIT_STRING "9"   // as string to be displayed in online help
+#define HOTKEY_LEVEL_MAX_LIMIT         9  // maximum supported by SetupStore parser: 9, required minimum: 1
+#define HOTKEY_LEVEL_MAX_LIMIT_STRING "9" // as string to be displayed in online help
 
-#define OSD_PRESET_MAX_LIMIT  5  // maximum supported by SetupStore parser: 9, required minimum: 1
-#define OSD_PRESET_MAX_LIMIT_STRING "5"   // as string to be displayed in online help
+#define OSD_PRESET_MAX_LIMIT         9  // maximum supported by SetupStore parser: 9, required minimum: 1
+#define OSD_PRESET_MAX_LIMIT_STRING "9" // as string to be displayed in online help
 
 // min/max for setup
 #define OSDleftPctMin      0
