@@ -21,7 +21,6 @@
 #include "txtrecv.h"
 #include "setup.h"
 
-
 // status of current channel
 enum eChannelInfo {
    ChannelIsLive,
