@@ -653,7 +653,7 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
             case Frame     : configMode = Font     ; break;
             case Font      : configMode = Voffset  ; break;
             case Voffset   : configMode = BackTrans; break;
-            case BackTrans : configMode = NotActive; break; // stop config mode
+            case BackTrans : configMode = LastActionConfig; break; // stop config mode
          };
          ShowPage();
          break;
