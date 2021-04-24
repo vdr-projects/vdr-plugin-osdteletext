@@ -248,7 +248,9 @@ cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height, int leftFram
     }
     if (osd->CanHandleAreas(Areas, sizeof(Areas) / sizeof(tArea)) != oeOk) {
         DELETENULL(osd);
-        esyslog("osdteletext: can't create requested OSD area with x0=%d y0=%d width=%d height=%d bpp=%d", x0, y0, width, height, bpp);
+        esyslog("osdteletext: can't create requested OSD area with x0=%d y0=%d width=%d height=%d bpp=%d osdPreset=%d", x0, y0, width, height, bpp
+            , ttSetup.osdPreset
+        );
         Skins.Message(mtError, "OSD-Teletext can't request OSD area, check plugin settings");
         return;
     }
@@ -261,10 +263,11 @@ cDisplay32BPP::cDisplay32BPP(int x0, int y0, int width, int height, int leftFram
     setTopFrame(topFrame);
     setBottomFrame(bottomFrame);
 
-    isyslog("osdteletext: OSD area successful requested with x0=%d y0=%d width=%d height=%d bpp=%d lF=%d rF=%d tF=%d bF=%d bg=0x%08x"
+    isyslog("osdteletext: OSD area successful requested with x0=%d y0=%d width=%d height=%d bpp=%d lF=%d rF=%d tF=%d bF=%d bg=0x%08x osdPreset=%d"
         , x0, y0, width, height, bpp
         , leftFrame, rightFrame, topFrame, bottomFrame
         , clrBackground
+        , ttSetup.osdPreset
     );
 
     InitScaler();
