@@ -101,7 +101,6 @@ private:
    int hotkeyLevel;
    int tempPageNumber[LastActionKey];
    int tempPageNumberHotkey[LastActionHotkey][HOTKEY_LEVEL_MAX_LIMIT];
-   //int tempConfiguredClrBackground; //must be a signed int
    cOsdItem *osdPresetMaxItem;
    cOsdItem *osdPresetItem;
    cString   osdPresetString;
