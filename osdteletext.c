@@ -32,13 +32,15 @@ using namespace std;
 
 #define NUMELEMENTS(x) (sizeof(x) / sizeof(x[0]))
 
-static const char *VERSION        = "2.1.0";
+static const char *VERSION        = "2.2.0.alpha.2";
 static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
 static const char *MAINMENUENTRY  = trNOOP("Teletext");
 
 unsigned int m_debugmask = 0;
 unsigned int m_debugpage = 0;
 unsigned int m_debugpsub = 0;
+int maxOsdPreset = 1;
+int maxHotkeyLevel = 1;
 int m_debugline = -1;
 
 class cPluginTeletextosd : public cPlugin {
@@ -51,6 +53,7 @@ private:
   int maxStorage;
   void initTexts();
   Storage::StorageSystem storageSystem;
+
 public:
   cPluginTeletextosd(void);
   virtual ~cPluginTeletextosd();
@@ -68,12 +71,20 @@ public:
 };
 
 class cTeletextSetupPage;
+
+// macro for creating setup string with given text and conditional index+1 suffix
+#define CREATE_SETUP_STRING_COND_SUFFIX(index, text) \
+      if (index == 0) \
+         snprintf(str, sizeof(str), "%s", text); \
+      else \
+         snprintf(str, sizeof(str), "%s%d", text, index + 1);
+
 class ActionEdit {
    public:
       void Init(cTeletextSetupPage*, int, cMenuEditIntItem  *, cMenuEditStraItem *);
+      void Init(cTeletextSetupPage*, int, int, bool, cMenuEditIntItem  *, cMenuEditStraItem *);
       cMenuEditStraItem *action;
       cMenuEditIntItem  *number;
-      bool visible;
    };
 
 struct ActionKeyName {
@@ -83,23 +94,41 @@ struct ActionKeyName {
 
 class cTeletextSetupPage : public cMenuSetupPage {
 friend class ActionEdit;
+friend class cPluginTeletextosd;
 private:
    TeletextSetup temp;
+   int osdPreset;
+   int hotkeyLevel;
    int tempPageNumber[LastActionKey];
-   int tempConfiguredClrBackground; //must be a signed int
+   int tempPageNumberHotkey[LastActionHotkey][HOTKEY_LEVEL_MAX_LIMIT];
+   cOsdItem *osdPresetMaxItem;
+   cOsdItem *osdPresetItem;
+   cString   osdPresetString;
+   cOsdItem *osdPresetConfigItem[LastActionConfig][OSD_PRESET_MAX_LIMIT]; // array of supported configuration items
+   cOsdItem *menuSectionKeysItem;
+   cOsdItem *hotkeyLevelMaxItem;
+   cOsdItem *hotkeyLevelItem;
+   cString   hotkeyLevelString;
 protected:
    virtual void Store(void);
+   int osdConfig[LastActionConfig][OSD_PRESET_MAX_LIMIT]; // matrix of supported presets
    ActionEdit ActionEdits[LastActionKey];
+   ActionEdit ActionEditsHotkey[LastActionHotkey][HOTKEY_LEVEL_MAX_LIMIT];
+   void SetupRefreshKeys(void);
+   void SetupRefreshHotkeys(void);
+   void SetupRefreshOsdConfig(void);
    virtual eOSState ProcessKey(eKeys Key);
 public:
    cTeletextSetupPage(void);
    static const ActionKeyName *actionKeyNames;
+   static const ActionKeyName *actionHotkeyNames;
    static const char **modes;
    //~cTeletextSetupPage(void);
    //void SetItemVisible(cOsdItem *Item, bool visible, bool callDisplay=false);
 };
 
 const ActionKeyName *cTeletextSetupPage::actionKeyNames = 0;
+const ActionKeyName *cTeletextSetupPage::actionHotkeyNames = 0;
 const char **cTeletextSetupPage::modes = 0;
 
 /*class MenuEditActionItem : public cMenuEditStraItem {
@@ -120,7 +149,33 @@ cPluginTeletextosd::cPluginTeletextosd(void)
   // Initialize any member variables here.
   // DON'T DO ANYTHING ELSE THAT MAY HAVE SIDE EFFECTS, REQUIRE GLOBAL
   // VDR OBJECTS TO EXIST OR PRODUCE ANY OUTPUT!
-}
+
+   initTexts();
+
+   // read available fonts into Vector
+   cFont::GetAvailableFontNames(&ttSetup.txtFontNames, true);
+
+   // run through available fonts backwards and delete blacklisted ones
+   for (int i = ttSetup.txtFontNames.Size() -1;  i >= 0; i--) {
+      if (    (strcasestr(ttSetup.txtFontNames[i], "Italic" ) != NULL)
+           || (strcasestr(ttSetup.txtFontNames[i], "Oblique") != NULL)
+      ) {
+         DEBUG_OT_FONT("available font='%s' BLACKLISTED", ttSetup.txtFontNames[i]);
+         ttSetup.txtFontNames.Remove(i);
+      } else {
+         DEBUG_OT_FONT("available font='%s' WHITELISTED", ttSetup.txtFontNames[i]);
+      };
+   };
+
+   // display selectable fonts
+   for (int i = 0; i < ttSetup.txtFontNames.Size(); i++) {
+      if (ttSetup.txtFontNames[i] != NULL) {
+         DEBUG_OT_FONT("selectable font[%d]='%s'", i, ttSetup.txtFontNames[i]);
+      };
+   };
+
+   ttSetup.configuredClrBackground = -1; // flag for check whether it's still in setup.conf
+};
 
 cPluginTeletextosd::~cPluginTeletextosd()
 {
@@ -130,23 +185,28 @@ cPluginTeletextosd::~cPluginTeletextosd()
 const char *cPluginTeletextosd::CommandLineHelp(void)
 {
   // Return a string that describes all known command line options.
-  return "  -d        --directory=DIR    The directory where the temporary\n"
-         "                               files will be stored.\n"
-         "                               (default: /var/cache/vdr/vtx)\n"
-         "                               Ensure that the directory exists and is writable.\n"
+  return "  -d        --directory=DIR    The directory where the temporary files will be stored.\n"
+         "                                default: /var/cache/vdr/vtx\n"
+         "                                Ensure that the directory exists and is writable.\n"
          "  -n        --max-cache=NUM    Maximum size in megabytes of cache used\n"
-         "                               to store the pages on the harddisk.\n"
-         "                               (default: a calculated value below 50 MB)\n"
+         "                                to store the pages on the harddisk.\n"
+         "                                default: a calculated value below 50 MB\n"
          "  -s        --cache-system=SYS Set the cache system to be used.\n"
-         "                               Choose \"legacy\" for the traditional\n"
-         "                               one-file-per-page system.\n"
-         "                               Default is \"packed\" for the \n"
-         "                               one-file-for-a-few-pages system.\n"
+         "                                Choose \"legacy\" for the traditional\n"
+         "                                 one-file-per-page system.\n"
+         "                                Default is \"packed\" for the \n"
+         "                                 one-file-for-a-few-pages system.\n"
          "  -t,       --toptext          Store top text pages at cache. (unviewable pages)\n"
+         "  -k        --key-levels=NUM   Maximum amount of Hotkey levels selectable and stored\n"
+         "                                default: 1 (which deactivate this feature)\n"
+         "                                maximum: " HOTKEY_LEVEL_MAX_LIMIT_STRING " levels\n"
+         "  -o        --osd-presets=NUM  Maximum amount of OSD presets selectable and stored\n"
+         "                                default: 1 (which deactivate this feature)\n"
+         "                                maximum: " OSD_PRESET_MAX_LIMIT_STRING " presets\n"
          "  -P|--debugpage <int|hexint>  Specify page to debug (int: autoconvert internally to hex)\n"
          "  -S|--debugpsub <int|hexint>  Specify sub-page to debug (int: autoconvert internally to hex)\n"
          "  -L|--debugline <int>         Specify line of page to debug\n"
-         "  -D|--debugmask <int|hexint>  Enable debugmask\n";
+         "  -D|--debugmask <int|hexint>  Enable debugmask (see logging.h for details)\n";
 }
 
 bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
@@ -157,6 +217,7 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
        { "max-cache",    required_argument,       NULL, 'n' },
        { "cache-system", required_argument,       NULL, 's' },
        { "toptext",      no_argument,             NULL, 't' },
+       { "hotkey-levels",required_argument,       NULL, 'k' },
        { "debugmask",    required_argument,       NULL, 'D' },
        { "debugpage",    required_argument,       NULL, 'P' },
        { "debugpsub",    required_argument,       NULL, 'S' },
@@ -165,7 +226,7 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
        };
 
    int c;
-   while ((c = getopt_long(argc, argv, "s:d:n:tD:", long_options, NULL)) != -1) {
+   while ((c = getopt_long(argc, argv, "o:k:s:d:n:tD:", long_options, NULL)) != -1) {
         switch (c) {
           case 's':
                     if (!optarg)
@@ -183,6 +244,32 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
                     }
                     break;
           case 't': storeTopText=true;
+                    break;
+          case 'k': if (isnumber(optarg)) {
+                       int n = atoi(optarg);
+                       if (n < 1) {
+                          maxHotkeyLevel = 1;
+                          esyslog("osdteletext: maximum key-level value (-k %s) below 1 (ignore and use minimum)", optarg);
+                       } else if ((n > HOTKEY_LEVEL_MAX_LIMIT)) {
+                          maxHotkeyLevel = HOTKEY_LEVEL_MAX_LIMIT;
+                          esyslog("osdteletext: maximum key-level value (-k %s) above limit of %d (ignore and use maximum)", optarg, HOTKEY_LEVEL_MAX_LIMIT);
+                       } else {
+                          maxHotkeyLevel = n;
+                       };
+                    }
+                    break;
+          case 'o': if (isnumber(optarg)) {
+                       int n = atoi(optarg);
+                       if (n < 1) {
+                          maxOsdPreset = 1;
+                          esyslog("osdteletext: maximum OSD-preset value (-o %s) below 1 (ignore and use minimum)", optarg);
+                       } else if ((n > OSD_PRESET_MAX_LIMIT)) {
+                          maxOsdPreset = OSD_PRESET_MAX_LIMIT;
+                          esyslog("osdteletext: maximum OSD-preset value (-o %s) above limit of %d (ignore and use maximum)", optarg, OSD_PRESET_MAX_LIMIT);
+                       } else {
+                          maxOsdPreset = n;
+                       };
+                    }
                     break;
           case 'D':
             if ((strlen(optarg) > 2) && (strncasecmp(optarg, "0x", 2) == 0)) {
@@ -252,61 +339,71 @@ bool cPluginTeletextosd::Start(void)
          break;
    }
 
-   initTexts();
    if (startReceiver)
       txtStatus=new cTxtStatus(storeTopText, storage);
-#define SETUP_MIN_MAX_CHECK(value, min, max) \
-   if (value < min) value = min; \
-   if (value > max) value = max;
 
-   SETUP_MIN_MAX_CHECK(ttSetup.OSDwidthPct , OSDwidthPctMin , OSDwidthPctMax )
-   SETUP_MIN_MAX_CHECK(ttSetup.OSDheightPct, OSDheightPctMin, OSDheightPctMax)
-   SETUP_MIN_MAX_CHECK(ttSetup.OSDleftPct  , OSDleftPctMin  , OSDleftPctMax  )
-   SETUP_MIN_MAX_CHECK(ttSetup.OSDtopPct   , OSDtopPctMin   , OSDtopPctMax   )
-   SETUP_MIN_MAX_CHECK(ttSetup.OSDframePix , OSDframePixMin , OSDframePixMax )
-   SETUP_MIN_MAX_CHECK(ttSetup.txtVoffset  , txtVoffsetMin  , txtVoffsetMax  )
+   if (maxOsdPreset > 1)
+      isyslog("osdteletext: OSD multiple preset feature enabled with maximum of presets: %d", maxOsdPreset);
+   else
+      isyslog("osdteletext: OSD multiple preset feature not activated");
 
-   // read available fonts into Vector
-   cFont::GetAvailableFontNames(&ttSetup.txtFontNames, true);
+   if (maxHotkeyLevel > 1)
+      isyslog("osdteletext: OSD menu Hotkey multi-level feature enabled with maximum of levels: %d", maxHotkeyLevel);
+   else
+      isyslog("osdteletext: OSD menu Hotkey multi-level feature not activated");
 
-   // run through available fonts backwards and delete blacklisted ones
-   for (int i = ttSetup.txtFontNames.Size() -1;  i >= 0; i--) {
-      if (    (strcasestr(ttSetup.txtFontNames[i], "Italic" ) != NULL)
-           || (strcasestr(ttSetup.txtFontNames[i], "Oblique") != NULL)
-      ) {
-         DEBUG_OT_FONT("available font='%s' BLACKLISTED", ttSetup.txtFontNames[i]);
-         ttSetup.txtFontNames.Remove(i);
-      } else {
-         DEBUG_OT_FONT("available font='%s' WHITELISTED", ttSetup.txtFontNames[i]);
-      };
+   ttSetup.osdPreset = 0; // default
+
+   // legacy migration handling
+   if ((ttSetup.migrationFlag_2_2 == false) && (ttSetup.configuredClrBackground >= 0)) {
+      // BackTrans(1) not found, but configuredClrBackground found in setup.conf
+      // overtake value from legacy TODO remove >= 2.3.0
+      ttSetup.osdConfig[BackTrans][0] = ttSetup.configuredClrBackground;
+      dsyslog("osdteletext: overtake into 'OSDbackTrans' (preset 1) from setup.conf: configuredClrBackground: %d -> %d" , 255 - ttSetup.configuredClrBackground, ttSetup.osdConfig[BackTrans][0]);
    };
-
-   // display selectable fonts
-   for (int i = 0; i < ttSetup.txtFontNames.Size(); i++) {
-      DEBUG_OT_FONT("selectable font[%d]='%s'", i, ttSetup.txtFontNames[i]);
-   };
-
-   // find configured font and map into index value
-   ttSetup.txtFontIndex = ttSetup.txtFontNames.Find(ttSetup.txtFontName);
-   if (ttSetup.txtFontIndex < 0) {
-       ttSetup.txtFontIndex = 0;
-   }
 
    return true;
 }
 
 void cPluginTeletextosd::Stop(void)
 {
-   // store potentially changed values TODO detect real change
-   SetupStore("OSDheightPct", ttSetup.OSDheightPct);
-   SetupStore("OSDwidthPct", ttSetup.OSDwidthPct);
-   SetupStore("OSDtopPct", ttSetup.OSDtopPct);
-   SetupStore("OSDleftPct", ttSetup.OSDleftPct);
-   SetupStore("OSDframePix", ttSetup.OSDframePix);
-   SetupStore("txtFontName", ttSetup.txtFontName);
-   SetupStore("txtVoffset", ttSetup.txtVoffset);
-   SetupStore("lineMode24", ttSetup.lineMode24);
-   SetupStore("configuredClrBackground", (int)(ttSetup.configuredClrBackground >> 24));
+   char str[40];
+
+   // TODO: deduplicate code, see also cTeletextSetupPage::Store
+   // Question: how to share that code beteen cTeletextSetupPage and cPluginTeletextosd
+   // store OSD presets
+   // preset "1" (internally 0) without digit suffix for backwards compatibility
+   for (int p = 0; p < maxOsdPreset; p++) {
+      CREATE_SETUP_STRING_COND_SUFFIX(p, "OSDleftPct")
+      SetupStore(str, ttSetup.osdConfig[Left][p]);
+
+      CREATE_SETUP_STRING_COND_SUFFIX(p, "OSDtopPct")
+      SetupStore(str, ttSetup.osdConfig[Top][p]);
+
+      CREATE_SETUP_STRING_COND_SUFFIX(p, "OSDwidthPct")
+      SetupStore(str, ttSetup.osdConfig[Width][p]);
+
+      CREATE_SETUP_STRING_COND_SUFFIX(p, "OSDheightPct")
+      SetupStore(str, ttSetup.osdConfig[Height][p]);
+
+      CREATE_SETUP_STRING_COND_SUFFIX(p, "OSDframePix")
+      SetupStore(str, ttSetup.osdConfig[Frame][p]);
+
+      CREATE_SETUP_STRING_COND_SUFFIX(p, "txtVoffset")
+      SetupStore(str, ttSetup.osdConfig[Voffset][p]);
+
+      CREATE_SETUP_STRING_COND_SUFFIX(p, "txtFontName")
+      SetupStore(str, ttSetup.txtFontNames[ttSetup.osdConfig[Font][p]]); // convert into name
+
+      CREATE_SETUP_STRING_COND_SUFFIX(p, "OSDbackTrans")
+      SetupStore(str, ttSetup.osdConfig[BackTrans][p]);
+   };
+
+   // legacy TODO remove >= 2.3.0
+   if (ttSetup.configuredClrBackground >= 0) {
+      // found in setup.conf during read, so store it back in legacy format
+      SetupStore("configuredClrBackground", 255 - ttSetup.osdConfig[BackTrans][0]);
+   };
 
    DELETENULL(txtStatus);
    if (storage) {
@@ -318,21 +415,29 @@ void cPluginTeletextosd::Stop(void)
 void cPluginTeletextosd::initTexts() {
    if (cTeletextSetupPage::actionKeyNames)
       return;
-   //TODO: rewrite this in the xy[0].cd="fg"; form
+
    static const ActionKeyName st_actionKeyNames[] =
+   {
+      { "Action_kFastRew",  trVDR("Key$FastRew") },
+      { "Action_kFastFwd",  trVDR("Key$FastFwd") },
+      { "Action_kStop",     trVDR("Key$Stop") },
+      { "Action_kOk",       trVDR("Key$Ok") },
+      { "Action_kPlay",     trVDR("Key$Play") },
+   };
+
+   cTeletextSetupPage::actionKeyNames = st_actionKeyNames;
+
+
+   static const ActionKeyName st_actionHotkeyNames[] =
    {
       { "Action_kRed",      trVDR("Key$Red") },
       { "Action_kGreen",    trVDR("Key$Green") },
       { "Action_kYellow",   trVDR("Key$Yellow") },
       { "Action_kBlue",     trVDR("Key$Blue") },
-      { "Action_kPlay",     trVDR("Key$Play") },
-      { "Action_kStop",     trVDR("Key$Stop") },
-      { "Action_kFastFwd",  trVDR("Key$FastFwd") },
-      { "Action_kFastRew",  trVDR("Key$FastRew") },
-      { "Action_kOk",       trVDR("Key$Ok") },
    };
 
-   cTeletextSetupPage::actionKeyNames = st_actionKeyNames;
+   cTeletextSetupPage::actionHotkeyNames = st_actionHotkeyNames;
+
 
    static const char *st_modes[] =
    {
@@ -346,7 +451,11 @@ void cPluginTeletextosd::initTexts() {
       tr("24-LineMode"),
       tr("Answer"),
       tr("Pause"),
-      tr("Jump to..."),
+      tr("Hotkey Level+"),
+      tr("Hotkey Level-"),
+      tr("OSD Preset+"),
+      tr("OSD Preset-"),
+      tr("Jump to...") // has to stay always as the last one
    };
 
    cTeletextSetupPage::modes = st_modes;
@@ -374,111 +483,272 @@ cMenuSetupPage *cPluginTeletextosd::SetupMenu(void)
   return new cTeletextSetupPage;
 }
 
+/* index extraction macro */
+#define CHECK_SETUP_STRING_COND_SUFFIX(name, text, index, limit) \
+   index = -1; \
+   if (! strcasecmp(name, text)) { \
+      index = 0; \
+   } else { \
+      if (! strncasecmp(name, text, strlen(text))) { \
+         if ((strlen(name) - 1) != strlen(text)) { \
+           esyslog("osdteletext: ignore entry with too long suffix in setup.conf: osdteletext.%s", name); \
+           return false; /* invalid option, only 1 digit is supported */ \
+         } \
+         /* extract digit suffix */ \
+         index = atoi(name + strlen(text)) - 1; /* last char digit */ \
+         if ((index < 1) || (index >= limit)) { \
+           /* ignore out-of-range suffix */ \
+           esyslog("osdteletext: ignore entry with out-of-range digit in setup.conf: osdteletext.%s (detected index=%d)", name, index); \
+           return false; \
+         }; \
+      }; \
+   }; \
+   if (index >= 0) { DEBUG_OT_SETUP("found setup config: Name=%s Text=%s Index=%d Value='%s'\n", name, text, index, Value); };
+
+/* value check/store macro */
+#define CHECK_STORE_INT_VALUE(store, value, min, max) \
+   store = atoi(value); \
+   if (store < min) store = min; \
+   else if (store > max) store = max;
+
+/* ignore obsolete options */
+#define DSYSLOG_IGNORE_OPTION(info) dsyslog("osdteletext: ignore obsolete option in setup.conf: osdteletext.%s (%s)", Name, info);
 
 bool cPluginTeletextosd::SetupParse(const char *Name, const char *Value)
 {
   initTexts();
+
   // Parse your own setup parameters and store their values.
-  if (!strcasecmp(Name, "configuredClrBackground")) ttSetup.configuredClrBackground=( ((unsigned int)atoi(Value)) << 24);
+  if      (!strcasecmp(Name, "HideMainMenu")) ttSetup.HideMainMenu=atoi(Value);
   else if (!strcasecmp(Name, "showClock")) ttSetup.showClock=atoi(Value);
-     //currently not used
-  else if (!strcasecmp(Name, "suspendReceiving")) ttSetup.suspendReceiving=atoi(Value);
   else if (!strcasecmp(Name, "autoUpdatePage")) ttSetup.autoUpdatePage=atoi(Value);
-  else if (!strcasecmp(Name, "OSDheightPct")) ttSetup.OSDheightPct=atoi(Value);
-  else if (!strcasecmp(Name, "OSDwidthPct")) ttSetup.OSDwidthPct=atoi(Value);
-  else if (!strcasecmp(Name, "OSDtopPct")) ttSetup.OSDtopPct=atoi(Value);
-  else if (!strcasecmp(Name, "OSDleftPct")) ttSetup.OSDleftPct=atoi(Value);
-  else if (!strcasecmp(Name, "OSDframePix")) ttSetup.OSDframePix=atoi(Value);
-  else if (!strcasecmp(Name, "inactivityTimeout")) /*ttSetup.inactivityTimeout=atoi(Value)*/;
-  else if (!strcasecmp(Name, "HideMainMenu")) ttSetup.HideMainMenu=atoi(Value);
-  else if (!strcasecmp(Name, "txtFontName")) ttSetup.txtFontName=strdup(Value);
   else if (!strcasecmp(Name, "txtG0Block")) ttSetup.txtG0Block=atoi(Value);
   else if (!strcasecmp(Name, "txtG2Block")) ttSetup.txtG2Block=atoi(Value);
-  else if (!strcasecmp(Name, "txtVoffset")) ttSetup.txtVoffset=atoi(Value);
   else if (!strcasecmp(Name, "colorMode4bpp")) ttSetup.colorMode4bpp=atoi(Value);
   else if (!strcasecmp(Name, "lineMode24")) ttSetup.lineMode24=atoi(Value);
-  // ignore obsolete options
-#define DSYSLOG_IGNORE_OPTION dsyslog("osdteletext: ignore obsolete option in setup.conf: osdteletext.%s", Name);
-  else if (!strcasecmp(Name, "OSDHAlign"  )) { DSYSLOG_IGNORE_OPTION } // < 1.0.0
-  else if (!strcasecmp(Name, "OSDVAlign"  )) { DSYSLOG_IGNORE_OPTION } // < 1.0.0
-  else if (!strcasecmp(Name, "OSDheight"  )) { DSYSLOG_IGNORE_OPTION } // < 1.0.0
-  else if (!strcasecmp(Name, "OSDwidth"   )) { DSYSLOG_IGNORE_OPTION } // < 1.0.0
-  else if (!strcasecmp(Name, "OSDhcentPct")) { DSYSLOG_IGNORE_OPTION } // 1.0.0 - 1.0.4
-  else if (!strcasecmp(Name, "OSDvcentPct")) { DSYSLOG_IGNORE_OPTION } // 1.0.0 - 1.0.4
-  else if (!strcasecmp(Name, "OSDframePct")) { DSYSLOG_IGNORE_OPTION } // > 1.0.6 && < 1.0.7
+  else if (!strcasecmp(Name, "OSDHAlign"  )) { DSYSLOG_IGNORE_OPTION("<1.0.0") }
+  else if (!strcasecmp(Name, "OSDVAlign"  )) { DSYSLOG_IGNORE_OPTION("<1.0.0") }
+  else if (!strcasecmp(Name, "OSDheight"  )) { DSYSLOG_IGNORE_OPTION("<1.0.0") }
+  else if (!strcasecmp(Name, "OSDwidth"   )) { DSYSLOG_IGNORE_OPTION("<1.0.0") }
+  else if (!strcasecmp(Name, "OSDhcentPct")) { DSYSLOG_IGNORE_OPTION("1.0.0-1.0.4") }
+  else if (!strcasecmp(Name, "OSDvcentPct")) { DSYSLOG_IGNORE_OPTION("1.0.0-1.0.4") }
+  else if (!strcasecmp(Name, "OSDframePct")) { DSYSLOG_IGNORE_OPTION(">1.0.6 && <1.0.7") }
+  else if (!strcasecmp(Name, "suspendReceiving")) { DSYSLOG_IGNORE_OPTION("<0.8.0") }
+  else if (!strcasecmp(Name, "inactivityTimeout")) { DSYSLOG_IGNORE_OPTION("<0.8.0") }
+  else if (!strcasecmp(Name, "configuredClrBackground")) {
+      // DSYSLOG_IGNORE_OPTION("<2.2.0") TODO >= 2.3.0
+      ttSetup.configuredClrBackground = 255 - atoi(Value); // legacy setting, map already to new internal value handling
+      if (ttSetup.configuredClrBackground < 0)
+         ttSetup.configuredClrBackground = 0;
+      else if (ttSetup.configuredClrBackground > 255)
+         ttSetup.configuredClrBackground = 255;
+  }
+  else if (!strcasecmp(Name, "osdPresetMax")) {
+     ttSetup.osdPresetMax = atoi(Value);
+     if (ttSetup.osdPresetMax > maxOsdPreset) {
+        // limit by command line option maximum
+        ttSetup.osdPresetMax = maxOsdPreset;
+     } else if (ttSetup.osdPresetMax < 1) {
+        // minimum is 1
+        ttSetup.osdPresetMax = 1;
+     };
+  }
+  else if (!strcasecmp(Name, "hotkeyLevelMax")) {
+     ttSetup.hotkeyLevelMax = atoi(Value);
+     if (ttSetup.hotkeyLevelMax > maxHotkeyLevel) {
+        // limit by command line option maximum
+        ttSetup.hotkeyLevelMax = maxHotkeyLevel;
+     } else if (ttSetup.hotkeyLevelMax < 1) {
+        // minimum is 1
+        ttSetup.hotkeyLevelMax = 1;
+     };
+  }
   else {
+      // parse setup related to OSD with preset
+      int p;
+
+      CHECK_SETUP_STRING_COND_SUFFIX(Name, "OSDleftPct", p, OSD_PRESET_MAX_LIMIT);
+      if (p >= 0) {
+         CHECK_STORE_INT_VALUE(ttSetup.osdConfig[Left][p], Value, OSDleftPctMin, OSDleftPctMax)
+         return true;
+      };
+
+      CHECK_SETUP_STRING_COND_SUFFIX(Name, "OSDtopPct", p, OSD_PRESET_MAX_LIMIT);
+      if (p >= 0) {
+         CHECK_STORE_INT_VALUE(ttSetup.osdConfig[Top][p], Value, OSDtopPctMin, OSDtopPctMax);
+         return true;
+      };
+
+      CHECK_SETUP_STRING_COND_SUFFIX(Name, "OSDwidthPct", p, OSD_PRESET_MAX_LIMIT);
+      if (p >= 0) {
+         CHECK_STORE_INT_VALUE(ttSetup.osdConfig[Width][p], Value, OSDwidthPctMin, OSDwidthPctMax);
+         return true;
+      };
+
+      CHECK_SETUP_STRING_COND_SUFFIX(Name, "OSDheightPct", p, OSD_PRESET_MAX_LIMIT);
+      if (p >= 0) {
+         CHECK_STORE_INT_VALUE(ttSetup.osdConfig[Height][p], Value, OSDheightPctMin, OSDheightPctMax);
+         return true;
+      };
+
+      CHECK_SETUP_STRING_COND_SUFFIX(Name, "OSDframePix", p, OSD_PRESET_MAX_LIMIT);
+      if (p >= 0) {
+         CHECK_STORE_INT_VALUE(ttSetup.osdConfig[Frame][p], Value, OSDframePixMin, OSDframePixMax);
+         return true;
+      };
+
+      CHECK_SETUP_STRING_COND_SUFFIX(Name, "txtVoffset", p, OSD_PRESET_MAX_LIMIT);
+      if (p >= 0) {
+         CHECK_STORE_INT_VALUE(ttSetup.osdConfig[Voffset][p], Value, txtVoffsetMin, txtVoffsetMax);
+         return true;
+      };
+
+      CHECK_SETUP_STRING_COND_SUFFIX(Name, "OSDbackTrans", p, OSD_PRESET_MAX_LIMIT);
+      if (p >= 0) {
+         CHECK_STORE_INT_VALUE(ttSetup.osdConfig[BackTrans][p], Value, BackTransMin, BackTransMax);
+         if (p == 0) ttSetup.migrationFlag_2_2 = true; // set migration flag for 2.2.0 (configuredClrBackground)
+         return true;
+      };
+
+      CHECK_SETUP_STRING_COND_SUFFIX(Name, "txtFontName", p, OSD_PRESET_MAX_LIMIT);
+      if (p >= 0) {
+         // font name to index conversion
+         int i = ttSetup.txtFontNames.Find(Value);
+         if (i < 0) i = 0; // not found -> default is 1st one
+         ttSetup.osdConfig[Font][p] = i;
+         DEBUG_OT_SETUP("map setup config: Name=%s Index=%d Value='%s' to FontIndex=%d\n", Name, p, Value, i);
+         return true;
+      };
+
+     // parse setup related to keys
      for (int i=0;i<LastActionKey;i++) {
+        // DEBUG_OT_SETUP("compare i=%d internalName=%s\n", i, cTeletextSetupPage::actionKeyNames[i].internalName);
         if (!strcasecmp(Name, cTeletextSetupPage::actionKeyNames[i].internalName)) {
            ttSetup.mapKeyToAction[i]=(eTeletextAction)atoi(Value);
-
-           //for migration to 0.4
-           if (ttSetup.mapKeyToAction[i]<100 && ttSetup.mapKeyToAction[i]>=LastAction)
-              ttSetup.mapKeyToAction[i]=LastAction-1;
-
            return true;
         }
      }
 
-     //for migration to 0.4
-     char act[8];
-     strncpy(act, Name, 7);
-     if (!strcasecmp(act, "Action_"))
-        return true;
+     // parse setup related to Hotkey with levels
+     for (int i = 0; i < LastActionHotkey; i++) {
+        int l;
+        int v;
+        CHECK_SETUP_STRING_COND_SUFFIX(Name, cTeletextSetupPage::actionHotkeyNames[i].internalName, l, HOTKEY_LEVEL_MAX_LIMIT);
+        if (l >= 0) {
+           CHECK_STORE_INT_VALUE(v, Value, 0, ((int) LastAction) - 1);
+           ttSetup.mapHotkeyToAction[i][l] = (eTeletextAction) v;
+           return true;
+        };
+     };
 
      return false;
   }
   return true;
 }
 
+
 void cTeletextSetupPage::Store(void) {
-   //copy table
+   char str[40];
+
+   // copy temporary preset table
+   for (int p = 0; p < OSD_PRESET_MAX_LIMIT; p++) {
+      for (int t = 0; t < LastActionConfig; t++) {
+         ttSetup.osdConfig[t][p] = temp.osdConfig[t][p];
+      };
+   };
+
+   ttSetup.osdPresetMax=temp.osdPresetMax;
+
+   // copy key table
    for (int i=0;i<LastActionKey;i++) {
       if (temp.mapKeyToAction[i] >= LastAction) //jump to page selected
          ttSetup.mapKeyToAction[i]=(eTeletextAction)tempPageNumber[i];
       else //one of the other modes selected
          ttSetup.mapKeyToAction[i]=temp.mapKeyToAction[i];
    }
-   ttSetup.configuredClrBackground=( ((unsigned int)tempConfiguredClrBackground) << 24);
+
+   // copy Hotkey table
+   for (int l = 0; l < HOTKEY_LEVEL_MAX_LIMIT; l++) {
+      for (int i = 0;i < LastActionHotkey; i++) {
+         if (temp.mapHotkeyToAction[i][l] >= LastAction) //jump to page selected
+            ttSetup.mapHotkeyToAction[i][l] = (eTeletextAction)tempPageNumberHotkey[i][l];
+         else //one of the other modes selected
+            ttSetup.mapHotkeyToAction[i][l] = temp.mapHotkeyToAction[i][l];
+      }
+   }
+
+   ttSetup.hotkeyLevelMax=temp.hotkeyLevelMax;
+
    ttSetup.showClock=temp.showClock;
-   ttSetup.suspendReceiving=temp.suspendReceiving;
    ttSetup.autoUpdatePage=temp.autoUpdatePage;
-   ttSetup.OSDheightPct=temp.OSDheightPct;
-   ttSetup.OSDwidthPct=temp.OSDwidthPct;
-   ttSetup.OSDtopPct=temp.OSDtopPct;
-   ttSetup.OSDleftPct=temp.OSDleftPct;
-   ttSetup.OSDframePix=temp.OSDframePix;
    ttSetup.HideMainMenu=temp.HideMainMenu;
-   ttSetup.txtFontName=ttSetup.txtFontNames[temp.txtFontIndex];
    ttSetup.txtG0Block=temp.txtG0Block;
    ttSetup.txtG2Block=temp.txtG2Block;
-   ttSetup.txtVoffset=temp.txtVoffset;
    ttSetup.colorMode4bpp=temp.colorMode4bpp;
    ttSetup.lineMode24=temp.lineMode24;
-   //ttSetup.inactivityTimeout=temp.inactivityTimeout;
 
+   // store key table
    for (int i=0;i<LastActionKey;i++) {
       SetupStore(actionKeyNames[i].internalName, ttSetup.mapKeyToAction[i]);
    }
-   SetupStore("configuredClrBackground", (int)(ttSetup.configuredClrBackground >> 24));
+
+   // store Hotkey table (maximum given by command line: maxHotkeyLevel)
+   // hotkeyLevel "1" (interally 0) without digit for backwards compatibility
+   for (int l = 0; l < maxHotkeyLevel; l++) {
+      for (int i = 0; i < LastActionHotkey;i++) {
+         CREATE_SETUP_STRING_COND_SUFFIX(l, actionHotkeyNames[i].internalName)
+         SetupStore(str, ttSetup.mapHotkeyToAction[i][l]);
+      };
+   };
+
+   SetupStore("hotkeyLevelMax", ttSetup.hotkeyLevelMax); // store currently configured maximum
+
+   // store OSD presets
+   // preset "1" (internally 0) without digit suffix for backwards compatibility
+   for (int p = 0; p < maxOsdPreset; p++) {
+      CREATE_SETUP_STRING_COND_SUFFIX(p, "OSDleftPct")
+      SetupStore(str, ttSetup.osdConfig[Left][p]);
+
+      CREATE_SETUP_STRING_COND_SUFFIX(p, "OSDtopPct")
+      SetupStore(str, ttSetup.osdConfig[Top][p]);
+
+      CREATE_SETUP_STRING_COND_SUFFIX(p, "OSDwidthPct")
+      SetupStore(str, ttSetup.osdConfig[Width][p]);
+
+      CREATE_SETUP_STRING_COND_SUFFIX(p, "OSDheightPct")
+      SetupStore(str, ttSetup.osdConfig[Height][p]);
+
+      CREATE_SETUP_STRING_COND_SUFFIX(p, "OSDframePix")
+      SetupStore(str, ttSetup.osdConfig[Frame][p]);
+
+      CREATE_SETUP_STRING_COND_SUFFIX(p, "txtVoffset")
+      SetupStore(str, ttSetup.osdConfig[Voffset][p]);
+
+      CREATE_SETUP_STRING_COND_SUFFIX(p, "txtFontName")
+      SetupStore(str, ttSetup.txtFontNames[ttSetup.osdConfig[Font][p]]); // convert into name
+
+      CREATE_SETUP_STRING_COND_SUFFIX(p, "OSDbackTrans")
+      SetupStore(str, ttSetup.osdConfig[BackTrans][p]);
+   };
+
+   SetupStore("osdPresetMax", ttSetup.osdPresetMax); // store currently configured maximum
+
+
+   // legacy TODO remove >= 2.3.0
+   if (ttSetup.configuredClrBackground >= 0) {
+      // found in setup.conf during read, so store it back in legacy format
+      SetupStore("configuredClrBackground", 255 - ttSetup.osdConfig[BackTrans][0]);
+   };
+
+   // Global
    SetupStore("showClock", ttSetup.showClock);
-      //currently not used
-   //SetupStore("suspendReceiving", ttSetup.suspendReceiving);
    SetupStore("autoUpdatePage", ttSetup.autoUpdatePage);
-   SetupStore("OSDheightPct", ttSetup.OSDheightPct);
-   SetupStore("OSDwidthPct", ttSetup.OSDwidthPct);
-   SetupStore("OSDtopPct", ttSetup.OSDtopPct);
-   SetupStore("OSDleftPct", ttSetup.OSDleftPct);
-   SetupStore("OSDframePix", ttSetup.OSDframePix);
    SetupStore("HideMainMenu", ttSetup.HideMainMenu);
-   SetupStore("txtFontName", ttSetup.txtFontName);
    SetupStore("txtG0Block", ttSetup.txtG0Block);
    SetupStore("txtG2Block", ttSetup.txtG2Block);
-   SetupStore("txtVoffset", ttSetup.txtVoffset);
    SetupStore("colorMode4bpp", ttSetup.colorMode4bpp);
    SetupStore("lineMode24", ttSetup.lineMode24);
-   //SetupStore("inactivityTimeout", ttSetup.inactivityTimeout);
 }
-
 
 cTeletextSetupPage::cTeletextSetupPage(void) {
    cString buf;
@@ -496,7 +766,20 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    temp.txtBlock[9]  = tr("Reserved");
    temp.txtBlock[10] = tr("Hebrew");
 
-   //init tables
+   osdPreset = 1;
+   temp.osdPresetMax = ttSetup.osdPresetMax;
+
+   // init temporary preset table
+   for (int p = 0; p < OSD_PRESET_MAX_LIMIT; p++) {
+      for (int t = 0; t < LastActionConfig; t++) {
+         temp.osdConfig[t][p] = ttSetup.osdConfig[t][p];
+      };
+   };
+
+   hotkeyLevel = 1;
+   temp.hotkeyLevelMax = ttSetup.hotkeyLevelMax;
+
+   // init key tables
    for (int i=0;i<LastActionKey;i++) {
       if (ttSetup.mapKeyToAction[i] >= LastAction) {//jump to page selected
          temp.mapKeyToAction[i]=LastAction; //to display the last string
@@ -506,56 +789,115 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
          tempPageNumber[i]=100;
       }
    }
-   tempConfiguredClrBackground=(ttSetup.configuredClrBackground >> 24);
-   temp.showClock=ttSetup.showClock;
-   temp.suspendReceiving=ttSetup.suspendReceiving;
-   temp.autoUpdatePage=ttSetup.autoUpdatePage;
-   temp.OSDheightPct=ttSetup.OSDheightPct;
-   temp.OSDwidthPct=ttSetup.OSDwidthPct;
-   temp.OSDtopPct=ttSetup.OSDtopPct;
-   temp.OSDleftPct=ttSetup.OSDleftPct;
-   temp.OSDframePix=ttSetup.OSDframePix;
-   temp.HideMainMenu=ttSetup.HideMainMenu;
-   temp.txtFontName=ttSetup.txtFontName;
-   temp.txtG0Block=ttSetup.txtG0Block;
-   temp.txtG2Block=ttSetup.txtG2Block;
-   temp.txtVoffset=ttSetup.txtVoffset;
-   temp.colorMode4bpp=ttSetup.colorMode4bpp;
-   temp.lineMode24=ttSetup.lineMode24;
-   //temp.inactivityTimeout=ttSetup.inactivityTimeout;
 
-   temp.txtFontIndex = ttSetup.txtFontNames.Find(ttSetup.txtFontName);
-   if (temp.txtFontIndex < 0) {
-       temp.txtFontIndex = 0;
+   // init Hotkey tables
+   for (int l = 0; l < HOTKEY_LEVEL_MAX_LIMIT; l++) {
+      for (int i = 0; i < LastActionHotkey; i++) {
+         if (ttSetup.mapHotkeyToAction[i][l] >= LastAction) {//jump to page selected
+            temp.mapHotkeyToAction[i][l] = LastAction; //to display the last string
+            tempPageNumberHotkey[i][l] = ttSetup.mapHotkeyToAction[i][l];
+         } else { //one of the other modes selected
+            temp.mapHotkeyToAction[i][l] = ttSetup.mapHotkeyToAction[i][l];
+            tempPageNumberHotkey[i][l] = 100;
+         }
+      }
    }
 
-   Add(new cMenuEditIntItem(tr("Background transparency"), &tempConfiguredClrBackground, 0, 255));
+   temp.showClock=ttSetup.showClock;
+   temp.autoUpdatePage=ttSetup.autoUpdatePage;
+   temp.osdPresetMax=ttSetup.osdPresetMax;
+   temp.hotkeyLevelMax=ttSetup.hotkeyLevelMax;
+   temp.HideMainMenu=ttSetup.HideMainMenu;
+   temp.txtG0Block=ttSetup.txtG0Block;
+   temp.txtG2Block=ttSetup.txtG2Block;
+   temp.colorMode4bpp=ttSetup.colorMode4bpp;
+   temp.lineMode24=ttSetup.lineMode24;
+
+   Add(new cMenuEditBoolItem(tr("Hide mainmenu entry"), &temp.HideMainMenu));
 
    Add(new cMenuEditBoolItem(tr("Show clock"), &temp.showClock ));
 
-   //Add(new cMenuEditBoolItem(tr("Setup$Suspend receiving"), &temp.suspendReceiving ));
-
    Add(new cMenuEditBoolItem(tr("Auto-update pages"), &temp.autoUpdatePage ));
-   Add(new cMenuEditIntItem(tr("OSD left (%)"), &temp.OSDleftPct, OSDleftPctMin, OSDleftPctMax));
-   Add(new cMenuEditIntItem(tr("OSD top (%)"), &temp.OSDtopPct, OSDtopPctMin, OSDtopPctMax));
-   Add(new cMenuEditIntItem(tr("OSD width (%)"), &temp.OSDwidthPct, OSDwidthPctMin, OSDwidthPctMax));
-   Add(new cMenuEditIntItem(tr("OSD height (%)"), &temp.OSDheightPct, OSDheightPctMin, OSDheightPctMax));
-   Add(new cMenuEditIntItem(tr("OSD frame pixel"), &temp.OSDframePix, OSDframePixMin, OSDframePixMax));
-   Add(new cMenuEditBoolItem(tr("Hide mainmenu entry"), &temp.HideMainMenu));
-   Add(new cMenuEditStraItem(tr("Text Font"), &temp.txtFontIndex, ttSetup.txtFontNames.Size(), &ttSetup.txtFontNames[0]));
    Add(new cMenuEditStraItem(tr("G0 code block"), &temp.txtG0Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
    Add(new cMenuEditStraItem(tr("G2 code block"), &temp.txtG2Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
-   Add(new cMenuEditIntItem(tr("Text Vertical Offset"), &temp.txtVoffset, txtVoffsetMin, txtVoffsetMax));
    Add(new cMenuEditBoolItem(tr("16-Color Mode"), &temp.colorMode4bpp));
    Add(new cMenuEditBoolItem(tr("24-Line Mode"), &temp.lineMode24));
 
-   //Using same string as VDR's setup menu
-   //Add(new cMenuEditIntItem(tr("Setup.Miscellaneous$Min. user inactivity (min)"), &temp.inactivityTimeout));
-
-   buf = cString::sprintf("%s:", tr("Key bindings"));
+   // OSD presets
+   if (maxOsdPreset > 1)
+      buf = cString::sprintf("OSD %s (%s %s %d/%d):", tr("Config"), tr("max"), tr("Presets"), maxOsdPreset, OSD_PRESET_MAX_LIMIT);
+   else
+      buf = cString::sprintf("OSD %s", tr("Config"));
    item = new cOsdItem(*buf);
    item->SetSelectable(false);
    Add(item);
+
+   if (maxOsdPreset > 1) {
+      // maximum given by command line option: maxOsdPreset
+      cString buf2 = cString::sprintf("OSD %s %s", tr("Presets"), tr("visible"));
+      osdPresetMaxItem = new cMenuEditIntItem(buf2, &temp.osdPresetMax, 1, maxOsdPreset);
+      Add(osdPresetMaxItem);
+
+      osdPresetString = cString::sprintf("OSD %s %s", tr("Presets"), tr("Config")); // remember string for refresh
+      osdPresetItem = new cMenuEditIntItem(osdPresetString, &osdPreset, 1, temp.osdPresetMax);
+      Add(osdPresetItem);
+   } else {
+      // hide option but remember for hook later the section entry from above
+      osdPresetItem = item;
+   };
+
+   for (int p = 0; p < OSD_PRESET_MAX_LIMIT; p++) {
+      // precreate all menu entries
+      osdPresetConfigItem[Left]     [p] = new cMenuEditIntItem(tr("OSD left (%)"           ), &temp.osdConfig[Left]     [p], OSDleftPctMin  , OSDleftPctMax  );
+      osdPresetConfigItem[Top]      [p] = new cMenuEditIntItem(tr("OSD top (%)"            ), &temp.osdConfig[Top]      [p], OSDtopPctMin   , OSDtopPctMax   );
+      osdPresetConfigItem[Width]    [p] = new cMenuEditIntItem(tr("OSD width (%)"          ), &temp.osdConfig[Width]    [p], OSDwidthPctMin , OSDwidthPctMax );
+      osdPresetConfigItem[Height]   [p] = new cMenuEditIntItem(tr("OSD height (%)"         ), &temp.osdConfig[Height]   [p], OSDheightPctMin, OSDheightPctMax);
+      osdPresetConfigItem[Frame]    [p] = new cMenuEditIntItem(tr("OSD frame pixel"        ), &temp.osdConfig[Frame]    [p], OSDframePixMin , OSDframePixMax );
+      osdPresetConfigItem[Font]     [p] = new cMenuEditStraItem(tr("Text Font"             ), &temp.osdConfig[Font]     [p], ttSetup.txtFontNames.Size(), &ttSetup.txtFontNames[0]);
+      osdPresetConfigItem[Voffset]  [p] = new cMenuEditIntItem(tr("Text Vertical Offset"   ), &temp.osdConfig[Voffset]  [p], txtVoffsetMin  , txtVoffsetMax  );
+      osdPresetConfigItem[BackTrans][p] = new cMenuEditIntItem(tr("Background transparency"), &temp.osdConfig[BackTrans][p], BackTransMin   , BackTransMax   );
+   };
+
+   SetupRefreshOsdConfig();
+
+   // Hotkey bindings
+   if (maxHotkeyLevel > 1)
+      buf = cString::sprintf("%s Hotkey (%s %s %d/%d):", tr("Key bindings"), tr("max"), tr("Levels"), maxHotkeyLevel, HOTKEY_LEVEL_MAX_LIMIT);
+   else
+      buf = cString::sprintf("%s Hotkey:", tr("Key bindings"));
+   item = new cOsdItem(*buf);
+   item->SetSelectable(false);
+   Add(item);
+
+   if (maxHotkeyLevel > 1) {
+      // maximum given by command line option: maxHotkeyLevel
+      cString buf2 = cString::sprintf("OSD Hotkey %s %s", tr("Levels"), tr("visible"));
+      hotkeyLevelMaxItem = new cMenuEditIntItem(buf2, &temp.hotkeyLevelMax, 1, maxHotkeyLevel);
+      Add(hotkeyLevelMaxItem);
+
+      hotkeyLevelString = cString::sprintf("OSD Hotkey %s %s", tr("Level"), tr("Config")); // remember string for refresh
+      hotkeyLevelItem = new cMenuEditIntItem(hotkeyLevelString, &hotkeyLevel, 1, temp.hotkeyLevelMax);
+      Add(hotkeyLevelItem);
+   } else {
+      // hide option but remember for hook later the section entry from above
+      hotkeyLevelItem = item;
+   };
+
+   for (int l = 0; l < maxHotkeyLevel; l++) {
+      for (int i = 0; i < LastActionHotkey; i++) {
+         ActionEditsHotkey[i][l].Init(this, i, l
+            , (l == (hotkeyLevel - 1))
+            , new cMenuEditIntItem(tr("  Page number"), &tempPageNumberHotkey[i][l], 100, 899)
+            , new cMenuEditStraItem(actionHotkeyNames[i].userName, (int*)&temp.mapHotkeyToAction[i][l], LastAction+1, modes)
+         );
+      };
+   }
+
+   // Standard Key bindings
+   buf = cString::sprintf("%s:", tr("Key bindings"));
+   menuSectionKeysItem = new cOsdItem(*buf);
+   menuSectionKeysItem->SetSelectable(false);
+   Add(menuSectionKeysItem);
 
    for (int i=0;i<LastActionKey;i++) {
       ActionEdits[i].Init(this, i, new cMenuEditIntItem(tr("  Page number"), &tempPageNumber[i], 100, 899),
@@ -563,37 +905,170 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    }
 }
 
+void cTeletextSetupPage::SetupRefreshOsdConfig(void) {
+   // delete all entry if existing
+   #define DELETE_IF_EXISTING(item) if (cList<cOsdItem>::Contains(item)) cList<cOsdItem>::Del(item, false);
+
+   // remove all entries
+   for (int t = 0; t < LastActionConfig; t++)
+      for (int p = 0; p < OSD_PRESET_MAX_LIMIT; p++)
+         DELETE_IF_EXISTING(osdPresetConfigItem[t][p]);
+
+   int p = osdPreset - 1;
+
+   DEBUG_OT_SETUP("display setup menu for OSD preset: %d\n", osdPreset);
+
+   for (int t = 0; t < LastActionConfig; t++) {
+      if (t == Left) {
+         // using hook from section or preset switch
+         Add(osdPresetConfigItem[t][p], false, osdPresetItem);
+      } else {
+         // use previous hook
+         Add(osdPresetConfigItem[t][p] , false, osdPresetConfigItem[t - 1][p]);
+      }
+   };
+};
+
+void cTeletextSetupPage::SetupRefreshKeys(void) {
+   // recreate key setup without sophisticated and issue causing dynamic Insert+Add (e.g. last line 'Jump to' is not working)
+
+   // delete all key entry if existing
+   for (int i = 0; i < LastActionKey; i++) {
+      if (cList<cOsdItem>::Contains(ActionEdits[i].action))
+         cList<cOsdItem>::Del(ActionEdits[i].action, false);
+      if (cList<cOsdItem>::Contains(ActionEdits[i].number))
+         cList<cOsdItem>::Del(ActionEdits[i].number, false);
+   };
+
+   // add selected ones
+   cOsdItem *hook = menuSectionKeysItem;
+   for (int i = 0; i < LastActionKey; i++) {
+      DEBUG_OT_KEYS("key assigment menu i=%d action=%d (main)", i, temp.mapKeyToAction[i]);
+      Add(ActionEdits[i].action, false, hook);
+      hook = ActionEdits[i].action;
+
+      if (temp.mapKeyToAction[i] == LastAction) {
+         // insert number if selected
+         DEBUG_OT_KEYS("key assigment menu i=%d action=%d pagenumber=%d", i, temp.mapKeyToAction[i], tempPageNumber[i]);
+         Add(ActionEdits[i].number, false, hook);
+         hook = ActionEdits[i].number;
+      };
+   };
+}
+
+void cTeletextSetupPage::SetupRefreshHotkeys(void) {
+   // recreate hot key setup without sophisticated and issue causing dynamic Insert+Add (e.g. last line 'Jump to' is not working)
+
+   // Hotkey assignment
+   int l = hotkeyLevel - 1;
+
+   // delete all hot key entry if existing
+   for (int l = 0; l < HOTKEY_LEVEL_MAX_LIMIT; l++) {
+      for (int i = 0; i < LastActionHotkey; i++) {
+         if (cList<cOsdItem>::Contains(ActionEditsHotkey[i][l].action))
+            cList<cOsdItem>::Del(ActionEditsHotkey[i][l].action, false);
+         if (cList<cOsdItem>::Contains(ActionEditsHotkey[i][l].number))
+            cList<cOsdItem>::Del(ActionEditsHotkey[i][l].number, false);
+      };
+   };
+
+   // add selected ones
+   cOsdItem *hook = hotkeyLevelItem;
+   for (int i = 0; i < LastActionHotkey; i++) {
+      DEBUG_OT_KEYS("hot key assigment menu i=%d hotkeyLevel=%d action=%d (main)", i, hotkeyLevel, temp.mapHotkeyToAction[i][l]);
+      Add(ActionEditsHotkey[i][l].action, false, hook);
+      hook = ActionEditsHotkey[i][l].action;
+
+      if (temp.mapHotkeyToAction[i][l] == LastAction) {
+         // insert number if selected
+         DEBUG_OT_KEYS("hot key assigment menu i=%d hotkeyLevel=%d action=%d pagenumber=%d", i, hotkeyLevel, temp.mapHotkeyToAction[i][l], tempPageNumberHotkey[i][l]);
+         Add(ActionEditsHotkey[i][l].number, false, hook);
+         hook = ActionEditsHotkey[i][l].number;
+      };
+   };
+
+}
+
 eOSState cTeletextSetupPage::ProcessKey(eKeys Key) {
-   DEBUG_OT_KEYS("called with Key=%d", Key);
+   if (Key != kNone) DEBUG_OT_KEYS("called with Key=%d", Key);
    eOSState state = cMenuSetupPage::ProcessKey(Key);
    if (Key != kRight && Key!=kLeft)
       return state;
    cOsdItem *item = Get(Current());
+
+   // OSD config preset
+   if (item == osdPresetMaxItem) {
+      // change of OSD preset max
+      DEBUG_OT_KEYS("osdPresetMaxItem changed osdPresetMax=%d (osdPreset=%d)", temp.osdPresetMax, osdPreset);
+
+      if (osdPreset > temp.osdPresetMax) {
+         osdPreset = temp.osdPresetMax;
+         // recreate OSD config with reduced osdPreset (e.g. switch from >max to max)
+         SetupRefreshOsdConfig();
+      };
+
+      // replace entry with new maximum
+      cList<cOsdItem>::Del(osdPresetItem);
+      osdPresetItem = new cMenuEditIntItem(osdPresetString, &osdPreset, 1, temp.osdPresetMax);
+      Add(osdPresetItem, false, osdPresetMaxItem);
+
+      Display();
+      return state;
+   };
+
+   if (item == osdPresetItem) {
+      // change between configs
+      DEBUG_OT_KEYS("osdPresetItem changed osdPreset=%d", osdPreset);
+      SetupRefreshOsdConfig();
+      Display();
+      return state;
+   };
+
+   // OSD hotkey
+   if (item == hotkeyLevelMaxItem) {
+      // change of OSD menu level max
+      DEBUG_OT_KEYS("hotkeyLevelMaxItem changed hotkeyLevelMax=%d (hotkeyLevel=%d)", temp.hotkeyLevelMax, hotkeyLevel);
+
+      if (hotkeyLevel > temp.hotkeyLevelMax) {
+         hotkeyLevel = temp.hotkeyLevelMax;
+         // recreate Hotkey with reduced hotkeyLevel (e.g. switch from >max to max)
+         SetupRefreshHotkeys();
+      };
+
+      // replace entry with new maximum
+      cList<cOsdItem>::Del(hotkeyLevelItem);
+      hotkeyLevelItem = new cMenuEditIntItem(hotkeyLevelString, &hotkeyLevel, 1, temp.hotkeyLevelMax);
+      Add(hotkeyLevelItem, false, hotkeyLevelMaxItem);
+
+      Display();
+      return state;
+   };
+
+   if (item == hotkeyLevelItem) {
+      // change between menu levels
+      DEBUG_OT_KEYS("hotkeyLevelItem changed hotkeyLevel=%d", hotkeyLevel);
+      SetupRefreshHotkeys();
+      Display();
+      return state;
+   };
+
+   // Standard Key change handling for 'Jump to'
    for (int i=0;i<LastActionKey;i++) {
       if (ActionEdits[i].action==item) { //we have a key left/right and one of our items as current
-         //eOSState state = item->ProcessKey(Key);
-         //if (state != osUnknown) { //really should not return osUnknown I think
-            if (temp.mapKeyToAction[i] == LastAction && !ActionEdits[i].visible) {
-               //need to make it visible
-               if (i+1<LastActionKey)
-                  //does not work for i==LastAction-1
-                  Ins( ActionEdits[i].number, false, ActionEdits[i+1].action);
-               else
-                  Add( ActionEdits[i].number, false );
-
-               ActionEdits[i].visible=true;
-               Display();
-            } else if (temp.mapKeyToAction[i] != LastAction && ActionEdits[i].visible) {
-               //need to hide it
-               cList<cOsdItem>::Del(ActionEdits[i].number, false);
-               ActionEdits[i].visible=false;
-               Display();
-            }
-            break;
-            //return state;
-         //}
-     }
+         SetupRefreshKeys();
+         Display();
+      }
    }
+
+   // Hotkey change handling for 'Jump to'
+   int l = hotkeyLevel - 1;
+   for (int i=0; i < LastActionHotkey; i++) {
+      DEBUG_OT_KEYS("hot key assigment menu i=%d hotkeyLevel=%d action=%d (pagenumber)", i, hotkeyLevel, temp.mapHotkeyToAction[i][l]);
+      if (ActionEditsHotkey[i][l].action == item) { //we have a key left/right and one of our items as current
+         SetupRefreshHotkeys();
+         Display();
+      };
+   };
 
    return state;
    //return cMenuSetupPage::ProcessKey(Key);
@@ -606,12 +1081,18 @@ void ActionEdit::Init(cTeletextSetupPage* s, int num, cMenuEditIntItem  *p, cMen
    s->Add(action);
    if (s->temp.mapKeyToAction[num] == LastAction) {
       s->Add(number);
-      visible=true;
-   } else
-      visible=false;
+   };
 }
 
-
+void ActionEdit::Init(cTeletextSetupPage* s, int num, int level, bool active, cMenuEditIntItem  *p, cMenuEditStraItem * a) {
+   action=a;
+   number=p;
+   if (!active) return;
+   s->Add(action);
+   if (s->temp.mapHotkeyToAction[num][level] == LastAction) {
+      s->Add(number);
+   };
+}
 
 
 VDRPLUGINCREATOR(cPluginTeletextosd); // Don't touch this!

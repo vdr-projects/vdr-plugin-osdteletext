@@ -49,10 +49,14 @@ TeletextBrowser* TeletextBrowser::self=0;
 tColor clrBackground;
 bool clrBackgroundInit = false;
 
-eTeletextActionConfig configMode = NotActive;
+extern int maxOsdPreset;
+extern int maxHotkeyLevel;
+
+eTeletextActionConfig configMode = LastActionConfig;
 
 TeletextBrowser::TeletextBrowser(cTxtStatus *txtSt,Storage *s)
   : cursorPos(0), pageFound(true), selectingChannel(false),
+    hotkeyLevel(0),
     delayClearMessage(0),
     needClearMessage(false), selectingChannelNumber(-1), txtStatus(txtSt),
     suspendedReceiving(false), previousPage(currentPage),
@@ -60,14 +64,13 @@ TeletextBrowser::TeletextBrowser(cTxtStatus *txtSt,Storage *s)
     lastActivity(time(NULL)), inactivityTimeout(-1), storage(s)
 {
    if (!clrBackgroundInit) {
-      clrBackground = (tColor) ttSetup.configuredClrBackground; // default
+      clrBackground = TTSETUPPRESET_TCOLOR(BackTrans); // default
       clrBackgroundInit = true;
    };
 
-   self=this;
+   ttSetup.osdPreset = 0; // default preset
 
-   //if (txtStatus)
-    //  txtStatus->ForceReceiving(true);
+   self=this;
 }
 
 
@@ -75,11 +78,6 @@ TeletextBrowser::~TeletextBrowser() {
    Display::Delete();
 
    self=0;
-   /*if (txtStatus) {
-      if (suspendedReceiving)
-         txtStatus->ForceSuspending(false);
-      txtStatus->ForceReceiving(false);
-   }*/
 }
 
 void TeletextBrowser::Show(void) {
@@ -247,7 +245,7 @@ bool TeletextBrowser::TriggerChannelSwitch(const int channelNumber) {
 eOSState TeletextBrowser::ProcessKey(eKeys Key) {
    cDisplay::enumZoom zoomR;
    Display::Mode modeR;
-   tColor bgcR, bgcSetup = ttSetup.configuredClrBackground;
+   tColor bgcR, bgcSetup = TTSETUPPRESET_TCOLOR(BackTrans);
    bool changedConfig = false;
 
    if (Key != kNone)
@@ -360,7 +358,7 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
             };
          }
          //check for activity timeout
-         if (ttSetup.inactivityTimeout && (time(NULL) - lastActivity > ttSetup.inactivityTimeout*60))
+         if (Setup.MinUserInactivity && ((time(NULL) - lastActivity) > (Setup.MinUserInactivity * 60)))
             return osEnd;
          break;
 
@@ -423,27 +421,27 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
          break; 
          
       case kRed: 
-         if (configMode != NotActive) { // catch config mode
+         if (configMode != LastActionConfig) { // catch config mode
             changedConfig = ExecuteActionConfig(configMode, -1); // decrement
             break;
          };
          // continue below
 
       case kGreen: 
-         if (configMode != NotActive) { // catch config mode
+         if (configMode != LastActionConfig) { // catch config mode
             changedConfig = ExecuteActionConfig(configMode, +1); // increment
             break;
          };
          // continue below
 
       case kYellow:
-         if (configMode != NotActive) { // key is inactive in config mode (displaying value)
+         if (configMode != LastActionConfig) { // key is inactive in config mode (displaying value)
             break;
          };
          // continue below
 
       case kBlue:
-         if (configMode != NotActive) { // catch config mode
+         if (configMode != LastActionConfig) { // catch config mode
             ExecuteAction(Config);
             break;
          };
@@ -469,8 +467,8 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
    if (changedConfig) {
       zoomR = Display::GetZoom(); // remember zoom
       modeR = Display::mode; // remember mode
-      if (ttSetup.configuredClrBackground != bgcSetup) {
-         bgcR = ttSetup.configuredClrBackground; // color was changed during config
+      if (TTSETUPPRESET_TCOLOR(BackTrans) != bgcSetup) {
+         bgcR = TTSETUPPRESET_TCOLOR(BackTrans); // color was changed during config
          DEBUG_OT_KEYS("osdteletext: recreate display with remembered mode=%d zoom=%d and setup configured bgc=%08x", modeR, zoomR, bgcR);
       } else {
          bgcR = Display::GetBackgroundColor(); // remember color
@@ -487,7 +485,6 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
 
 bool TeletextBrowser::ExecuteActionConfig(eTeletextActionConfig e, int delta) {
    bool changedConfig = false;
-   int BackTransVal;
 
 #define COND_ADJ_VALUE(value, min, max, delta) \
    if (((value + delta) >= min) && ((value + delta) <= max)) { \
@@ -503,42 +500,38 @@ bool TeletextBrowser::ExecuteActionConfig(eTeletextActionConfig e, int delta) {
 
    switch (configMode) {
       case Left:
-         COND_ADJ_VALUE(ttSetup.OSDleftPct, OSDleftPctMin, OSDleftPctMax, delta);
+         COND_ADJ_VALUE(TTSETUPPRESET(configMode), OSDleftPctMin, OSDleftPctMax, delta);
          break;
 
       case Top:
-         COND_ADJ_VALUE(ttSetup.OSDtopPct, OSDtopPctMin, OSDtopPctMax, delta);
+         COND_ADJ_VALUE(TTSETUPPRESET(configMode), OSDtopPctMin, OSDtopPctMax, delta);
          break;
 
       case Width:
-         COND_ADJ_VALUE(ttSetup.OSDwidthPct, OSDwidthPctMin, OSDwidthPctMax, delta);
+         COND_ADJ_VALUE(TTSETUPPRESET(configMode), OSDwidthPctMin, OSDwidthPctMax, delta);
          break;
 
       case Height:
-         COND_ADJ_VALUE(ttSetup.OSDheightPct, OSDheightPctMin, OSDheightPctMax, delta);
+         COND_ADJ_VALUE(TTSETUPPRESET(configMode), OSDheightPctMin, OSDheightPctMax, delta);
          break;
 
       case Frame:
-         COND_ADJ_VALUE(ttSetup.OSDframePix, OSDframePixMin, OSDframePixMax, delta);
+         COND_ADJ_VALUE(TTSETUPPRESET(configMode), OSDframePixMin, OSDframePixMax, delta);
          break;
 
       case Font:
-         ttSetup.txtFontIndex++;
-         if (ttSetup.txtFontIndex >= ttSetup.txtFontNames.Size()) ttSetup.txtFontIndex = 0; // rollover
-         ttSetup.txtFontName = ttSetup.txtFontNames[ttSetup.txtFontIndex];
+         TTSETUPPRESET(configMode)++;
+         if (TTSETUPPRESET(configMode) >= ttSetup.txtFontNames.Size()) TTSETUPPRESET(configMode) = 0; // rollover
          changedConfig = true;
          break;
 
       case Voffset:
-         COND_ADJ_VALUE(ttSetup.txtVoffset, txtVoffsetMin, txtVoffsetMax, delta);
+         COND_ADJ_VALUE(TTSETUPPRESET(configMode), txtVoffsetMin, txtVoffsetMax, delta);
          break;
 
       case BackTrans:
-         BackTransVal = ((uint32_t) ttSetup.configuredClrBackground) >> 24;
-         DEBUG_OT_KEYS("key action: 'Config->BackTrans' BackTransVal=%d BackTransMin=%d BackTransMax=%d delta=%d", BackTransVal, BackTransMin, BackTransMax, delta * 8);
-         COND_ADJ_VALUE(BackTransVal, BackTransMin, BackTransMax, delta * 8);
-         ttSetup.configuredClrBackground = ((uint32_t) BackTransVal) << 24;
-         clrBackground = ttSetup.configuredClrBackground;
+         DEBUG_OT_KEYS("key action: 'Config->BackTrans' BackTrans=%d BackTransMin=%d BackTransMax=%d delta=%d", TTSETUPPRESET(configMode), BackTransMin, BackTransMax, delta * 8);
+         COND_ADJ_VALUE(TTSETUPPRESET(configMode), BackTransMin, BackTransMax, delta * 8);
          break;
 
       default:
@@ -653,7 +646,7 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
             break;
          };
          switch(configMode) {
-            case NotActive : configMode = Left     ; break; // start config mode
+            case LastActionConfig : configMode = Left     ; break; // start config mode
             case Left      : configMode = Top      ; break;
             case Top       : configMode = Width    ; break;
             case Width     : configMode = Height   ; break;
@@ -661,10 +654,104 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
             case Frame     : configMode = Font     ; break;
             case Font      : configMode = Voffset  ; break;
             case Voffset   : configMode = BackTrans; break;
-            case BackTrans : configMode = NotActive; break; // stop config mode
+            case BackTrans : configMode = LastActionConfig; break; // stop config mode
          };
          ShowPage();
          break;
+
+      case HotkeyLevelPlus:
+      case HotkeyLevelMinus:
+         if (ttSetup.lineMode24) {
+            // HotkeyLevel switch mode is only supported in 25-line mode
+            // otherwise one can get lost and has to enter plugin setup menu to disable 24-line mode there
+            needClearMessage=true;
+            delayClearMessage = 3;
+            Display::DrawMessage(tr("Hotkey level change is not supported in 24-line mode"), ttcYellow);
+            break;
+         };
+
+         if (maxHotkeyLevel <= 1) {
+            // HotkeyLevel disabled by command line option limit to 1 or default
+            needClearMessage=true;
+            delayClearMessage = 3;
+            Display::DrawMessage(tr("Hotkey levels are disabled"), ttcRed);
+            break;
+         };
+
+         if (ttSetup.hotkeyLevelMax <= 2) {
+            // HotkeyLevel not active by setup limit to 1
+            needClearMessage=true;
+            delayClearMessage = 3;
+            Display::DrawMessage(tr("Hotkey levels are not active"), ttcYellow);
+            break;
+         };
+
+         switch(e) {
+            case HotkeyLevelPlus:
+               DEBUG_OT_KEYS("key action: 'HotkeyLevelPlus' current hotkeyLevel=%d ttSetup.hotkeyLevelMax=%d", hotkeyLevel, ttSetup.hotkeyLevelMax);
+               hotkeyLevel++;
+               if (hotkeyLevel == ttSetup.hotkeyLevelMax)
+                  hotkeyLevel = 0; // rollover to minimum
+               break;
+
+            case HotkeyLevelMinus:
+               DEBUG_OT_KEYS("key action: 'HotkeyLevelMinus' current hotkeyLevel=%d ttSetup.hotkeyLevelMax=%d", hotkeyLevel, ttSetup.hotkeyLevelMax);
+               hotkeyLevel--;
+               if (hotkeyLevel < 0)
+                  hotkeyLevel = ttSetup.hotkeyLevelMax - 1; // rollover to maximum
+               break;
+
+            default:
+               // will not reached but avoids compiler warning
+               break;
+         };
+         ShowPage();
+         break;
+
+
+      case OsdPresetPlus:
+      case OsdPresetMinus:
+         if (maxOsdPreset <= 1) {
+            // OSD Preset disabled by command line option limit to 1 or default
+            needClearMessage=true;
+            delayClearMessage = 3;
+            Display::DrawMessage(tr("OSD presets are disabled"), ttcRed);
+            break;
+         };
+
+         if (ttSetup.osdPresetMax <= 2) {
+            // HotkeyLevel not active by setup limit to 1
+            needClearMessage=true;
+            delayClearMessage = 3;
+            Display::DrawMessage(tr("OSD presets are not active"), ttcYellow);
+            break;
+         };
+
+         switch(e) {
+            case OsdPresetPlus:
+               DEBUG_OT_KEYS("key action: 'OsdPresetPlus' current ttSetup.osdPreset=%d ttSetup.osdPresetMax=%d", ttSetup.osdPreset, ttSetup.osdPresetMax);
+               ttSetup.osdPreset++;
+               if (ttSetup.osdPreset == ttSetup.osdPresetMax)
+                  ttSetup.osdPreset = 0; // rollover to minimum
+               break;
+
+            case OsdPresetMinus:
+               DEBUG_OT_KEYS("key action: 'HotkeyLevelMinus' current ttSetup.osdPreset=%d ttSetup.ttSetup.osdPresetMax=%d", ttSetup.osdPreset, ttSetup.osdPresetMax);
+               ttSetup.osdPreset--;
+               if (ttSetup.osdPreset < 0)
+                  ttSetup.osdPreset = ttSetup.osdPresetMax - 1; // rollover to maximum
+               break;
+
+            default:
+               // will not reached but avoids compiler warning
+               break;
+         };
+
+         Display::Delete();
+         Display::SetMode(Display::Full, TTSETUPPRESET_TCOLOR(BackTrans));
+         ShowPage();
+         break;
+
 
       case ToggleConceal:
          DEBUG_OT_KEYS("key action: 'ToggleConceal' Concealed=%d -> %d", Display::GetConceal(), not(Display::GetConceal()));
@@ -711,7 +798,7 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
 // If configured is black or transparent, do 2-state transparent->black only.
 void TeletextBrowser::ChangeBackground()
 {
-   tColor clrConfig = (tColor)ttSetup.configuredClrBackground;
+   tColor clrConfig = TTSETUPPRESET_TCOLOR(BackTrans);
    tColor clrCurrent = clrBackground;
 
    if (clrCurrent == clrConfig)
@@ -732,10 +819,10 @@ void TeletextBrowser::ChangeBackground()
 
 eTeletextAction TeletextBrowser::TranslateKey(eKeys Key) {
    switch(Key) {
-      case kRed:     return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyRed];
-      case kGreen:   return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyGreen];
-      case kYellow:  return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyYellow];
-      case kBlue:    return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyBlue];
+      case kRed:     return (eTeletextAction)ttSetup.mapHotkeyToAction[ActionHotkeyRed]   [hotkeyLevel];
+      case kGreen:   return (eTeletextAction)ttSetup.mapHotkeyToAction[ActionHotkeyGreen] [hotkeyLevel];
+      case kYellow:  return (eTeletextAction)ttSetup.mapHotkeyToAction[ActionHotkeyYellow][hotkeyLevel];
+      case kBlue:    return (eTeletextAction)ttSetup.mapHotkeyToAction[ActionHotkeyBlue]  [hotkeyLevel];
       case kPlay:    return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyPlay];
       //case kPause:   return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyPause]; // not passed into plugin somehow
       case kOk:      return (eTeletextAction)ttSetup.mapKeyToAction[ActionKeyOk];
@@ -1044,6 +1131,31 @@ void TeletextBrowser::UpdateClock() {
       Display::DrawClock();
 }
 
+// convert action to text
+// implant hotkeyLevel number for related action
+// implant ttSetup.osdPreset number for related actions if maximum is > 1
+#define CONVERT_ACTION_TO_TEXT(text, mode) \
+      if ((mode == HotkeyLevelPlus) || (mode == HotkeyLevelMinus)) { \
+         snprintf(text, sizeof(text), "%-10s", tr(st_modesFooter[mode])); \
+         text[9] = '0' + (int) hotkeyLevel + 1; \
+         text[10] = '\0'; \
+      } else if ((mode == OsdPresetPlus) || (mode == OsdPresetMinus)) { \
+         snprintf(text, sizeof(text), "%-10s", tr(st_modesFooter[mode])); \
+         text[9] = '0' + (int) ttSetup.osdPreset + 1; \
+         text[10] = '\0'; \
+      } else if ((mode == Config) && (ttSetup.osdPresetMax > 1) && (configMode != LastActionConfig)) { \
+         snprintf(text, sizeof(text), "%-10s", tr(st_modesFooter[mode])); \
+         text[8] = ' '; \
+         text[9] = '0' + (int) ttSetup.osdPreset + 1; \
+         text[10] = '\0'; \
+      } else if ((int) mode < 100) { \
+         snprintf(text, sizeof(text), "%s", tr(st_modesFooter[mode])); \
+      } else if ((int) mode < 999) { \
+         snprintf(text, sizeof(text), "-> %03d", mode); \
+      } else { \
+         snprintf(text, sizeof(text), "ERROR"); \
+      }; \
+
 void TeletextBrowser::UpdateFooter() {
    DEBUG_OT_FOOT("called with lineMode24=%d", ttSetup.lineMode24);
 
@@ -1053,21 +1165,12 @@ void TeletextBrowser::UpdateFooter() {
    FooterFlags flag = FooterNormal; // default
    eTeletextActionValueType valueType = None;
 
-   if (configMode == NotActive) {
+   if (configMode == LastActionConfig) {
       eTeletextAction AkRed    = TranslateKey(kRed);
       eTeletextAction AkGreen  = TranslateKey(kGreen);
       eTeletextAction AkYellow = TranslateKey(kYellow);
       eTeletextAction AkBlue   = TranslateKey(kBlue);
       DEBUG_OT_FOOT("AkRed=%d AkGreen=%d AkYellow=%d AkBlue=%d", AkRed, AkGreen, AkYellow, AkBlue);
-
-#define CONVERT_ACTION_TO_TEXT(text, mode) \
-      if ((int) mode < 100) { \
-         snprintf(text, sizeof(text), "%s", tr(st_modesFooter[mode])); \
-      } else if ((int) mode < 999) { \
-         snprintf(text, sizeof(text), "-> %03d", mode); \
-      } else { \
-         snprintf(text, sizeof(text), "ERROR"); \
-      }; \
 
       CONVERT_ACTION_TO_TEXT(textRed   , AkRed   );
       CONVERT_ACTION_TO_TEXT(textGreen , AkGreen );
@@ -1089,8 +1192,8 @@ void TeletextBrowser::UpdateFooter() {
 
          case Font:
             snprintf(textRed   , sizeof(textRed)   , "%s" , tr(config_modes[configMode])); // <mode>
-            DEBUG_OT_FOOT("ttSetup.txtFontIndex=%d ttSetup.txtFontNames[%d]='%s'", ttSetup.txtFontIndex, ttSetup.txtFontIndex, ttSetup.txtFontNames[ttSetup.txtFontIndex]);
-            snprintf(textGreen, sizeof(textGreen)  , "%s", ttSetup.txtFontNames[ttSetup.txtFontIndex]); // FontName
+            DEBUG_OT_FOOT("txtFontIndex=%d txtFontNames[%d]='%s'", TTSETUPPRESET(Font), TTSETUPPRESET(Font), ttSetup.txtFontNames[TTSETUPPRESET(Font)]);
+            snprintf(textGreen, sizeof(textGreen)  , "%s", ttSetup.txtFontNames[TTSETUPPRESET(Font)]); // FontName
             flag = FooterGreenYellowValue;
             break;
 
@@ -1102,37 +1205,21 @@ void TeletextBrowser::UpdateFooter() {
       char *valueStr = NULL;
       switch (configMode) {
          case Left:
-            valueInt = ttSetup.OSDleftPct;
-            valueType = Pct;
-            break;
-
          case Top:
-            valueInt = ttSetup.OSDtopPct;
-            valueType = Pct;
-            break;
-
          case Width:
-            valueInt = ttSetup.OSDwidthPct;
-            valueType = Pct;
-            break;
-
          case Height:
-            valueInt = ttSetup.OSDheightPct;
+            valueInt = TTSETUPPRESET(configMode);
             valueType = Pct;
             break;
 
          case Frame:
-            valueInt = ttSetup.OSDframePix;
-            valueType = Pix;
-            break;
-
          case Voffset:
-            valueInt = ttSetup.txtVoffset;
+            valueInt = TTSETUPPRESET(configMode);
             valueType = Pix;
             break;
 
          case BackTrans:
-            valueInt = ((uint32_t) ttSetup.configuredClrBackground) >> 24;
+            valueInt = TTSETUPPRESET(configMode);
             valueType = Int;
             break;
 
@@ -1169,7 +1256,7 @@ void TeletextBrowser::UpdateFooter() {
             break;
       };
 
-      snprintf(textBlue  , sizeof(textBlue)  , "%s", tr(st_modesFooter[Config])); // option itself
+      CONVERT_ACTION_TO_TEXT(textBlue, Config); // option itself with optional preset number
    };
 
    DEBUG_OT_FOOT("textRed='%s' textGreen='%s' text Yellow='%s' textBlue='%s' flag=%d", textRed, textGreen, textYellow, textBlue, flag);
@@ -1180,33 +1267,151 @@ TeletextSetup ttSetup;
 
 TeletextSetup::TeletextSetup()
    //Set default values for setup options
-  : configuredClrBackground(clrGray50), showClock(true),
-    suspendReceiving(false), autoUpdatePage(true),
-    //OSDHeight+width default values given in Start()
-    OSDheightPct(100), OSDwidthPct(100),
-    OSDtopPct(0), OSDleftPct(0),
-    //use the value set for VDR's min user inactivity.
-    //Initially this value could be changed via the plugin's setup, but I removed that
-    //because there is no advantage, but a possible problem when VDR's value is change
-    //after the plugin has stored its own value.
-    inactivityTimeout(Setup.MinUserInactivity),
+  :
+    migrationFlag_2_2(false),
+    showClock(true),
+    autoUpdatePage(true),
+    osdPresetMax(1),
+    hotkeyLevelMax(1),
     HideMainMenu(false),
-    txtFontName("teletext2:Medium"),
-    txtVoffset(0),
     colorMode4bpp(false),
     lineMode24(false)
 {
+   // init osdConfig
+   int p = 0;
+
+   // Preset "default"
+   osdConfig[Left]     [p] =  15;
+   osdConfig[Top]      [p] =   5;
+   osdConfig[Width]    [p] =  70;
+   osdConfig[Height]   [p] =  90;
+   osdConfig[Frame]    [p] =   0;
+   osdConfig[Font]     [p] =   0;
+   osdConfig[Voffset]  [p] =   0;
+   osdConfig[BackTrans][p] = 128;
+
+   // Preset "2" .. "5" 50% in corners
+   for (p = 1; p < 5; p++) {
+      if (p < OSD_PRESET_MAX_LIMIT) {
+         if ((p == 1) || (p == 4))
+            osdConfig[Left]  [p] =   0;
+         else
+            osdConfig[Left]  [p] =  50;
+         if ((p == 1) || (p == 2))
+            osdConfig[Top]   [p] =   0;
+         else
+            osdConfig[Top]   [p] =  50;
+         osdConfig[Width]    [p] =  50;
+         osdConfig[Height]   [p] =  50;
+         osdConfig[Frame]    [p] =   8;
+         osdConfig[Font]     [p] =   0;
+         osdConfig[Voffset]  [p] =   0;
+         if (p == 1)
+            osdConfig[BackTrans][p] =   0;
+         else if (p == 2)
+            osdConfig[BackTrans][p] =  64;
+         else if (p == 3)
+            osdConfig[BackTrans][p] = 192;
+         else if (p == 4)
+            osdConfig[BackTrans][p] = 255;
+      };
+   };
+
+   // Preset "6" .. "9" 25% in corners
+   for (p = 5; p < 9; p++) {
+      if (p < OSD_PRESET_MAX_LIMIT) {
+         if ((p == 5) || (p == 8))
+            osdConfig[Left]  [p] =   0;
+         else
+            osdConfig[Left]  [p] =  75;
+         if ((p == 5) || (p == 6))
+            osdConfig[Top]   [p] =   0;
+         else
+            osdConfig[Top]   [p] =  75;
+         osdConfig[Width]    [p] =  25;
+         osdConfig[Height]   [p] =  25;
+         osdConfig[Frame]    [p] =   4;
+         osdConfig[Font]     [p] =   0;
+         osdConfig[Voffset]  [p] =   0;
+         if (p == 5)
+            osdConfig[BackTrans][p] =   0;
+         else if (p == 6)
+            osdConfig[BackTrans][p] =  64;
+         else if (p == 7)
+            osdConfig[BackTrans][p] = 192;
+         else if (p == 8)
+            osdConfig[BackTrans][p] = 255;
+      };
+   };
+
    //init key bindings
    for (int i=0; i < LastActionKey; i++)
       mapKeyToAction[i]=(eTeletextAction)0;
-   mapKeyToAction[ActionKeyRed]=DarkScreen;
-   mapKeyToAction[ActionKeyGreen]=(eTeletextAction)100;
-   mapKeyToAction[ActionKeyYellow]=HalfPage;
-   mapKeyToAction[ActionKeyBlue]=Zoom;
+
    mapKeyToAction[ActionKeyStop]=Config;
    mapKeyToAction[ActionKeyFastRew]=LineMode24;
    mapKeyToAction[ActionKeyFastFwd]=ToggleConceal;
    mapKeyToAction[ActionKeyOk]=TogglePause;
+
+   // init Hotkey bindings
+   for (int i=0; i < LastActionHotkey; i++)
+      for (int l = 0; l < HOTKEY_LEVEL_MAX_LIMIT; l++)
+         mapHotkeyToAction[i][l]=(eTeletextAction)0;
+
+   int l = 0;
+   // hot key mapping for level 1 (default)
+   if (l < HOTKEY_LEVEL_MAX_LIMIT) {
+      mapHotkeyToAction[ActionHotkeyRed]   [l] = DarkScreen;
+      mapHotkeyToAction[ActionHotkeyGreen] [l] = (eTeletextAction) 100; // page 100
+      mapHotkeyToAction[ActionHotkeyYellow][l] = HalfPage;
+      mapHotkeyToAction[ActionHotkeyBlue]  [l] = Zoom;
+   };
+
+   // hot key mapping for level 2
+   l++;
+   if (l < HOTKEY_LEVEL_MAX_LIMIT) {
+      mapHotkeyToAction[ActionHotkeyRed]   [l] = SwitchChannel;
+      mapHotkeyToAction[ActionHotkeyGreen] [l] = ToggleConceal;
+      mapHotkeyToAction[ActionHotkeyYellow][l] = TogglePause;
+      mapHotkeyToAction[ActionHotkeyBlue]  [l] = HotkeyLevelPlus;
+   };
+
+   // hot key mapping for level 3
+   l++;
+   if (l < HOTKEY_LEVEL_MAX_LIMIT) {
+      mapHotkeyToAction[ActionHotkeyRed]   [l] = LineMode24;
+      mapHotkeyToAction[ActionHotkeyGreen] [l] = (eTeletextAction) 150; // page 150 ARD Subtitle
+      mapHotkeyToAction[ActionHotkeyYellow][l] = (eTeletextAction) 777; // page 777 3sat Subtitle
+      mapHotkeyToAction[ActionHotkeyBlue]  [l] = HotkeyLevelPlus;
+   };
+
+   // hot key mapping for level 4
+   l++;
+   if (l < HOTKEY_LEVEL_MAX_LIMIT) {
+      mapHotkeyToAction[ActionHotkeyRed]   [l] = HotkeyLevelMinus;
+      mapHotkeyToAction[ActionHotkeyGreen] [l] = (eTeletextAction) 200; // page 200
+      mapHotkeyToAction[ActionHotkeyYellow][l] = (eTeletextAction) 300; // page 300
+      mapHotkeyToAction[ActionHotkeyBlue]  [l] = HotkeyLevelPlus;
+   };
+
+   // hot key mapping for level 5
+   l++;
+   if (l < HOTKEY_LEVEL_MAX_LIMIT) {
+      mapHotkeyToAction[ActionHotkeyRed]   [l] = (eTeletextAction) 898; // page 898 3sat Test#1
+      mapHotkeyToAction[ActionHotkeyGreen] [l] = (eTeletextAction) 199; // page 199 ARD/ZDF Test
+      mapHotkeyToAction[ActionHotkeyYellow][l] = (eTeletextAction) 886; // page 886 ORF2 Test
+      mapHotkeyToAction[ActionHotkeyBlue]  [l] = HotkeyLevelPlus;
+   };
+
+   // default for other levels
+   l++;
+   while (l < HOTKEY_LEVEL_MAX_LIMIT) {
+      mapHotkeyToAction[ActionHotkeyRed]   [l] = (eTeletextAction) 100 + l; // page 100 + l
+      mapHotkeyToAction[ActionHotkeyGreen] [l] = (eTeletextAction) 200 + l; // page 200 + l
+      mapHotkeyToAction[ActionHotkeyYellow][l] = (eTeletextAction) 300 + l; // page 300 + l
+      mapHotkeyToAction[ActionHotkeyBlue]  [l] = HotkeyLevelPlus;
+      l++;
+   }
 }
 
 // vim: ts=3 sw=3 et

@@ -24,7 +24,11 @@ const char *st_modesFooter[] =
       trNOOP("24LineMode"),
       trNOOP("Answer"),
       trNOOP("Pause"),
-      trNOOP("Jump to..."),
+      trNOOP("HkLevel+"),
+      trNOOP("HkLevel-"),
+      trNOOP("Preset+"),
+      trNOOP("Preset-"),
+      trNOOP("Jump to...") // has to stay always the last one
 };
 
 const char *config_modes[] =

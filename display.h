@@ -33,7 +33,7 @@ namespace Display {
     extern cDisplay *display;
 
     // Access to display mode:
-    void SetMode(Display::Mode mode, tColor clrBackground = (tColor)ttSetup.configuredClrBackground);
+    void SetMode(Display::Mode mode, tColor clrBackground = TTSETUPPRESET_TCOLOR(BackTrans));
     inline void Delete()
         { if (display) { DELETENULL(display); } }
 

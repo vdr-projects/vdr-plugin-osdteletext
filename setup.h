@@ -15,6 +15,13 @@
 
 #include <vdr/config.h>
 
+// max for setup
+#define HOTKEY_LEVEL_MAX_LIMIT         9  // maximum supported by SetupStore parser: 9, required minimum: 1
+#define HOTKEY_LEVEL_MAX_LIMIT_STRING "9" // as string to be displayed in online help
+
+#define OSD_PRESET_MAX_LIMIT         9  // maximum supported by SetupStore parser: 9, required minimum: 1
+#define OSD_PRESET_MAX_LIMIT_STRING "9" // as string to be displayed in online help
+
 // min/max for setup
 #define OSDleftPctMin      0
 #define OSDleftPctMax     90
@@ -34,8 +41,22 @@
 // There are two places to be kept in sync with these enums:
 //  TeletextBrowser::TranslateKey and 
 // 1:1 relation between st_modes[] in osdteletext.c + eTeletextAction in setup.h + st_modesFooter in setup.c
-enum eTeletextAction { Zoom, HalfPage, SwitchChannel,
-                       DarkScreen, /*SuspendReceiving,*/ Config, LineMode24, ToggleConceal, TogglePause, LastAction }; //and 100-899 => jump to page
+enum eTeletextAction {
+   Zoom,
+   HalfPage,
+   SwitchChannel,
+   DarkScreen,
+   /*SuspendReceiving,*/
+   Config,
+   LineMode24,
+   ToggleConceal,
+   TogglePause,
+   HotkeyLevelPlus,
+   HotkeyLevelMinus,
+   OsdPresetPlus,
+   OsdPresetMinus,
+   LastAction // has to stay always as the last one (special flag for 'jump to pages')
+}; //and 100-899 => jump to page
 
 enum eTeletextActionConfig {
    Left,
@@ -46,7 +67,7 @@ enum eTeletextActionConfig {
    Font,
    Voffset,
    BackTrans,
-   NotActive,
+   LastActionConfig, // has to stay always the last one
 };
 
 enum eTeletextActionValueType {
@@ -62,20 +83,25 @@ enum eTeletextActionValueType {
 extern const char *st_modesFooter[];
 extern const char *config_modes[];
 
-
 enum ActionKeys {
    // keep in sync: static const ActionKeyName st_actionKeyNames in osdteletext.c
-   ActionKeyRed,
-   ActionKeyGreen,
-   ActionKeyYellow,
-   ActionKeyBlue,
-   ActionKeyPlay,
-   ActionKeyStop,
-   ActionKeyFastFwd,
    ActionKeyFastRew,
+   ActionKeyFastFwd,
+   ActionKeyStop,
    ActionKeyOk,
+   ActionKeyPlay,
 
    LastActionKey
+};
+
+enum ActionHotkeys {
+   // keep in sync: static const ActionKeyName st_actionHotkeyNames in osdteletext.c
+   ActionHotkeyRed,
+   ActionHotkeyGreen,
+   ActionHotkeyYellow,
+   ActionHotkeyBlue,
+
+   LastActionHotkey
 };
 
 enum FooterFlags {
@@ -88,28 +114,35 @@ enum FooterFlags {
 class TeletextSetup {
 public:
    TeletextSetup();
+   bool migrationFlag_2_2;
+   int osdConfig[(int) eTeletextActionConfig::LastActionConfig][OSD_PRESET_MAX_LIMIT];
    int mapKeyToAction[(int) ActionKeys::LastActionKey]; // see enum ActionKeys
-   unsigned int configuredClrBackground;
+   int mapHotkeyToAction[(int) ActionHotkeys::LastActionHotkey][HOTKEY_LEVEL_MAX_LIMIT]; // see enum ActionHotkeys and HotkeyLevelMax
+   int configuredClrBackground; // legacy TODO remove >= 2.3.0
    int showClock;
-   int suspendReceiving;
    int autoUpdatePage;
-   int OSDheightPct;
-   int OSDwidthPct;
-   int OSDtopPct;
-   int OSDleftPct;
-   int OSDframePix;
-   int inactivityTimeout;
+   int osdPresetMax;
+   int hotkeyLevelMax;
    int HideMainMenu;
-   cString txtFontName;
    cStringList txtFontNames;
-   int txtFontIndex;
    int txtG0Block;
    int txtG2Block;
-   int txtVoffset;
    const char *txtBlock[11];
    int colorMode4bpp;
    int lineMode24;
+
+   // current value of osdPreset
+   int osdPreset;
 };
+
+// shortcut to OSD config value of current preset
+#define TTSETUPPRESET(type) ttSetup.osdConfig[type][ttSetup.osdPreset]
+
+// shortcut to OSD config value of current preset converted to TCOLOR value incl. negate
+#define TTSETUPPRESET_TCOLOR(type) ((tColor) (((uint32_t) (255 - (ttSetup.osdConfig[type][ttSetup.osdPreset] & 0xff))) << 24))
+
+// shortcut to OSD config value of current preset converted to font name
+#define TTSETUPPRESET_FONTNAME(type) ttSetup.txtFontNames[TTSETUPPRESET(type)]
 
 extern TeletextSetup ttSetup;
 

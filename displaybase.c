@@ -133,7 +133,7 @@ void cDisplay::InitScaler() {
 
     int txtFontWidth = fontWidth;
     int txtFontHeight = fontHeight;
-    const char *txtFontName = ttSetup.txtFontName;
+    const char *txtFontName = TTSETUPPRESET_FONTNAME(Font);
     std::string footprint = GetFontFootprint(txtFontName);
     if (footprint.compare(TXTFontFootprint) == 0) {
         // cached
@@ -390,7 +390,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
     const cFont *font = TXTFont; // FIXED: -Wmaybe-uninitialized
     int charset = c.GetCharset();
     int fontType = 0;
-    int w = fontWidth / 2;
+    int w = fontWidth  / 2;
     int h = fontHeight / 2;
     if (c.GetDblWidth() != dblw_Normal) {
         fontType |= 1;
@@ -460,7 +460,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
 
     if ((m_debugmask & DEBUG_MASK_OT_ACT_LIMIT_LINES) && (y > 8)) return;
 
-    int vx = x * fontWidth / 2;
+    int vx = x * fontWidth  / 2;
     int vy = y * fontHeight / 2;
 
     bool drawChar = true;
@@ -520,13 +520,13 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
 //            charBm.DrawText(0, 0, buf, fg, bg, font);
             if (
                  (cache_valid == 0) || (
-                 (cache_txtVoffset   != ttSetup.txtVoffset)
+                 (cache_txtVoffset   != TTSETUPPRESET(Voffset))
               || (cache_outputHeight != outputHeight      )
               || (cache_OsdHeight    != cOsd::OsdHeight() )
               )
             ) {
                 cache_valid = 1;
-                cache_txtVoffset   = ttSetup.txtVoffset;
+                cache_txtVoffset   = TTSETUPPRESET(Voffset);
                 cache_outputHeight = outputHeight;
                 cache_OsdHeight    = cOsd::OsdHeight();
                 cache_Vshift       = (cache_txtVoffset * cache_outputHeight) / cache_OsdHeight;
@@ -534,7 +534,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
             };
 
             if ((m_debugline >= 0) && (y == m_debugline)) {
-                DEBUG_OT_DCHR("y=%2d x=%2d vy=%4d vx=%4d w=%d h=%d cache_Vshift=%d ttfg=%d ttbg=%d BoxedOut=%d text charset=0x%04x char='%s'", y, x, vy, vx, w, h, cache_Vshift, ttfg, ttbg, c.GetBoxedOut(), charset, buf);
+                DEBUG_OT_DCHR("y=%2d x=%2d vy=%4d vx=%4d w=%d h=%d cache_Vshift=%d ttfg=%d fg=0x%08x ttbg=%d bg=0x%08x BoxedOut=%d text charset=0x%04x char='%s'", y, x, vy, vx, w, h, cache_Vshift, ttfg, fg, ttbg, bg, c.GetBoxedOut(), charset, buf);
             };
 
             charBm.DrawText(0, cache_Vshift, buf, fg, 0, font, 0, 0);

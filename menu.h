@@ -21,6 +21,7 @@
 #include "txtrecv.h"
 #include "setup.h"
 
+// status of current channel
 enum eChannelInfo {
    ChannelIsLive,
    ChannelIsTuned,
@@ -64,6 +65,7 @@ protected:
    bool pageFound;
    bool selectingChannel;
    static eChannelInfo ChannelInfo;
+   int hotkeyLevel;
    int delayClearMessage;
    bool needClearMessage;
    int selectingChannelNumber;

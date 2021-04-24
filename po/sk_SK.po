@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: osdteletext-0.9.0\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-19 07:48+0200\n"
+"POT-Creation-Date: 2021-04-24 11:28+0200\n"
 "PO-Revision-Date: 2011-02-15 21:11+0100\n"
 "Last-Translator: Milan Hrala <hrala.milan@gmail.com>\n"
 "Language-Team: Slovak <hrala.milan@gmail.com>\n"
@@ -58,6 +58,21 @@ msgstr ""
 msgid "*** Config mode is not supported in 24-line mode ***"
 msgstr ""
 
+msgid "Hotkey level change is not supported in 24-line mode"
+msgstr ""
+
+msgid "Hotkey levels are disabled"
+msgstr ""
+
+msgid "Hotkey levels are not active"
+msgstr ""
+
+msgid "OSD presets are disabled"
+msgstr ""
+
+msgid "OSD presets are not active"
+msgstr ""
+
 msgid "Channel (press OK): "
 msgstr "Kanál (stlačte OK): "
 
@@ -100,6 +115,18 @@ msgstr ""
 msgid "Pause"
 msgstr ""
 
+msgid "Hotkey Level+"
+msgstr ""
+
+msgid "Hotkey Level-"
+msgstr ""
+
+msgid "OSD Preset+"
+msgstr ""
+
+msgid "OSD Preset-"
+msgstr ""
+
 msgid "Jump to..."
 msgstr "Skoč na..."
 
@@ -130,14 +157,35 @@ msgstr ""
 msgid "Hebrew"
 msgstr ""
 
-msgid "Background transparency"
-msgstr "Priesvitnosť pozadia"
+msgid "Hide mainmenu entry"
+msgstr "Schovať položku v hlavnom menu"
 
 msgid "Show clock"
 msgstr "Zobraziť hodiny"
 
 msgid "Auto-update pages"
 msgstr "Aktualizácia stránok"
+
+msgid "G0 code block"
+msgstr ""
+
+msgid "G2 code block"
+msgstr ""
+
+msgid "16-Color Mode"
+msgstr ""
+
+msgid "24-Line Mode"
+msgstr ""
+
+msgid "max"
+msgstr ""
+
+msgid "Presets"
+msgstr ""
+
+msgid "visible"
+msgstr ""
 
 msgid "OSD left (%)"
 msgstr ""
@@ -154,29 +202,23 @@ msgstr ""
 msgid "OSD frame pixel"
 msgstr ""
 
-msgid "Hide mainmenu entry"
-msgstr "Schovať položku v hlavnom menu"
-
 msgid "Text Font"
-msgstr ""
-
-msgid "G0 code block"
-msgstr ""
-
-msgid "G2 code block"
 msgstr ""
 
 msgid "Text Vertical Offset"
 msgstr ""
 
-msgid "16-Color Mode"
-msgstr ""
-
-msgid "24-Line Mode"
-msgstr ""
+msgid "Background transparency"
+msgstr "Priesvitnosť pozadia"
 
 msgid "Key bindings"
 msgstr "Klávesové skratky"
+
+msgid "Levels"
+msgstr ""
+
+msgid "Level"
+msgstr ""
 
 msgid "  Page number"
 msgstr "  Číslo strany"
@@ -191,6 +233,18 @@ msgid "SwitchBack"
 msgstr ""
 
 msgid "24LineMode"
+msgstr ""
+
+msgid "HkLevel+"
+msgstr ""
+
+msgid "HkLevel-"
+msgstr ""
+
+msgid "Preset+"
+msgstr ""
+
+msgid "Preset-"
 msgstr ""
 
 msgid "Left"
