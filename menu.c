@@ -363,7 +363,7 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
             };
          }
          //check for activity timeout
-         if (ttSetup.inactivityTimeout && (time(NULL) - lastActivity > ttSetup.inactivityTimeout*60))
+         if (Setup.MinUserInactivity && ((time(NULL) - lastActivity) > (Setup.MinUserInactivity * 60)))
             return osEnd;
          break;
 
