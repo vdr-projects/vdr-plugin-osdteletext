@@ -46,6 +46,7 @@ Keys:
 	"Zoom", "Half page", "Switch channel", "Switch background",
 	"Config", "24-Line-Mode", "Answer", "Pause"
         "Hotkey Level+", "Hotkey Level-"
+        "OSD Preset+", "OSD Preset-"
             "Jump to..." a specific page.
 
    Description of the actions:
@@ -94,6 +95,9 @@ Keys:
            FastFwd: Hotkey Level+
            FastRwd: Hotkey Level-
 
+     OSD Preset+    :  Change to next OSD preset (incl. rollover)
+     OSD Preset-    :  Change to previous OSD preset (incl. rollover)
+
    How to configure the key bindings:
    In the plugins setup menu, you can assign one of actions to each key.
    You can choose freely which actions you need, you are not forced to assign
@@ -103,9 +107,6 @@ Keys:
 
 
 Other Setup options:
-   Background transparency: 
-               number between 0 (transparent) and 255 (black). Default is 127
-               (also used by VDR)
    Show Clock: Toggles whether an additional clock is drawn approximately
                every second.
                The clock shows the current system time, not any time broadcast
@@ -114,17 +115,6 @@ Other Setup options:
    Auto-update pages: 
                Continuously checks whether a page has changed and updates it
                if yes.
-   OSD width, OSD height: 
-               Adjusts the width and height of the OSD independent from VDR's
-               settings. The valid range is 10% to 100%
-   OSD left, OSD top:
-               Adjusts the left and top edge of the OSD independent from VDR's
-               settings. The valid range is 0% to 90%
-   Frame:
-               Adjust black surrounding frame sized by amount of pixel
-   Text Vertical Offset:
-               Adjust the vertical offset by amount of (scaled) pixels
-               The valid range is -10 to 10 (and depending on selected font)
    Color Mode 4bpp:
                Enforce 16-color mode (for some older DVB cards)
    24-line mode
@@ -135,6 +125,26 @@ Other Setup options:
                plugin will be closed. Set to 0 to disable this. Note that
                disabling timeout will also effectively disable VDR's
                auto-shutdown feature as long as the plugin is active.
+
+   ** optional with multi-preset support **
+   OSD Presets visible
+               Limit maximum visible presets
+
+   OSD left, OSD top:
+               Adjusts the left and top edge of the OSD independent from VDR's
+               settings. The valid range is 0% to 90%
+   OSD width, OSD height: 
+               Adjusts the width and height of the OSD independent from VDR's
+               settings. The valid range is 10% to 100%
+   Frame:
+               Adjust black surrounding frame sized by amount of pixel
+   Font:
+               Select the font to display text
+   Text Vertical Offset:
+               Adjust the vertical offset by amount of (scaled) pixels
+               The valid range is -10 to 10 (and depending on selected font)
+   Background transparency: 
+               number between 0 (black) and 255 (transparency). Default is 128
 
    Hotkey (color key) bindings: See above, optional with multi-level support
 
@@ -162,6 +172,9 @@ Command line options:
      -k        --key-levels=NUM   Maximum amount of Hotkey levels selectable and stored
                                    default: 1 (which deactivate this feature)
                                    maximum: 9 levels
+     -o        --osd-presets=NUM  Maximum amount of OSD presets selectable and stored
+                                   default: 1 (which deactivate this feature)
+                                   maximum: 9 presets
      -P|--debugpage <int|hexint>  Specify page to debug (int: autoconvert internally to hex)
      -S|--debugpsub <int|hexint>  Specify sub-page to debug (int: autoconvert internally to hex)
      -L|--debugline <int>         Specify line of page to debug
@@ -219,4 +232,5 @@ Subtitle pages for verification
 TODO
 - in case "show clock" is disabled but teletext page provides clock, update related regions automatically
 	Channel 3sat incl. blinking ":"
+
 - extend UTF8toTeletextChar with further mappings

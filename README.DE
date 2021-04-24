@@ -19,6 +19,7 @@ Tasten:
    Verfügbare Tasten: Blau, Rot, Gelb, Grün, Stop, Schneller Vorlauf, Schn. Rücklauf, OK
    Aktionen:          "Vergrößern", "Halbe Seite", "Kanal wechseln",
                       "Hotkey Ebene+", "Hotkey Ebene-"
+                      "OSD Voreinstellung+", "OSD Voreinstellung-"
                       "Hintergrund wechseln", "Springe zu..." einer bestimmten Seite
 
    Beschreibung der Aktionen:
@@ -44,6 +45,7 @@ Tasten:
                       Links,Oben +/-
                       Breite,Höhe +/-
                       Rahmen +/-
+                      Zeichensatz
                       Text Vertikaer Offset +/-
                       Hintergrund Transparenz +/-
 
@@ -56,6 +58,10 @@ Tasten:
       Pause       :  Stoppt Aktualisierung der Seite (Umschalter)
                       OSD zeigt rotes '!' während die Aktualisierug pausiert
                       OSD zeigt green '>' nachdem die Pause deaktiviert wurde (bis zur nächsten Aktualisierung der Seite)
+
+     ** falls eingeschaltet/aktiv **
+     OSD Preset+    :  Wechsle zur nächsten OSD Voreinstellung (incl. Rollover)
+     OSD Preset-    :  Wechsle zur vorherigen OSD Voreinstellung (incl. rollover)
 
      ** falls eingeschaltet/aktiv **
      Hotkey Ebene+  :  Wechsle zur nächsten Hotkey Ebene (incl. Rollover)
@@ -72,21 +78,11 @@ Tasten:
    angegeben.
 
 Andere Optionen:
-   Hintergrund-Transparenz: Zahl zwischen 0 (transparent) und 255 (schwarz). Vorgegeben ist 127 (wie auch von VDR)
    Zeige Uhr:  Diese Option bestimmt, ob etwa im Sekundenabstand zusätzlich eine Uhr angezeigt wird.
                Die Uhr zeigt die aktuelle Systemzeit, nicht die mit dem Videotext ausgestrahlte Zeit.
                Um genaue Werte zu haben, kann VDR die Systemzeit von einem Transponder einstellen.
    Automatisch aktualisieren: 
                Überprüft ständig, ob sich die Seite geändert hat und aktualisiert sie wenn nötig
-   OSD-Breite, OSD-Höhe: 
-               Hier kann die Größe des OSD unabhängig von den Einstellungen für VDR
-               bestimmt werden. Valider Bereich zwischen 10% und 100%
-   OSD Links, OSD Oben:
-               Hier kann die linke/obere Ecke des OSD unabhängig von den Einstellungen für VDR
-               bestimmt werden. Valider Bereich zwischen 0% und 90%
-   Vertikaler Text Offset:
-               Justage des vertikalen Offsets für Textdarstellung bei einer (skalierten) Anzahl von Pixels
-               Valider Bereich zwischen -10 und 10 (und abhängig vom ausgewählten Font)
    16-Farben-Modus:
                Benutze nur 16 Farben (4-Bit) (für ältere DVB Karten)
    Mindest Benutzer-Inaktivität:
@@ -94,6 +90,21 @@ Andere Optionen:
                der Benutzer solange keine Taste betätigt hat. Das kann durch setzen des Wertes auf 0
                verhindert werden. Dann wird jedoch auch das automatische Abschalten von VDR effektiv 
                außer Kraft gesetzt, solange das Plugin geöffnet ist.
+
+   ** optional mit Unterstützung mehrerer Voreinstellungen **
+
+   OSD-Breite, OSD-Höhe: 
+               Hier kann die Größe des OSD unabhängig von den Einstellungen für VDR
+               bestimmt werden. Valider Bereich zwischen 10% und 100%
+   OSD Links, OSD Oben:
+               Hier kann die linke/obere Ecke des OSD unabhängig von den Einstellungen für VDR
+               bestimmt werden. Valider Bereich zwischen 0% und 90%
+   Zeichensatz:
+               Hier kann der Zeichensatz ausgewählt werden
+   Vertikaler Text Offset:
+               Justage des vertikalen Offsets für Textdarstellung bei einer (skalierten) Anzahl von Pixels
+               Valider Bereich zwischen -10 und 10 (und abhängig vom ausgewählten Font)
+   Hintergrund-Transparenz: Zahl zwischen 0 (schwarz) und 255 (transparenz). Vorgegeben ist 128 (wie auch von VDR)
 
    Hotkey (Farb-)Tasten einrichten:    siehe oben, optional mit multi-Ebenen-Unterstützung
 
@@ -119,6 +130,9 @@ Kommandozeilen-Optionen:
      -k        --key-levels=NUM   Maximale Anzahl von Hot Key Ebenen für Auswahl und Speicherung
                                    Standard: 1 (deaktiviert diese Erweiterung)
                                    Maximum: 9 Ebenen
+     -o        --osd-presets=NUM  Maximale Anzahl von OSD Voreinstellungen für Auswahl und Speicherung
+                                   Standard: 1 (deaktiviert diese Erweiterung)
+                                   Maximum: 9 Voreinstellungen
      -P|--debugpage <int|hexint>  Spezifiziere Seite für Debugging (int: intern automatisch konvertiert nach hex)
      -S|--debugpsub <int|hexint>  Spezifiziere Unterseite für Debugging (int: intern automatisch konvertiert nach hex)
      -L|--debugline <int>         Spezifiziere Zeile für Debugging

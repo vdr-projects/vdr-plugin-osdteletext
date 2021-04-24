@@ -1,0 +1,6 @@
+- in case "show clock" is disabled but teletext page provides clock, update related regions automatically
+	Channel 3sat incl. blinking ":"
+
+- extend UTF8toTeletextChar with further mappings
+
+- extend X/26 support
