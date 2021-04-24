@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 2.4.4\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-19 07:20+0200\n"
+"POT-Creation-Date: 2021-04-24 11:28+0200\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Peter Bieringer <pb@bieringer.de>\n"
 "Language-Team: German <vdr@linuxtv.org>\n"
@@ -67,6 +67,12 @@ msgstr "Hotkey Ebenen sind deaktiviert"
 msgid "Hotkey levels are not active"
 msgstr "Hotkey Ebenen sind nicht aktiv"
 
+msgid "OSD presets are disabled"
+msgstr "OSD Voreinstellungen sind abgeschaltet"
+
+msgid "OSD presets are not active"
+msgstr "OSD Voreinstellungen sind nicht aktiv"
+
 msgid "Channel (press OK): "
 msgstr "Sender (OK drücken): "
 
@@ -115,6 +121,12 @@ msgstr "Hotkey Ebene+"
 msgid "Hotkey Level-"
 msgstr "Hotkey Ebene-"
 
+msgid "OSD Preset+"
+msgstr "OSD Preset+"
+
+msgid "OSD Preset-"
+msgstr "OSD Preset-"
+
 msgid "Jump to..."
 msgstr "Springe zu..."
 
@@ -145,14 +157,35 @@ msgstr ""
 msgid "Hebrew"
 msgstr ""
 
-msgid "Background transparency"
-msgstr "Hintergrund-Transparenz"
+msgid "Hide mainmenu entry"
+msgstr "Hauptmenüeintrag verstecken"
 
 msgid "Show clock"
 msgstr "Uhr anzeigen"
 
 msgid "Auto-update pages"
 msgstr "Seiten aktualisieren"
+
+msgid "G0 code block"
+msgstr ""
+
+msgid "G2 code block"
+msgstr ""
+
+msgid "16-Color Mode"
+msgstr "16-Farben Modus"
+
+msgid "24-Line Mode"
+msgstr "24-Zeilen Modus"
+
+msgid "max"
+msgstr "max"
+
+msgid "Presets"
+msgstr "Voreinstellungen"
+
+msgid "visible"
+msgstr "sichtbar"
 
 msgid "OSD left (%)"
 msgstr "OSD Links (%)"
@@ -169,50 +202,26 @@ msgstr "OSD Höhe (%)"
 msgid "OSD frame pixel"
 msgstr "OSD Rahmen Pixel"
 
-msgid "Hide mainmenu entry"
-msgstr "Hauptmenüeintrag verstecken"
-
 msgid "Text Font"
 msgstr "Zeichensatz"
-
-msgid "G0 code block"
-msgstr ""
-
-msgid "G2 code block"
-msgstr ""
 
 msgid "Text Vertical Offset"
 msgstr "Text vertikaler Offset"
 
-msgid "16-Color Mode"
-msgstr "16-Farben Modus"
-
-msgid "24-Line Mode"
-msgstr "24-Zeilen Modus"
+msgid "Background transparency"
+msgstr "Hintergrund-Transparenz"
 
 msgid "Key bindings"
 msgstr "Tastenzuweisung"
 
-msgid "Hotkey"
-msgstr "Hotkey"
-
-msgid "max"
-msgstr "max"
-
 msgid "Levels"
 msgstr "Ebenen"
-
-msgid "visible"
-msgstr "sichtbar"
 
 msgid "Level"
 msgstr "Ebene"
 
 msgid "  Page number"
 msgstr "  Seitenzahl"
-
-msgid "OSD Hotkey Level"
-msgstr "OSD Hotkey Ebene"
 
 msgid "Half Page"
 msgstr "HalbeSeite"
@@ -231,6 +240,12 @@ msgstr "HkEbene+"
 
 msgid "HkLevel-"
 msgstr "HKEbene-"
+
+msgid "Preset+"
+msgstr "Voreinst+"
+
+msgid "Preset-"
+msgstr "Voreinst-"
 
 msgid "Left"
 msgstr "Links"
