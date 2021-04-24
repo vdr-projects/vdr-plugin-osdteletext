@@ -38,7 +38,6 @@
 #define BackTransMin       0
 #define BackTransMax     255
 
-
 // There are two places to be kept in sync with these enums:
 //  TeletextBrowser::TranslateKey and 
 // 1:1 relation between st_modes[] in osdteletext.c + eTeletextAction in setup.h + st_modesFooter in setup.c
