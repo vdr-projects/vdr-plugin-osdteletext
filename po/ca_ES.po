@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-19 07:48+0200\n"
+"POT-Creation-Date: 2021-04-24 11:28+0200\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Jordi Vilà <jvila@tinet.org>\n"
 "Language-Team: Catalan <vdr@linuxtv.org>\n"
@@ -60,6 +60,21 @@ msgstr ""
 msgid "*** Config mode is not supported in 24-line mode ***"
 msgstr ""
 
+msgid "Hotkey level change is not supported in 24-line mode"
+msgstr ""
+
+msgid "Hotkey levels are disabled"
+msgstr ""
+
+msgid "Hotkey levels are not active"
+msgstr ""
+
+msgid "OSD presets are disabled"
+msgstr ""
+
+msgid "OSD presets are not active"
+msgstr ""
+
 msgid "Channel (press OK): "
 msgstr "Canal (premi OK):"
 
@@ -102,6 +117,18 @@ msgstr ""
 msgid "Pause"
 msgstr ""
 
+msgid "Hotkey Level+"
+msgstr ""
+
+msgid "Hotkey Level-"
+msgstr ""
+
+msgid "OSD Preset+"
+msgstr ""
+
+msgid "OSD Preset-"
+msgstr ""
+
 msgid "Jump to..."
 msgstr "Salta a..."
 
@@ -132,14 +159,35 @@ msgstr ""
 msgid "Hebrew"
 msgstr ""
 
-msgid "Background transparency"
-msgstr "Transparència del fons"
+msgid "Hide mainmenu entry"
+msgstr ""
 
 msgid "Show clock"
 msgstr "Visualitza l'hora"
 
 msgid "Auto-update pages"
 msgstr "Actualització pàgines automàtica"
+
+msgid "G0 code block"
+msgstr ""
+
+msgid "G2 code block"
+msgstr ""
+
+msgid "16-Color Mode"
+msgstr ""
+
+msgid "24-Line Mode"
+msgstr ""
+
+msgid "max"
+msgstr ""
+
+msgid "Presets"
+msgstr ""
+
+msgid "visible"
+msgstr ""
 
 msgid "OSD left (%)"
 msgstr ""
@@ -156,28 +204,22 @@ msgstr ""
 msgid "OSD frame pixel"
 msgstr ""
 
-msgid "Hide mainmenu entry"
-msgstr ""
-
 msgid "Text Font"
-msgstr ""
-
-msgid "G0 code block"
-msgstr ""
-
-msgid "G2 code block"
 msgstr ""
 
 msgid "Text Vertical Offset"
 msgstr ""
 
-msgid "16-Color Mode"
-msgstr ""
-
-msgid "24-Line Mode"
-msgstr ""
+msgid "Background transparency"
+msgstr "Transparència del fons"
 
 msgid "Key bindings"
+msgstr ""
+
+msgid "Levels"
+msgstr ""
+
+msgid "Level"
 msgstr ""
 
 msgid "  Page number"
@@ -193,6 +235,18 @@ msgid "SwitchBack"
 msgstr ""
 
 msgid "24LineMode"
+msgstr ""
+
+msgid "HkLevel+"
+msgstr ""
+
+msgid "HkLevel-"
+msgstr ""
+
+msgid "Preset+"
+msgstr ""
+
+msgid "Preset-"
 msgstr ""
 
 msgid "Left"

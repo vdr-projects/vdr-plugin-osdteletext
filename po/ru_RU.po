@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-19 07:48+0200\n"
+"POT-Creation-Date: 2021-04-24 11:28+0200\n"
 "PO-Revision-Date: 2008-12-30 13:52+0100\n"
 "Last-Translator: Andrey Pridvorov <ua0lnj@bk.ru>\n"
 "Language-Team: Russian <vdr@linuxtv.org>\n"
@@ -59,6 +59,21 @@ msgstr ""
 msgid "*** Config mode is not supported in 24-line mode ***"
 msgstr ""
 
+msgid "Hotkey level change is not supported in 24-line mode"
+msgstr ""
+
+msgid "Hotkey levels are disabled"
+msgstr ""
+
+msgid "Hotkey levels are not active"
+msgstr ""
+
+msgid "OSD presets are disabled"
+msgstr ""
+
+msgid "OSD presets are not active"
+msgstr ""
+
 msgid "Channel (press OK): "
 msgstr "Канал (Нажмите ОК)"
 
@@ -101,6 +116,18 @@ msgstr ""
 msgid "Pause"
 msgstr ""
 
+msgid "Hotkey Level+"
+msgstr ""
+
+msgid "Hotkey Level-"
+msgstr ""
+
+msgid "OSD Preset+"
+msgstr ""
+
+msgid "OSD Preset-"
+msgstr ""
+
 msgid "Jump to..."
 msgstr "перейти к..."
 
@@ -131,14 +158,35 @@ msgstr "Арабск."
 msgid "Hebrew"
 msgstr "Иврит"
 
-msgid "Background transparency"
-msgstr "Прозрачность фона"
+msgid "Hide mainmenu entry"
+msgstr "Скрыть в главном меню"
 
 msgid "Show clock"
 msgstr "Показывать часы"
 
 msgid "Auto-update pages"
 msgstr "Автообновление страниц"
+
+msgid "G0 code block"
+msgstr "G0 кодировка"
+
+msgid "G2 code block"
+msgstr "G2 кодировка"
+
+msgid "16-Color Mode"
+msgstr ""
+
+msgid "24-Line Mode"
+msgstr ""
+
+msgid "max"
+msgstr ""
+
+msgid "Presets"
+msgstr ""
+
+msgid "visible"
+msgstr ""
 
 msgid "OSD left (%)"
 msgstr ""
@@ -155,29 +203,23 @@ msgstr ""
 msgid "OSD frame pixel"
 msgstr ""
 
-msgid "Hide mainmenu entry"
-msgstr "Скрыть в главном меню"
-
 msgid "Text Font"
 msgstr "Шрифт"
-
-msgid "G0 code block"
-msgstr "G0 кодировка"
-
-msgid "G2 code block"
-msgstr "G2 кодировка"
 
 msgid "Text Vertical Offset"
 msgstr ""
 
-msgid "16-Color Mode"
-msgstr ""
-
-msgid "24-Line Mode"
-msgstr ""
+msgid "Background transparency"
+msgstr "Прозрачность фона"
 
 msgid "Key bindings"
 msgstr "Привязка кнопок"
+
+msgid "Levels"
+msgstr ""
+
+msgid "Level"
+msgstr ""
 
 msgid "  Page number"
 msgstr "  Номер страницы"
@@ -192,6 +234,18 @@ msgid "SwitchBack"
 msgstr ""
 
 msgid "24LineMode"
+msgstr ""
+
+msgid "HkLevel+"
+msgstr ""
+
+msgid "HkLevel-"
+msgstr ""
+
+msgid "Preset+"
+msgstr ""
+
+msgid "Preset-"
 msgstr ""
 
 msgid "Left"
