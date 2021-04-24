@@ -855,7 +855,7 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
       osdPresetConfigItem[Frame]    [p] = new cMenuEditIntItem(tr("OSD frame pixel"        ), &temp.osdConfig[Frame]    [p], OSDframePixMin , OSDframePixMax );
       osdPresetConfigItem[Font]     [p] = new cMenuEditStraItem(tr("Text Font"             ), &temp.osdConfig[Font]     [p], ttSetup.txtFontNames.Size(), &ttSetup.txtFontNames[0]);
       osdPresetConfigItem[Voffset]  [p] = new cMenuEditIntItem(tr("Text Vertical Offset"   ), &temp.osdConfig[Voffset]  [p], txtVoffsetMin  , txtVoffsetMax  );
-      osdPresetConfigItem[BackTrans][p] = new cMenuEditIntItem(tr("Background transparency"), &temp.osdConfig[BackTrans][p], 0              , 255            );
+      osdPresetConfigItem[BackTrans][p] = new cMenuEditIntItem(tr("Background transparency"), &temp.osdConfig[BackTrans][p], BackTransMin   , BackTransMax   );
    };
 
    SetupRefreshOsdConfig();
