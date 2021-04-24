@@ -63,7 +63,7 @@ TeletextBrowser::TeletextBrowser(cTxtStatus *txtSt,Storage *s)
     lastActivity(time(NULL)), inactivityTimeout(-1), storage(s)
 {
    if (!clrBackgroundInit) {
-      clrBackground = (tColor) ttSetup.configuredClrBackground; // default
+      clrBackground = TTSETUPPRESET_TCOLOR(BackTrans); // default
       clrBackgroundInit = true;
    };
 
@@ -250,7 +250,7 @@ bool TeletextBrowser::TriggerChannelSwitch(const int channelNumber) {
 eOSState TeletextBrowser::ProcessKey(eKeys Key) {
    cDisplay::enumZoom zoomR;
    Display::Mode modeR;
-   tColor bgcR, bgcSetup = ttSetup.configuredClrBackground;
+   tColor bgcR, bgcSetup = TTSETUPPRESET_TCOLOR(BackTrans);
    bool changedConfig = false;
 
    if (Key != kNone)
@@ -472,8 +472,8 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
    if (changedConfig) {
       zoomR = Display::GetZoom(); // remember zoom
       modeR = Display::mode; // remember mode
-      if (ttSetup.configuredClrBackground != bgcSetup) {
-         bgcR = ttSetup.configuredClrBackground; // color was changed during config
+      if (TTSETUPPRESET_TCOLOR(BackTrans) != bgcSetup) {
+         bgcR = TTSETUPPRESET_TCOLOR(BackTrans); // color was changed during config
          DEBUG_OT_KEYS("osdteletext: recreate display with remembered mode=%d zoom=%d and setup configured bgc=%08x", modeR, zoomR, bgcR);
       } else {
          bgcR = Display::GetBackgroundColor(); // remember color
@@ -506,42 +506,39 @@ bool TeletextBrowser::ExecuteActionConfig(eTeletextActionConfig e, int delta) {
 
    switch (configMode) {
       case Left:
-         COND_ADJ_VALUE(ttSetup.OSDleftPct, OSDleftPctMin, OSDleftPctMax, delta);
+         COND_ADJ_VALUE(TTSETUPPRESET(configMode), OSDleftPctMin, OSDleftPctMax, delta);
          break;
 
       case Top:
-         COND_ADJ_VALUE(ttSetup.OSDtopPct, OSDtopPctMin, OSDtopPctMax, delta);
+         COND_ADJ_VALUE(TTSETUPPRESET(configMode), OSDtopPctMin, OSDtopPctMax, delta);
          break;
 
       case Width:
-         COND_ADJ_VALUE(ttSetup.OSDwidthPct, OSDwidthPctMin, OSDwidthPctMax, delta);
+         COND_ADJ_VALUE(TTSETUPPRESET(configMode), OSDwidthPctMin, OSDwidthPctMax, delta);
          break;
 
       case Height:
-         COND_ADJ_VALUE(ttSetup.OSDheightPct, OSDheightPctMin, OSDheightPctMax, delta);
+         COND_ADJ_VALUE(TTSETUPPRESET(configMode), OSDheightPctMin, OSDheightPctMax, delta);
          break;
 
       case Frame:
-         COND_ADJ_VALUE(ttSetup.OSDframePix, OSDframePixMin, OSDframePixMax, delta);
+         COND_ADJ_VALUE(TTSETUPPRESET(configMode), OSDframePixMin, OSDframePixMax, delta);
          break;
 
       case Font:
-         ttSetup.txtFontIndex++;
-         if (ttSetup.txtFontIndex >= ttSetup.txtFontNames.Size()) ttSetup.txtFontIndex = 0; // rollover
-         ttSetup.txtFontName = ttSetup.txtFontNames[ttSetup.txtFontIndex];
+         TTSETUPPRESET(configMode)++;
+         if (TTSETUPPRESET(configMode) >= ttSetup.txtFontNames.Size()) TTSETUPPRESET(configMode) = 0; // rollover
+         // ttSetup.txtFontName = ttSetup.txtFontNames[ttSetup.txtFontIndex];
          changedConfig = true;
          break;
 
       case Voffset:
-         COND_ADJ_VALUE(ttSetup.txtVoffset, txtVoffsetMin, txtVoffsetMax, delta);
+         COND_ADJ_VALUE(TTSETUPPRESET(configMode), txtVoffsetMin, txtVoffsetMax, delta);
          break;
 
       case BackTrans:
-         BackTransVal = ((uint32_t) ttSetup.configuredClrBackground) >> 24;
-         DEBUG_OT_KEYS("key action: 'Config->BackTrans' BackTransVal=%d BackTransMin=%d BackTransMax=%d delta=%d", BackTransVal, BackTransMin, BackTransMax, delta * 8);
-         COND_ADJ_VALUE(BackTransVal, BackTransMin, BackTransMax, delta * 8);
-         ttSetup.configuredClrBackground = ((uint32_t) BackTransVal) << 24;
-         clrBackground = ttSetup.configuredClrBackground;
+         DEBUG_OT_KEYS("key action: 'Config->BackTrans' BackTrans=%d BackTransMin=%d BackTransMax=%d delta=%d", TTSETUPPRESET(configMode), BackTransMin, BackTransMax, delta * 8);
+         COND_ADJ_VALUE(TTSETUPPRESET(configMode), BackTransMin, BackTransMax, delta * 8);
          break;
 
       default:
@@ -763,7 +760,7 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
 // If configured is black or transparent, do 2-state transparent->black only.
 void TeletextBrowser::ChangeBackground()
 {
-   tColor clrConfig = (tColor)ttSetup.configuredClrBackground;
+   tColor clrConfig = TTSETUPPRESET_TCOLOR(BackTrans);
    tColor clrCurrent = clrBackground;
 
    if (clrCurrent == clrConfig)
@@ -1143,8 +1140,8 @@ void TeletextBrowser::UpdateFooter() {
 
          case Font:
             snprintf(textRed   , sizeof(textRed)   , "%s" , tr(config_modes[configMode])); // <mode>
-            DEBUG_OT_FOOT("ttSetup.txtFontIndex=%d ttSetup.txtFontNames[%d]='%s'", ttSetup.txtFontIndex, ttSetup.txtFontIndex, ttSetup.txtFontNames[ttSetup.txtFontIndex]);
-            snprintf(textGreen, sizeof(textGreen)  , "%s", ttSetup.txtFontNames[ttSetup.txtFontIndex]); // FontName
+            DEBUG_OT_FOOT("txtFontIndex=%d txtFontNames[%d]='%s'", TTSETUPPRESET(Font), TTSETUPPRESET(Font), ttSetup.txtFontNames[TTSETUPPRESET(Font)]);
+            snprintf(textGreen, sizeof(textGreen)  , "%s", ttSetup.txtFontNames[TTSETUPPRESET(Font)]); // FontName
             flag = FooterGreenYellowValue;
             break;
 
@@ -1156,37 +1153,21 @@ void TeletextBrowser::UpdateFooter() {
       char *valueStr = NULL;
       switch (configMode) {
          case Left:
-            valueInt = ttSetup.OSDleftPct;
-            valueType = Pct;
-            break;
-
          case Top:
-            valueInt = ttSetup.OSDtopPct;
-            valueType = Pct;
-            break;
-
          case Width:
-            valueInt = ttSetup.OSDwidthPct;
-            valueType = Pct;
-            break;
-
          case Height:
-            valueInt = ttSetup.OSDheightPct;
+            valueInt = TTSETUPPRESET(configMode);
             valueType = Pct;
             break;
 
          case Frame:
-            valueInt = ttSetup.OSDframePix;
-            valueType = Pix;
-            break;
-
          case Voffset:
-            valueInt = ttSetup.txtVoffset;
+            valueInt = TTSETUPPRESET(configMode);
             valueType = Pix;
             break;
 
          case BackTrans:
-            valueInt = ((uint32_t) ttSetup.configuredClrBackground) >> 24;
+            valueInt = TTSETUPPRESET(configMode);
             valueType = Int;
             break;
 
