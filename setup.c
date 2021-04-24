@@ -26,6 +26,8 @@ const char *st_modesFooter[] =
       trNOOP("Pause"),
       trNOOP("HkLevel+"),
       trNOOP("HkLevel-"),
+      trNOOP("Preset+"),
+      trNOOP("Preset-"),
       trNOOP("Jump to...") // has to stay always the last one
 };
 
