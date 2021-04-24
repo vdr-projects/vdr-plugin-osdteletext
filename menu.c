@@ -68,9 +68,6 @@ TeletextBrowser::TeletextBrowser(cTxtStatus *txtSt,Storage *s)
    };
 
    self=this;
-
-   //if (txtStatus)
-    //  txtStatus->ForceReceiving(true);
 }
 
 
@@ -78,11 +75,6 @@ TeletextBrowser::~TeletextBrowser() {
    Display::Delete();
 
    self=0;
-   /*if (txtStatus) {
-      if (suspendedReceiving)
-         txtStatus->ForceSuspending(false);
-      txtStatus->ForceReceiving(false);
-   }*/
 }
 
 void TeletextBrowser::Show(void) {
