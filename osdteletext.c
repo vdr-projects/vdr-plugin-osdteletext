@@ -505,7 +505,7 @@ cMenuSetupPage *cPluginTeletextosd::SetupMenu(void)
    }; \
    if (index >= 0) { DEBUG_OT_SETUP("found setup config: Name=%s Text=%s Index=%d Value='%s'\n", name, text, index, Value); };
 
-/* value check/storemacro */
+/* value check/store macro */
 #define CHECK_STORE_INT_VALUE(store, value, min, max) \
    store = atoi(value); \
    if (store < min) store = min; \
