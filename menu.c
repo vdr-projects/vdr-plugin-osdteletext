@@ -522,7 +522,6 @@ bool TeletextBrowser::ExecuteActionConfig(eTeletextActionConfig e, int delta) {
       case Font:
          TTSETUPPRESET(configMode)++;
          if (TTSETUPPRESET(configMode) >= ttSetup.txtFontNames.Size()) TTSETUPPRESET(configMode) = 0; // rollover
-         // ttSetup.txtFontName = ttSetup.txtFontNames[ttSetup.txtFontIndex];
          changedConfig = true;
          break;
 
@@ -1137,15 +1136,15 @@ void TeletextBrowser::UpdateClock() {
 // implant ttSetup.osdPreset number for related actions if maximum is > 1
 #define CONVERT_ACTION_TO_TEXT(text, mode) \
       if ((mode == HotkeyLevelPlus) || (mode == HotkeyLevelMinus)) { \
-         snprintf(text, sizeof(text), "%-9s ", tr(st_modesFooter[mode])); \
+         snprintf(text, sizeof(text), "%-10s", tr(st_modesFooter[mode])); \
          text[9] = '0' + (int) hotkeyLevel + 1; \
          text[10] = '\0'; \
       } else if ((mode == OsdPresetPlus) || (mode == OsdPresetMinus)) { \
-         snprintf(text, sizeof(text), "%-9s ", tr(st_modesFooter[mode])); \
+         snprintf(text, sizeof(text), "%-10s", tr(st_modesFooter[mode])); \
          text[9] = '0' + (int) ttSetup.osdPreset + 1; \
          text[10] = '\0'; \
-      } else if ((mode == Config) && (ttSetup.osdPresetMax > 1)) { \
-         snprintf(text, sizeof(text), "%-8s  ", tr(st_modesFooter[mode])); \
+      } else if ((mode == Config) && (ttSetup.osdPresetMax > 1) && (configMode != LastActionConfig)) { \
+         snprintf(text, sizeof(text), "%-10s", tr(st_modesFooter[mode])); \
          text[8] = ' '; \
          text[9] = '0' + (int) ttSetup.osdPreset + 1; \
          text[10] = '\0'; \
@@ -1257,7 +1256,7 @@ void TeletextBrowser::UpdateFooter() {
             break;
       };
 
-      CONVERT_ACTION_TO_TEXT(textBlue, Config); // option itself
+      CONVERT_ACTION_TO_TEXT(textBlue, Config); // option itself with optional preset number
    };
 
    DEBUG_OT_FOOT("textRed='%s' textGreen='%s' text Yellow='%s' textBlue='%s' flag=%d", textRed, textGreen, textYellow, textBlue, flag);
@@ -1282,65 +1281,67 @@ TeletextSetup::TeletextSetup()
    int p = 0;
 
    // Preset "default"
-   osdConfig[Left]     [p] =   0;
-   osdConfig[Top]      [p] =   0;
-   osdConfig[Width]    [p] = 100;
-   osdConfig[Height]   [p] = 100;
+   osdConfig[Left]     [p] =  15;
+   osdConfig[Top]      [p] =   5;
+   osdConfig[Width]    [p] =  70;
+   osdConfig[Height]   [p] =  90;
    osdConfig[Frame]    [p] =   0;
    osdConfig[Font]     [p] =   0;
    osdConfig[Voffset]  [p] =   0;
    osdConfig[BackTrans][p] = 128;
 
-   // Preset "2" 50% top/left bg=255
-   p++;
-   if (p < OSD_PRESET_MAX_LIMIT) {
-      osdConfig[Left]     [p] =   0;
-      osdConfig[Top]      [p] =   0;
-      osdConfig[Width]    [p] =  50;
-      osdConfig[Height]   [p] =  50;
-      osdConfig[Frame]    [p] =   4;
-      osdConfig[Font]     [p] =   0;
-      osdConfig[Voffset]  [p] =   0;
-      osdConfig[BackTrans][p] = 255;
+   // Preset "2" .. "5" 50% in corners
+   for (p = 1; p < 5; p++) {
+      if (p < OSD_PRESET_MAX_LIMIT) {
+         if ((p == 1) || (p == 4))
+            osdConfig[Left]  [p] =   0;
+         else
+            osdConfig[Left]  [p] =  50;
+         if ((p == 1) || (p == 2))
+            osdConfig[Top]   [p] =   0;
+         else
+            osdConfig[Top]   [p] =  50;
+         osdConfig[Width]    [p] =  50;
+         osdConfig[Height]   [p] =  50;
+         osdConfig[Frame]    [p] =   8;
+         osdConfig[Font]     [p] =   0;
+         osdConfig[Voffset]  [p] =   0;
+         if (p == 1)
+            osdConfig[BackTrans][p] =   0;
+         else if (p == 2)
+            osdConfig[BackTrans][p] =  64;
+         else if (p == 3)
+            osdConfig[BackTrans][p] = 192;
+         else if (p == 4)
+            osdConfig[BackTrans][p] = 255;
+      };
    };
 
-   // Preset "3" 50% top/right bg=192
-   p++;
-   if (p < OSD_PRESET_MAX_LIMIT) {
-      osdConfig[Left]     [p] =  50;
-      osdConfig[Top]      [p] =   0;
-      osdConfig[Width]    [p] =  50;
-      osdConfig[Height]   [p] =  50;
-      osdConfig[Frame]    [p] =   4;
-      osdConfig[Font]     [p] =   0;
-      osdConfig[Voffset]  [p] =   0;
-      osdConfig[BackTrans][p] = 192;
-   };
-
-   // Preset "4" 50% bottom/right bg=64
-   p++;
-   if (p < OSD_PRESET_MAX_LIMIT) {
-      osdConfig[Left]     [p] =  50;
-      osdConfig[Top]      [p] =  50;
-      osdConfig[Width]    [p] =  50;
-      osdConfig[Height]   [p] =  50;
-      osdConfig[Frame]    [p] =   4;
-      osdConfig[Font]     [p] =   0;
-      osdConfig[Voffset]  [p] =   0;
-      osdConfig[BackTrans][p] =  64;
-   };
-
-   // Preset "5" 50% bottom/right bg=0
-   p++;
-   if (p < OSD_PRESET_MAX_LIMIT) {
-      osdConfig[Left]     [p] =   0;
-      osdConfig[Top]      [p] =  50;
-      osdConfig[Width]    [p] =  50;
-      osdConfig[Height]   [p] =  50;
-      osdConfig[Frame]    [p] =   4;
-      osdConfig[Font]     [p] =   0;
-      osdConfig[Voffset]  [p] =   0;
-      osdConfig[BackTrans][p] =   0;
+   // Preset "6" .. "9" 25% in corners
+   for (p = 5; p < 9; p++) {
+      if (p < OSD_PRESET_MAX_LIMIT) {
+         if ((p == 5) || (p == 8))
+            osdConfig[Left]  [p] =   0;
+         else
+            osdConfig[Left]  [p] =  75;
+         if ((p == 5) || (p == 6))
+            osdConfig[Top]   [p] =   0;
+         else
+            osdConfig[Top]   [p] =  75;
+         osdConfig[Width]    [p] =  25;
+         osdConfig[Height]   [p] =  25;
+         osdConfig[Frame]    [p] =   4;
+         osdConfig[Font]     [p] =   0;
+         osdConfig[Voffset]  [p] =   0;
+         if (p == 5)
+            osdConfig[BackTrans][p] =   0;
+         else if (p == 6)
+            osdConfig[BackTrans][p] =  64;
+         else if (p == 7)
+            osdConfig[BackTrans][p] = 192;
+         else if (p == 8)
+            osdConfig[BackTrans][p] = 255;
+      };
    };
 
    //init key bindings
