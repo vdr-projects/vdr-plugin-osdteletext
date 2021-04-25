@@ -280,7 +280,7 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
             } else {
 				   m_debugmask = atoi(optarg);
             };
-			   dsyslog("osdteletext: enable debug mask: %d (0x%02x)", m_debugmask, m_debugmask);
+			   dsyslog("osdteletext: enable debug mask: %d (0x%08x)", m_debugmask, m_debugmask);
             break;
 
           case 'P':
