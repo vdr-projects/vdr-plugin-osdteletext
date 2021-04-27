@@ -8,6 +8,10 @@ VDR Plugin 'osdteletext' Revision History
 - [pbiering] implement optional OSD Hotkey level feature (max. 9 levels with limiter)
 - [pbiering] rework dynamic menu creation related to 'jump to' to fix 'not working on last config entry' issue
 
+2021-04-27: version 2.1.1
+- [pbiering] release receiver on live channel switch earlier in sequence to use even on 2-tuner systems by default only one tuner
+- [pbiering] release device on non-live -> non-live channel switch earlier to avoid locking on 2-tuner systems
+
 2021-04-19: version 2.1.0
 - [pbiering] catch case where in tuned mode channel switch is triggered on selected device and switch into cached mode
 
