@@ -219,6 +219,24 @@ bool TeletextBrowser::TriggerChannelSwitch(const int channelNumber) {
 #endif
    if (!newChannel) return false;
 
+   if (txtStatus->receiver) {
+      // receiver is already running
+      if (txtStatus->receiver->Live()) {
+         if (channelNumber == liveChannelNumber) {
+            DEBUG_OT_TXTRCVC("requested channel %d is LIVE channel, running receiver found on LIVE channel %d - not action required", channelNumber, liveChannelNumber);
+         } else {
+            DEBUG_OT_TXTRCVC("requested channel %d is NON-LIVE channel, running receiver found on LIVE channel %d - action will be triggered later", channelNumber, liveChannelNumber);
+         };
+      } else {
+         if (channelNumber == liveChannelNumber) {
+            DEBUG_OT_TXTRCVC("requested channel %d is LIVE channel, running receiver found on NON-LIVE channel %d - action will be triggered later", channelNumber, liveChannelNumber);
+         } else {
+            DEBUG_OT_TXTRCVC("requested channel %d is NON-LIVE channel, running receiver found on NON-LIVE channel %d - stop receiver to release device", channelNumber, liveChannelNumber);
+            DELETENULL(txtStatus->receiver);
+         };
+      };
+   };
+
    cDevice *device = cDevice::GetDeviceForTransponder(newChannel, TRANSFERPRIORITY - 1);
    if (device != NULL) {
       needClearMessage = true;

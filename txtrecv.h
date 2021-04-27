@@ -79,11 +79,13 @@ public:
    virtual void Stop();
    void SetFlagStopByLiveChannelSwitch(bool flag) { flagStopByLiveChannelSwitch = flag; };
    bool Live() { return live; };
+   bool ChannelNumber() { return channel->Number(); };
 };
 
 class cTxtStatus : public cStatus {
-private:
+public:
    cTxtReceiver *receiver;
+private:
    bool storeTopText;
    Storage* storage;
    int NonLiveChannelNumber;
