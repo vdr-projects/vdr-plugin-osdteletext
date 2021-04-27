@@ -216,7 +216,18 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber, bool Li
 {
    // ignore if channel is 0
    if (ChannelNumber == 0) {
-      DEBUG_OT_TXTRCVC("IGNORE channel=0 switch on DVB %d for channel %d LiveView=%s\n", Device->DeviceNumber(), ChannelNumber, BOOLTOTEXT(LiveView));
+      if (LiveView && receiver) {
+         if (receiver->Live()) {
+            DEBUG_OT_TXTRCVC("STOPRC channel=0 switch on DVB %d for channel %d LiveView=%s (receiver is attached to LIVE channel)\n", Device->DeviceNumber(), ChannelNumber, BOOLTOTEXT(LiveView));
+            DELETENULL(receiver);
+            return;
+         } else {
+            DEBUG_OT_TXTRCVC("IGNORE channel=0 switch on DVB %d for channel %d LiveView=%s (receiver is attached to NON-LIVE channel)\n", Device->DeviceNumber(), ChannelNumber, BOOLTOTEXT(LiveView));
+            return;
+         };
+      } else {
+         DEBUG_OT_TXTRCVC("IGNORE channel=0 switch on DVB %d for channel %d LiveView=%s\n", Device->DeviceNumber(), ChannelNumber, BOOLTOTEXT(LiveView));
+      };
       return;
    };
 
@@ -276,7 +287,7 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber, bool Li
       receiver->SetFlagStopByLiveChannelSwitch(true);
    };
 
-   // channel was changed, delete the running receiver
+   // channel was changed, delete the running receiver if still running
    DELETENULL(receiver);
 
    if (TPid) {
