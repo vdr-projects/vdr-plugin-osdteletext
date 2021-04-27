@@ -234,6 +234,7 @@ bool TeletextBrowser::TriggerChannelSwitch(const int channelNumber) {
             DEBUG_OT_TXTRCVC("requested channel %d is LIVE channel, running receiver found on NON-LIVE channel %d - action will be triggered later", channelNumber, liveChannelNumber);
          } else {
             DEBUG_OT_TXTRCVC("requested channel %d is NON-LIVE channel, running receiver found on NON-LIVE channel %d - stop receiver to release device", channelNumber, liveChannelNumber);
+            switchChannelInProgress = true;
             DELETENULL(txtStatus->receiver);
          };
       };
