@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-19 07:48+0200\n"
+"POT-Creation-Date: 2021-04-27 19:28+0200\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Jordi Vilà <jvila@tinet.org>\n"
 "Language-Team: Catalan <vdr@linuxtv.org>\n"
@@ -49,6 +49,9 @@ msgid "display cached pages"
 msgstr ""
 
 msgid "cached"
+msgstr ""
+
+msgid "Channel Tuning Successful"
 msgstr ""
 
 msgid "Channel Tuning Not Successful"
