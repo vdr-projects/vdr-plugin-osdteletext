@@ -190,7 +190,7 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelInfo info
          // all cases catched
       };
 
-      self->ShowPage();
+      self->ShowPage((strlen(str) > 0));
 
       if (strlen(str) > 0) {
          self->needClearMessage=true;
@@ -219,22 +219,50 @@ bool TeletextBrowser::TriggerChannelSwitch(const int channelNumber) {
 #endif
    if (!newChannel) return false;
 
+   if (txtStatus->receiver) {
+      // receiver is already running
+      if (txtStatus->receiver->Live()) {
+         if (channelNumber == liveChannelNumber) {
+            DEBUG_OT_TXTRCVC("requested channel %d is LIVE channel, running receiver found on LIVE channel %d - not action required", channelNumber, liveChannelNumber);
+         } else {
+            DEBUG_OT_TXTRCVC("requested channel %d is NON-LIVE channel, running receiver found on LIVE channel %d - action will be triggered later", channelNumber, liveChannelNumber);
+         };
+      } else {
+         if (channelNumber == liveChannelNumber) {
+            DEBUG_OT_TXTRCVC("requested channel %d is LIVE channel, running receiver found on NON-LIVE channel %d - action will be triggered later", channelNumber, liveChannelNumber);
+         } else {
+            DEBUG_OT_TXTRCVC("requested channel %d is NON-LIVE channel, running receiver found on NON-LIVE channel %d - stop receiver to release device", channelNumber, liveChannelNumber);
+            switchChannelInProgress = true;
+            DELETENULL(txtStatus->receiver);
+         };
+      };
+   };
+
    cDevice *device = cDevice::GetDeviceForTransponder(newChannel, TRANSFERPRIORITY - 1);
    if (device != NULL) {
       needClearMessage = true;
       switchChannelInProgress = true;
       if (device->SwitchChannel(newChannel, (channelNumber == liveChannelNumber) ? true : false)) {
-         // Display::DrawMessage(tr("Channel Tuning Successful"), ttcGreen);
+         if (1 == 0) {
+            // too verbose - disabled
+            Display::DrawMessage(tr("Channel Tuning Successful"), ttcGreen);
+         };
          result = true;
+         DEBUG_OT_TXTRCVC("DVB %d successful tuned to channel %d (live=%s)", device->DeviceNumber(), channelNumber, BOOLTOTEXT(channelNumber == liveChannelNumber));
       } else {
          needClearMessage = true;
          delayClearMessage = 5;
          Display::DrawMessage(tr("Channel Tuning Not Successful"), ttcRed);
+         DEBUG_OT_TXTRCVC("DVB %d cannot tune to channel %d", device->DeviceNumber(), channelNumber);
       };
    } else {
-      needClearMessage = true;
-      delayClearMessage = 2;
-      Display::DrawMessage(tr("No Free Tuner Found - Use Cache Only"), ttcYellow);
+      if (1 == 0) {
+         // too verbose - disabled
+         needClearMessage = true;
+         delayClearMessage = 2;
+         Display::DrawMessage(tr("No Free Tuner Found - Use Cache Only"), ttcYellow);
+      };
+      DEBUG_OT_TXTRCVC("no free tuner available to tune to channel %d (use cache)", channelNumber);
       ChannelSwitched(channelNumber, ChannelIsCached);
    };
 
@@ -1003,8 +1031,8 @@ void TeletextBrowser::SetPreviousPage(int oldPage, int oldSubPage, int newPage) 
 
 
 
-void TeletextBrowser::ShowPage() {
-   if ((pageFound=DecodePage())) {
+void TeletextBrowser::ShowPage(bool suppressMessage) {
+   if ((pageFound=DecodePage(suppressMessage))) {
       if (ttSetup.autoUpdatePage)
          checkSum=PageCheckSum();
    }
@@ -1040,7 +1068,7 @@ void TeletextBrowser::ShowAskForChannel() {
 }
 
 //this is taken and adapted from the teletext plugin since it uses its data
-bool TeletextBrowser::DecodePage() {
+bool TeletextBrowser::DecodePage(bool suppressMessage) {
    // Load the page and decodes it
    unsigned char cache[sizeof(TelePageData)];
    StorageHandle fd;
@@ -1096,8 +1124,10 @@ bool TeletextBrowser::DecodePage() {
             color = ttcRed;
          };
       };
-      needClearMessage = false;
-      Display::DrawMessage(str, str2, color);
+      if (! suppressMessage) {
+         needClearMessage = false;
+         Display::DrawMessage(str, str2, color);
+      };
       UpdateFooter();
       Display::ReleaseFlush();
 
