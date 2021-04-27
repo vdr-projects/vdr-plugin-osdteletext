@@ -192,7 +192,7 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelInfo info
          // all cases catched
       };
 
-      self->ShowPage();
+      self->ShowPage((strlen(str) > 0));
 
       if (strlen(str) > 0) {
          self->needClearMessage=true;
@@ -944,8 +944,8 @@ void TeletextBrowser::SetPreviousPage(int oldPage, int oldSubPage, int newPage) 
 
 
 
-void TeletextBrowser::ShowPage() {
-   if ((pageFound=DecodePage())) {
+void TeletextBrowser::ShowPage(bool suppressMessage) {
+   if ((pageFound=DecodePage(suppressMessage))) {
       if (ttSetup.autoUpdatePage)
          checkSum=PageCheckSum();
    }
@@ -981,7 +981,7 @@ void TeletextBrowser::ShowAskForChannel() {
 }
 
 //this is taken and adapted from the teletext plugin since it uses its data
-bool TeletextBrowser::DecodePage() {
+bool TeletextBrowser::DecodePage(bool suppressMessage) {
    // Load the page and decodes it
    unsigned char cache[sizeof(TelePageData)];
    StorageHandle fd;
@@ -1037,8 +1037,10 @@ bool TeletextBrowser::DecodePage() {
             color = ttcRed;
          };
       };
-      needClearMessage = false;
-      Display::DrawMessage(str, str2, color);
+      if (! suppressMessage) {
+         needClearMessage = false;
+         Display::DrawMessage(str, str2, color);
+      };
       UpdateFooter();
       Display::ReleaseFlush();
 
