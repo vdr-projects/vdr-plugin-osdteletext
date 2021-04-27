@@ -40,10 +40,10 @@ public:
 protected:
    enum Direction { DirectionForward, DirectionBackward };
    void SetNumber(int i);
-   void ShowPage();
+   void ShowPage(bool suppressMessage = false);
    void UpdateClock();
    void UpdateFooter();
-   bool DecodePage();
+   bool DecodePage(bool suppressMessage = false);
    void ChangePageRelative(Direction direction);
    void ChangeSubPageRelative(Direction direction);
    bool CheckPage();
