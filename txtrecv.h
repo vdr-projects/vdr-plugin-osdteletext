@@ -78,6 +78,7 @@ public:
    virtual ~cTxtReceiver();
    virtual void Stop();
    void SetFlagStopByLiveChannelSwitch(bool flag) { flagStopByLiveChannelSwitch = flag; };
+   bool Live() { return live; };
 };
 
 class cTxtStatus : public cStatus {
