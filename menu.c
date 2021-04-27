@@ -243,7 +243,10 @@ bool TeletextBrowser::TriggerChannelSwitch(const int channelNumber) {
       needClearMessage = true;
       switchChannelInProgress = true;
       if (device->SwitchChannel(newChannel, (channelNumber == liveChannelNumber) ? true : false)) {
-         // Display::DrawMessage(tr("Channel Tuning Successful"), ttcGreen);
+         if (1 == 0) {
+            // too verbose - disabled
+            Display::DrawMessage(tr("Channel Tuning Successful"), ttcGreen);
+         };
          result = true;
          DEBUG_OT_TXTRCVC("DVB %d successful tuned to channel %d (live=%s)", device->DeviceNumber(), channelNumber, BOOLTOTEXT(channelNumber == liveChannelNumber));
       } else {
@@ -253,9 +256,12 @@ bool TeletextBrowser::TriggerChannelSwitch(const int channelNumber) {
          DEBUG_OT_TXTRCVC("DVB %d cannot tune to channel %d", device->DeviceNumber(), channelNumber);
       };
    } else {
-      needClearMessage = true;
-      delayClearMessage = 2;
-      Display::DrawMessage(tr("No Free Tuner Found - Use Cache Only"), ttcYellow);
+      if (1 == 0) {
+         // too verbose - disabled
+         needClearMessage = true;
+         delayClearMessage = 2;
+         Display::DrawMessage(tr("No Free Tuner Found - Use Cache Only"), ttcYellow);
+      };
       DEBUG_OT_TXTRCVC("no free tuner available to tune to channel %d (use cache)", channelNumber);
       ChannelSwitched(channelNumber, ChannelIsCached);
    };
