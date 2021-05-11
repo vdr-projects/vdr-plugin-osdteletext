@@ -88,7 +88,7 @@ Andere Optionen:
    Mindest Benutzer-Inaktivität:
                Bestimmt die Zeit (in Minuten), nach der das Plugin automatisch geschlossen wird, wenn
                der Benutzer solange keine Taste betätigt hat. Das kann durch setzen des Wertes auf 0
-               verhindert werden. Dann wird jedoch auch das automatische Abschalten von VDR effektiv 
+               verhindert werden. Dann wird jedoch auch das automatische Abschalten von VDR effektiv
                außer Kraft gesetzt, solange das Plugin geöffnet ist.
 
    ** optional mit Unterstützung mehrerer Voreinstellungen **

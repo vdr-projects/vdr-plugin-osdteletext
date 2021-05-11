@@ -133,7 +133,7 @@ Other Setup options:
    OSD left, OSD top:
                Adjusts the left and top edge of the OSD independent from VDR's
                settings. The valid range is 0% to 90%
-   OSD width, OSD height: 
+   OSD width, OSD height:
                Adjusts the width and height of the OSD independent from VDR's
                settings. The valid range is 10% to 100%
    Frame:
@@ -143,7 +143,7 @@ Other Setup options:
    Text Vertical Offset:
                Adjust the vertical offset by amount of (scaled) pixels
                The valid range is -10 to 10 (and depending on selected font)
-   Background transparency: 
+   Background transparency:
                number between 0 (black) and 255 (transparency). Default is 128
 
    Hotkey (color key) bindings: See above, optional with multi-level support

@@ -497,13 +497,14 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
       modeR = Display::mode; // remember mode
       if (TTSETUPPRESET_TCOLOR(BackTrans) != bgcSetup) {
          bgcR = TTSETUPPRESET_TCOLOR(BackTrans); // color was changed during config
+         clrBackground = bgcR; // set globally
          DEBUG_OT_KEYS("osdteletext: recreate display with remembered mode=%d zoom=%d and setup configured bgc=%08x", modeR, zoomR, bgcR);
       } else {
          bgcR = Display::GetBackgroundColor(); // remember color
          DEBUG_OT_KEYS("osdteletext: recreate display with remembered mode=%d zoom=%d bgc=%08x", modeR, zoomR, bgcR);
       };
       Display::Delete();
-      Display::SetMode(modeR, bgcR); // new with remembered mode and backgroud color
+      Display::SetMode(modeR, bgcR); // new with remembered mode and background color
       Display::SetZoom(zoomR); // apply remembered zoom
       ShowPage();
    };
