@@ -1,7 +1,10 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
+2021-05-12:
+- [pbiering] fix in setup changed but not applied to current background transparency
+
 2021-05-11:
-- [pbiering] fix changed but not remembered background transparency
+- [pbiering] fix in OSD config changed but not remembered background transparency
 
 2021-04-22:
 - [pbiering] remove obsolete setup options suspendReceiving, inactivityTimeout

@@ -32,9 +32,11 @@ using namespace std;
 
 #define NUMELEMENTS(x) (sizeof(x) / sizeof(x[0]))
 
-static const char *VERSION        = "2.2.0.alpha.5";
+static const char *VERSION        = "2.2.0.alpha.6";
 static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
 static const char *MAINMENUENTRY  = trNOOP("Teletext");
+
+extern tColor clrBackground;
 
 unsigned int m_debugmask = 0;
 unsigned int m_debugpage = 0;
@@ -748,6 +750,10 @@ void cTeletextSetupPage::Store(void) {
    SetupStore("txtG2Block", ttSetup.txtG2Block);
    SetupStore("colorMode4bpp", ttSetup.colorMode4bpp);
    SetupStore("lineMode24", ttSetup.lineMode24);
+
+   if (clrBackground != TTSETUPPRESET_TCOLOR(BackTrans)) {
+      clrBackground = TTSETUPPRESET_TCOLOR(BackTrans);
+   };
 }
 
 cTeletextSetupPage::cTeletextSetupPage(void) {
