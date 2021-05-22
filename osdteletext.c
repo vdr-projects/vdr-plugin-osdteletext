@@ -32,7 +32,7 @@ using namespace std;
 
 #define NUMELEMENTS(x) (sizeof(x) / sizeof(x[0]))
 
-static const char *VERSION        = "2.2.0.beta.2";
+static const char *VERSION        = "2.2.0.beta.3";
 static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
 static const char *MAINMENUENTRY  = trNOOP("Teletext");
 
@@ -637,7 +637,7 @@ bool cPluginTeletextosd::SetupParse(const char *Name, const char *Value)
         int v;
         CHECK_SETUP_STRING_COND_SUFFIX(Name, cTeletextSetupPage::actionHotkeyNames[i].internalName, l, HOTKEY_LEVEL_MAX_LIMIT);
         if (l >= 0) {
-           CHECK_STORE_INT_VALUE(v, Value, 0, 999);
+           CHECK_STORE_INT_VALUE(v, Value, 0, 899);
            if ((v < 100) && (v >= (int) LastAction)) {
               esyslog("osdteletext: ignore entry with out-of-range value in setup.conf: osdteletext.%s (%d)", Name, v);
               return true;
