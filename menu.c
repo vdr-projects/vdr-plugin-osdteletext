@@ -707,7 +707,7 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
             break;
          };
 
-         if (ttSetup.hotkeyLevelMax <= 2) {
+         if (ttSetup.hotkeyLevelMax < 2) {
             // HotkeyLevel not active by setup limit to 1
             needClearMessage=true;
             delayClearMessage = 3;
