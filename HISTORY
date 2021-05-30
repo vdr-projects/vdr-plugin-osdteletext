@@ -1,5 +1,8 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
+2021-05-30: version 2.2.0
+- [pbiering] adjust range check for "jump to page"
+
 2021-05-22:
 - [pbiering] fix range check bug related to Hotkey "jump to page" config
 - [pbiering] fix not working Hotkey level feature in case only 2 levels are active
