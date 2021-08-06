@@ -125,7 +125,7 @@ void Display::SetMode(Display::Mode NewMode, tColor clrBackground) {
 
             if (y0 + OSDheight + OSDtopFrame + OSDbottomFrame > cOsd::OsdHeight() + cOsd::OsdTop()) {
                 // limit bottom frame instead drawing out-of-area
-                OSDbottomFrame = cOsd::OsdHeight() - OSDheight -y0 - OSDtopFrame + cOsd::OsdTop();
+                OSDbottomFrame = cOsd::OsdHeight() - OSDheight - y0 - OSDtopFrame + cOsd::OsdTop();
                 if (OSDbottomFrame < 0) OSDbottomFrame = 0;
             };
         };
