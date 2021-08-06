@@ -86,6 +86,15 @@ void Display::SetMode(Display::Mode NewMode, tColor clrBackground) {
         // horizontal center with black frame left/right
         OSDleftFrame = (cOsd::OsdWidth() - OSDwidth) / 2;
         OSDrightFrame = cOsd::OsdWidth() - OSDwidth - OSDleftFrame;
+
+        if ((OSDleftFrame > 0) && (OSDleftFrame > TTSETUPPRESET(Frame))) {
+            x0 += OSDleftFrame - TTSETUPPRESET(Frame);
+            OSDleftFrame = TTSETUPPRESET(Frame);
+        };
+
+        if ((OSDrightFrame > 0) && (OSDrightFrame > TTSETUPPRESET(Frame))) {
+            OSDrightFrame = TTSETUPPRESET(Frame);
+        };
     };
 
     if (TTSETUPPRESET(Height) < 100) {
