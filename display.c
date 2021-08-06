@@ -71,7 +71,7 @@ void Display::SetMode(Display::Mode NewMode, tColor clrBackground) {
 
             x0 -= OSDleftFrame;
             if (x0 < cOsd::OsdLeft()) {
-                OSDleftFrame += (x0 - cOsd::OsdLeft());
+                OSDleftFrame += x0 - cOsd::OsdLeft();
                 x0 = cOsd::OsdLeft();
             };
             if (OSDleftFrame < 0) OSDleftFrame = 0;
@@ -118,7 +118,7 @@ void Display::SetMode(Display::Mode NewMode, tColor clrBackground) {
 
             y0 -= OSDtopFrame;
             if (y0 < cOsd::OsdTop()) {
-                OSDtopFrame += (y0- cOsd::OsdTop());
+                OSDtopFrame += y0 - cOsd::OsdTop();
                 y0 = cOsd::OsdTop();
             };
             if (OSDtopFrame < 0) OSDtopFrame = 0;
