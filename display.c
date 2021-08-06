@@ -133,6 +133,15 @@ void Display::SetMode(Display::Mode NewMode, tColor clrBackground) {
         // vertical center with black frame top/bottom
         OSDtopFrame = (cOsd::OsdHeight() - OSDheight) / 2;
         OSDbottomFrame = cOsd::OsdHeight() - OSDheight - OSDtopFrame;
+
+        if ((OSDtopFrame > 0) && (OSDtopFrame > TTSETUPPRESET(Frame))) {
+            y0 += OSDtopFrame - TTSETUPPRESET(Frame);
+            OSDtopFrame = TTSETUPPRESET(Frame);
+        };
+
+        if ((OSDbottomFrame > 0) && (OSDbottomFrame > TTSETUPPRESET(Frame))) {
+            OSDbottomFrame = TTSETUPPRESET(Frame);
+        };
     };
 
     DEBUG_OT_AREA("osdteletext: OSD area calculated by percent values: OL=%d OT=%d OW=%d OH=%d OwP=%d%% OhP=%d%% OlP=%d%% OtP=%d%% OfPx=%d lineMode24=%d => x0=%d y0=%d Ow=%d Oh=%d OlF=%d OrF=%d OtF=%d ObF=%d"
