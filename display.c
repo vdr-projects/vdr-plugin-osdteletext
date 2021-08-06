@@ -108,15 +108,15 @@ void Display::SetMode(Display::Mode NewMode, tColor clrBackground) {
             OSDbottomFrame = TTSETUPPRESET(Frame);
 
             y0 -= OSDtopFrame;
-            if (y0 < 0) {
-                OSDtopFrame += y0;
-                y0 = 0;
+            if (y0 < cOsd::OsdTop()) {
+                OSDtopFrame += (y0- cOsd::OsdTop());
+                y0 = cOsd::OsdTop();
             };
             if (OSDtopFrame < 0) OSDtopFrame = 0;
 
-            if (y0 + OSDheight + OSDtopFrame + OSDbottomFrame > cOsd::OsdHeight()) {
+            if (y0 + OSDheight + OSDtopFrame + OSDbottomFrame > cOsd::OsdHeight() + cOsd::OsdTop()) {
                 // limit bottom frame instead drawing out-of-area
-                OSDbottomFrame = cOsd::OsdHeight() - OSDheight - y0 - OSDtopFrame;
+                OSDbottomFrame = cOsd::OsdHeight() - OSDheight - OSDtopFrame - y0 + cOsd::OsdTop();
                 if (OSDbottomFrame < 0) OSDbottomFrame = 0;
             };
         };
