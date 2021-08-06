@@ -43,7 +43,7 @@ void Display::SetMode(Display::Mode NewMode, tColor clrBackground) {
     if (display!=NULL && NewMode==mode) return; // No change, nothing to do
 
     // calculate from percentage and OSD maximum
-    OSDwidth = (cOsd::OsdWidth()   * TTSETUPPRESET(Width) ) / 100;
+    OSDwidth  = (cOsd::OsdWidth()  * TTSETUPPRESET(Width) ) / 100;
     OSDheight = (cOsd::OsdHeight() * TTSETUPPRESET(Height)) / 100;
 
     // align with hChars/vLines
