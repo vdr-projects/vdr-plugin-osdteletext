@@ -2,7 +2,7 @@ VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
 2021-08-06: version 2.2.1
 - [pbiering] fix frame in case reaching OSD limits
-- [pbiering] honor frame value in case of 100% width or heigh
+- [pbiering] honor frame value in case of 100% width or height
 
 2021-05-30: version 2.2.0
 - [pbiering] adjust range check for "jump to page"
