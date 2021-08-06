@@ -70,15 +70,15 @@ void Display::SetMode(Display::Mode NewMode, tColor clrBackground) {
             OSDrightFrame = TTSETUPPRESET(Frame);
 
             x0 -= OSDleftFrame;
-            if (x0 < 0) {
-                OSDleftFrame += x0;
-                x0 = 0;
+            if (x0 < cOsd::OsdLeft()) {
+                OSDleftFrame += (x0 - cOsd::OsdLeft());
+                x0 = cOsd::OsdLeft();
             };
             if (OSDleftFrame < 0) OSDleftFrame = 0;
 
-            if (x0 + OSDwidth + OSDrightFrame + OSDleftFrame > cOsd::OsdWidth()) {
+            if (x0 + OSDwidth + OSDrightFrame + OSDleftFrame > cOsd::OsdWidth() + cOsd::OsdLeft()) {
                 // limit right frame instead drawing out-of-area
-                OSDrightFrame = cOsd::OsdWidth() - OSDwidth - x0 - OSDleftFrame;
+                OSDrightFrame = cOsd::OsdWidth() - OSDwidth - x0 - OSDleftFrame + cOsd::OsdLeft();
                 if (OSDrightFrame < 0) OSDrightFrame = 0;
             };
         };
