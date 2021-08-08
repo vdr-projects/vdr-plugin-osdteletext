@@ -43,7 +43,7 @@ void Display::SetMode(Display::Mode NewMode, tColor clrBackground) {
     if (display!=NULL && NewMode==mode) return; // No change, nothing to do
 
     // calculate from percentage and OSD maximum
-    OSDwidth = (cOsd::OsdWidth()   * TTSETUPPRESET(Width) ) / 100;
+    OSDwidth  = (cOsd::OsdWidth()  * TTSETUPPRESET(Width) ) / 100;
     OSDheight = (cOsd::OsdHeight() * TTSETUPPRESET(Height)) / 100;
 
     // align with hChars/vLines
@@ -70,15 +70,15 @@ void Display::SetMode(Display::Mode NewMode, tColor clrBackground) {
             OSDrightFrame = TTSETUPPRESET(Frame);
 
             x0 -= OSDleftFrame;
-            if (x0 < 0) {
-                OSDleftFrame += x0;
-                x0 = 0;
+            if (x0 < cOsd::OsdLeft()) {
+                OSDleftFrame += x0 - cOsd::OsdLeft();
+                x0 = cOsd::OsdLeft();
             };
             if (OSDleftFrame < 0) OSDleftFrame = 0;
 
-            if (x0 + OSDwidth + OSDrightFrame + OSDleftFrame > cOsd::OsdWidth()) {
+            if (x0 + OSDwidth + OSDrightFrame + OSDleftFrame > cOsd::OsdWidth() + cOsd::OsdLeft()) {
                 // limit right frame instead drawing out-of-area
-                OSDrightFrame = cOsd::OsdWidth() - OSDwidth - x0 - OSDleftFrame;
+                OSDrightFrame = cOsd::OsdWidth() - OSDwidth - x0 - OSDleftFrame + cOsd::OsdLeft();
                 if (OSDrightFrame < 0) OSDrightFrame = 0;
             };
         };
@@ -86,6 +86,15 @@ void Display::SetMode(Display::Mode NewMode, tColor clrBackground) {
         // horizontal center with black frame left/right
         OSDleftFrame = (cOsd::OsdWidth() - OSDwidth) / 2;
         OSDrightFrame = cOsd::OsdWidth() - OSDwidth - OSDleftFrame;
+
+        if ((OSDleftFrame > 0) && (OSDleftFrame > TTSETUPPRESET(Frame))) {
+            x0 += OSDleftFrame - TTSETUPPRESET(Frame);
+            OSDleftFrame = TTSETUPPRESET(Frame);
+        };
+
+        if ((OSDrightFrame > 0) && (OSDrightFrame > TTSETUPPRESET(Frame))) {
+            OSDrightFrame = TTSETUPPRESET(Frame);
+        };
     };
 
     if (TTSETUPPRESET(Height) < 100) {
@@ -108,15 +117,15 @@ void Display::SetMode(Display::Mode NewMode, tColor clrBackground) {
             OSDbottomFrame = TTSETUPPRESET(Frame);
 
             y0 -= OSDtopFrame;
-            if (y0 < 0) {
-                OSDtopFrame += y0;
-                y0 = 0;
+            if (y0 < cOsd::OsdTop()) {
+                OSDtopFrame += y0 - cOsd::OsdTop();
+                y0 = cOsd::OsdTop();
             };
             if (OSDtopFrame < 0) OSDtopFrame = 0;
 
-            if (y0 + OSDheight + OSDtopFrame + OSDbottomFrame > cOsd::OsdHeight()) {
+            if (y0 + OSDheight + OSDtopFrame + OSDbottomFrame > cOsd::OsdHeight() + cOsd::OsdTop()) {
                 // limit bottom frame instead drawing out-of-area
-                OSDbottomFrame = cOsd::OsdHeight() - OSDheight - y0 - OSDtopFrame;
+                OSDbottomFrame = cOsd::OsdHeight() - OSDheight - y0 - OSDtopFrame + cOsd::OsdTop();
                 if (OSDbottomFrame < 0) OSDbottomFrame = 0;
             };
         };
@@ -124,6 +133,15 @@ void Display::SetMode(Display::Mode NewMode, tColor clrBackground) {
         // vertical center with black frame top/bottom
         OSDtopFrame = (cOsd::OsdHeight() - OSDheight) / 2;
         OSDbottomFrame = cOsd::OsdHeight() - OSDheight - OSDtopFrame;
+
+        if ((OSDtopFrame > 0) && (OSDtopFrame > TTSETUPPRESET(Frame))) {
+            y0 += OSDtopFrame - TTSETUPPRESET(Frame);
+            OSDtopFrame = TTSETUPPRESET(Frame);
+        };
+
+        if ((OSDbottomFrame > 0) && (OSDbottomFrame > TTSETUPPRESET(Frame))) {
+            OSDbottomFrame = TTSETUPPRESET(Frame);
+        };
     };
 
     DEBUG_OT_AREA("osdteletext: OSD area calculated by percent values: OL=%d OT=%d OW=%d OH=%d OwP=%d%% OhP=%d%% OlP=%d%% OtP=%d%% OfPx=%d lineMode24=%d => x0=%d y0=%d Ow=%d Oh=%d OlF=%d OrF=%d OtF=%d ObF=%d"
