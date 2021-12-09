@@ -228,7 +228,7 @@ public:
     // Draw footer to OSD
 
     void DrawHints(const char *textH1, const char *textH2, const char* textH3, const char *textH4, const char *textH5, const HintsFlags flag);
-    // Draw navigation line to OSD
+    // Draw hint line to OSD
 
     void DrawClock();
     // Draw current time to OSD
