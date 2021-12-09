@@ -901,6 +901,10 @@ void cDisplay::DrawMessage(const char *txt1, const char *txt2, const enumTeletex
     int w2 = 0;
     int h2 = 0;
 
+    // remember for later
+    int w1_orig = w1;
+    int w2_orig = w2;
+
     // box w/h
     int w = w1;
     int h = h1;
@@ -933,6 +937,7 @@ void cDisplay::DrawMessage(const char *txt1, const char *txt2, const enumTeletex
     if (w > outputWidth)  w = outputWidth;
     if (h > outputHeight) h = outputHeight;
 
+    // center box
     int x = (outputWidth -w)/2 + leftFrame;
     int y = (outputHeight-h)/2 + topFrame;
 
@@ -953,10 +958,22 @@ void cDisplay::DrawMessage(const char *txt1, const char *txt2, const enumTeletex
     MessageX = x;
     MessageY = y;
 
+    // limit width
+    if ((w - 4 * border) < w1) {
+        w1 = w - 4 * border;
+        wsyslog_ot("text too long for box, apply width limit (%d->%d) for txt1='%s'", w1_orig, w1, txt1);
+    };
+    if (txt2 != NULL) {
+        if ((w - 4 * border) < w2) {
+            w2 = w - 4 * border;
+            wsyslog_ot("text too long for box, apply width limit (%d->%d) for txt2='%s'", w2_orig, w2, txt2);
+        };
+    };
+
     // Draw text
     if (txt2 == NULL) {
         osd->DrawText(x + 2 * border + o1, y + 2 * border, txt1, fg, bg, MessageFont, w1, h1);
-        DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OW=%d OH=%d w1=%d h1=%d txt='%s'", MessageX, MessageY, MessageW, MessageH, outputWidth, outputHeight, w1, h1, txt1);
+        DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OW=%d OH=%d w1=%d h1=%d txt1='%s'", MessageX, MessageY, MessageW, MessageH, outputWidth, outputHeight, w1, h1, txt1);
     } else {
         osd->DrawText(x + 2 * border + o1, y + 2 * border                  , txt1, fg, bg, MessageFont, w1, h1);
         osd->DrawText(x + 2 * border + o2, y + 2 * border + h1 + border / 2, txt2, fg, bg, MessageFont, w2, h2);
