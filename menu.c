@@ -651,11 +651,16 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
 
       case LineMode24:
          DEBUG_OT_KEYS("key action: 'LineMode24' lineMode24=%d", ttSetup.lineMode24);
-         // toggle LineMode24
-         if (ttSetup.lineMode24 != 0) {
+         // toggle LineMode24: 0 -> 2 -> 1 -> 0
+         //  0: 25 lines / Hotkeys only
+         //  1: 24 lines / No Hotkeys+Hints
+         //  2: 27 lines / Hotkeys+Hints
+         if (ttSetup.lineMode24 == 2) {
+            ttSetup.lineMode24 = 1;
+         } else if (ttSetup.lineMode24 == 1) {
             ttSetup.lineMode24 = 0;
          } else {
-            ttSetup.lineMode24 = 1;
+            ttSetup.lineMode24 = 2;
          };
          zoomR = Display::GetZoom(); // remember zoom
          modeR = Display::mode; // remember mode
@@ -667,8 +672,8 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
 
       case Config:
          DEBUG_OT_KEYS("key action: 'Config' lineMode24=%d configMode=%d", ttSetup.lineMode24, configMode);
-         if (ttSetup.lineMode24) {
-            // config mode is only supported in 25-line mode
+         if (ttSetup.lineMode24 == 1) {
+            // config mode is only supported in 25/27-line mode
             needClearMessage=true;
             delayClearMessage = 3;
             Display::DrawMessage(tr("*** Config mode is not supported in 24-line mode ***"), ttcYellow);
@@ -690,8 +695,8 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
 
       case HotkeyLevelPlus:
       case HotkeyLevelMinus:
-         if (ttSetup.lineMode24) {
-            // HotkeyLevel switch mode is only supported in 25-line mode
+         if (ttSetup.lineMode24 == 1) {
+            // HotkeyLevel switch mode is only supported in 25/27-line mode
             // otherwise one can get lost and has to enter plugin setup menu to disable 24-line mode there
             needClearMessage=true;
             delayClearMessage = 3;
