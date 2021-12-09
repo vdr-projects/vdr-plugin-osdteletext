@@ -444,7 +444,7 @@ void cPluginTeletextosd::initTexts() {
 
    static const char *st_modes[] =
    {
-      // 1:1 relation between st_modes[] in osdteletext.c + eTeletextAction in setup.h + st_modesFooter in setup.c
+      // 1:1 relation between st_modes[] in osdteletext.c + eTeletextAction in setup.h + st_modesHotkey in setup.c
       tr("Zoom"),
       tr("Half page"),
       tr("Change channel"),

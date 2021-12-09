@@ -812,25 +812,25 @@ void cDisplay::DrawPageId(const char *text, const enumTeletextColor cText, const
     };
 }
 
-void cDisplay::DrawFooter(const char *textRed, const char *textGreen, const char* textYellow, const char *textBlue, const FooterFlags flag) {
-    if (Boxed) return; // don't draw footer in on boxed pages
+void cDisplay::DrawHotkey(const char *textRed, const char *textGreen, const char* textYellow, const char *textBlue, const HotkeyFlags flag) {
+    if (Boxed) return; // don't draw hotkey on boxed pages
 
     switch(flag) {
-        case FooterNormal:
+        case HotkeyNormal:
             DrawTextExtended( 0, 24, textRed   , 10, AlignmentCenter, ttcWhite, ttcRed    );
             DrawTextExtended(10, 24, textGreen , 10, AlignmentCenter, ttcBlack, ttcGreen  );
             DrawTextExtended(20, 24, textYellow, 10, AlignmentCenter, ttcBlack, ttcYellow );
             DrawTextExtended(30, 24, textBlue  , 10, AlignmentCenter, ttcWhite, ttcBlue   );
             break;
 
-        case FooterYellowValue:
+        case HotkeyYellowValue:
             DrawTextExtended( 0, 24, textRed   , 10, AlignmentCenter, ttcWhite, ttcRed    );
             DrawTextExtended(10, 24, textGreen , 10, AlignmentCenter, ttcBlack, ttcGreen  );
             DrawTextExtended(20, 24, textYellow, 10, AlignmentCenter, ttcWhite, ttcMagenta);
             DrawTextExtended(30, 24, textBlue  , 10, AlignmentCenter, ttcWhite, ttcBlue   );
             break;
 
-        case FooterGreenYellowValue:
+        case HotkeyGreenYellowValue:
             DrawTextExtended( 0, 24, textRed   , 10, AlignmentCenter, ttcWhite, ttcRed    );
             DrawTextExtended(10, 24, textGreen , 20, AlignmentCenter, ttcWhite, ttcMagenta);
             DrawTextExtended(30, 24, textBlue  , 10, AlignmentCenter, ttcWhite, ttcBlue   );
@@ -839,7 +839,7 @@ void cDisplay::DrawFooter(const char *textRed, const char *textGreen, const char
 }
 
 void cDisplay::DrawHints(const char *textH1, const char *textH2, const char* textH3, const char *textH4, const char *textH5, const HintsFlags flag) {
-    if (Boxed) return; // don't draw Navigation in on boxed pages
+    if (Boxed) return; // don't draw hints on boxed pages
 
     switch(flag) {
         case HintsKey:

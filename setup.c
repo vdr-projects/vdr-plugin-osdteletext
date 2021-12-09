@@ -11,10 +11,10 @@
 
 #include "setup.h"
 
-const char *st_modesFooter[] =
+const char *st_modesHotkey[] =
 {
-      // 1:1 relation between st_modes[] in osdteletext.c + eTeletextAction in setup.h + st_modesFooter in setup.c
-      // maximum 10 chars used in line25 footer //
+      // 1:1 relation between st_modes[] in osdteletext.c + eTeletextAction in setup.h + st_modesHotkey in setup.c
+      // maximum 10 chars used in line25 hotkey //
       trNOOP("Zoom"),
       trNOOP("Half Page"),
       trNOOP("ChangeChan"),

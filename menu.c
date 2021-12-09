@@ -377,8 +377,8 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
                if (! Display::GetPaused())
                   UpdateClock();
 
-               //updating footer
-               UpdateFooter();
+               //updating hotkey
+               UpdateHotkey();
 
                //trigger blink
                if (! Display::GetPaused())
@@ -1100,7 +1100,7 @@ bool TeletextBrowser::DecodePage(bool suppressMessage) {
       Display::RenderTeletextCode(cache);
       ShowPageNumber();
       UpdateClock();
-      UpdateFooter();
+      UpdateHotkey();
       Display::ReleaseFlush();
    } else {
       // page doesn't exist
@@ -1134,7 +1134,7 @@ bool TeletextBrowser::DecodePage(bool suppressMessage) {
          needClearMessage = false;
          Display::DrawMessage(str, str2, color);
       };
-      UpdateFooter();
+      UpdateHotkey();
       Display::ReleaseFlush();
 
       return false;
@@ -1172,22 +1172,22 @@ void TeletextBrowser::UpdateClock() {
 // implant ttSetup.osdPreset number for related actions if maximum is > 1
 #define CONVERT_ACTION_TO_TEXT(text, mode) \
       if ((mode == HotkeyLevelPlus) || (mode == HotkeyLevelMinus)) { \
-         snprintf(text, sizeof(text), "%-10s", tr(st_modesFooter[mode])); \
+         snprintf(text, sizeof(text), "%-10s", tr(st_modesHotkey[mode])); \
          if ((text[9] == '+') || (text[9] == '-')) text[8] = text[9]; \
          text[9] = '0' + (int) hotkeyLevel + 1; \
          text[10] = '\0'; \
       } else if ((mode == OsdPresetPlus) || (mode == OsdPresetMinus)) { \
-         snprintf(text, sizeof(text), "%-10s", tr(st_modesFooter[mode])); \
+         snprintf(text, sizeof(text), "%-10s", tr(st_modesHotkey[mode])); \
          if ((text[9] == '+') || (text[9] == '-')) text[8] = text[9]; \
          text[9] = '0' + (int) ttSetup.osdPreset + 1; \
          text[10] = '\0'; \
       } else if ((mode == Config) && (ttSetup.osdPresetMax > 1) && (configMode != LastActionConfig)) { \
-         snprintf(text, sizeof(text), "%-10s", tr(st_modesFooter[mode])); \
+         snprintf(text, sizeof(text), "%-10s", tr(st_modesHotkey[mode])); \
          text[8] = ' '; \
          text[9] = '0' + (int) ttSetup.osdPreset + 1; \
          text[10] = '\0'; \
       } else if ((int) mode < 100) { \
-         snprintf(text, sizeof(text), "%s", tr(st_modesFooter[mode])); \
+         snprintf(text, sizeof(text), "%s", tr(st_modesHotkey[mode])); \
       } else if ((int) mode < 999) { \
          snprintf(text, sizeof(text), "-> %03d", mode); \
       } else { \
@@ -1196,22 +1196,22 @@ void TeletextBrowser::UpdateClock() {
 
 #define CONVERT_ACTION_TO_TEXT_8(text, mode) \
       if ((mode == HotkeyLevelPlus) || (mode == HotkeyLevelMinus)) { \
-         snprintf(text, sizeof(text), "%-8s", tr(st_modesFooter[mode])); \
+         snprintf(text, sizeof(text), "%-8s", tr(st_modesHotkey[mode])); \
          if ((text[7] == '+') || (text[7] == '-')) text[6] = text[7]; \
          text[7] = '0' + (int) hotkeyLevel + 1; \
          text[8] = '\0'; \
       } else if ((mode == OsdPresetPlus) || (mode == OsdPresetMinus)) { \
-         snprintf(text, sizeof(text), "%-8s", tr(st_modesFooter[mode])); \
+         snprintf(text, sizeof(text), "%-8s", tr(st_modesHotkey[mode])); \
          if ((text[7] == '+') || (text[7] == '-')) text[6] = text[7]; \
          text[7] = '0' + (int) ttSetup.osdPreset + 1; \
          text[8] = '\0'; \
       } else if ((mode == Config) && (ttSetup.osdPresetMax > 1) && (configMode != LastActionConfig)) { \
-         snprintf(text, sizeof(text), "%-8s", tr(st_modesFooter[mode])); \
+         snprintf(text, sizeof(text), "%-8s", tr(st_modesHotkey[mode])); \
          text[6] = ' '; \
          text[7] = '0' + (int) ttSetup.osdPreset + 1; \
          text[8] = '\0'; \
       } else if ((int) mode < 100) { \
-         snprintf(text, sizeof(text), "%s", tr(st_modesFooter[mode])); \
+         snprintf(text, sizeof(text), "%s", tr(st_modesHotkey[mode])); \
       } else if ((int) mode < 999) { \
          snprintf(text, sizeof(text), "-> %03d", mode); \
       } else { \
@@ -1219,13 +1219,13 @@ void TeletextBrowser::UpdateClock() {
       }; \
 
 
-void TeletextBrowser::UpdateFooter() {
-   DEBUG_OT_FOOT("called with lineMode24=%d", ttSetup.lineMode24);
+void TeletextBrowser::UpdateHotkey() {
+   DEBUG_OT_HOTK("called with lineMode24=%d", ttSetup.lineMode24);
 
    if (ttSetup.lineMode24 == 1) return; // nothing to do
 
    char textRed[81]= "", textGreen[81] = "", textYellow[81] = "", textBlue[81] = ""; // 40x UTF-8 char + \0
-   FooterFlags flag = FooterNormal; // default
+   HotkeyFlags flag = HotkeyNormal; // default
    eTeletextActionValueType valueType = None;
 
    if (configMode == LastActionConfig) {
@@ -1233,7 +1233,7 @@ void TeletextBrowser::UpdateFooter() {
       eTeletextAction AkGreen  = TranslateKey(kGreen);
       eTeletextAction AkYellow = TranslateKey(kYellow);
       eTeletextAction AkBlue   = TranslateKey(kBlue);
-      DEBUG_OT_FOOT("AkRed=%d AkGreen=%d AkYellow=%d AkBlue=%d", AkRed, AkGreen, AkYellow, AkBlue);
+      DEBUG_OT_HOTK("AkRed=%d AkGreen=%d AkYellow=%d AkBlue=%d", AkRed, AkGreen, AkYellow, AkBlue);
 
       CONVERT_ACTION_TO_TEXT(textRed   , AkRed   );
       CONVERT_ACTION_TO_TEXT(textGreen , AkGreen );
@@ -1250,14 +1250,14 @@ void TeletextBrowser::UpdateFooter() {
          case BackTrans:
             snprintf(textRed   , sizeof(textRed)   , "%s-", tr(config_modes[configMode])); // <mode>-
             snprintf(textGreen , sizeof(textGreen) , "%s+", tr(config_modes[configMode])); // <mode>+
-            flag = FooterYellowValue;
+            flag = HotkeyYellowValue;
             break;
 
          case Font:
             snprintf(textRed   , sizeof(textRed)   , "%s" , tr(config_modes[configMode])); // <mode>
-            DEBUG_OT_FOOT("txtFontIndex=%d txtFontNames[%d]='%s'", TTSETUPPRESET(Font), TTSETUPPRESET(Font), ttSetup.txtFontNames[TTSETUPPRESET(Font)]);
+            DEBUG_OT_HOTK("txtFontIndex=%d txtFontNames[%d]='%s'", TTSETUPPRESET(Font), TTSETUPPRESET(Font), ttSetup.txtFontNames[TTSETUPPRESET(Font)]);
             snprintf(textGreen, sizeof(textGreen)  , "%s", ttSetup.txtFontNames[TTSETUPPRESET(Font)]); // FontName
-            flag = FooterGreenYellowValue;
+            flag = HotkeyGreenYellowValue;
             break;
 
          default:
@@ -1322,8 +1322,8 @@ void TeletextBrowser::UpdateFooter() {
       CONVERT_ACTION_TO_TEXT(textBlue, Config); // option itself with optional preset number
    };
 
-   DEBUG_OT_FOOT("textRed='%s' textGreen='%s' text Yellow='%s' textBlue='%s' flag=%d", textRed, textGreen, textYellow, textBlue, flag);
-   Display::DrawFooter(textRed, textGreen, textYellow, textBlue, flag);
+   DEBUG_OT_HOTK("textRed='%s' textGreen='%s' text Yellow='%s' textBlue='%s' flag=%d", textRed, textGreen, textYellow, textBlue, flag);
+   Display::DrawHotkey(textRed, textGreen, textYellow, textBlue, flag);
 
    if (ttSetup.lineMode24 != 2) return; // nothing more to do
 
@@ -1337,7 +1337,7 @@ void TeletextBrowser::UpdateFooter() {
    eTeletextAction AkStop    = TranslateKey(kStop);
    eTeletextAction AkPlay    = TranslateKey(kPlay);
    eTeletextAction AkOk      = TranslateKey(kOk);
-   DEBUG_OT_FOOT("AkFastRew=%d AkPlay=%d AkOk=%d AkStop=%d AkFastFwd=%d", AkFastRew, AkPlay, AkOk, AkStop, AkFastFwd);
+   DEBUG_OT_HOTK("AkFastRew=%d AkPlay=%d AkOk=%d AkStop=%d AkFastFwd=%d", AkFastRew, AkPlay, AkOk, AkStop, AkFastFwd);
 
    CONVERT_ACTION_TO_TEXT_8(textH1, AkFastRew);
    CONVERT_ACTION_TO_TEXT_8(textH2, AkPlay   );

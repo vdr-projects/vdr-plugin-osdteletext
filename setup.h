@@ -40,7 +40,7 @@
 
 // There are two places to be kept in sync with these enums:
 //  TeletextBrowser::TranslateKey and 
-// 1:1 relation between st_modes[] in osdteletext.c + eTeletextAction in setup.h + st_modesFooter in setup.c
+// 1:1 relation between st_modes[] in osdteletext.c + eTeletextAction in setup.h + st_modesHotkey in setup.c
 enum eTeletextAction {
    Zoom,
    HalfPage,
@@ -80,7 +80,7 @@ enum eTeletextActionValueType {
 
 
 // values stored in setup.c:
-extern const char *st_modesFooter[];
+extern const char *st_modesHotkey[];
 extern const char *config_modes[];
 
 enum ActionKeys {
@@ -104,10 +104,10 @@ enum ActionHotkeys {
    LastActionHotkey
 };
 
-enum FooterFlags {
-   FooterNormal,
-   FooterYellowValue,
-   FooterGreenYellowValue
+enum HotkeyFlags {
+   HotkeyNormal,
+   HotkeyYellowValue,
+   HotkeyGreenYellowValue
 };
 
 enum HintsFlags {
