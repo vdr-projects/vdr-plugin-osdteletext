@@ -934,11 +934,11 @@ void cDisplay::DrawMessage(const char *txt1, const char *txt2, const enumTeletex
     // Draw text
     if (txt2 == NULL) {
         osd->DrawText(x + 2 * border + o1, y + 2 * border, txt1, fg, bg, MessageFont, w1, h1);
-        DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OW=%d OH=%d txt='%s'", MessageX, MessageY, MessageW, MessageH, outputWidth, outputHeight, txt1);
+        DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OW=%d OH=%d w1=%d h1=%d txt='%s'", MessageX, MessageY, MessageW, MessageH, outputWidth, outputHeight, w1, h1, txt1);
     } else {
         osd->DrawText(x + 2 * border + o1, y + 2 * border                  , txt1, fg, bg, MessageFont, w1, h1);
         osd->DrawText(x + 2 * border + o2, y + 2 * border + h1 + border / 2, txt2, fg, bg, MessageFont, w2, h2);
-        DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OW=%d OH=%d txt1='%s' txt2='%s'", MessageX, MessageY, MessageW, MessageH, outputWidth, outputHeight, txt1, txt2);
+        DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OW=%d OH=%d w1=%d h1=%d w2=%d w2=%d txt1='%s' txt2='%s'", MessageX, MessageY, MessageW, MessageH, outputWidth, outputHeight, w1, h1, w2, h2, txt1, txt2);
     };
 
     // And flush all changes
