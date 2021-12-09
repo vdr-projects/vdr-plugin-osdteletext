@@ -22,7 +22,7 @@ extern          int m_debugline;
 #define DEBUG_MASK_OT_DD	0x00001000	// DrawDisplay
 #define DEBUG_MASK_OT_MSG	0x00002000	// Draw/Clear Message
 #define DEBUG_MASK_OT_DRPI	0x00004000	// DrawPageId
-#define DEBUG_MASK_OT_FOOT	0x00008000	// DrawFooter
+#define DEBUG_MASK_OT_HOTK	0x00008000	// DrawHotkey
 #define DEBUG_MASK_OT_FONT	0x00010000	// Font
 #define DEBUG_MASK_OT_AREA	0x00020000	// Area
 #define DEBUG_MASK_OT_DBFC	0x00040000	// DisplayBase Function Call
@@ -57,7 +57,7 @@ extern          int m_debugline;
 #define DEBUG_OT_KEYS   if (m_debugmask & DEBUG_MASK_OT_KEYS)   dsyslog_ot
 #define DEBUG_OT_MSG    if (m_debugmask & DEBUG_MASK_OT_MSG)    dsyslog_ot
 #define DEBUG_OT_DRPI   if (m_debugmask & DEBUG_MASK_OT_DRPI)   dsyslog_ot
-#define DEBUG_OT_FOOT   if (m_debugmask & DEBUG_MASK_OT_FOOT)   dsyslog_ot
+#define DEBUG_OT_HOTK   if (m_debugmask & DEBUG_MASK_OT_HOTK)   dsyslog_ot
 #define DEBUG_OT_DCHR   if (m_debugmask & DEBUG_MASK_OT_DCHR)   dsyslog_ot
 #define DEBUG_OT_BOXED  if (m_debugmask & DEBUG_MASK_OT_BOXED)  dsyslog_ot
 #define DEBUG_OT_DTXT   if (m_debugmask & DEBUG_MASK_OT_DTXT )  dsyslog_ot

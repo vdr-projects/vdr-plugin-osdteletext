@@ -43,7 +43,7 @@ protected:
    void SetNumber(int i);
    void ShowPage(bool suppressMessage = false);
    void UpdateClock();
-   void UpdateFooter();
+   void UpdateHotkey();
    bool DecodePage(bool suppressMessage = false);
    void ChangePageRelative(Direction direction);
    void ChangeSubPageRelative(Direction direction);
