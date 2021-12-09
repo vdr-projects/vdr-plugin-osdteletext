@@ -153,7 +153,7 @@ public:
 // Teletext display lines
 //  ttSetup.lineMode24 == 0: 25
 //  ttSetup.lineMode24 == 1: 24
-// t tSetup.lineMode24 == 2: 27
+//  ttSetup.lineMode24 == 2: 27
 #define TT_DISPLAY_LINES  ((ttSetup.lineMode24 == 1) ? 24 : ((ttSetup.lineMode24 == 0) ? 25 : 27))
 
 
