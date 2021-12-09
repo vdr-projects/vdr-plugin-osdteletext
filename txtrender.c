@@ -550,6 +550,8 @@ void cRenderPage::RenderTeletextCode(unsigned char *PageCode) {
             c.SetBoxedOut(true);    
         }
         SetChar(x,24,c);
+        SetChar(x,25,c);
+        SetChar(x,26,c);
     }
 
     /* VTXV5 handling starts here */

@@ -28,7 +28,7 @@ cDisplay *Display::display=NULL;
 void Display::SetMode(Display::Mode NewMode, tColor clrBackground) {
     // Background is optional and default predefined in display.h
     int hChars = 40;
-    int vLines = (ttSetup.lineMode24 == true) ? 24 : 25;
+    int vLines = TT_DISPLAY_LINES;
     int OSDwidth;
     int OSDheight;
     int OSDleftFrame  = 0;
@@ -314,7 +314,7 @@ void cDisplay32BPPHalf::InitOSD() {
     int x0 = OsdX0;
 
     int height = Height / 2; // half heigth
-    int vLines = (ttSetup.lineMode24 == true) ? 24 : 25;
+    int vLines = TT_DISPLAY_LINES;
     if ((height % vLines) > 0) height = (height / vLines) * vLines; // alignment
 
     int y0 = OsdY0;

@@ -121,9 +121,9 @@ void cDisplay::InitScaler() {
 
     fontWidth = (outputWidth * 2 / 40) & 0xfffe;
     if (Zoom == Zoom_Off) {
-        fontHeight = (outputHeight * 2 / ((ttSetup.lineMode24 == true) ? 24 : 25)) & 0xfffe;
+        fontHeight = (outputHeight * 2 / TT_DISPLAY_LINES)  & 0xfffe;
     } else {
-        fontHeight = (outputHeight * 2 * 2 / ((ttSetup.lineMode24 == true) ? 24 : 25)) & 0xfffe;
+        fontHeight = (outputHeight * 2 * 2 / TT_DISPLAY_LINES) & 0xfffe;
     }
     // use even font size for double sized characters (prevents rounding errors during character display)
     fontWidth &= 0xfffe;
@@ -346,7 +346,7 @@ void cDisplay::DrawDisplay() {
 
     if (!IsDirty()) return; // nothing to do
 
-    for (y = 0; y < ((ttSetup.lineMode24 == true) ? 24 : 25); y++) {
+    for (y = 0; y < TT_DISPLAY_LINES; y++) {
         for (x=0;x<40;x++) {
             if (IsDirty(x,y)) {
                 // Need to draw char to osd
@@ -453,15 +453,17 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
     }
 
     bool h_scale_div2 = false;
+    int lines_div2 = 0;
 
     if (Zoom == Zoom_Lower) {
         y -= 12;
         if (y < 0 || y > 11) {
-            if ((ttSetup.lineMode24 == false) && (y == 12)) {
-                // display special line 24 in half height
+            if ((ttSetup.lineMode24 == false) && (y >= 12)) {
+                // display special line 24 and beyond in half height
                 h /= 2;
                 h_scale_div2 = true;
                 font = TXTHlfHFont;
+                lines_div2 = y - 12;
             } else {
                 // display only line 12-23 (12 lines)
                 return;
@@ -471,12 +473,13 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
 
     if (Zoom == Zoom_Upper) {
         if (y > 11) {
-            if ((ttSetup.lineMode24 == false) && (y == 24)) {
-                // display special line 24 in half height
+            if ((ttSetup.lineMode24 == false) && (y >= 24)) {
+                // display special line 24 and beyond in half height
                 y -= 12;
                 h /= 2;
                 h_scale_div2 = true;
                 font = TXTHlfHFont;
+                lines_div2 = y - 12;
             } else {
                 // display only line 0-11 (12 lines)
                 return;
@@ -487,7 +490,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
     if ((m_debugmask & DEBUG_MASK_OT_ACT_LIMIT_LINES) && (y > 8)) return;
 
     int vx = x * fontWidth  / 2;
-    int vy = y * fontHeight / 2;
+    int vy = y * fontHeight / 2 - lines_div2 * h;
 
     bool drawChar = true;
     if (c.GetDblWidth() == dblw_Right) {
