@@ -110,6 +110,11 @@ enum FooterFlags {
    FooterGreenYellowValue
 };
 
+enum HintsFlags {
+   HintsKey,
+   HintsValue
+};
+
 //Default values are set in menu.c, setup menu, parsing and storing can be found in osdteletext.c
 class TeletextSetup {
 public:
@@ -127,9 +132,10 @@ public:
    cStringList txtFontNames;
    int txtG0Block;
    int txtG2Block;
-   const char *txtBlock[11];
+   const char *txtBlock[11]; // see osdteletext.c
    int colorMode4bpp;
    int lineMode24;
+   const char *lineMode[3]; // see osdteletext.c
 
    // current value of osdPreset
    int osdPreset;

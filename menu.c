@@ -1189,10 +1189,35 @@ void TeletextBrowser::UpdateClock() {
          snprintf(text, sizeof(text), "ERROR"); \
       }; \
 
+#define CONVERT_ACTION_TO_TEXT_8(text, mode) \
+      if ((mode == HotkeyLevelPlus) || (mode == HotkeyLevelMinus)) { \
+         snprintf(text, sizeof(text), "%-8s", tr(st_modesFooter[mode])); \
+         if ((text[7] == '+') || (text[7] == '-')) text[6] = text[7]; \
+         text[7] = '0' + (int) hotkeyLevel + 1; \
+         text[8] = '\0'; \
+      } else if ((mode == OsdPresetPlus) || (mode == OsdPresetMinus)) { \
+         snprintf(text, sizeof(text), "%-8s", tr(st_modesFooter[mode])); \
+         if ((text[7] == '+') || (text[7] == '-')) text[6] = text[7]; \
+         text[7] = '0' + (int) ttSetup.osdPreset + 1; \
+         text[8] = '\0'; \
+      } else if ((mode == Config) && (ttSetup.osdPresetMax > 1) && (configMode != LastActionConfig)) { \
+         snprintf(text, sizeof(text), "%-8s", tr(st_modesFooter[mode])); \
+         text[6] = ' '; \
+         text[7] = '0' + (int) ttSetup.osdPreset + 1; \
+         text[8] = '\0'; \
+      } else if ((int) mode < 100) { \
+         snprintf(text, sizeof(text), "%s", tr(st_modesFooter[mode])); \
+      } else if ((int) mode < 999) { \
+         snprintf(text, sizeof(text), "-> %03d", mode); \
+      } else { \
+         snprintf(text, sizeof(text), "ERROR"); \
+      }; \
+
+
 void TeletextBrowser::UpdateFooter() {
    DEBUG_OT_FOOT("called with lineMode24=%d", ttSetup.lineMode24);
 
-   if ( ttSetup.lineMode24 ) return; // nothing to do
+   if (ttSetup.lineMode24 == 1) return; // nothing to do
 
    char textRed[81]= "", textGreen[81] = "", textYellow[81] = "", textBlue[81] = ""; // 40x UTF-8 char + \0
    FooterFlags flag = FooterNormal; // default
@@ -1294,6 +1319,27 @@ void TeletextBrowser::UpdateFooter() {
 
    DEBUG_OT_FOOT("textRed='%s' textGreen='%s' text Yellow='%s' textBlue='%s' flag=%d", textRed, textGreen, textYellow, textBlue, flag);
    Display::DrawFooter(textRed, textGreen, textYellow, textBlue, flag);
+
+   if (ttSetup.lineMode24 != 2) return; // nothing more to do
+
+   // Hint lines
+   char textH1[81]= "FastRew", textH2[81] = "Play", textH3[81] = "OK", textH4[81] = "Stop", textH5[81] = "FastFwd"; // 40x UTF-8 char + \0
+
+   Display::DrawHints(textH1, textH2, textH3, textH4, textH5, HintsKey);
+
+   eTeletextAction AkFastRew = TranslateKey(kFastRew);
+   eTeletextAction AkFastFwd = TranslateKey(kFastFwd);
+   eTeletextAction AkStop    = TranslateKey(kStop);
+   eTeletextAction AkPlay    = TranslateKey(kPlay);
+   eTeletextAction AkOk      = TranslateKey(kOk);
+   DEBUG_OT_FOOT("AkFastRew=%d AkPlay=%d AkOk=%d AkStop=%d AkFastFwd=%d", AkFastRew, AkPlay, AkOk, AkStop, AkFastFwd);
+
+   CONVERT_ACTION_TO_TEXT_8(textH1, AkFastRew);
+   CONVERT_ACTION_TO_TEXT_8(textH2, AkPlay   );
+   CONVERT_ACTION_TO_TEXT_8(textH3, AkOk     );
+   CONVERT_ACTION_TO_TEXT_8(textH4, AkStop   );
+   CONVERT_ACTION_TO_TEXT_8(textH5, AkFastFwd);
+   Display::DrawHints(textH1, textH2, textH3, textH4, textH5, HintsValue);
 }
 
 TeletextSetup ttSetup;
@@ -1308,7 +1354,7 @@ TeletextSetup::TeletextSetup()
     hotkeyLevelMax(1),
     HideMainMenu(false),
     colorMode4bpp(false),
-    lineMode24(false)
+    lineMode24(0)
 {
    // init osdConfig
    int p = 0;

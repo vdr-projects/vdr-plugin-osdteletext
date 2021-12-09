@@ -838,6 +838,28 @@ void cDisplay::DrawFooter(const char *textRed, const char *textGreen, const char
    };
 }
 
+void cDisplay::DrawHints(const char *textH1, const char *textH2, const char* textH3, const char *textH4, const char *textH5, const HintsFlags flag) {
+    if (Boxed) return; // don't draw Navigation in on boxed pages
+
+    switch(flag) {
+        case HintsKey:
+            DrawTextExtended( 0, 25, textH1, 8, AlignmentCenter, ttcHalfCyan, ttcGrey   );
+            DrawTextExtended( 8, 25, textH2, 8, AlignmentCenter, ttcHalfCyan, ttcColor25);
+            DrawTextExtended(16, 25, textH3, 8, AlignmentCenter, ttcHalfCyan, ttcGrey   );
+            DrawTextExtended(24, 25, textH4, 8, AlignmentCenter, ttcHalfCyan, ttcColor25);
+            DrawTextExtended(32, 25, textH5, 8, AlignmentCenter, ttcHalfCyan, ttcGrey   );
+            break;
+
+        case HintsValue:
+            DrawTextExtended( 0, 26, textH1, 8, AlignmentCenter, ttcColor25 , ttcGrey   );
+            DrawTextExtended( 8, 26, textH2, 8, AlignmentCenter, ttcColor31 , ttcColor25);
+            DrawTextExtended(16, 26, textH3, 8, AlignmentCenter, ttcColor25 , ttcGrey   );
+            DrawTextExtended(24, 26, textH4, 8, AlignmentCenter, ttcColor31 , ttcColor25);
+            DrawTextExtended(32, 26, textH5, 8, AlignmentCenter, ttcColor25 , ttcGrey   );
+            break;
+    };
+}
+
 void cDisplay::DrawClock() {
     if (Boxed) return; // don't draw Clock in on boxed pages
 

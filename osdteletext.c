@@ -777,6 +777,10 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    temp.txtBlock[9]  = tr("Reserved");
    temp.txtBlock[10] = tr("Hebrew");
 
+   temp.lineMode[0]  = tr("Hotkeys");
+   temp.lineMode[1]  = tr("No Hotkeys+Hints");
+   temp.lineMode[2]  = tr("Hotkeys+Hints");
+
    osdPreset = 1;
    temp.osdPresetMax = ttSetup.osdPresetMax;
 
@@ -832,7 +836,7 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    Add(new cMenuEditStraItem(tr("G0 code block"), &temp.txtG0Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
    Add(new cMenuEditStraItem(tr("G2 code block"), &temp.txtG2Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
    Add(new cMenuEditBoolItem(tr("16-Color Mode"), &temp.colorMode4bpp));
-   Add(new cMenuEditBoolItem(tr("24-Line Mode"), &temp.lineMode24));
+   Add(new cMenuEditStraItem(tr("24-Line Mode"), &temp.lineMode24, NUMELEMENTS(temp.lineMode), temp.lineMode));
 
    // OSD presets
    if (maxOsdPreset > 1)
