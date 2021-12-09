@@ -889,8 +889,8 @@ void cDisplay::DrawMessage(const char *txt1, const char *txt2, const enumTeletex
 
     if (txt2 != NULL) {
         // 2nd line active
-        h2 = MessageFont->Height(txt2);
         w2 = MessageFont->Width(txt2);
+        h2 = MessageFont->Height(txt2);
 
         h += h2 + border / 2; // increase height
 

@@ -539,7 +539,7 @@ void cRenderPage::RenderTeletextCode(unsigned char *PageCode) {
     } // end for y
     
     for (x=0;x<40;x++) {
-        // Clean out last line
+        // Clean out last lines
         cTeletextChar c;
         c.SetFGColor(ttcWhite);
         c.SetBGColor(ttcBlack);
