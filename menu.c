@@ -1163,15 +1163,17 @@ void TeletextBrowser::UpdateClock() {
 }
 
 // convert action to text
-// implant hotkeyLevel number for related action
+// implant hotkeyLevel number for related action, shift +/- in case of last char
 // implant ttSetup.osdPreset number for related actions if maximum is > 1
 #define CONVERT_ACTION_TO_TEXT(text, mode) \
       if ((mode == HotkeyLevelPlus) || (mode == HotkeyLevelMinus)) { \
          snprintf(text, sizeof(text), "%-10s", tr(st_modesFooter[mode])); \
+         if ((text[9] == '+') || (text[9] == '-')) text[8] = text[9]; \
          text[9] = '0' + (int) hotkeyLevel + 1; \
          text[10] = '\0'; \
       } else if ((mode == OsdPresetPlus) || (mode == OsdPresetMinus)) { \
          snprintf(text, sizeof(text), "%-10s", tr(st_modesFooter[mode])); \
+         if ((text[9] == '+') || (text[9] == '-')) text[8] = text[9]; \
          text[9] = '0' + (int) ttSetup.osdPreset + 1; \
          text[10] = '\0'; \
       } else if ((mode == Config) && (ttSetup.osdPresetMax > 1) && (configMode != LastActionConfig)) { \
