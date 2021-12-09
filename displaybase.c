@@ -260,19 +260,45 @@ void cDisplay::CleanDisplay() {
     DirtyAll=true;
 }
 
+// AARRGGBB
+#define COLOR_HALF(clr)  ((clr & 0xff000000) | ((clr & 0x00fe0000) >> 1) | ((clr & 0x0000fe00) >> 1) | ((clr & 0x000000fe) >> 1))
 
 tColor cDisplay::GetColorRGB(enumTeletextColor ttc, int Area) {
     switch (ttc) {
-    case ttcBlack:       return Background;
-    case ttcRed:         return clrRed;
-    case ttcGreen:       return clrGreen;
-    case ttcYellow:      return clrYellow;
-    case ttcBlue:        return clrBlue;
-    case ttcMagenta:     return clrMagenta;
-    case ttcCyan:        return clrCyan;
-    case ttcWhite:       return clrWhite;
-    case ttcTransparent: return clrTransparent;
-    default:             return Background;
+        case ttcBlack:       return Background;
+        case ttcRed:         return clrRed;
+        case ttcGreen:       return clrGreen;
+        case ttcYellow:      return clrYellow;
+        case ttcBlue:        return clrBlue;
+        case ttcMagenta:     return clrMagenta;
+        case ttcCyan:        return clrCyan;
+        case ttcWhite:       return clrWhite;
+        case ttcTransparent: return clrTransparent;
+        case ttcHalfRed:     return COLOR_HALF(clrRed);
+        case ttcHalfGreen:   return COLOR_HALF(clrGreen);
+        case ttcHalfYellow:  return COLOR_HALF(clrYellow);
+        case ttcHalfBlue:    return COLOR_HALF(clrBlue);
+        case ttcHalfMagenta: return COLOR_HALF(clrMagenta);
+        case ttcHalfCyan:    return COLOR_HALF(clrCyan);
+        case ttcGrey:        return COLOR_HALF(clrWhite);
+        // 16-31 according to  ETSI EN 300 706 V1.2.1 (2003-012.4) 12.4
+        case ttcColor16:     return 0xFFFC005C;
+        case ttcColor17:     return 0xFFFC7C00;
+        case ttcColor18:     return 0xFF00FC7C;
+        case ttcColor19:     return 0xFFFCFCBC;
+        case ttcColor20:     return 0xFFFCFCBC;
+        case ttcColor21:     return 0xFF00CCAC;
+        case ttcColor22:     return 0xFF5C0000;
+        case ttcColor23:     return 0xFF6C5C2C;
+        case ttcColor24:     return 0xFFCC7C7C;
+        case ttcColor25:     return 0xFF3C3C3C; // grey25
+        case ttcColor26:     return 0xFFFC7C7C;
+        case ttcColor27:     return 0xFF7CFC7C;
+        case ttcColor28:     return 0xFFFCFC7C;
+        case ttcColor29:     return 0xFF7C7CFC;
+        case ttcColor30:     return 0xFF7CFCFC;
+        case ttcColor31:     return 0xFFDCDCDC; // grey75
+        default:             return Background;
     }
 }
 
