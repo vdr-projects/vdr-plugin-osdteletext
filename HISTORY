@@ -4,6 +4,7 @@ VDR Plugin 'osdteletext' Revision History
 - [pbiering] add support for half bright standard colors and ETSI colors 16-31
 - [pbiering] extend 24-Line-Toggle with a 3rd option to display hint lines for standard keys
 - [pbiering] long option fix "key-levels", add-missing "osd-preset"
+- [pbiering] limit DrawMessage box to maximum box size
 
 2021-08-06: version 2.2.1
 - [pbiering] fix frame in case reaching OSD limits

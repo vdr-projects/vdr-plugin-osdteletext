@@ -42,6 +42,7 @@ extern          int m_debugline;
 #define DEBUG_MASK_OT_ACT_CHAR_BACK_BLUE	0x40000000	// Char Background Blue (debugging for detecting pixel offset issues)
 
 #define dsyslog_ot(format, arg...) dsyslog("osdteletext: DEBUG %s/%s: " format, __FILE__, __FUNCTION__, ## arg)
+#define wsyslog_ot(format, arg...) esyslog("osdteletext: WARN  %s/%s: " format, __FILE__, __FUNCTION__, ## arg)
 
 #define DEBUG_OT	if (m_debugmask & DEBUG_MASK_OT)        dsyslog_ot
 #define DEBUG_OT_FONT	if (m_debugmask & DEBUG_MASK_OT_FONT)   dsyslog_ot
