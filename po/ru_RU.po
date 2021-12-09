@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-27 19:28+0200\n"
+"POT-Creation-Date: 2021-12-09 07:58+0100\n"
 "PO-Revision-Date: 2008-12-30 13:52+0100\n"
 "Last-Translator: Andrey Pridvorov <ua0lnj@bk.ru>\n"
 "Language-Team: Russian <vdr@linuxtv.org>\n"
@@ -160,6 +160,15 @@ msgstr "Арабск."
 
 msgid "Hebrew"
 msgstr "Иврит"
+
+msgid "Hotkeys"
+msgstr ""
+
+msgid "No Hotkeys+Hints"
+msgstr ""
+
+msgid "Hotkeys+Hints"
+msgstr ""
 
 msgid "Hide mainmenu entry"
 msgstr "Скрыть в главном меню"

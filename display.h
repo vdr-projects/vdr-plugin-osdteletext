@@ -89,6 +89,9 @@ namespace Display {
     inline void DrawFooter(const char *textRed, const char *textGreen, const char* textYellow, const char *textBlue, const FooterFlags flag)
         { if (display) display->DrawFooter(textRed, textGreen, textYellow, textBlue, flag); }
 
+    inline void DrawHints(const char *textH1, const char *textH2, const char* textH3, const char *textH4, const char *textH5, const HintsFlags flag)
+        { if (display) display->DrawHints(textH1, textH2, textH3, textH4, textH5, flag); }
+
     inline void DrawMessage(const char *txt)
         { if (display) display->DrawMessage(txt, NULL); }
     inline void DrawMessage(const char *txt, const char *txt2)

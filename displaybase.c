@@ -121,9 +121,9 @@ void cDisplay::InitScaler() {
 
     fontWidth = (outputWidth * 2 / 40) & 0xfffe;
     if (Zoom == Zoom_Off) {
-        fontHeight = (outputHeight * 2 / ((ttSetup.lineMode24 == true) ? 24 : 25)) & 0xfffe;
+        fontHeight = (outputHeight * 2 / TT_DISPLAY_LINES)  & 0xfffe;
     } else {
-        fontHeight = (outputHeight * 2 * 2 / ((ttSetup.lineMode24 == true) ? 24 : 25)) & 0xfffe;
+        fontHeight = (outputHeight * 2 * 2 / TT_DISPLAY_LINES) & 0xfffe;
     }
     // use even font size for double sized characters (prevents rounding errors during character display)
     fontWidth &= 0xfffe;
@@ -260,19 +260,45 @@ void cDisplay::CleanDisplay() {
     DirtyAll=true;
 }
 
+// AARRGGBB
+#define COLOR_HALF(clr)  ((clr & 0xff000000) | ((clr & 0x00fe0000) >> 1) | ((clr & 0x0000fe00) >> 1) | ((clr & 0x000000fe) >> 1))
 
 tColor cDisplay::GetColorRGB(enumTeletextColor ttc, int Area) {
     switch (ttc) {
-    case ttcBlack:       return Background;
-    case ttcRed:         return clrRed;
-    case ttcGreen:       return clrGreen;
-    case ttcYellow:      return clrYellow;
-    case ttcBlue:        return clrBlue;
-    case ttcMagenta:     return clrMagenta;
-    case ttcCyan:        return clrCyan;
-    case ttcWhite:       return clrWhite;
-    case ttcTransparent: return clrTransparent;
-    default:             return Background;
+        case ttcBlack:       return Background;
+        case ttcRed:         return clrRed;
+        case ttcGreen:       return clrGreen;
+        case ttcYellow:      return clrYellow;
+        case ttcBlue:        return clrBlue;
+        case ttcMagenta:     return clrMagenta;
+        case ttcCyan:        return clrCyan;
+        case ttcWhite:       return clrWhite;
+        case ttcTransparent: return clrTransparent;
+        case ttcHalfRed:     return COLOR_HALF(clrRed);
+        case ttcHalfGreen:   return COLOR_HALF(clrGreen);
+        case ttcHalfYellow:  return COLOR_HALF(clrYellow);
+        case ttcHalfBlue:    return COLOR_HALF(clrBlue);
+        case ttcHalfMagenta: return COLOR_HALF(clrMagenta);
+        case ttcHalfCyan:    return COLOR_HALF(clrCyan);
+        case ttcGrey:        return COLOR_HALF(clrWhite);
+        // 16-31 according to  ETSI EN 300 706 V1.2.1 (2003-012.4) 12.4
+        case ttcColor16:     return 0xFFFC005C;
+        case ttcColor17:     return 0xFFFC7C00;
+        case ttcColor18:     return 0xFF00FC7C;
+        case ttcColor19:     return 0xFFFCFCBC;
+        case ttcColor20:     return 0xFFFCFCBC;
+        case ttcColor21:     return 0xFF00CCAC;
+        case ttcColor22:     return 0xFF5C0000;
+        case ttcColor23:     return 0xFF6C5C2C;
+        case ttcColor24:     return 0xFFCC7C7C;
+        case ttcColor25:     return 0xFF3C3C3C; // grey25
+        case ttcColor26:     return 0xFFFC7C7C;
+        case ttcColor27:     return 0xFF7CFC7C;
+        case ttcColor28:     return 0xFFFCFC7C;
+        case ttcColor29:     return 0xFF7C7CFC;
+        case ttcColor30:     return 0xFF7CFCFC;
+        case ttcColor31:     return 0xFFDCDCDC; // grey75
+        default:             return Background;
     }
 }
 
@@ -320,7 +346,7 @@ void cDisplay::DrawDisplay() {
 
     if (!IsDirty()) return; // nothing to do
 
-    for (y = 0; y < ((ttSetup.lineMode24 == true) ? 24 : 25); y++) {
+    for (y = 0; y < TT_DISPLAY_LINES; y++) {
         for (x=0;x<40;x++) {
             if (IsDirty(x,y)) {
                 // Need to draw char to osd
@@ -427,15 +453,17 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
     }
 
     bool h_scale_div2 = false;
+    int lines_div2 = 0;
 
     if (Zoom == Zoom_Lower) {
         y -= 12;
         if (y < 0 || y > 11) {
-            if ((ttSetup.lineMode24 == false) && (y == 12)) {
-                // display special line 24 in half height
+            if ((ttSetup.lineMode24 == false) && (y >= 12)) {
+                // display special line >= 25 in half height
                 h /= 2;
                 h_scale_div2 = true;
                 font = TXTHlfHFont;
+                lines_div2 = y - 12;
             } else {
                 // display only line 12-23 (12 lines)
                 return;
@@ -445,12 +473,13 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
 
     if (Zoom == Zoom_Upper) {
         if (y > 11) {
-            if ((ttSetup.lineMode24 == false) && (y == 24)) {
-                // display special line 24 in half height
+            if ((ttSetup.lineMode24 == false) && (y >= 24)) {
+                // display special line >= 25 in half height
                 y -= 12;
                 h /= 2;
                 h_scale_div2 = true;
                 font = TXTHlfHFont;
+                lines_div2 = y - 12;
             } else {
                 // display only line 0-11 (12 lines)
                 return;
@@ -461,7 +490,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
     if ((m_debugmask & DEBUG_MASK_OT_ACT_LIMIT_LINES) && (y > 8)) return;
 
     int vx = x * fontWidth  / 2;
-    int vy = y * fontHeight / 2;
+    int vy = y * fontHeight / 2 - lines_div2 * h;
 
     bool drawChar = true;
     if (c.GetDblWidth() == dblw_Right) {
@@ -809,6 +838,28 @@ void cDisplay::DrawFooter(const char *textRed, const char *textGreen, const char
    };
 }
 
+void cDisplay::DrawHints(const char *textH1, const char *textH2, const char* textH3, const char *textH4, const char *textH5, const HintsFlags flag) {
+    if (Boxed) return; // don't draw Navigation in on boxed pages
+
+    switch(flag) {
+        case HintsKey:
+            DrawTextExtended( 0, 25, textH1, 8, AlignmentCenter, ttcHalfCyan, ttcGrey   );
+            DrawTextExtended( 8, 25, textH2, 8, AlignmentCenter, ttcHalfCyan, ttcColor25);
+            DrawTextExtended(16, 25, textH3, 8, AlignmentCenter, ttcHalfCyan, ttcGrey   );
+            DrawTextExtended(24, 25, textH4, 8, AlignmentCenter, ttcHalfCyan, ttcColor25);
+            DrawTextExtended(32, 25, textH5, 8, AlignmentCenter, ttcHalfCyan, ttcGrey   );
+            break;
+
+        case HintsValue:
+            DrawTextExtended( 0, 26, textH1, 8, AlignmentCenter, ttcColor25 , ttcGrey   );
+            DrawTextExtended( 8, 26, textH2, 8, AlignmentCenter, ttcColor31 , ttcColor25);
+            DrawTextExtended(16, 26, textH3, 8, AlignmentCenter, ttcColor25 , ttcGrey   );
+            DrawTextExtended(24, 26, textH4, 8, AlignmentCenter, ttcColor31 , ttcColor25);
+            DrawTextExtended(32, 26, textH5, 8, AlignmentCenter, ttcColor25 , ttcGrey   );
+            break;
+    };
+}
+
 void cDisplay::DrawClock() {
     if (Boxed) return; // don't draw Clock in on boxed pages
 
@@ -860,8 +911,8 @@ void cDisplay::DrawMessage(const char *txt1, const char *txt2, const enumTeletex
 
     if (txt2 != NULL) {
         // 2nd line active
-        h2 = MessageFont->Height(txt2);
         w2 = MessageFont->Width(txt2);
+        h2 = MessageFont->Height(txt2);
 
         h += h2 + border / 2; // increase height
 
@@ -905,11 +956,11 @@ void cDisplay::DrawMessage(const char *txt1, const char *txt2, const enumTeletex
     // Draw text
     if (txt2 == NULL) {
         osd->DrawText(x + 2 * border + o1, y + 2 * border, txt1, fg, bg, MessageFont, w1, h1);
-        DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OW=%d OH=%d txt='%s'", MessageX, MessageY, MessageW, MessageH, outputWidth, outputHeight, txt1);
+        DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OW=%d OH=%d w1=%d h1=%d txt='%s'", MessageX, MessageY, MessageW, MessageH, outputWidth, outputHeight, w1, h1, txt1);
     } else {
         osd->DrawText(x + 2 * border + o1, y + 2 * border                  , txt1, fg, bg, MessageFont, w1, h1);
         osd->DrawText(x + 2 * border + o2, y + 2 * border + h1 + border / 2, txt2, fg, bg, MessageFont, w2, h2);
-        DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OW=%d OH=%d txt1='%s' txt2='%s'", MessageX, MessageY, MessageW, MessageH, outputWidth, outputHeight, txt1, txt2);
+        DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OW=%d OH=%d w1=%d h1=%d w2=%d w2=%d txt1='%s' txt2='%s'", MessageX, MessageY, MessageW, MessageH, outputWidth, outputHeight, w1, h1, w2, h2, txt1, txt2);
     };
 
     // And flush all changes

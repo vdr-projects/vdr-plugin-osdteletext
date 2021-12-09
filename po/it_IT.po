@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-27 19:28+0200\n"
+"POT-Creation-Date: 2021-12-09 07:58+0100\n"
 "PO-Revision-Date: 2010-11-06 19:59+0100\n"
 "Last-Translator: Diego Pierotto <vdr-italian@tiscali.it>\n"
 "Language-Team: Italian <vdr@linuxtv.org>\n"
@@ -165,6 +165,15 @@ msgid "Arabic"
 msgstr ""
 
 msgid "Hebrew"
+msgstr ""
+
+msgid "Hotkeys"
+msgstr ""
+
+msgid "No Hotkeys+Hints"
+msgstr ""
+
+msgid "Hotkeys+Hints"
 msgstr ""
 
 msgid "Hide mainmenu entry"

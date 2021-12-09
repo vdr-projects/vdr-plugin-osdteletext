@@ -651,11 +651,16 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
 
       case LineMode24:
          DEBUG_OT_KEYS("key action: 'LineMode24' lineMode24=%d", ttSetup.lineMode24);
-         // toggle LineMode24
-         if (ttSetup.lineMode24 != 0) {
+         // toggle LineMode24: 0 -> 2 -> 1 -> 0
+         //  0: 25 lines / Hotkeys only
+         //  1: 24 lines / No Hotkeys+Hints
+         //  2: 27 lines / Hotkeys+Hints
+         if (ttSetup.lineMode24 == 2) {
+            ttSetup.lineMode24 = 1;
+         } else if (ttSetup.lineMode24 == 1) {
             ttSetup.lineMode24 = 0;
          } else {
-            ttSetup.lineMode24 = 1;
+            ttSetup.lineMode24 = 2;
          };
          zoomR = Display::GetZoom(); // remember zoom
          modeR = Display::mode; // remember mode
@@ -667,8 +672,8 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
 
       case Config:
          DEBUG_OT_KEYS("key action: 'Config' lineMode24=%d configMode=%d", ttSetup.lineMode24, configMode);
-         if (ttSetup.lineMode24) {
-            // config mode is only supported in 25-line mode
+         if (ttSetup.lineMode24 == 1) {
+            // config mode is only supported in 25/27-line mode
             needClearMessage=true;
             delayClearMessage = 3;
             Display::DrawMessage(tr("*** Config mode is not supported in 24-line mode ***"), ttcYellow);
@@ -690,8 +695,8 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
 
       case HotkeyLevelPlus:
       case HotkeyLevelMinus:
-         if (ttSetup.lineMode24) {
-            // HotkeyLevel switch mode is only supported in 25-line mode
+         if (ttSetup.lineMode24 == 1) {
+            // HotkeyLevel switch mode is only supported in 25/27-line mode
             // otherwise one can get lost and has to enter plugin setup menu to disable 24-line mode there
             needClearMessage=true;
             delayClearMessage = 3;
@@ -1163,15 +1168,17 @@ void TeletextBrowser::UpdateClock() {
 }
 
 // convert action to text
-// implant hotkeyLevel number for related action
+// implant hotkeyLevel number for related action, shift +/- in case of last char
 // implant ttSetup.osdPreset number for related actions if maximum is > 1
 #define CONVERT_ACTION_TO_TEXT(text, mode) \
       if ((mode == HotkeyLevelPlus) || (mode == HotkeyLevelMinus)) { \
          snprintf(text, sizeof(text), "%-10s", tr(st_modesFooter[mode])); \
+         if ((text[9] == '+') || (text[9] == '-')) text[8] = text[9]; \
          text[9] = '0' + (int) hotkeyLevel + 1; \
          text[10] = '\0'; \
       } else if ((mode == OsdPresetPlus) || (mode == OsdPresetMinus)) { \
          snprintf(text, sizeof(text), "%-10s", tr(st_modesFooter[mode])); \
+         if ((text[9] == '+') || (text[9] == '-')) text[8] = text[9]; \
          text[9] = '0' + (int) ttSetup.osdPreset + 1; \
          text[10] = '\0'; \
       } else if ((mode == Config) && (ttSetup.osdPresetMax > 1) && (configMode != LastActionConfig)) { \
@@ -1187,10 +1194,35 @@ void TeletextBrowser::UpdateClock() {
          snprintf(text, sizeof(text), "ERROR"); \
       }; \
 
+#define CONVERT_ACTION_TO_TEXT_8(text, mode) \
+      if ((mode == HotkeyLevelPlus) || (mode == HotkeyLevelMinus)) { \
+         snprintf(text, sizeof(text), "%-8s", tr(st_modesFooter[mode])); \
+         if ((text[7] == '+') || (text[7] == '-')) text[6] = text[7]; \
+         text[7] = '0' + (int) hotkeyLevel + 1; \
+         text[8] = '\0'; \
+      } else if ((mode == OsdPresetPlus) || (mode == OsdPresetMinus)) { \
+         snprintf(text, sizeof(text), "%-8s", tr(st_modesFooter[mode])); \
+         if ((text[7] == '+') || (text[7] == '-')) text[6] = text[7]; \
+         text[7] = '0' + (int) ttSetup.osdPreset + 1; \
+         text[8] = '\0'; \
+      } else if ((mode == Config) && (ttSetup.osdPresetMax > 1) && (configMode != LastActionConfig)) { \
+         snprintf(text, sizeof(text), "%-8s", tr(st_modesFooter[mode])); \
+         text[6] = ' '; \
+         text[7] = '0' + (int) ttSetup.osdPreset + 1; \
+         text[8] = '\0'; \
+      } else if ((int) mode < 100) { \
+         snprintf(text, sizeof(text), "%s", tr(st_modesFooter[mode])); \
+      } else if ((int) mode < 999) { \
+         snprintf(text, sizeof(text), "-> %03d", mode); \
+      } else { \
+         snprintf(text, sizeof(text), "ERROR"); \
+      }; \
+
+
 void TeletextBrowser::UpdateFooter() {
    DEBUG_OT_FOOT("called with lineMode24=%d", ttSetup.lineMode24);
 
-   if ( ttSetup.lineMode24 ) return; // nothing to do
+   if (ttSetup.lineMode24 == 1) return; // nothing to do
 
    char textRed[81]= "", textGreen[81] = "", textYellow[81] = "", textBlue[81] = ""; // 40x UTF-8 char + \0
    FooterFlags flag = FooterNormal; // default
@@ -1292,6 +1324,27 @@ void TeletextBrowser::UpdateFooter() {
 
    DEBUG_OT_FOOT("textRed='%s' textGreen='%s' text Yellow='%s' textBlue='%s' flag=%d", textRed, textGreen, textYellow, textBlue, flag);
    Display::DrawFooter(textRed, textGreen, textYellow, textBlue, flag);
+
+   if (ttSetup.lineMode24 != 2) return; // nothing more to do
+
+   // Hint lines
+   char textH1[81]= "FastRew", textH2[81] = "Play", textH3[81] = "OK", textH4[81] = "Stop", textH5[81] = "FastFwd"; // 40x UTF-8 char + \0
+
+   Display::DrawHints(textH1, textH2, textH3, textH4, textH5, HintsKey);
+
+   eTeletextAction AkFastRew = TranslateKey(kFastRew);
+   eTeletextAction AkFastFwd = TranslateKey(kFastFwd);
+   eTeletextAction AkStop    = TranslateKey(kStop);
+   eTeletextAction AkPlay    = TranslateKey(kPlay);
+   eTeletextAction AkOk      = TranslateKey(kOk);
+   DEBUG_OT_FOOT("AkFastRew=%d AkPlay=%d AkOk=%d AkStop=%d AkFastFwd=%d", AkFastRew, AkPlay, AkOk, AkStop, AkFastFwd);
+
+   CONVERT_ACTION_TO_TEXT_8(textH1, AkFastRew);
+   CONVERT_ACTION_TO_TEXT_8(textH2, AkPlay   );
+   CONVERT_ACTION_TO_TEXT_8(textH3, AkOk     );
+   CONVERT_ACTION_TO_TEXT_8(textH4, AkStop   );
+   CONVERT_ACTION_TO_TEXT_8(textH5, AkFastFwd);
+   Display::DrawHints(textH1, textH2, textH3, textH4, textH5, HintsValue);
 }
 
 TeletextSetup ttSetup;
@@ -1306,7 +1359,7 @@ TeletextSetup::TeletextSetup()
     hotkeyLevelMax(1),
     HideMainMenu(false),
     colorMode4bpp(false),
-    lineMode24(false)
+    lineMode24(0)
 {
    // init osdConfig
    int p = 0;

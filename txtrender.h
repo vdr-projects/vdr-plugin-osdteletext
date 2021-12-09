@@ -225,7 +225,7 @@ class cRenderPage {
     // 'dirty' flag on each character
     
 protected:
-    cTeletextChar Page[40][25];
+    cTeletextChar Page[40][27];
 
     int Flags;
     //   0x80  C4 - Erase page
@@ -250,9 +250,11 @@ protected:
 public: 
     cRenderPage();
 
+#define CHECK_XY_LIMIT(x,y)	((x < 0) || (x >= 40) || (y < 0) || (y >= 27))
+
     cTeletextChar GetChar(int x, int y) {
         // Read character content from page
-        if (x<0 || x>=40 || y<0 || y>=25) {
+        if (CHECK_XY_LIMIT(x,y)) {
             esyslog("osdteletext: WARN: out of bounds access to teletext page (GetChar x=%d y=%d)", x, y);
             return cTeletextChar();
         }
@@ -266,7 +268,7 @@ public:
     
     bool IsDirty(int x, int y) {
         // local dirty status
-        if (x<0 || x>=40 || y<0 || y>=25) {
+        if (CHECK_XY_LIMIT(x,y)) {
             esyslog("osdteletext: WARN: out of bounds access to teletext page (IsDirty x=%d y=%d)", x, y);
             return false;
         }
@@ -275,7 +277,7 @@ public:
 
     void MakeDirty(int x, int y) {
         // force one character dirty
-        if (x<0 || x>=40 || y<0 || y>=25) {
+        if (CHECK_XY_LIMIT(x,y)) {
             esyslog("osdteletext: WARN: out of bounds access to teletext page (MakeDirty x=%d y=%d)", x, y);
             return;
         }
@@ -286,7 +288,7 @@ public:
     void SetChar(int x, int y, cTeletextChar c) {
         // Set character at given location
         
-        if (x<0 || x>=40 || y<0 || y>=25) {
+        if (CHECK_XY_LIMIT(x,y)) {
             esyslog("osdteletext: WARN: out of bounds access to teletext page (SetChar x=%d y=%d c=%x)", x, y, c.GetC());
             return;
         }

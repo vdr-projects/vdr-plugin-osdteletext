@@ -78,7 +78,7 @@ Keys:
                      Text Vertical Offset +/-
                      Background Transparency +/-
 
-     24-Line-Mode:  Hide Hotkey line (line 25)
+     24-Line-Mode:  Toggle Hotkey line (line 25) or add even Hints lines (line 26+27)
 
      Answer      :  Display concealed chars (toggle)
                      OSD will display yellow '?' in case page contains concealed chars

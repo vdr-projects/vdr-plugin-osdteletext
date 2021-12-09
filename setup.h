@@ -110,6 +110,11 @@ enum FooterFlags {
    FooterGreenYellowValue
 };
 
+enum HintsFlags {
+   HintsKey,
+   HintsValue
+};
+
 //Default values are set in menu.c, setup menu, parsing and storing can be found in osdteletext.c
 class TeletextSetup {
 public:
@@ -127,9 +132,10 @@ public:
    cStringList txtFontNames;
    int txtG0Block;
    int txtG2Block;
-   const char *txtBlock[11];
+   const char *txtBlock[11]; // see osdteletext.c
    int colorMode4bpp;
    int lineMode24;
+   const char *lineMode[3]; // see osdteletext.c
 
    // current value of osdPreset
    int osdPreset;
@@ -143,6 +149,13 @@ public:
 
 // shortcut to OSD config value of current preset converted to font name
 #define TTSETUPPRESET_FONTNAME(type) ttSetup.txtFontNames[TTSETUPPRESET(type)]
+
+// Teletext display lines
+//  ttSetup.lineMode24 == 0: 25
+//  ttSetup.lineMode24 == 1: 24
+//  ttSetup.lineMode24 == 2: 27
+#define TT_DISPLAY_LINES  ((ttSetup.lineMode24 == 1) ? 24 : ((ttSetup.lineMode24 == 0) ? 25 : 27))
+
 
 extern TeletextSetup ttSetup;
 

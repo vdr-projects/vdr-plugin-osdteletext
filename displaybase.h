@@ -227,6 +227,9 @@ public:
     void DrawFooter(const char *textRed, const char *textGreen, const char* textYellow, const char *textBlue, const FooterFlags flag);
     // Draw footer to OSD
 
+    void DrawHints(const char *textH1, const char *textH2, const char* textH3, const char *textH4, const char *textH5, const HintsFlags flag);
+    // Draw hint line to OSD
+
     void DrawClock();
     // Draw current time to OSD
 

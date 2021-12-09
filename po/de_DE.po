@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 2.4.4\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-04-27 20:59+0200\n"
+"POT-Creation-Date: 2021-12-09 06:06+0100\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Peter Bieringer <pb@bieringer.de>\n"
 "Language-Team: German <vdr@linuxtv.org>\n"
@@ -159,6 +159,15 @@ msgstr ""
 
 msgid "Hebrew"
 msgstr ""
+
+msgid "Hotkeys"
+msgstr "Hotkeys"
+
+msgid "No Hotkeys+Hints"
+msgstr "Keine Hotkeys+Hinweise"
+
+msgid "Hotkeys+Hints"
+msgstr "Hotkeys+Hinweise"
 
 msgid "Hide mainmenu entry"
 msgstr "Hauptmenüeintrag verstecken"
