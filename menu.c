@@ -1168,48 +1168,25 @@ void TeletextBrowser::UpdateClock() {
 }
 
 // convert action to text
-// implant hotkeyLevel number for related action, shift +/- in case of last char
+// implant hotkeyLevel number for related action
 // implant ttSetup.osdPreset number for related actions if maximum is > 1
-#define CONVERT_ACTION_TO_TEXT(text, mode) \
+// implant hotkeyLevel/osdPreset +/- in case of text length is above limit-2
+#define CONVERT_ACTION_TO_TEXT(text, mode, limit) \
       if ((mode == HotkeyLevelPlus) || (mode == HotkeyLevelMinus)) { \
-         snprintf(text, sizeof(text), "%-10s", tr(st_modesHotkey[mode])); \
-         if ((text[9] == '+') || (text[9] == '-')) text[8] = text[9]; \
-         text[9] = '0' + (int) hotkeyLevel + 1; \
-         text[10] = '\0'; \
+         snprintf(text, sizeof(text), "%-40s", tr(st_modesHotkey[mode])); \
+         if (strlen(tr(st_modesHotkey[mode])) > limit - 1) text[limit - 2] = (mode == HotkeyLevelPlus) ? '+' : '-'; \
+         text[limit - 1] = '0' + (int) hotkeyLevel + 1; \
+         text[limit] = '\0'; \
       } else if ((mode == OsdPresetPlus) || (mode == OsdPresetMinus)) { \
-         snprintf(text, sizeof(text), "%-10s", tr(st_modesHotkey[mode])); \
-         if ((text[9] == '+') || (text[9] == '-')) text[8] = text[9]; \
-         text[9] = '0' + (int) ttSetup.osdPreset + 1; \
-         text[10] = '\0'; \
+         snprintf(text, sizeof(text), "%-40s", tr(st_modesHotkey[mode])); \
+         if (strlen(tr(st_modesHotkey[mode])) > limit - 1) text[limit - 2] = (mode == OsdPresetPlus) ? '+' : '-'; \
+         text[limit - 1] = '0' + (int) ttSetup.osdPreset + 1; \
+         text[limit] = '\0'; \
       } else if ((mode == Config) && (ttSetup.osdPresetMax > 1) && (configMode != LastActionConfig)) { \
-         snprintf(text, sizeof(text), "%-10s", tr(st_modesHotkey[mode])); \
-         text[8] = ' '; \
-         text[9] = '0' + (int) ttSetup.osdPreset + 1; \
-         text[10] = '\0'; \
-      } else if ((int) mode < 100) { \
-         snprintf(text, sizeof(text), "%s", tr(st_modesHotkey[mode])); \
-      } else if ((int) mode < 999) { \
-         snprintf(text, sizeof(text), "-> %03d", mode); \
-      } else { \
-         snprintf(text, sizeof(text), "ERROR"); \
-      }; \
-
-#define CONVERT_ACTION_TO_TEXT_8(text, mode) \
-      if ((mode == HotkeyLevelPlus) || (mode == HotkeyLevelMinus)) { \
-         snprintf(text, sizeof(text), "%-8s", tr(st_modesHotkey[mode])); \
-         if ((text[7] == '+') || (text[7] == '-')) text[6] = text[7]; \
-         text[7] = '0' + (int) hotkeyLevel + 1; \
-         text[8] = '\0'; \
-      } else if ((mode == OsdPresetPlus) || (mode == OsdPresetMinus)) { \
-         snprintf(text, sizeof(text), "%-8s", tr(st_modesHotkey[mode])); \
-         if ((text[7] == '+') || (text[7] == '-')) text[6] = text[7]; \
-         text[7] = '0' + (int) ttSetup.osdPreset + 1; \
-         text[8] = '\0'; \
-      } else if ((mode == Config) && (ttSetup.osdPresetMax > 1) && (configMode != LastActionConfig)) { \
-         snprintf(text, sizeof(text), "%-8s", tr(st_modesHotkey[mode])); \
-         text[6] = ' '; \
-         text[7] = '0' + (int) ttSetup.osdPreset + 1; \
-         text[8] = '\0'; \
+         snprintf(text, sizeof(text), "%-40s", tr(st_modesHotkey[mode])); \
+         text[limit - 2] = ' '; \
+         text[limit - 1] = '0' + (int) ttSetup.osdPreset + 1; \
+         text[limit] = '\0'; \
       } else if ((int) mode < 100) { \
          snprintf(text, sizeof(text), "%s", tr(st_modesHotkey[mode])); \
       } else if ((int) mode < 999) { \
@@ -1235,10 +1212,10 @@ void TeletextBrowser::UpdateHotkey() {
       eTeletextAction AkBlue   = TranslateKey(kBlue);
       DEBUG_OT_HOTK("AkRed=%d AkGreen=%d AkYellow=%d AkBlue=%d", AkRed, AkGreen, AkYellow, AkBlue);
 
-      CONVERT_ACTION_TO_TEXT(textRed   , AkRed   );
-      CONVERT_ACTION_TO_TEXT(textGreen , AkGreen );
-      CONVERT_ACTION_TO_TEXT(textYellow, AkYellow);
-      CONVERT_ACTION_TO_TEXT(textBlue  , AkBlue  );
+      CONVERT_ACTION_TO_TEXT(textRed   , AkRed   , 10);
+      CONVERT_ACTION_TO_TEXT(textGreen , AkGreen , 10);
+      CONVERT_ACTION_TO_TEXT(textYellow, AkYellow, 10);
+      CONVERT_ACTION_TO_TEXT(textBlue  , AkBlue  , 10);
    } else {
       switch (configMode) {
          case Left:
@@ -1319,7 +1296,7 @@ void TeletextBrowser::UpdateHotkey() {
             break;
       };
 
-      CONVERT_ACTION_TO_TEXT(textBlue, Config); // option itself with optional preset number
+      CONVERT_ACTION_TO_TEXT(textBlue, Config, 10); // option itself with optional preset number
    };
 
    DEBUG_OT_HOTK("textRed='%s' textGreen='%s' text Yellow='%s' textBlue='%s' flag=%d", textRed, textGreen, textYellow, textBlue, flag);
@@ -1328,22 +1305,22 @@ void TeletextBrowser::UpdateHotkey() {
    if (ttSetup.lineMode24 != 2) return; // nothing more to do
 
    // Hint lines
-   char textH1[81]= "FastRew", textH2[81] = "Play", textH3[81] = "OK", textH4[81] = "Stop", textH5[81] = "FastFwd"; // 40x UTF-8 char + \0
+   char textH1[81]= "FastRew", textH2[81] = "Stop", textH3[81] = "OK", textH4[81] = "Play", textH5[81] = "FastFwd"; // 40x UTF-8 char + \0
 
    Display::DrawHints(textH1, textH2, textH3, textH4, textH5, HintsKey);
 
    eTeletextAction AkFastRew = TranslateKey(kFastRew);
    eTeletextAction AkFastFwd = TranslateKey(kFastFwd);
    eTeletextAction AkStop    = TranslateKey(kStop);
-   eTeletextAction AkPlay    = TranslateKey(kPlay);
    eTeletextAction AkOk      = TranslateKey(kOk);
-   DEBUG_OT_HOTK("AkFastRew=%d AkPlay=%d AkOk=%d AkStop=%d AkFastFwd=%d", AkFastRew, AkPlay, AkOk, AkStop, AkFastFwd);
+   eTeletextAction AkPlay    = TranslateKey(kPlay);
+   DEBUG_OT_HOTK("AkFastRew=%d AkStop=%d AkOk=%d AkPlay=%d AkFastFwd=%d", AkFastRew, AkStop, AkOk, AkPlay, AkFastFwd);
 
-   CONVERT_ACTION_TO_TEXT_8(textH1, AkFastRew);
-   CONVERT_ACTION_TO_TEXT_8(textH2, AkPlay   );
-   CONVERT_ACTION_TO_TEXT_8(textH3, AkOk     );
-   CONVERT_ACTION_TO_TEXT_8(textH4, AkStop   );
-   CONVERT_ACTION_TO_TEXT_8(textH5, AkFastFwd);
+   CONVERT_ACTION_TO_TEXT(textH1, AkFastRew, 8);
+   CONVERT_ACTION_TO_TEXT(textH2, AkStop   , 8);
+   CONVERT_ACTION_TO_TEXT(textH3, AkOk     , 8);
+   CONVERT_ACTION_TO_TEXT(textH4, AkPlay   , 8);
+   CONVERT_ACTION_TO_TEXT(textH5, AkFastFwd, 8);
    Display::DrawHints(textH1, textH2, textH3, textH4, textH5, HintsValue);
 }
 
