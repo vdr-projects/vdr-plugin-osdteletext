@@ -458,7 +458,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
     if (Zoom == Zoom_Lower) {
         y -= 12;
         if (y < 0 || y > 11) {
-            if ((ttSetup.lineMode24 == false) && (y >= 12)) {
+            if ((ttSetup.lineMode24 != 1) && (y >= 12)) {
                 // display special line >= 25 in half height
                 h /= 2;
                 h_scale_div2 = true;
@@ -473,7 +473,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
 
     if (Zoom == Zoom_Upper) {
         if (y > 11) {
-            if ((ttSetup.lineMode24 == false) && (y >= 24)) {
+            if ((ttSetup.lineMode24 != 1) && (y >= 24)) {
                 // display special line >= 25 in half height
                 y -= 12;
                 h /= 2;
