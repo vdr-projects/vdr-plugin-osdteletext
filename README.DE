@@ -60,15 +60,18 @@ Tasten:
                       OSD zeigt green '>' nachdem die Pause deaktiviert wurde (bis zur nächsten Aktualisierung der Seite)
 
      ** falls eingeschaltet/aktiv **
-     OSD Preset+    :  Wechsle zur nächsten OSD Voreinstellung (incl. Rollover)
-     OSD Preset-    :  Wechsle zur vorherigen OSD Voreinstellung (incl. rollover)
-
-     ** falls eingeschaltet/aktiv **
      Hotkey Ebene+  :  Wechsle zur nächsten Hotkey Ebene (incl. Rollover)
      Hotkey Ebene-  :  Wechsle zur vorherigen Hotkey Ebene (incl. Rollover)
         Empfohlene Zuweisung:
            FastFwd: Hotkey Ebene+
            FastRwd: Hotkey Ebene-
+
+     ** falls eingeschaltet/aktiv **
+     OSD Preset+    :  Wechsle zur nächsten OSD Voreinstellung (incl. Rollover)
+     OSD Preset-    :  Wechsle zur vorherigen OSD Voreinstellung (incl. rollover)
+        Empfohlene Zuweisung:
+           Stopp     : OSD Preset-
+           Wiedergabe: OSD Preset+
 
    Wie man Tasten Aktionen zuordnet:
    Im Einstellungsmenü des Plugins kann jeder Taste eine Aktion zugeordnet werden.

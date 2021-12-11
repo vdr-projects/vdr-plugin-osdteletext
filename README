@@ -95,8 +95,12 @@ Keys:
            FastFwd: Hotkey Level+
            FastRwd: Hotkey Level-
 
+     ** if enabled/active **
      OSD Preset+    :  Change to next OSD preset (incl. rollover)
      OSD Preset-    :  Change to previous OSD preset (incl. rollover)
+	Recommended assignment:
+           Stop: OSD Preset-
+           Play: OSD Preset+
 
    How to configure the key bindings:
    In the plugins setup menu, you can assign one of actions to each key.
