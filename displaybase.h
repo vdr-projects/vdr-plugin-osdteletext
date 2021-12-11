@@ -224,11 +224,11 @@ public:
     // Max len chars, fill up with spaces
     // with alignment, foreground and background color
 
-    void DrawHotkey(const char *textRed, const char *textGreen, const char* textYellow, const char *textBlue, const HotkeyFlags flag);
-    // Draw hotkey to OSD
+    void DrawHotkey(const char *textRed, const char *textGreen, const char* textYellow, const char *textBlue, const HotkeyFlag flag);
+    // Draw hotkey to OSD (line 25)
 
-    void DrawHints(const char *textH1, const char *textH2, const char* textH3, const char *textH4, const char *textH5, const HintsFlags flag);
-    // Draw hint line to OSD
+    void DrawInfo(const char *textI1, const char *textI2, const char* textI3, const char *textI4, const char *textI5, const InfoLineFlag flag);
+    // Draw info line with 5 columns to OSD (line 26: flag=InfoLine1, line 27: flag=InfoLine2)
 
     void DrawClock();
     // Draw current time to OSD

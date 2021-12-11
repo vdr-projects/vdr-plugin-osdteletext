@@ -651,16 +651,16 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
 
       case LineMode24:
          DEBUG_OT_KEYS("key action: 'LineMode24' lineMode24=%d", ttSetup.lineMode24);
-         // toggle LineMode24: 0 -> 2 -> 1 -> 0
-         //  0: 25 lines / Hotkeys only
-         //  1: 24 lines / No Hotkeys+Hints
-         //  2: 27 lines / Hotkeys+Hints
-         if (ttSetup.lineMode24 == 2) {
-            ttSetup.lineMode24 = 1;
-         } else if (ttSetup.lineMode24 == 1) {
-            ttSetup.lineMode24 = 0;
+         // toggle LineMode24: Hotkeys -> Hotkeys+Stdkeys -> None -> Hotkeys
+         //  0: 25 lines / Hotkeys
+         //  1: 24 lines / None
+         //  2: 27 lines / Hotkeys+Stdkeys
+         if (ttSetup.lineMode24 == HintLinesHotkeysAndStdkeys) {
+            ttSetup.lineMode24 = HintLinesNone;
+         } else if (ttSetup.lineMode24 == HintLinesNone) {
+            ttSetup.lineMode24 = HintLinesHotkeys;
          } else {
-            ttSetup.lineMode24 = 2;
+            ttSetup.lineMode24 = HintLinesHotkeysAndStdkeys;
          };
          zoomR = Display::GetZoom(); // remember zoom
          modeR = Display::mode; // remember mode
@@ -1202,7 +1202,7 @@ void TeletextBrowser::UpdateHotkey() {
    if (ttSetup.lineMode24 == 1) return; // nothing to do
 
    char textRed[81]= "", textGreen[81] = "", textYellow[81] = "", textBlue[81] = ""; // 40x UTF-8 char + \0
-   HotkeyFlags flag = HotkeyNormal; // default
+   HotkeyFlag flag = HotkeyNormal; // default
    eTeletextActionValueType valueType = None;
 
    if (configMode == LastActionConfig) {
@@ -1305,9 +1305,9 @@ void TeletextBrowser::UpdateHotkey() {
    if (ttSetup.lineMode24 != 2) return; // nothing more to do
 
    // Hint lines
-   char textH1[81]= "FastRew", textH2[81] = "Stop", textH3[81] = "OK", textH4[81] = "Play", textH5[81] = "FastFwd"; // 40x UTF-8 char + \0
+   char textI1[81]= "FastRew", textI2[81] = "Stop", textI3[81] = "OK", textI4[81] = "Play", textI5[81] = "FastFwd"; // 40x UTF-8 char + \0
 
-   Display::DrawHints(textH1, textH2, textH3, textH4, textH5, HintsKey);
+   Display::DrawInfo(textI1, textI2, textI3, textI4, textI5, InfoLine1);
 
    eTeletextAction AkFastRew = TranslateKey(kFastRew);
    eTeletextAction AkFastFwd = TranslateKey(kFastFwd);
@@ -1316,12 +1316,12 @@ void TeletextBrowser::UpdateHotkey() {
    eTeletextAction AkPlay    = TranslateKey(kPlay);
    DEBUG_OT_HOTK("AkFastRew=%d AkStop=%d AkOk=%d AkPlay=%d AkFastFwd=%d", AkFastRew, AkStop, AkOk, AkPlay, AkFastFwd);
 
-   CONVERT_ACTION_TO_TEXT(textH1, AkFastRew, 8);
-   CONVERT_ACTION_TO_TEXT(textH2, AkStop   , 8);
-   CONVERT_ACTION_TO_TEXT(textH3, AkOk     , 8);
-   CONVERT_ACTION_TO_TEXT(textH4, AkPlay   , 8);
-   CONVERT_ACTION_TO_TEXT(textH5, AkFastFwd, 8);
-   Display::DrawHints(textH1, textH2, textH3, textH4, textH5, HintsValue);
+   CONVERT_ACTION_TO_TEXT(textI1, AkFastRew, 8);
+   CONVERT_ACTION_TO_TEXT(textI2, AkStop   , 8);
+   CONVERT_ACTION_TO_TEXT(textI3, AkOk     , 8);
+   CONVERT_ACTION_TO_TEXT(textI4, AkPlay   , 8);
+   CONVERT_ACTION_TO_TEXT(textI5, AkFastFwd, 8);
+   Display::DrawInfo(textI1, textI2, textI3, textI4, textI5, InfoLine2);
 }
 
 TeletextSetup ttSetup;
@@ -1336,7 +1336,7 @@ TeletextSetup::TeletextSetup()
     hotkeyLevelMax(1),
     HideMainMenu(false),
     colorMode4bpp(false),
-    lineMode24(0)
+    lineMode24(HintLinesHotkeys)
 {
    // init osdConfig
    int p = 0;

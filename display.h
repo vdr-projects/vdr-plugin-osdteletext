@@ -86,11 +86,11 @@ namespace Display {
     inline void DrawPageId(const char *text, const enumTeletextColor cText, const bool boxedAlwaysOn)
         { if (display) display->DrawPageId(text, cText, boxedAlwaysOn); }
 
-    inline void DrawHotkey(const char *textRed, const char *textGreen, const char* textYellow, const char *textBlue, const HotkeyFlags flag)
+    inline void DrawHotkey(const char *textRed, const char *textGreen, const char* textYellow, const char *textBlue, const HotkeyFlag flag)
         { if (display) display->DrawHotkey(textRed, textGreen, textYellow, textBlue, flag); }
 
-    inline void DrawHints(const char *textH1, const char *textH2, const char* textH3, const char *textH4, const char *textH5, const HintsFlags flag)
-        { if (display) display->DrawHints(textH1, textH2, textH3, textH4, textH5, flag); }
+    inline void DrawInfo(const char *textI1, const char *textI2, const char* textI3, const char *textI4, const char *textI5, const InfoLineFlag flag)
+        { if (display) display->DrawInfo(textI1, textI2, textI3, textI4, textI5, flag); }
 
     inline void DrawMessage(const char *txt)
         { if (display) display->DrawMessage(txt, NULL); }

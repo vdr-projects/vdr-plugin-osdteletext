@@ -778,8 +778,8 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    temp.txtBlock[10] = tr("Hebrew");
 
    temp.lineMode[0]  = tr("Hotkeys");
-   temp.lineMode[1]  = tr("No Hotkeys+Hints");
-   temp.lineMode[2]  = tr("Hotkeys+Hints");
+   temp.lineMode[1]  = tr("None");
+   temp.lineMode[2]  = tr("Hotkeys+Stdkeys");
 
    osdPreset = 1;
    temp.osdPresetMax = ttSetup.osdPresetMax;

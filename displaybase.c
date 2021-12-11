@@ -458,7 +458,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
     if (Zoom == Zoom_Lower) {
         y -= 12;
         if (y < 0 || y > 11) {
-            if ((ttSetup.lineMode24 != 1) && (y >= 12)) {
+            if ((ttSetup.lineMode24 != HintLinesNone) && (y >= 12)) {
                 // display special line >= 25 in half height
                 h /= 2;
                 h_scale_div2 = true;
@@ -473,7 +473,7 @@ void cDisplay::DrawChar(int x, int y, cTeletextChar c) {
 
     if (Zoom == Zoom_Upper) {
         if (y > 11) {
-            if ((ttSetup.lineMode24 != 1) && (y >= 24)) {
+            if ((ttSetup.lineMode24 != HintLinesNone) && (y >= 24)) {
                 // display special line >= 25 in half height
                 y -= 12;
                 h /= 2;
@@ -812,7 +812,7 @@ void cDisplay::DrawPageId(const char *text, const enumTeletextColor cText, const
     };
 }
 
-void cDisplay::DrawHotkey(const char *textRed, const char *textGreen, const char* textYellow, const char *textBlue, const HotkeyFlags flag) {
+void cDisplay::DrawHotkey(const char *textRed, const char *textGreen, const char* textYellow, const char *textBlue, const HotkeyFlag flag) {
     if (Boxed) return; // don't draw hotkey on boxed pages
 
     switch(flag) {
@@ -838,24 +838,24 @@ void cDisplay::DrawHotkey(const char *textRed, const char *textGreen, const char
    };
 }
 
-void cDisplay::DrawHints(const char *textH1, const char *textH2, const char* textH3, const char *textH4, const char *textH5, const HintsFlags flag) {
+void cDisplay::DrawInfo(const char *textI1, const char *textI2, const char* textI3, const char *textI4, const char *textI5, const InfoLineFlag flag) {
     if (Boxed) return; // don't draw hints on boxed pages
 
     switch(flag) {
-        case HintsKey:
-            DrawTextExtended( 0, 25, textH1, 8, AlignmentCenter, ttcHalfCyan, ttcGrey   );
-            DrawTextExtended( 8, 25, textH2, 8, AlignmentCenter, ttcHalfCyan, ttcColor25);
-            DrawTextExtended(16, 25, textH3, 8, AlignmentCenter, ttcHalfCyan, ttcGrey   );
-            DrawTextExtended(24, 25, textH4, 8, AlignmentCenter, ttcHalfCyan, ttcColor25);
-            DrawTextExtended(32, 25, textH5, 8, AlignmentCenter, ttcHalfCyan, ttcGrey   );
+        case InfoLine1:
+            DrawTextExtended( 0, 25, textI1, 8, AlignmentCenter, ttcHalfCyan, ttcGrey   );
+            DrawTextExtended( 8, 25, textI2, 8, AlignmentCenter, ttcHalfCyan, ttcColor25);
+            DrawTextExtended(16, 25, textI3, 8, AlignmentCenter, ttcHalfCyan, ttcGrey   );
+            DrawTextExtended(24, 25, textI4, 8, AlignmentCenter, ttcHalfCyan, ttcColor25);
+            DrawTextExtended(32, 25, textI5, 8, AlignmentCenter, ttcHalfCyan, ttcGrey   );
             break;
 
-        case HintsValue:
-            DrawTextExtended( 0, 26, textH1, 8, AlignmentCenter, ttcColor25 , ttcGrey   );
-            DrawTextExtended( 8, 26, textH2, 8, AlignmentCenter, ttcColor31 , ttcColor25);
-            DrawTextExtended(16, 26, textH3, 8, AlignmentCenter, ttcColor25 , ttcGrey   );
-            DrawTextExtended(24, 26, textH4, 8, AlignmentCenter, ttcColor31 , ttcColor25);
-            DrawTextExtended(32, 26, textH5, 8, AlignmentCenter, ttcColor25 , ttcGrey   );
+        case InfoLine2:
+            DrawTextExtended( 0, 26, textI1, 8, AlignmentCenter, ttcColor25 , ttcGrey   );
+            DrawTextExtended( 8, 26, textI2, 8, AlignmentCenter, ttcColor31 , ttcColor25);
+            DrawTextExtended(16, 26, textI3, 8, AlignmentCenter, ttcColor25 , ttcGrey   );
+            DrawTextExtended(24, 26, textI4, 8, AlignmentCenter, ttcColor31 , ttcColor25);
+            DrawTextExtended(32, 26, textI5, 8, AlignmentCenter, ttcColor25 , ttcGrey   );
             break;
     };
 }
