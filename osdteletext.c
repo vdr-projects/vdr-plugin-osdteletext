@@ -451,7 +451,7 @@ void cPluginTeletextosd::initTexts() {
       tr("Switch background"),
       //tr("Suspend receiving"),
       tr("Config"),
-      tr("24-LineMode"),
+      tr("Footer Line"),
       tr("Answer"),
       tr("Pause"),
       tr("Hotkey Level+"),
@@ -836,7 +836,7 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    Add(new cMenuEditStraItem(tr("G0 code block"), &temp.txtG0Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
    Add(new cMenuEditStraItem(tr("G2 code block"), &temp.txtG2Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
    Add(new cMenuEditBoolItem(tr("16-Color Mode"), &temp.colorMode4bpp));
-   Add(new cMenuEditStraItem(tr("24-Line Mode"), &temp.lineMode24, NUMELEMENTS(temp.lineMode), temp.lineMode));
+   Add(new cMenuEditStraItem(tr("Footer Line"), &temp.lineMode24, NUMELEMENTS(temp.lineMode), temp.lineMode));
 
    // OSD presets
    if (maxOsdPreset > 1)

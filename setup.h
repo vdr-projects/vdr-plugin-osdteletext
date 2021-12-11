@@ -46,7 +46,6 @@ enum eTeletextAction {
    HalfPage,
    SwitchChannel,
    DarkScreen,
-   /*SuspendReceiving,*/
    Config,
    LineMode24,
    ToggleConceal,
