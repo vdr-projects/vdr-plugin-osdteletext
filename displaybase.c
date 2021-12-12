@@ -1026,6 +1026,9 @@ void cDisplay::DrawMessage(const char *txt1, const char *txt2, const cString *tx
     tColor bg = GetColorRGB(cBackground, 0);
     tColor fr = GetColorRGB(cFrame, 0);
     tColor fa = GetColorRGB(cTextArray, 0);
+    if (cBackground == ttcBlack) {
+        bg = clrBlack; // avoid transparent background on message boxes
+    };
     if (fg == bg) bg = GetColorRGBAlternate(cBackground,0);
 
     // Draw framed box (2 outer pixel always background)
