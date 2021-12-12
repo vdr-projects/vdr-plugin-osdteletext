@@ -104,6 +104,7 @@ namespace Display {
 
     inline void DrawMessage(const char *txt, const char *txt2, const cString *txtArray, const int txtArrayEntries, const int txtArrayColumns, const enumTeletextColor cFrame)
         { if (display) display->DrawMessage(txt, txt2, txtArray, NULL, txtArrayEntries, txtArrayColumns, cFrame); }
+
     inline void DrawMessage(const char *txt, const char *txt2, const cString *txtArray, const enumTeletextColor *ctxtArray, const int txtArrayEntries, const int txtArrayColumns, const enumTeletextColor cFrame)
         { if (display) display->DrawMessage(txt, txt2, txtArray, ctxtArray, txtArrayEntries, txtArrayColumns, cFrame); }
 
