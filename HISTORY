@@ -1,5 +1,10 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
+=======
+2021-12-12:
+- [pbiering] ChannelSwitch: add hint about Top40 channels with Teletext
+- [pbiering] DrawMessage: avoid transparent background on message boxes
+
 2021-12-10:
 - [pbiering] naming: replace "Line 24" with "Footer Line" and improve text representations
 

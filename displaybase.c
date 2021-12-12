@@ -873,8 +873,11 @@ void cDisplay::DrawClock() {
     DrawText(32,0,text,8);
 }
 
-void cDisplay::DrawMessage(const char *txt1, const char *txt2, const enumTeletextColor cFrame, const enumTeletextColor cText, const enumTeletextColor cBackground) {
-    int border=6; // minimum
+void cDisplay::DrawMessage(const char *txt1, const char *txt2, const cString *txtArray, const enumTeletextColor *ctxtArray, const int txtArrayEntries, const int txtArrayColumns, const enumTeletextColor cFrame, const enumTeletextColor cText, const enumTeletextColor cBackground, const enumTeletextColor cTextArray) {
+    int border = 6; // minimum
+
+    if (!osd) return;
+
     if (outputWidth > 720) {
         // increase border
         border = ((border * outputWidth) / 720) & 0xfffe; // always even number
@@ -883,8 +886,6 @@ void cDisplay::DrawMessage(const char *txt1, const char *txt2, const enumTeletex
         // select larger font
         MessageFont = cFont::GetFont(fontOsd);
     };
-
-    if (!osd) return;
 
     HoldFlush();
     // Hold flush until done
@@ -913,12 +914,19 @@ void cDisplay::DrawMessage(const char *txt1, const char *txt2, const enumTeletex
     int o1 = 0;
     int o2 = 0;
 
+    bool txtArrayActive = (txtArray != NULL) && (txtArrayEntries > 0) && (txtArrayColumns > 0);
+
     if (txt2 != NULL) {
         // 2nd line active
         w2 = MessageFont->Width(txt2);
         h2 = MessageFont->Height(txt2);
 
         h += h2 + border / 2; // increase height
+
+        if (txtArrayActive) {
+            // in case of txtArray mode, add gap between txt and txt2
+            h += border;
+        };
 
         if (w2 > w1) {
             // 2nd line is longer
@@ -928,13 +936,85 @@ void cDisplay::DrawMessage(const char *txt1, const char *txt2, const enumTeletex
             // 1st line is longer
             o2 = (w1 - w2) / 2;
         };
-    }
+    } else {
+        if (txtArrayActive) {
+            // in case of txtArray mode, add gap between txt and txtArray
+            h += border;
+        };
+    };
+
+    int wa[3] = {0, 0, 0};
+    int ha[3] = {0, 0, 0};
+    int ca = (txtArrayColumns <= 3) ? txtArrayColumns : 3; // limit to maximum 3
+    int wal;
+    int hal;
+    int cl;
+
+    if (txtArrayActive) {
+        // clear offset, always have alignment=left
+        o1 = 0;
+        o2 = 0;
+
+        // lines per column
+        cl = ceil((float) txtArrayEntries / (float) ca);
+
+        // calculate width and height per column
+        int c = 0;
+        for (int l = 0; l < txtArrayEntries; l++) {
+            if (l >= (c + 1) * cl) {
+                // next column
+                c++;
+                if (c >= ca) {
+                    // limit reached (should not happen)
+                    break;
+                };
+            };
+
+            wal = MessageFont->Width(txtArray[l]);
+            hal = MessageFont->Height(txtArray[l]);
+            if (wal > wa[c]) wa[c] = wal; // increase maximum width of column
+            ha[c] += hal + border / 2; // increase height
+        };
+
+        // calculate maximum width/height
+        int waMax = 0;
+        int haMax = 0;
+        for (c = 0; c < ca; c++) {
+            // add width per column
+            waMax += wa[c];
+
+            // find maximum height
+            if (ha[c] > haMax) haMax = ha[c];
+        };
+
+        // add column gap (2*border)
+        waMax += (ca - 1) * border * 2;
+
+        // check for maximum width of message box
+        if (waMax > w) {
+            w = waMax;
+        };
+
+        // add maximum height
+        h += haMax;
+    };
 
     w += 4 * border;
     h += 4 * border;
 
     // limit to maximum
-    if (w > outputWidth)  w = outputWidth;
+    if (w > outputWidth) {
+        w = outputWidth;
+
+        if (txtArrayActive) {
+            if (ca > 1) {
+                // make all textArray columns equal size
+                int wc = (w - (ca -1 ) * border * 2 - 4 * border) / ca;
+                for (int c = 0; c < ca; c++) wa[c] = wc;
+            };
+        };
+    };
+
     if (h > outputHeight) h = outputHeight;
 
     // center box
@@ -942,10 +1022,14 @@ void cDisplay::DrawMessage(const char *txt1, const char *txt2, const enumTeletex
     int y = (outputHeight-h)/2 + topFrame;
 
     // Get local color mapping
-    tColor fg=GetColorRGB(cText,0);
-    tColor bg=GetColorRGB(cBackground,0);
-    tColor fr=GetColorRGB(cFrame,0);
-    if (fg==bg) bg=GetColorRGBAlternate(cBackground,0);
+    tColor fg = GetColorRGB(cText, 0);
+    tColor bg = GetColorRGB(cBackground, 0);
+    tColor fr = GetColorRGB(cFrame, 0);
+    tColor fa = GetColorRGB(cTextArray, 0);
+    if (cBackground == ttcBlack) {
+        bg = clrBlack; // avoid transparent background on message boxes
+    };
+    if (fg == bg) bg = GetColorRGBAlternate(cBackground,0);
 
     // Draw framed box (2 outer pixel always background)
     osd->DrawRectangle(x           , y           , x+w-1         , y+h-1         , bg); // outer rectangle
@@ -971,13 +1055,60 @@ void cDisplay::DrawMessage(const char *txt1, const char *txt2, const enumTeletex
     };
 
     // Draw text
+    int xDraw = x + 2 * border;
+    int yDraw = y + 2 * border;
     if (txt2 == NULL) {
-        osd->DrawText(x + 2 * border + o1, y + 2 * border, txt1, fg, bg, MessageFont, w1, h1);
         DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OW=%d OH=%d w1=%d h1=%d txt1='%s'", MessageX, MessageY, MessageW, MessageH, outputWidth, outputHeight, w1, h1, txt1);
+
+        osd->DrawText(xDraw + o1, yDraw, txt1, fg, bg, MessageFont, w1, h1);
+        yDraw += h1 + border / 2;
+
+        if (txtArrayActive) yDraw += border; // add gap
     } else {
-        osd->DrawText(x + 2 * border + o1, y + 2 * border                  , txt1, fg, bg, MessageFont, w1, h1);
-        osd->DrawText(x + 2 * border + o2, y + 2 * border + h1 + border / 2, txt2, fg, bg, MessageFont, w2, h2);
         DEBUG_OT_MSG("MX=%d MY=%d MW=%d MH=%d OW=%d OH=%d w1=%d h1=%d w2=%d w2=%d txt1='%s' txt2='%s'", MessageX, MessageY, MessageW, MessageH, outputWidth, outputHeight, w1, h1, w2, h2, txt1, txt2);
+
+        osd->DrawText(xDraw + o1, yDraw, txt1, fg, bg, MessageFont, w1, h1);
+        yDraw += h1 + border / 2;
+
+        if (txtArrayActive) yDraw += border; // add gap
+
+        osd->DrawText(xDraw + o2, yDraw, txt2, (txtArrayActive) ? fa : fg, bg, MessageFont, w2, h2); // textArrayActive use related color
+        yDraw += h2 + border / 2;
+    };
+
+    // Draw text array in frame color
+    if ((txtArray != NULL) && (txtArrayEntries > 0) && (txtArrayColumns > 0)) {
+        DEBUG_OT_MSG("txtArray draw txtArrayEntries=%d txtArrayColumns=%d ca=%d cl=%d", txtArrayEntries, txtArrayColumns, ca, cl);
+        int c = 0;
+        int xa = 0;
+        int ya = 0;
+        for (int l = 0; l < txtArrayEntries; l++) {
+            if (l >= (c + 1) * cl) {
+                // next column
+                xa += wa[c] + (2 * border); // add width of current column + 2*border
+                ya = 0; // reset y
+
+                c++; // increase counter
+                if (c >= ca) {
+                    // limit reached (should not happen)
+                    break;
+                };
+            };
+
+            wal = MessageFont->Width(txtArray[l]);
+            hal = MessageFont->Height(txtArray[l]);
+            if (wal > wa[c]) wal = wa[c]; // limit to column maximum
+
+            if (ctxtArray != NULL) {
+                fa = GetColorRGB(ctxtArray[l], 0);
+            };
+
+            DEBUG_OT_MSG("txtArray l=%d c=%d xa=%d ya=%d, wal=%d hal=%d col=0x%08x txt='%s''", l, c, xa, ya, wal, hal, fa, *txtArray[l]);
+
+            osd->DrawText(xDraw + o1 + xa, yDraw + ya, txtArray[l], fa, bg, MessageFont, wal, hal);
+
+            ya += hal + border / 2;
+        };
     };
 
     // And flush all changes

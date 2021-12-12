@@ -236,8 +236,12 @@ public:
     void DrawPageId(const char *text, const enumTeletextColor cText = ttcWhite, const bool boxedAlwaysOn = false);
     // Draw Page ID string to OSD with optional text color and optional always in boxed mode
 
-    void DrawMessage(const char *txt1, const char *txt2 = NULL, const enumTeletextColor cFrame = ttcWhite, const enumTeletextColor cText = ttcWhite, const enumTeletextColor cBackground = ttcBlack);
-    // Draw a framed, centered message box to OSD with optional(default) color definition for frame(white), text(white), background(black) and a 2nd line
+    void DrawMessage(const char *txt1, const char *txt2 = NULL, const cString *txtArray = NULL, const enumTeletextColor *ctxtArray = NULL, const int txtArrayEntries = 0, const int txtArrayColumns = 0, const enumTeletextColor cFrame = ttcWhite, const enumTeletextColor cText = ttcWhite, const enumTeletextColor cBackground = ttcBlack, const enumTeletextColor cTextArray = ttcGrey);
+    // Draw a framed, centered message box to OSD with
+    //   optional(default) color definition for frame(white), text(white), background(black), txtArray(grey)
+    //   optional a 2nd line
+    //   optional additional lines with text in columns
+    //   optional colors for additional lines
 
     void ClearMessage();
     // Remove message box and redraw hidden content

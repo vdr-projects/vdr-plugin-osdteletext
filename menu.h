@@ -37,6 +37,7 @@ public:
    ~TeletextBrowser();
    void Show(void);
    static void ChannelSwitched(int ChannelNumber, const eChannelInfo info);
+   static void ChannelPage100Stored(int ChannelNumber);
    virtual eOSState ProcessKey(eKeys Key);
 protected:
    enum Direction { DirectionForward, DirectionBackward };
