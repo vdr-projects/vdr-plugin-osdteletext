@@ -1,6 +1,6 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
-2021-12-10
+2021-12-10:
 - [pbiering] naming: replace "Line 24" with "Footer Line" and improve text representations
 
 2021-12-09: version 2.3.0
