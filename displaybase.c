@@ -1009,7 +1009,7 @@ void cDisplay::DrawMessage(const char *txt1, const char *txt2, const cString *tx
         if (txtArrayActive) {
             if (ca > 1) {
                 // make all textArray columns equal size
-                int wc = (w - (ca -1 ) * border * 2 - 4 * border) / ca;
+                int wc = (w - (ca - 1) * border * 2 - 4 * border) / ca;
                 for (int c = 0; c < ca; c++) wa[c] = wc;
             };
         };
