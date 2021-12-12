@@ -31,6 +31,10 @@
 
 #define PSEUDO_HEX_TO_DECIMAL(x) ( (GET_HUNDREDS_DECIMAL(x))*256 + (GET_TENS_DECIMAL(x))*16 + (GET_ONES_DECIMAL(x)) )
 
+#define TTC_CHANNEL_LIVE   ttcWhite
+#define TTC_CHANNEL_TUNED  ttcMagenta
+#define TTC_CHANNEL_CACHED ttcCyan
+
 using namespace std;
    
 typedef map<int,int> IntMap;
@@ -1066,11 +1070,11 @@ void TeletextBrowser::ShowPageNumber() {
 
    if (ChannelInfo == ChannelIsTuned) {
       str[7]='t';
-      Display::DrawPageId(str, ttcMagenta, true); // colored
+      Display::DrawPageId(str, TTC_CHANNEL_TUNED, true); // colored
    }
    else if (liveChannelNumber != currentChannelNumber) {
       str[7]='c';
-      Display::DrawPageId(str, ttcCyan, true); // colored
+      Display::DrawPageId(str, TTC_CHANNEL_CACHED, true); // colored
    }
    else
       Display::DrawPageId(str);
@@ -1081,6 +1085,7 @@ void TeletextBrowser::ShowAskForChannel() {
 #define channelHintsColumns 3
    // cached during plugin run
    cString channelHintsArray[channelHintsEntriesMax];
+   enumTeletextColor channelHintsArrayColors[channelHintsEntriesMax];
    int channelHintsEntries = 0;
 
    if (selectingChannel) {
@@ -1097,21 +1102,31 @@ void TeletextBrowser::ShowAskForChannel() {
          const cChannel* Channel = Channels.GetByNumber(channelNumber);
 #endif
          if (Channel->Tpid()) {
+            // only store channels with Teletext
+
             bool cached = false;
             IntBoolMap::iterator it = channelPage100Stored.find(channelNumber);
             if (it != channelPage100Stored.end()) { //found
                cached = true;
-            }
-            // only store channels with Teletext
-            //    add additional hint text
-            //    :* -> current channel
-            //    :l -> live channel
-            channelHintsArray[channelHintsEntries] = cString::sprintf("%d%s: %s"
-                  , channelNumber
-                  , (channelNumber == currentChannelNumber) ? ":*" :
-                     (channelNumber == liveChannelNumber ? ":L" :
-                        (cached ? ":C" : ""))
-                  , Channel->ShortName(true));
+            };
+
+            const char *hint = "";
+            enumTeletextColor color = ttcGrey; // default
+
+            if (channelNumber == currentChannelNumber) {
+               hint = ":*";
+               color = TTC_CHANNEL_TUNED;
+            } else if (channelNumber == liveChannelNumber) {
+               hint = ":L";
+               color = TTC_CHANNEL_LIVE;
+            } else if (cached) {
+               hint = ":C";
+               color = TTC_CHANNEL_CACHED;
+            };
+
+            // add additional hint text
+            channelHintsArray[channelHintsEntries] = cString::sprintf("%d%s: %s", channelNumber, hint, Channel->ShortName(true));
+            channelHintsArrayColors[channelHintsEntries] = color;
             channelHintsEntries++;
          };
          channelNumber++;
@@ -1122,7 +1137,7 @@ void TeletextBrowser::ShowAskForChannel() {
       if (channelHintsEntries > 0) {
          // new, with channel hints
          cString str2 = cString::sprintf("%s (Top %d %s %s)", tr("Channels"), channelHintsEntries, tr("with"), tr("Teletext"));
-         Display::DrawMessage(str, str2, channelHintsArray, channelHintsEntries, channelHintsColumns, ttcBlue);
+         Display::DrawMessage(str, str2, channelHintsArray, channelHintsArrayColors, channelHintsEntries, channelHintsColumns, ttcBlue);
       } else {
          // default without channel hints
          Display::DrawMessage(str, ttcBlue);
