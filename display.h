@@ -98,19 +98,22 @@ namespace Display {
         { if (display) display->DrawMessage(txt, txt2); }
 
     inline void DrawMessage(const char *txt, const enumTeletextColor cFrame)
-        { if (display) display->DrawMessage(txt, NULL, cFrame); }
+        { if (display) display->DrawMessage(txt, NULL, NULL, 0, 0, cFrame); }
     inline void DrawMessage(const char *txt, const char *txt2,  const enumTeletextColor cFrame)
-        { if (display) display->DrawMessage(txt, txt2, cFrame); }
+        { if (display) display->DrawMessage(txt, txt2, NULL, 0, 0, cFrame); }
+
+    inline void DrawMessage(const char *txt, const char *txt2, const cString *txtArray, const int txtArrayEntries, const int txtArrayColumns, const enumTeletextColor cFrame)
+        { if (display) display->DrawMessage(txt, txt2, txtArray, txtArrayEntries, txtArrayColumns, cFrame); }
 
     inline void DrawMessage(const char *txt, const enumTeletextColor cFrame, const enumTeletextColor cText)
-        { if (display) display->DrawMessage(txt, NULL, cFrame, cText); }
+        { if (display) display->DrawMessage(txt, NULL, NULL, 0, 0, cFrame, cText); }
     inline void DrawMessage(const char *txt, const char *txt2, const enumTeletextColor cFrame, const enumTeletextColor cText)
-        { if (display) display->DrawMessage(txt, txt2, cFrame, cText); }
+        { if (display) display->DrawMessage(txt, txt2, NULL, 0, 0, cFrame, cText); }
 
     inline void DrawMessage(const char *txt, const enumTeletextColor cFrame, const enumTeletextColor cText, const enumTeletextColor cBackground)
-        { if (display) display->DrawMessage(txt, NULL, cFrame, cText, cBackground); }
+        { if (display) display->DrawMessage(txt, NULL, NULL, 0, 0, cFrame, cText, cBackground); }
     inline void DrawMessage(const char *txt, const char *txt2, const enumTeletextColor cFrame, const enumTeletextColor cText, const enumTeletextColor cBackground)
-        { if (display) display->DrawMessage(txt, txt2, cFrame, cText, cBackground); }
+        { if (display) display->DrawMessage(txt, txt2, NULL, 0, 0, cFrame, cText, cBackground); }
 
     inline void ClearMessage()
         { if (display) display->ClearMessage(); }
