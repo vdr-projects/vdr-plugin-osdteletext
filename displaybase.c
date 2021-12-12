@@ -873,7 +873,7 @@ void cDisplay::DrawClock() {
     DrawText(32,0,text,8);
 }
 
-void cDisplay::DrawMessage(const char *txt1, const char *txt2, const cString *txtArray, const int txtArrayEntries, const int txtArrayColumns, const enumTeletextColor cFrame, const enumTeletextColor cText, const enumTeletextColor cBackground, const enumTeletextColor cTextArray) {
+void cDisplay::DrawMessage(const char *txt1, const char *txt2, const cString *txtArray, const enumTeletextColor *ctxtArray, const int txtArrayEntries, const int txtArrayColumns, const enumTeletextColor cFrame, const enumTeletextColor cText, const enumTeletextColor cBackground, const enumTeletextColor cTextArray) {
     int border = 6; // minimum
 
     if (!osd) return;
@@ -1096,7 +1096,11 @@ void cDisplay::DrawMessage(const char *txt1, const char *txt2, const cString *tx
             hal = MessageFont->Height(txtArray[l]);
             if (wal > wa[c]) wal = wa[c]; // limit to column maximum
 
-            DEBUG_OT_MSG("txtArray l=%d c=%d xa=%d ya=%d, wal=%d hal=%d txt='%s''", l, c, xa, ya, wal, hal, *txtArray[l]);
+            if (ctxtArray != NULL) {
+                fa = GetColorRGB(ctxtArray[l], 0);
+            };
+
+            DEBUG_OT_MSG("txtArray l=%d c=%d xa=%d ya=%d, wal=%d hal=%d col=0x%08x txt='%s''", l, c, xa, ya, wal, hal, fa, *txtArray[l]);
 
             osd->DrawText(xDraw + o1 + xa, yDraw + ya, txtArray[l], fa, bg, MessageFont, wal, hal);
 

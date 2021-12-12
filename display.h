@@ -98,22 +98,24 @@ namespace Display {
         { if (display) display->DrawMessage(txt, txt2); }
 
     inline void DrawMessage(const char *txt, const enumTeletextColor cFrame)
-        { if (display) display->DrawMessage(txt, NULL, NULL, 0, 0, cFrame); }
+        { if (display) display->DrawMessage(txt, NULL, NULL, NULL, 0, 0, cFrame); }
     inline void DrawMessage(const char *txt, const char *txt2,  const enumTeletextColor cFrame)
-        { if (display) display->DrawMessage(txt, txt2, NULL, 0, 0, cFrame); }
+        { if (display) display->DrawMessage(txt, txt2, NULL, NULL, 0, 0, cFrame); }
 
     inline void DrawMessage(const char *txt, const char *txt2, const cString *txtArray, const int txtArrayEntries, const int txtArrayColumns, const enumTeletextColor cFrame)
-        { if (display) display->DrawMessage(txt, txt2, txtArray, txtArrayEntries, txtArrayColumns, cFrame); }
+        { if (display) display->DrawMessage(txt, txt2, txtArray, NULL, txtArrayEntries, txtArrayColumns, cFrame); }
+    inline void DrawMessage(const char *txt, const char *txt2, const cString *txtArray, const enumTeletextColor *ctxtArray, const int txtArrayEntries, const int txtArrayColumns, const enumTeletextColor cFrame)
+        { if (display) display->DrawMessage(txt, txt2, txtArray, ctxtArray, txtArrayEntries, txtArrayColumns, cFrame); }
 
     inline void DrawMessage(const char *txt, const enumTeletextColor cFrame, const enumTeletextColor cText)
-        { if (display) display->DrawMessage(txt, NULL, NULL, 0, 0, cFrame, cText); }
+        { if (display) display->DrawMessage(txt, NULL, NULL, NULL, 0, 0, cFrame, cText); }
     inline void DrawMessage(const char *txt, const char *txt2, const enumTeletextColor cFrame, const enumTeletextColor cText)
-        { if (display) display->DrawMessage(txt, txt2, NULL, 0, 0, cFrame, cText); }
+        { if (display) display->DrawMessage(txt, txt2, NULL, NULL, 0, 0, cFrame, cText); }
 
     inline void DrawMessage(const char *txt, const enumTeletextColor cFrame, const enumTeletextColor cText, const enumTeletextColor cBackground)
-        { if (display) display->DrawMessage(txt, NULL, NULL, 0, 0, cFrame, cText, cBackground); }
+        { if (display) display->DrawMessage(txt, NULL, NULL, NULL, 0, 0, cFrame, cText, cBackground); }
     inline void DrawMessage(const char *txt, const char *txt2, const enumTeletextColor cFrame, const enumTeletextColor cText, const enumTeletextColor cBackground)
-        { if (display) display->DrawMessage(txt, txt2, NULL, 0, 0, cFrame, cText, cBackground); }
+        { if (display) display->DrawMessage(txt, txt2, NULL, NULL, 0, 0, cFrame, cText, cBackground); }
 
     inline void ClearMessage()
         { if (display) display->ClearMessage(); }
