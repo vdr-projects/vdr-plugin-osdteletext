@@ -1,5 +1,8 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
+2021-12-12:
+- [pbiering] ChannelSwitch: add hint about Top40 channels with Teletext
+
 2021-12-09: version 2.3.0
 - [pbiering] add support for half bright standard colors and ETSI colors 16-31
 - [pbiering] extend 24-Line-Toggle with a 3rd option to display hint lines for standard keys
