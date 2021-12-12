@@ -1113,12 +1113,12 @@ void TeletextBrowser::ShowAskForChannel() {
             const char *hint = "";
             enumTeletextColor color = ttcGrey; // default
 
-            if (channelNumber == currentChannelNumber) {
-               hint = ":*";
-               color = TTC_CHANNEL_TUNED;
-            } else if (channelNumber == liveChannelNumber) {
+            if (channelNumber == liveChannelNumber) {
                hint = ":L";
                color = TTC_CHANNEL_LIVE;
+            } else if (channelNumber == currentChannelNumber) {
+               hint = ":T";
+               color = TTC_CHANNEL_TUNED;
             } else if (cached) {
                hint = ":C";
                color = TTC_CHANNEL_CACHED;
