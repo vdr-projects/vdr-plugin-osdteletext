@@ -248,7 +248,7 @@ msgid "SwitchBack"
 msgstr "Hintergrund"
 
 msgid "FooterLine"
-msgstr ""
+msgstr "Fusszeile"
 
 msgid "HkLevel+"
 msgstr "HkEbene+"
