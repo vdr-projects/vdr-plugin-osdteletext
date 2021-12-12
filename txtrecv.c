@@ -422,6 +422,11 @@ void cTxtReceiver::SaveAndDeleteTxtPage()
   if (TxtPage) {
      if (storeTopText || !TxtPage->IsTopTextPage()) {
         TxtPage->save();
+
+        if (TxtPage->page.page == 0x100) {
+           // call browser to place mark in map
+           TeletextBrowser::ChannelPage100Stored(channel->Number());
+        };
         DELETENULL(TxtPage);
      }
   }

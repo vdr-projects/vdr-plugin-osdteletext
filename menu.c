@@ -36,6 +36,10 @@ using namespace std;
 typedef map<int,int> IntMap;
 IntMap channelPageMap;
 
+// map for flag whether Page100 was stored already in cache, used on ChannelSwitch hint page
+typedef map<int,bool> IntBoolMap;
+IntBoolMap channelPage100Stored;
+
 //static variables
 int TeletextBrowser::currentPage=0x100; //Believe it or not, the teletext numbers are somehow hexadecimal
 int TeletextBrowser::currentSubPage=0;
@@ -93,6 +97,12 @@ bool TeletextBrowser::CheckIsValidChannel(int number) {
     return (Channels.GetByNumber(number) != 0);
 #endif
 }
+
+// callback from txtrec in case of page 100 was received and stored
+void TeletextBrowser::ChannelPage100Stored(int ChannelNumber) {
+   DEBUG_OT_TXTRCVC("called with ChNu=%d", ChannelNumber);
+   channelPage100Stored[ChannelNumber] = true;
+};
 
 void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelInfo info) {
    static eChannelInfo infoLast = ChannelIsLive;
