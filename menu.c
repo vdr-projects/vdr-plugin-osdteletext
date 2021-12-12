@@ -1077,9 +1077,56 @@ void TeletextBrowser::ShowPageNumber() {
 }
 
 void TeletextBrowser::ShowAskForChannel() {
+#define channelHintsEntriesMax 40
+#define channelHintsColumns 3
+   // cached during plugin run
+   cString channelHintsArray[channelHintsEntriesMax];
+   int channelHintsEntries = 0;
+
    if (selectingChannel) {
-      cString str = cString::sprintf(selectingChannelNumber > 0 ? "%s%d" : "%s", tr("Channel (press OK): "), selectingChannelNumber);
-      Display::DrawMessage(str, ttcBlue);
+      int channelNumber = 1;
+      while (channelHintsEntries < channelHintsEntriesMax) {
+         if (! CheckIsValidChannel(channelNumber)) {
+            // no more channels
+            break;
+         };
+#if defined(APIVERSNUM) && APIVERSNUM >= 20301
+         LOCK_CHANNELS_READ;
+         const cChannel* Channel = Channels->GetByNumber(channelNumber);
+#else
+         const cChannel* Channel = Channels.GetByNumber(channelNumber);
+#endif
+         if (Channel->Tpid()) {
+            bool cached = false;
+            IntBoolMap::iterator it = channelPage100Stored.find(channelNumber);
+            if (it != channelPage100Stored.end()) { //found
+               cached = true;
+            }
+            // only store channels with Teletext
+            //    add additional hint text
+            //    :* -> current channel
+            //    :l -> live channel
+            channelHintsArray[channelHintsEntries] = cString::sprintf("%d%s: %s"
+                  , channelNumber
+                  , (channelNumber == currentChannelNumber) ? ":*" :
+                     (channelNumber == liveChannelNumber ? ":L" :
+                        (cached ? ":C" : ""))
+                  , Channel->ShortName(true));
+            channelHintsEntries++;
+         };
+         channelNumber++;
+      };
+
+      cString str = cString::sprintf((selectingChannelNumber > 0) ? "%s%d_" : "%s_", tr("Channel (press OK): "), selectingChannelNumber);
+
+      if (channelHintsEntries > 0) {
+         // new, with channel hints
+         cString str2 = cString::sprintf("%s (Top %d %s %s)", tr("Channels"), channelHintsEntries, tr("with"), tr("Teletext"));
+         Display::DrawMessage(str, str2, channelHintsArray, channelHintsEntries, channelHintsColumns, ttcBlue);
+      } else {
+         // default without channel hints
+         Display::DrawMessage(str, ttcBlue);
+      };
    }
 }
 
