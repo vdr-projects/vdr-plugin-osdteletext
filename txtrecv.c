@@ -306,8 +306,13 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber, bool Li
          TeletextBrowser::ChannelSwitched(ChannelNumber, ChannelIsTuned);
       };
    } else {
-      DEBUG_OT_TXTRCVC("NOOP  do not attach receiver (MISSING teletext) on DVB %d for channel %d '%s'\n", Device->DeviceNumber(), newChannel->Number(), newChannel->Name());
-      TeletextBrowser::ChannelSwitched(ChannelNumber, ChannelHasNoTeletext);
+      if (LiveView) {
+         DEBUG_OT_TXTRCVC("NOOP  do not attach receiver (MISSING teletext) on DVB %d for LIVE channel %d '%s'\n", Device->DeviceNumber(), newChannel->Number(), newChannel->Name());
+         TeletextBrowser::ChannelSwitched(ChannelNumber, ChannelIsLiveButHasNoTeletext);
+      } else {
+         DEBUG_OT_TXTRCVC("NOOP  do not attach receiver (MISSING teletext) on DVB %d for TUNED channel %d '%s'\n", Device->DeviceNumber(), newChannel->Number(), newChannel->Name());
+         TeletextBrowser::ChannelSwitched(ChannelNumber, ChannelIsTunedButHasNoTeletext);
+      };
    }
 }
 

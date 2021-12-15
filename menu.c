@@ -139,11 +139,11 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelInfo info
    channel=chid;
    channelClass = *chan; // remember for later to display channel name
 
-   if (info == ChannelIsLive)
+   if ((info == ChannelIsLive) || (info == ChannelIsLiveButHasNoTeletext))
       liveChannelNumber= ChannelNumber; // remember active live channel
 
    ChannelInfo = info; // store info
-   
+
    //store page number of current channel
    IntMap::iterator it;
    channelPageMap[currentChannelNumber] = currentPage;
@@ -170,7 +170,7 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelInfo info
 
       self->delayClearMessage = 1; // default
 
-      if (info == ChannelHasNoTeletext) {
+      if ((info == ChannelIsLiveButHasNoTeletext) || (info == ChannelIsTunedButHasNoTeletext)) {
          snprintf(str, sizeof(str), "%s %s (%s %s)", tr("Switch to"), tr("Channel"), tr("without"), tr("Teletext"));
          color = ttcRed;
       }
@@ -1195,7 +1195,7 @@ bool TeletextBrowser::DecodePage(bool suppressMessage) {
       char str2[80];
       snprintf(str2, sizeof(str2), "%d: %s", channelClass.Number(), channelClass.Name());
       enumTeletextColor color = ttcYellow;
-      if (ChannelInfo == ChannelHasNoTeletext) {
+      if ((ChannelInfo == ChannelIsLiveButHasNoTeletext) || (ChannelInfo == ChannelIsTunedButHasNoTeletext)) {
          snprintf(str, sizeof(str), "%s %s (%s %s)", tr("Switch to"), tr("Channel"), tr("without"), tr("Teletext"));
          color = ttcRed;
       } else {
