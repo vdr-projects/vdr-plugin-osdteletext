@@ -67,10 +67,12 @@ TeletextBrowser::TeletextBrowser(cTxtStatus *txtSt,Storage *s)
     hotkeyLevel(0),
     delayClearMessage(0),
     needClearMessage(false), selectingChannelNumber(-1), txtStatus(txtSt),
-    suspendedReceiving(false), previousPage(currentPage),
+    previousPage(currentPage),
     previousSubPage(currentSubPage), pageBeforeNumberInput(currentPage),
     lastActivity(time(NULL)), inactivityTimeout(-1), storage(s)
 {
+   DEBUG_OT("called");
+
    if (!clrBackgroundInit) {
       clrBackground = TTSETUPPRESET_TCOLOR(BackTrans); // default
       clrBackgroundInit = true;
@@ -83,15 +85,21 @@ TeletextBrowser::TeletextBrowser(cTxtStatus *txtSt,Storage *s)
 
 
 TeletextBrowser::~TeletextBrowser() {
+   DEBUG_OT("called");
+
    Display::Delete();
 
    self=0;
 }
 
+
 void TeletextBrowser::Show(void) {
+   DEBUG_OT("called");
+
     Display::SetMode(Display::mode, clrBackground);
     ShowPage();
 }
+
 
 bool TeletextBrowser::CheckIsValidChannel(int number) {
 #if defined(APIVERSNUM) && APIVERSNUM >= 20301
@@ -102,11 +110,13 @@ bool TeletextBrowser::CheckIsValidChannel(int number) {
 #endif
 }
 
+
 // callback from txtrec in case of page 100 was received and stored
 void TeletextBrowser::ChannelPage100Stored(int ChannelNumber) {
    DEBUG_OT_TXTRCVC("called with ChNu=%d", ChannelNumber);
    channelPage100Stored[ChannelNumber] = true;
 };
+
 
 void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelInfo info) {
    static eChannelInfo infoLast = ChannelIsLive;
@@ -129,11 +139,11 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelInfo info
    channel=chid;
    channelClass = *chan; // remember for later to display channel name
 
-   if (info == ChannelIsLive)
+   if ((info == ChannelIsLive) || (info == ChannelIsLiveButHasNoTeletext))
       liveChannelNumber= ChannelNumber; // remember active live channel
 
    ChannelInfo = info; // store info
-   
+
    //store page number of current channel
    IntMap::iterator it;
    channelPageMap[currentChannelNumber] = currentPage;
@@ -160,7 +170,7 @@ void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelInfo info
 
       self->delayClearMessage = 1; // default
 
-      if (info == ChannelHasNoTeletext) {
+      if ((info == ChannelIsLiveButHasNoTeletext) || (info == ChannelIsTunedButHasNoTeletext)) {
          snprintf(str, sizeof(str), "%s %s (%s %s)", tr("Switch to"), tr("Channel"), tr("without"), tr("Teletext"));
          color = ttcRed;
       }
@@ -526,6 +536,7 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
    return osContinue;
 }
 
+
 bool TeletextBrowser::ExecuteActionConfig(eTeletextActionConfig e, int delta) {
    bool changedConfig = false;
 
@@ -647,16 +658,6 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
              Display::ClearMessage();
          };
          break;
-
-      /*case SuspendReceiving:
-            if (!txtStatus)
-               break;
-            //if (suspendedReceiving)
-             //  txtStatus->ForceSuspending(false);
-            //else
-             //  txtStatus->ForceSuspending(true);
-            //suspendedReceiving=(!suspendedReceiving);
-            break;*/
 
       case DarkScreen:
          DEBUG_OT_KEYS("key action: 'DarkScreen'");
@@ -842,6 +843,7 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
    }
 }
 
+
 // 3-state toggling between configured->transparent->black.
 // If configured is black or transparent, do 2-state transparent->black only.
 void TeletextBrowser::ChangeBackground()
@@ -969,6 +971,7 @@ int TeletextBrowser::nextValidPageNumber(int start, Direction direction) {
    return start;
 }
 
+
 void TeletextBrowser::ChangePageRelative(Direction direction)
 {
    int oldpage = currentPage;
@@ -992,6 +995,7 @@ void TeletextBrowser::ChangePageRelative(Direction direction)
    return;
 }
 
+
 void TeletextBrowser::ChangeSubPageRelative(Direction direction)
 {
    int oldsubpage = currentSubPage;
@@ -1012,6 +1016,7 @@ void TeletextBrowser::ChangeSubPageRelative(Direction direction)
    return;
 }
 
+
 bool TeletextBrowser::CheckFirstSubPage(int startWith) {
    int oldsubpage = currentSubPage;
 
@@ -1029,6 +1034,7 @@ bool TeletextBrowser::CheckFirstSubPage(int startWith) {
    return false;
 }
 
+
 bool TeletextBrowser::CheckPage()
 {
    StorageHandle fd;
@@ -1040,6 +1046,7 @@ bool TeletextBrowser::CheckPage()
    return true;
 }
 
+
 //sets the previousPage variables if and only if new page is different from old page
 void TeletextBrowser::SetPreviousPage(int oldPage, int oldSubPage, int newPage)  {
    if (oldPage != newPage) {
@@ -1049,14 +1056,15 @@ void TeletextBrowser::SetPreviousPage(int oldPage, int oldSubPage, int newPage) 
 }
 
 
-
-
 void TeletextBrowser::ShowPage(bool suppressMessage) {
+   DEBUG_OT("called with suppressMessage=%s", BOOLTOTEXT(suppressMessage));
+
    if ((pageFound=DecodePage(suppressMessage))) {
       if (ttSetup.autoUpdatePage)
          checkSum=PageCheckSum();
    }
 }
+
 
 void TeletextBrowser::ShowPageNumber() {
    DEBUG_OT_DRPI("called with currentPage=%03x currentSubPage=%02x", currentPage, currentSubPage);
@@ -1079,6 +1087,7 @@ void TeletextBrowser::ShowPageNumber() {
    else
       Display::DrawPageId(str);
 }
+
 
 void TeletextBrowser::ShowAskForChannel() {
 #define channelHintsEntriesMax 40
@@ -1145,8 +1154,11 @@ void TeletextBrowser::ShowAskForChannel() {
    }
 }
 
+
 //this is taken and adapted from the teletext plugin since it uses its data
 bool TeletextBrowser::DecodePage(bool suppressMessage) {
+   DEBUG_OT("called with suppressMessage=%s", BOOLTOTEXT(suppressMessage));
+
    // Load the page and decodes it
    unsigned char cache[sizeof(TelePageData)];
    StorageHandle fd;
@@ -1183,7 +1195,7 @@ bool TeletextBrowser::DecodePage(bool suppressMessage) {
       char str2[80];
       snprintf(str2, sizeof(str2), "%d: %s", channelClass.Number(), channelClass.Name());
       enumTeletextColor color = ttcYellow;
-      if (ChannelInfo == ChannelHasNoTeletext) {
+      if ((ChannelInfo == ChannelIsLiveButHasNoTeletext) || (ChannelInfo == ChannelIsTunedButHasNoTeletext)) {
          snprintf(str, sizeof(str), "%s %s (%s %s)", tr("Switch to"), tr("Channel"), tr("without"), tr("Teletext"));
          color = ttcRed;
       } else {
@@ -1234,10 +1246,12 @@ int TeletextBrowser::PageCheckSum() {
    return retSum;
 }
 
+
 void TeletextBrowser::UpdateClock() {
    if ( ttSetup.showClock )
       Display::DrawClock();
 }
+
 
 // convert action to text
 // implant hotkeyLevel number for related action
@@ -1396,7 +1410,9 @@ void TeletextBrowser::UpdateHotkey() {
    Display::DrawInfo(textI1, textI2, textI3, textI4, textI5, InfoLine2);
 }
 
+
 TeletextSetup ttSetup;
+
 
 TeletextSetup::TeletextSetup()
    //Set default values for setup options

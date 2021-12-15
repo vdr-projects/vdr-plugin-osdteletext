@@ -28,7 +28,8 @@ enum eChannelInfo {
    ChannelIsCached,
    ChannelWasTuned,
    ChannelWasTunedNewChannelIsLive,
-   ChannelHasNoTeletext
+   ChannelIsLiveButHasNoTeletext,
+   ChannelIsTunedButHasNoTeletext
 };
 
 class TeletextBrowser : public cOsdObject {
@@ -73,7 +74,6 @@ protected:
    int checkSum;
    cTxtStatus *txtStatus;
    bool paused;
-   bool suspendedReceiving;
    int previousPage;
    int previousSubPage;
    int pageBeforeNumberInput;
