@@ -1,9 +1,9 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
-2021-12-15:
+2021-12-15: version 2.3.1
 - [pbiering] ChannelSwitch: fix bug related to live channel hint in case of current channel has no Teletext
 
-2021-12-12: version 2.3.1
+2021-12-12:
 - [pbiering] ChannelSwitch: add hint about Top40 channels with Teletext
 - [pbiering] DrawMessage: avoid transparent background on message boxes
 
