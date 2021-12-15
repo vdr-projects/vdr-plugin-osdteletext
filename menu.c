@@ -71,6 +71,8 @@ TeletextBrowser::TeletextBrowser(cTxtStatus *txtSt,Storage *s)
     previousSubPage(currentSubPage), pageBeforeNumberInput(currentPage),
     lastActivity(time(NULL)), inactivityTimeout(-1), storage(s)
 {
+   DEBUG_OT("called");
+
    if (!clrBackgroundInit) {
       clrBackground = TTSETUPPRESET_TCOLOR(BackTrans); // default
       clrBackgroundInit = true;
@@ -83,15 +85,19 @@ TeletextBrowser::TeletextBrowser(cTxtStatus *txtSt,Storage *s)
 
 
 TeletextBrowser::~TeletextBrowser() {
+   DEBUG_OT("called");
+
    Display::Delete();
 
    self=0;
 }
 
+
 void TeletextBrowser::Show(void) {
     Display::SetMode(Display::mode, clrBackground);
     ShowPage();
 }
+
 
 bool TeletextBrowser::CheckIsValidChannel(int number) {
 #if defined(APIVERSNUM) && APIVERSNUM >= 20301
@@ -102,11 +108,13 @@ bool TeletextBrowser::CheckIsValidChannel(int number) {
 #endif
 }
 
+
 // callback from txtrec in case of page 100 was received and stored
 void TeletextBrowser::ChannelPage100Stored(int ChannelNumber) {
    DEBUG_OT_TXTRCVC("called with ChNu=%d", ChannelNumber);
    channelPage100Stored[ChannelNumber] = true;
 };
+
 
 void TeletextBrowser::ChannelSwitched(int ChannelNumber, const eChannelInfo info) {
    static eChannelInfo infoLast = ChannelIsLive;
@@ -526,6 +534,7 @@ eOSState TeletextBrowser::ProcessKey(eKeys Key) {
    return osContinue;
 }
 
+
 bool TeletextBrowser::ExecuteActionConfig(eTeletextActionConfig e, int delta) {
    bool changedConfig = false;
 
@@ -842,6 +851,7 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
    }
 }
 
+
 // 3-state toggling between configured->transparent->black.
 // If configured is black or transparent, do 2-state transparent->black only.
 void TeletextBrowser::ChangeBackground()
@@ -969,6 +979,7 @@ int TeletextBrowser::nextValidPageNumber(int start, Direction direction) {
    return start;
 }
 
+
 void TeletextBrowser::ChangePageRelative(Direction direction)
 {
    int oldpage = currentPage;
@@ -992,6 +1003,7 @@ void TeletextBrowser::ChangePageRelative(Direction direction)
    return;
 }
 
+
 void TeletextBrowser::ChangeSubPageRelative(Direction direction)
 {
    int oldsubpage = currentSubPage;
@@ -1012,6 +1024,7 @@ void TeletextBrowser::ChangeSubPageRelative(Direction direction)
    return;
 }
 
+
 bool TeletextBrowser::CheckFirstSubPage(int startWith) {
    int oldsubpage = currentSubPage;
 
@@ -1029,6 +1042,7 @@ bool TeletextBrowser::CheckFirstSubPage(int startWith) {
    return false;
 }
 
+
 bool TeletextBrowser::CheckPage()
 {
    StorageHandle fd;
@@ -1040,6 +1054,7 @@ bool TeletextBrowser::CheckPage()
    return true;
 }
 
+
 //sets the previousPage variables if and only if new page is different from old page
 void TeletextBrowser::SetPreviousPage(int oldPage, int oldSubPage, int newPage)  {
    if (oldPage != newPage) {
@@ -1049,14 +1064,13 @@ void TeletextBrowser::SetPreviousPage(int oldPage, int oldSubPage, int newPage) 
 }
 
 
-
-
 void TeletextBrowser::ShowPage(bool suppressMessage) {
    if ((pageFound=DecodePage(suppressMessage))) {
       if (ttSetup.autoUpdatePage)
          checkSum=PageCheckSum();
    }
 }
+
 
 void TeletextBrowser::ShowPageNumber() {
    DEBUG_OT_DRPI("called with currentPage=%03x currentSubPage=%02x", currentPage, currentSubPage);
@@ -1079,6 +1093,7 @@ void TeletextBrowser::ShowPageNumber() {
    else
       Display::DrawPageId(str);
 }
+
 
 void TeletextBrowser::ShowAskForChannel() {
 #define channelHintsEntriesMax 40
@@ -1144,6 +1159,7 @@ void TeletextBrowser::ShowAskForChannel() {
       };
    }
 }
+
 
 //this is taken and adapted from the teletext plugin since it uses its data
 bool TeletextBrowser::DecodePage(bool suppressMessage) {
@@ -1234,10 +1250,12 @@ int TeletextBrowser::PageCheckSum() {
    return retSum;
 }
 
+
 void TeletextBrowser::UpdateClock() {
    if ( ttSetup.showClock )
       Display::DrawClock();
 }
+
 
 // convert action to text
 // implant hotkeyLevel number for related action
@@ -1396,7 +1414,9 @@ void TeletextBrowser::UpdateHotkey() {
    Display::DrawInfo(textI1, textI2, textI3, textI4, textI5, InfoLine2);
 }
 
+
 TeletextSetup ttSetup;
+
 
 TeletextSetup::TeletextSetup()
    //Set default values for setup options
