@@ -67,7 +67,7 @@ TeletextBrowser::TeletextBrowser(cTxtStatus *txtSt,Storage *s)
     hotkeyLevel(0),
     delayClearMessage(0),
     needClearMessage(false), selectingChannelNumber(-1), txtStatus(txtSt),
-    suspendedReceiving(false), previousPage(currentPage),
+    previousPage(currentPage),
     previousSubPage(currentSubPage), pageBeforeNumberInput(currentPage),
     lastActivity(time(NULL)), inactivityTimeout(-1), storage(s)
 {
@@ -656,16 +656,6 @@ void TeletextBrowser::ExecuteAction(eTeletextAction e) {
              Display::ClearMessage();
          };
          break;
-
-      /*case SuspendReceiving:
-            if (!txtStatus)
-               break;
-            //if (suspendedReceiving)
-             //  txtStatus->ForceSuspending(false);
-            //else
-             //  txtStatus->ForceSuspending(true);
-            //suspendedReceiving=(!suspendedReceiving);
-            break;*/
 
       case DarkScreen:
          DEBUG_OT_KEYS("key action: 'DarkScreen'");

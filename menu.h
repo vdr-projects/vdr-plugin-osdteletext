@@ -73,7 +73,6 @@ protected:
    int checkSum;
    cTxtStatus *txtStatus;
    bool paused;
-   bool suspendedReceiving;
    int previousPage;
    int previousSubPage;
    int pageBeforeNumberInput;
