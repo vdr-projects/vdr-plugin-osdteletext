@@ -94,6 +94,8 @@ TeletextBrowser::~TeletextBrowser() {
 
 
 void TeletextBrowser::Show(void) {
+   DEBUG_OT("called");
+
     Display::SetMode(Display::mode, clrBackground);
     ShowPage();
 }
@@ -1055,6 +1057,8 @@ void TeletextBrowser::SetPreviousPage(int oldPage, int oldSubPage, int newPage) 
 
 
 void TeletextBrowser::ShowPage(bool suppressMessage) {
+   DEBUG_OT("called with suppressMessage=%s", BOOLTOTEXT(suppressMessage));
+
    if ((pageFound=DecodePage(suppressMessage))) {
       if (ttSetup.autoUpdatePage)
          checkSum=PageCheckSum();
@@ -1153,6 +1157,8 @@ void TeletextBrowser::ShowAskForChannel() {
 
 //this is taken and adapted from the teletext plugin since it uses its data
 bool TeletextBrowser::DecodePage(bool suppressMessage) {
+   DEBUG_OT("called with suppressMessage=%s", BOOLTOTEXT(suppressMessage));
+
    // Load the page and decodes it
    unsigned char cache[sizeof(TelePageData)];
    StorageHandle fd;
