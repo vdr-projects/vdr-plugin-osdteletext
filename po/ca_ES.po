@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-12-09 07:58+0100\n"
+"POT-Creation-Date: 2021-12-11 18:04+0100\n"
 "PO-Revision-Date: 2008-05-04 15:33+0200\n"
 "Last-Translator: Jordi Vilà <jvila@tinet.org>\n"
 "Language-Team: Catalan <vdr@linuxtv.org>\n"
@@ -81,6 +81,12 @@ msgstr ""
 msgid "Channel (press OK): "
 msgstr "Canal (premi OK):"
 
+msgid "Channels"
+msgstr ""
+
+msgid "with"
+msgstr ""
+
 msgid "Page"
 msgstr "Pàgina"
 
@@ -111,7 +117,7 @@ msgstr "Canvia el fons"
 msgid "Config"
 msgstr ""
 
-msgid "24-LineMode"
+msgid "Footer Line"
 msgstr ""
 
 msgid "Answer"
@@ -165,10 +171,10 @@ msgstr ""
 msgid "Hotkeys"
 msgstr ""
 
-msgid "No Hotkeys+Hints"
+msgid "None"
 msgstr ""
 
-msgid "Hotkeys+Hints"
+msgid "Hotkeys+Stdkeys"
 msgstr ""
 
 msgid "Hide mainmenu entry"
@@ -187,9 +193,6 @@ msgid "G2 code block"
 msgstr ""
 
 msgid "16-Color Mode"
-msgstr ""
-
-msgid "24-Line Mode"
 msgstr ""
 
 msgid "max"
@@ -246,7 +249,7 @@ msgstr ""
 msgid "SwitchBack"
 msgstr ""
 
-msgid "24LineMode"
+msgid "FooterLine"
 msgstr ""
 
 msgid "HkLevel+"

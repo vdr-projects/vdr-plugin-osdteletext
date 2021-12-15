@@ -46,7 +46,6 @@ enum eTeletextAction {
    HalfPage,
    SwitchChannel,
    DarkScreen,
-   /*SuspendReceiving,*/
    Config,
    LineMode24,
    ToggleConceal,
@@ -104,15 +103,21 @@ enum ActionHotkeys {
    LastActionHotkey
 };
 
-enum HotkeyFlags {
+enum HotkeyFlag {
    HotkeyNormal,
    HotkeyYellowValue,
    HotkeyGreenYellowValue
 };
 
-enum HintsFlags {
-   HintsKey,
-   HintsValue
+enum InfoLineFlag {
+   InfoLine1,
+   InfoLine2
+};
+
+enum HintLinesMode {
+   HintLinesHotkeys = 0,
+   HintLinesNone = 1,
+   HintLinesHotkeysAndStdkeys = 2
 };
 
 //Default values are set in menu.c, setup menu, parsing and storing can be found in osdteletext.c
@@ -151,10 +156,10 @@ public:
 #define TTSETUPPRESET_FONTNAME(type) ttSetup.txtFontNames[TTSETUPPRESET(type)]
 
 // Teletext display lines
-//  ttSetup.lineMode24 == 0: 25
-//  ttSetup.lineMode24 == 1: 24
-//  ttSetup.lineMode24 == 2: 27
-#define TT_DISPLAY_LINES  ((ttSetup.lineMode24 == 1) ? 24 : ((ttSetup.lineMode24 == 0) ? 25 : 27))
+//  ttSetup.lineMode24 == HintLinesHotkeys     : 25
+//  ttSetup.lineMode24 == HintLinesNone        : 24
+//  ttSetup.lineMode24 == (others)             : 27
+#define TT_DISPLAY_LINES  ((ttSetup.lineMode24 == HintLinesNone) ? 24 : ((ttSetup.lineMode24 == HintLinesHotkeys) ? 25 : 27))
 
 
 extern TeletextSetup ttSetup;

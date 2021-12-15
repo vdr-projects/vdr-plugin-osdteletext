@@ -32,7 +32,7 @@ using namespace std;
 
 #define NUMELEMENTS(x) (sizeof(x) / sizeof(x[0]))
 
-static const char *VERSION        = "2.3.0";
+static const char *VERSION        = "2.3.1";
 static const char *DESCRIPTION    = trNOOP("Displays teletext on the OSD");
 static const char *MAINMENUENTRY  = trNOOP("Teletext");
 
@@ -451,7 +451,7 @@ void cPluginTeletextosd::initTexts() {
       tr("Switch background"),
       //tr("Suspend receiving"),
       tr("Config"),
-      tr("24-LineMode"),
+      tr("Footer Line"),
       tr("Answer"),
       tr("Pause"),
       tr("Hotkey Level+"),
@@ -778,8 +778,8 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    temp.txtBlock[10] = tr("Hebrew");
 
    temp.lineMode[0]  = tr("Hotkeys");
-   temp.lineMode[1]  = tr("No Hotkeys+Hints");
-   temp.lineMode[2]  = tr("Hotkeys+Hints");
+   temp.lineMode[1]  = tr("None");
+   temp.lineMode[2]  = tr("Hotkeys+Stdkeys");
 
    osdPreset = 1;
    temp.osdPresetMax = ttSetup.osdPresetMax;
@@ -836,7 +836,7 @@ cTeletextSetupPage::cTeletextSetupPage(void) {
    Add(new cMenuEditStraItem(tr("G0 code block"), &temp.txtG0Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
    Add(new cMenuEditStraItem(tr("G2 code block"), &temp.txtG2Block, NUMELEMENTS(temp.txtBlock), temp.txtBlock));
    Add(new cMenuEditBoolItem(tr("16-Color Mode"), &temp.colorMode4bpp));
-   Add(new cMenuEditStraItem(tr("24-Line Mode"), &temp.lineMode24, NUMELEMENTS(temp.lineMode), temp.lineMode));
+   Add(new cMenuEditStraItem(tr("Footer Line"), &temp.lineMode24, NUMELEMENTS(temp.lineMode), temp.lineMode));
 
    // OSD presets
    if (maxOsdPreset > 1)

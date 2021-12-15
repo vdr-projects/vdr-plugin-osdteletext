@@ -224,11 +224,11 @@ public:
     // Max len chars, fill up with spaces
     // with alignment, foreground and background color
 
-    void DrawHotkey(const char *textRed, const char *textGreen, const char* textYellow, const char *textBlue, const HotkeyFlags flag);
-    // Draw hotkey to OSD
+    void DrawHotkey(const char *textRed, const char *textGreen, const char* textYellow, const char *textBlue, const HotkeyFlag flag);
+    // Draw hotkey to OSD (line 25)
 
-    void DrawHints(const char *textH1, const char *textH2, const char* textH3, const char *textH4, const char *textH5, const HintsFlags flag);
-    // Draw hint line to OSD
+    void DrawInfo(const char *textI1, const char *textI2, const char* textI3, const char *textI4, const char *textI5, const InfoLineFlag flag);
+    // Draw info line with 5 columns to OSD (line 26: flag=InfoLine1, line 27: flag=InfoLine2)
 
     void DrawClock();
     // Draw current time to OSD
@@ -236,8 +236,12 @@ public:
     void DrawPageId(const char *text, const enumTeletextColor cText = ttcWhite, const bool boxedAlwaysOn = false);
     // Draw Page ID string to OSD with optional text color and optional always in boxed mode
 
-    void DrawMessage(const char *txt1, const char *txt2 = NULL, const enumTeletextColor cFrame = ttcWhite, const enumTeletextColor cText = ttcWhite, const enumTeletextColor cBackground = ttcBlack);
-    // Draw a framed, centered message box to OSD with optional(default) color definition for frame(white), text(white), background(black) and a 2nd line
+    void DrawMessage(const char *txt1, const char *txt2 = NULL, const cString *txtArray = NULL, const enumTeletextColor *ctxtArray = NULL, const int txtArrayEntries = 0, const int txtArrayColumns = 0, const enumTeletextColor cFrame = ttcWhite, const enumTeletextColor cText = ttcWhite, const enumTeletextColor cBackground = ttcBlack, const enumTeletextColor cTextArray = ttcGrey);
+    // Draw a framed, centered message box to OSD with
+    //   optional(default) color definition for frame(white), text(white), background(black), txtArray(grey)
+    //   optional a 2nd line
+    //   optional additional lines with text in columns
+    //   optional colors for additional lines
 
     void ClearMessage();
     // Remove message box and redraw hidden content

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-12-09 07:58+0100\n"
+"POT-Creation-Date: 2021-12-11 18:04+0100\n"
 "PO-Revision-Date: 2008-12-30 13:52+0100\n"
 "Last-Translator: Andrey Pridvorov <ua0lnj@bk.ru>\n"
 "Language-Team: Russian <vdr@linuxtv.org>\n"
@@ -80,6 +80,12 @@ msgstr ""
 msgid "Channel (press OK): "
 msgstr "Канал (Нажмите ОК)"
 
+msgid "Channels"
+msgstr ""
+
+msgid "with"
+msgstr ""
+
 msgid "Page"
 msgstr "Страница"
 
@@ -110,7 +116,7 @@ msgstr "Переключить фон"
 msgid "Config"
 msgstr ""
 
-msgid "24-LineMode"
+msgid "Footer Line"
 msgstr ""
 
 msgid "Answer"
@@ -164,10 +170,10 @@ msgstr "Иврит"
 msgid "Hotkeys"
 msgstr ""
 
-msgid "No Hotkeys+Hints"
+msgid "None"
 msgstr ""
 
-msgid "Hotkeys+Hints"
+msgid "Hotkeys+Stdkeys"
 msgstr ""
 
 msgid "Hide mainmenu entry"
@@ -186,9 +192,6 @@ msgid "G2 code block"
 msgstr "G2 кодировка"
 
 msgid "16-Color Mode"
-msgstr ""
-
-msgid "24-Line Mode"
 msgstr ""
 
 msgid "max"
@@ -245,7 +248,7 @@ msgstr ""
 msgid "SwitchBack"
 msgstr ""
 
-msgid "24LineMode"
+msgid "FooterLine"
 msgstr ""
 
 msgid "HkLevel+"
