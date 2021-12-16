@@ -32,7 +32,7 @@ cDisplay::cDisplay(int width, int height)
       osd(NULL),
       outputWidth(0), outputHeight(0),
       leftFrame(0), rightFrame(0), topFrame(0), bottomFrame(0),
-      MessageFont(cFont::GetFont(fontSml)), MessageX(0), MessageY(0),
+      MessageFont(NULL), MessageX(0), MessageY(0),
       MessageW(0), MessageH(0),
       TXTFont(0), TXTDblWFont(0), TXTDblHFont(0), TXTDblHWFont(0), TXTHlfHFont(0)
 {
@@ -45,6 +45,7 @@ cDisplay::~cDisplay() {
     DELETENULL(TXTDblHFont);
     DELETENULL(TXTDblHWFont);
     DELETENULL(TXTHlfHFont);
+    DELETENULL(MessageFont);
 }
 
 // This is an improved detection mechanism (still ugly hack, any ideas on how to get font size with characters (glyphs) of specified width/height?)
@@ -882,9 +883,13 @@ void cDisplay::DrawMessage(const char *txt1, const char *txt2, const cString *tx
         // increase border
         border = ((border * outputWidth) / 720) & 0xfffe; // always even number
     };
-    if (outputWidth > 1280) {
-        // select larger font
-        MessageFont = cFont::GetFont(fontOsd);
+
+    // calculate scaled Height depending of outputHeight
+    int fontHeightScaled = (Setup.FontOsdSize * outputHeight) / cOsd::OsdHeight();
+
+    if (MessageFont == NULL) {
+        DEBUG_OT_FONT("create font with Setup.FontOsdSize=%d outputHeight=%d cOsd::OsdHeight=%d -> fontHeightScaled=%d", Setup.FontOsdSize, outputHeight, cOsd::OsdHeight(), fontHeightScaled);
+        MessageFont = cFont::CreateFont(Setup.FontOsd, fontHeightScaled);
     };
 
     HoldFlush();
