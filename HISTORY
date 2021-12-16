@@ -1,6 +1,9 @@
 VDR Plugin 'osdteletext' Revision History
 -----------------------------------------
-2021-12-15: version 2.3.1
+2021-12-16: version 2.3.1
+- [pbiering] DrawMessage: use scaled font to avoid exceeding current TT-OSD size
+
+2021-12-15:
 - [pbiering] ChannelSwitch: fix bug related to live channel hint in case of current channel has no Teletext
 
 2021-12-12:
