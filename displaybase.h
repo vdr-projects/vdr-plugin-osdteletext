@@ -77,6 +77,7 @@ protected:
     // frame border
 
     const cFont *MessageFont;
+    int MessageBorder;
     int MessageX,MessageY,MessageW,MessageH;
 
     const cFont *TXTFont;
