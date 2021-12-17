@@ -32,9 +32,10 @@ cDisplay::cDisplay(int width, int height)
       osd(NULL),
       outputWidth(0), outputHeight(0),
       leftFrame(0), rightFrame(0), topFrame(0), bottomFrame(0),
-      MessageFont(NULL), MessageX(0), MessageY(0),
+      MessageFont(NULL), MessageBorder(0),
+      MessageX(0), MessageY(0),
       MessageW(0), MessageH(0),
-      TXTFont(0), TXTDblWFont(0), TXTDblHFont(0), TXTDblHWFont(0), TXTHlfHFont(0)
+      TXTFont(NULL), TXTDblWFont(NULL), TXTDblHFont(NULL), TXTDblHWFont(NULL), TXTHlfHFont(NULL)
 {
 }
 
@@ -122,7 +123,7 @@ void cDisplay::InitScaler() {
 
     fontWidth = (outputWidth * 2 / 40) & 0xfffe;
     if (Zoom == Zoom_Off) {
-        fontHeight = (outputHeight * 2 / TT_DISPLAY_LINES)  & 0xfffe;
+        fontHeight = (outputHeight * 2 / TT_DISPLAY_LINES) & 0xfffe;
     } else {
         fontHeight = (outputHeight * 2 * 2 / TT_DISPLAY_LINES) & 0xfffe;
     }
@@ -153,6 +154,15 @@ void cDisplay::InitScaler() {
         TXTDblHWFont = GetFont(txtFontName, 3, txtFontHeight, txtFontWidth);
         TXTHlfHFont  = GetFont(txtFontName, 4, txtFontHeight / 4, txtFontWidth / 2);
     }
+
+    // calculate scaled Height depending of outputHeight
+    int MessageFontHeight = ceil((float) (Setup.FontOsdSize * outputHeight) / (float) cOsd::OsdHeight());
+
+    DEBUG_OT_FONT("create MessageFont with height based on Setup.FontOsdSize=%d outputHeight=%d cOsd::OsdHeight=%d -> MessageFontHeight=%d", Setup.FontOsdSize, outputHeight, cOsd::OsdHeight(), MessageFontHeight);
+    MessageFont = cFont::CreateFont(Setup.FontOsd, MessageFontHeight);
+
+    // scale border depending on width, base: 720 -> 6
+    MessageBorder = ceil((float) (6 * outputWidth) / (float) 720);
 }
 
 bool cDisplay::SetBlink(bool blink) {
@@ -875,22 +885,9 @@ void cDisplay::DrawClock() {
 }
 
 void cDisplay::DrawMessage(const char *txt1, const char *txt2, const cString *txtArray, const enumTeletextColor *ctxtArray, const int txtArrayEntries, const int txtArrayColumns, const enumTeletextColor cFrame, const enumTeletextColor cText, const enumTeletextColor cBackground, const enumTeletextColor cTextArray) {
-    int border = 6; // minimum
-
     if (!osd) return;
 
-    if (outputWidth > 720) {
-        // increase border
-        border = ((border * outputWidth) / 720) & 0xfffe; // always even number
-    };
-
-    // calculate scaled Height depending of outputHeight
-    int fontHeightScaled = (Setup.FontOsdSize * outputHeight) / cOsd::OsdHeight();
-
-    if (MessageFont == NULL) {
-        DEBUG_OT_FONT("create font with Setup.FontOsdSize=%d outputHeight=%d cOsd::OsdHeight=%d -> fontHeightScaled=%d", Setup.FontOsdSize, outputHeight, cOsd::OsdHeight(), fontHeightScaled);
-        MessageFont = cFont::CreateFont(Setup.FontOsd, fontHeightScaled);
-    };
+    int border = MessageBorder;
 
     HoldFlush();
     // Hold flush until done
