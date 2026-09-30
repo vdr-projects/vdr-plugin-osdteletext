@@ -81,6 +81,7 @@ DEFINES += -DPLUGIN_NAME_I18N='"$(PLUGIN)"'
 ### The object files (add further files here):
 
 OBJS = $(PLUGIN).o menu.o txtfont.o txtrecv.o txtrender.o displaybase.o display.o storage.o legacystorage.o packedstorage.o rootdir.o setup.o
+SERVICE_CONTRACT_TEST = $(TMPDIR)/test_osdteletext_service_contract
 
 ### The main target:
 
@@ -131,6 +132,20 @@ install-i18n: $(I18Nmsgs)
 $(SOFILE): $(OBJS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) -o $@
 
+.PHONY: check test-service-contract check-service-wiring check-snapshot-freshness
+check: test-service-contract check-service-wiring check-snapshot-freshness
+
+test-service-contract:
+	$(CXX) -std=c++11 -Wall -Wextra -pedantic -I. tests/test_service_contract.cpp -o $(SERVICE_CONTRACT_TEST)
+	$(SERVICE_CONTRACT_TEST)
+	rm -f $(SERVICE_CONTRACT_TEST)
+
+check-service-wiring:
+	python3 tests/check_service_wiring.py
+
+check-snapshot-freshness:
+	python3 tests/test_snapshot_store_source.py
+
 install-lib: $(SOFILE)
 	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
 
@@ -147,3 +162,4 @@ dist: $(I18Npo) clean
 clean:
 	@-rm -f $(PODIR)/*.mo $(PODIR)/*.pot
 	@-rm -f $(OBJS) $(DEPFILE) *.so *.tgz core* *~
+	@-rm -f $(SERVICE_CONTRACT_TEST)

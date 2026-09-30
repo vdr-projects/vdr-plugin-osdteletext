@@ -25,6 +25,7 @@ using namespace std;
 #include "legacystorage.h"
 #include "packedstorage.h"
 #include "logging.h"
+#include "teletextservice.h"
 
 #if defined(APIVERSNUM) && APIVERSNUM < 10739
 #error "VDR-1.7.39 API version or greater is required!"
@@ -66,6 +67,7 @@ public:
   virtual bool Start(void);
   virtual void Stop(void);
   virtual void Housekeeping(void);
+  virtual bool Service(const char *Id, void *Data = NULL);
   virtual const char *MainMenuEntry(void);
   virtual cOsdObject *MainMenuAction(void);
   virtual cMenuSetupPage *SetupMenu(void);
@@ -327,6 +329,8 @@ bool cPluginTeletextosd::ProcessArgs(int argc, char *argv[])
 
 bool cPluginTeletextosd::Start(void)
 {
+   TeletextService::ClearLiveService();
+
    // Start any background activities the plugin shall perform.
    //Clean any files which might be remaining from the last session,
    //perhaps due to a crash they have not been deleted.
@@ -409,6 +413,7 @@ void cPluginTeletextosd::Stop(void)
    };
 
    DELETENULL(txtStatus);
+   TeletextService::ClearLiveService();
    if (storage) {
       storage->cleanUp();
       DELETENULL(storage);
@@ -467,6 +472,11 @@ void cPluginTeletextosd::initTexts() {
 void cPluginTeletextosd::Housekeeping(void)
 {
   // Perform any cleanup or other regular tasks.
+}
+
+bool cPluginTeletextosd::Service(const char *Id, void *Data)
+{
+   return TeletextService::Handle(Id, Data);
 }
 
 const char *cPluginTeletextosd::MainMenuEntry(void)

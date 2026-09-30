@@ -16,6 +16,7 @@
 #include "setup.h"
 #include "menu.h"
 #include "logging.h"
+#include "teletextservice.h"
 
 #include <vdr/channels.h>
 #include <vdr/device.h>
@@ -180,17 +181,30 @@ void cTelePage::SetLine(const int line, uchar *myptr, const char *debugPrefix)
 void cTelePage::save()
 {
    unsigned char buf;
+
+   // Build the legacy VTXV5 header before publication so the in-memory
+   // snapshot is renderable without reading the on-disk cache.
+   memcpy(pagedata.pageheader, "VTXV5", 5);      // prefix (5)  "VTXV4" < 2.0.0
+   buf=0x01;      pagedata.pageheader[5]  = buf; // fixed 0x01 (1)
+   buf=mag;       pagedata.pageheader[6]  = buf; // mag (1)
+   buf=page.page; pagedata.pageheader[7]  = buf; // page (1)
+   buf=flags;     pagedata.pageheader[8]  = buf; // flags (1)
+   buf=lang;      pagedata.pageheader[9]  = buf; // lang (1)
+   buf=0x00;      pagedata.pageheader[10] = buf; // fixed 0x00 (1)
+   buf=0x00;      pagedata.pageheader[11] = buf; // fixed 0x00 (1)
+
+   cString pageChannelId = page.channel.ToString();
+   TeletextService::Publish(
+      *pageChannelId,
+      page.page,
+      page.subPage,
+      flags,
+      lang,
+      static_cast<unsigned char>(mag),
+      pagedata);
+
    StorageHandle fd;
    if ( (fd=storage->openForWriting(page)) ) {
-      // page header (12)
-      memcpy(pagedata.pageheader, "VTXV5", 5);      // prefix (5)  "VTXV4" < 2.0.0
-      buf=0x01;      pagedata.pageheader[5]  = buf; // fixed 0x01 (1)
-      buf=mag;       pagedata.pageheader[6]  = buf; // mag (1)
-      buf=page.page; pagedata.pageheader[7]  = buf; // page (1)
-      buf=flags;     pagedata.pageheader[8]  = buf; // flags (1)
-      buf=lang;      pagedata.pageheader[9]  = buf; // lang (1)
-      buf=0x00;      pagedata.pageheader[10] = buf; // fixed 0x00 (1)
-      buf=0x00;      pagedata.pageheader[11] = buf; // fixed 0x00 (1)
       storage->write(&pagedata, sizeof(TelePageData), fd);
       storage->close(fd);
    }
@@ -216,6 +230,8 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber, bool Li
 {
    // ignore if channel is 0
    if (ChannelNumber == 0) {
+      if (LiveView)
+         TeletextService::ClearLiveService();
       if (LiveView && receiver) {
          if (receiver->Live()) {
             DEBUG_OT_TXTRCVC("STOPRC channel=0 switch on DVB %d for channel %d LiveView=%s (receiver is attached to LIVE channel)\n", Device->DeviceNumber(), ChannelNumber, BOOLTOTEXT(LiveView));
@@ -240,6 +256,8 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber, bool Li
    const cChannel* newChannel = Channels.GetByNumber(ChannelNumber);
 #endif
    if (newChannel == NULL) {
+      if (LiveView)
+         TeletextService::ClearLiveService();
       DEBUG_OT_TXTRCVC("IGNORE invalid channel on DVB %d for channel %d LiveView=%s\n", Device->DeviceNumber(), ChannelNumber, BOOLTOTEXT(LiveView));
       return;
    };
@@ -280,6 +298,11 @@ void cTxtStatus::ChannelSwitch(const cDevice *Device, int ChannelNumber, bool Li
 
    // now re-attach the receiver to the new channel
    int TPid = newChannel->Tpid();
+
+   if (LiveView) {
+      cString serviceId = newChannel->GetChannelID().ToString();
+      TeletextService::SetLiveService(*serviceId, TPid != 0);
+   }
 
    if (LiveView && TPid && receiver) {
       // tell still running receiver thread that it will be deleted and new channel is live
@@ -370,10 +393,16 @@ void cTxtReceiver::Activate(bool On)
      if (!Running()) {
         Start();
         }
+     if (live)
+        TeletextService::SetReceiverActive(true);
      }
-  else if (Running()) {
-     buffer.Signal();
-     Cancel(2);
+  else {
+     if (live)
+        TeletextService::SetReceiverActive(false);
+     if (Running()) {
+        buffer.Signal();
+        Cancel(2);
+        }
      }
 }
 
